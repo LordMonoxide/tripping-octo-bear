@@ -1762,7 +1762,7 @@ Public Sub Events_SendEventData(ByVal pIndex As Long, ByVal EIndex As Long)
                     Buffer.WriteLong UBound(.text)
                     For D = 1 To UBound(.text)
                         Buffer.WriteString .text(D)
-                    Next D
+                    Next
                 Else
                     Buffer.WriteLong 0
                 End If
@@ -1770,12 +1770,12 @@ Public Sub Events_SendEventData(ByVal pIndex As Long, ByVal EIndex As Long)
                     Buffer.WriteLong UBound(.Data)
                     For D = 1 To UBound(.Data)
                         Buffer.WriteLong .Data(D)
-                    Next D
+                    Next
                 Else
                     Buffer.WriteLong 0
                 End If
             End With
-        Next i
+        Next
     Else
         Buffer.WriteLong 0
     End If
@@ -1807,7 +1807,7 @@ Public Sub Events_SendEventUpdate(ByVal pIndex As Long, ByVal EIndex As Long, By
             Buffer.WriteLong UBound(.text)
             For D = 1 To UBound(.text)
                 Buffer.WriteString .text(D)
-            Next D
+            Next
         Else
             Buffer.WriteLong 0
         End If
@@ -1815,7 +1815,7 @@ Public Sub Events_SendEventUpdate(ByVal pIndex As Long, ByVal EIndex As Long, By
             Buffer.WriteLong UBound(.Data)
             For D = 1 To UBound(.Data)
                 Buffer.WriteLong .Data(D)
-            Next D
+            Next
         Else
             Buffer.WriteLong 0
         End If

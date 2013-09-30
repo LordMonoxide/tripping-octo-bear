@@ -1064,7 +1064,7 @@ Sub HandleMapData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
         If IsPlaying(i) And GetPlayerMap(i) = mapNum Then
             Call PlayerWarp(i, mapNum, GetPlayerX(i), GetPlayerY(i))
         End If
-    Next i
+    Next
 
     Set Buffer = Nothing
 End Sub
@@ -2606,7 +2606,7 @@ Public Sub Events_HandleSaveEventData(ByVal Index As Long, ByRef Data() As Byte,
                     .HasText = True
                     For D = 1 To DCount
                         .text(D) = Buffer.ReadString
-                    Next D
+                    Next
                 Else
                     Erase .text
                     .HasText = False
@@ -2618,13 +2618,13 @@ Public Sub Events_HandleSaveEventData(ByVal Index As Long, ByRef Data() As Byte,
                     .HasData = True
                     For D = 1 To DCount
                         .Data(D) = Buffer.ReadLong
-                    Next D
+                    Next
                 Else
                     Erase .Data
                     .HasData = False
                 End If
             End With
-        Next s
+        Next
     Else
         Events(EIndex).HasSubEvents = False
         Erase Events(EIndex).SubEvents
@@ -2662,7 +2662,7 @@ Public Sub Events_HandleRequestEventsData(ByVal Index As Long, ByRef Data() As B
 
     For i = 1 To MAX_EVENTS
         Call Events_SendEventData(Index, i)
-    Next i
+    Next
 End Sub
 
 Public Sub Events_HandleRequestEditEvents(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)

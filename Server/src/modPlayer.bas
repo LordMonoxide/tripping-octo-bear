@@ -736,14 +736,14 @@ Function FindOpenBankSlot(ByVal Index As Long, ByVal itemnum As Long) As Long
                 FindOpenBankSlot = i
                 Exit Function
             End If
-        Next i
+        Next
 
     For i = 1 To MAX_BANK
         If GetPlayerBankItemNum(Index, i) = 0 Then
             FindOpenBankSlot = i
             Exit Function
         End If
-    Next i
+    Next
 End Function
 
 Function HasItem(ByVal Index As Long, ByVal itemnum As Long) As Long
@@ -885,7 +885,7 @@ Public Sub SetPlayerItems(ByVal Index As Long, ByVal itemID As Long, ByVal itemC
                 Call SendInventoryUpdate(Index, i)
                 Exit Sub
             End If
-        Next i
+        Next
     End If
     
     For i = 1 To MAX_INV
@@ -899,7 +899,7 @@ Public Sub SetPlayerItems(ByVal Index As Long, ByVal itemID As Long, ByVal itemC
             End If
             Call SendInventoryUpdate(Index, i)
         End If
-    Next i
+    Next
 End Sub
 Public Sub GivePlayerItems(ByVal Index As Long, ByVal itemID As Long, ByVal itemCount As Long)
     Dim i As Long
@@ -912,7 +912,7 @@ Public Sub GivePlayerItems(ByVal Index As Long, ByVal itemID As Long, ByVal item
                 Call SendInventoryUpdate(Index, i)
                 Exit Sub
             End If
-        Next i
+        Next
     End If
     
     For i = 1 To MAX_INV
@@ -926,7 +926,7 @@ Public Sub GivePlayerItems(ByVal Index As Long, ByVal itemID As Long, ByVal item
             End If
             Call SendInventoryUpdate(Index, i)
         End If
-    Next i
+    Next
 End Sub
 Public Sub TakePlayerItems(ByVal Index As Long, ByVal itemID As Long, ByVal itemCount As Long)
 Dim i As Long
@@ -1820,7 +1820,7 @@ Dim n As Long, i As Long, tempItem As Long, x As Long, itemnum As Long
                         PlayerMsg Index, "You discover a " & Item(Item(itemnum).Container(i)).Name, Green
                     End If
                 End If
-            Next i
+            Next
                     
             TakeInvItem Index, itemnum, 0
     
@@ -2779,14 +2779,14 @@ Dim x As Long, y As Long, i As Long
                                             Player(i).EventOpen(Map(GetPlayerMap(i)).Tile(x, y).Data1) = YES
                                             SendEventOpen i, YES, Map(GetPlayerMap(i)).Tile(x, y).Data1
                                         End If
-                                    Next i
+                                    Next
                                 Case 2
                                     For i = 1 To Player_HighIndex
                                         If IsPlaying(i) Then
                                             Player(i).EventOpen(Map(GetPlayerMap(i)).Tile(x, y).Data1) = YES
                                             SendEventOpen i, YES, Map(GetPlayerMap(i)).Tile(x, y).Data1
                                         End If
-                                    Next i
+                                    Next
                             End Select
                         End If
                     Else
@@ -2802,14 +2802,14 @@ Dim x As Long, y As Long, i As Long
                                             Player(i).EventOpen(Map(GetPlayerMap(i)).Tile(x, y).Data1) = NO
                                             SendEventOpen i, NO, Map(GetPlayerMap(i)).Tile(x, y).Data1
                                         End If
-                                    Next i
+                                    Next
                                 Case 2
                                     For i = 1 To Player_HighIndex
                                         If IsPlaying(i) Then
                                             Player(i).EventOpen(Map(GetPlayerMap(i)).Tile(x, y).Data1) = NO
                                             SendEventOpen i, NO, Map(GetPlayerMap(i)).Tile(x, y).Data1
                                         End If
-                                    Next i
+                                    Next
                             End Select
                         End If
                     End If
@@ -2831,14 +2831,14 @@ Dim x As Long, y As Long, i As Long
                                         Player(i).EventGraphic(Map(GetPlayerMap(i)).Tile(x, y).Data1) = .Data(3)
                                         SendEventGraphic i, .Data(3), Map(GetPlayerMap(i)).Tile(x, y).Data1
                                     End If
-                                Next i
+                                Next
                             Case 2
                                 For i = 1 To Player_HighIndex
                                     If IsPlaying(i) Then
                                         Player(i).EventGraphic(Map(GetPlayerMap(i)).Tile(x, y).Data1) = .Data(3)
                                         SendEventGraphic i, .Data(3), Map(GetPlayerMap(i)).Tile(x, y).Data1
                                     End If
-                                Next i
+                                Next
                         End Select
                     End If
             End Select

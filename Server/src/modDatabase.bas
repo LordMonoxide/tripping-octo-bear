@@ -261,11 +261,11 @@ Sub AddChar(ByVal Index As Long, ByVal Name As String, ByVal Sex As Byte, ByVal 
 
         For n = 1 To Stats.Stat_Count - 1
             Player(Index).Stat(n) = 1
-        Next n
+        Next
         
         For n = 1 To Skills.Skill_Count - 1
             Player(Index).Skill(n) = 1
-        Next n
+        Next
 
         Player(Index).dir = DIR_DOWN
         Player(Index).Map = START_MAP
@@ -851,7 +851,7 @@ Public Sub ClearEvents()
 
     For i = 1 To MAX_EVENTS
         Call ClearEvent(i)
-    Next i
+    Next
 End Sub
 
 Public Sub ClearEvent(ByVal Index As Long)
@@ -864,7 +864,7 @@ Public Sub LoadEvents()
 
     For i = 1 To MAX_EVENTS
         Call LoadEvent(i)
-    Next i
+    Next
 End Sub
 
 Public Sub LoadEvent(ByVal Index As Long)
@@ -903,7 +903,7 @@ Public Sub LoadEvent(ByVal Index As Long)
                             ReDim .text(1 To DCount)
                             For D = 1 To DCount
                                 Get #F, , .text(D)
-                            Next D
+                            Next
                         End If
                         Get #F, , DCount
                         If DCount <= 0 Then
@@ -914,10 +914,10 @@ Public Sub LoadEvent(ByVal Index As Long)
                             ReDim .Data(1 To DCount)
                             For D = 1 To DCount
                                 Get #F, , .Data(D)
-                            Next D
+                            Next
                         End If
                     End With
-                Next s
+                Next
             End If
             Get #F, , Events(Index).Trigger
             Get #F, , Events(Index).WalkThrought
@@ -963,7 +963,7 @@ Public Sub SaveEvent(ByVal Index As Long)
                         Put #F, , DCount
                         For D = 1 To DCount
                             Put #F, , .text(D)
-                        Next D
+                        Next
                     End If
                     If Not (.HasData) Then
                         DCount = 0
@@ -973,10 +973,10 @@ Public Sub SaveEvent(ByVal Index As Long)
                         Put #F, , DCount
                         For D = 1 To DCount
                             Put #F, , .Data(D)
-                        Next D
+                        Next
                     End If
                 End With
-            Next s
+            Next
         End If
         Put #F, , Events(Index).Trigger
         Put #F, , Events(Index).WalkThrought

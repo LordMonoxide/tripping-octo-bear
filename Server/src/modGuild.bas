@@ -115,7 +115,7 @@ Dim i As Integer
                 Else
                     Player(Index).GuildMemberId = 0
                 End If
-            Next i
+            Next
                 
             'Remove from guild if we can't find them
             If Player(Index).GuildMemberId = 0 Then
@@ -193,7 +193,7 @@ Public Sub MakeGuild(Founder_Index As Long, Name As String, Tag As String)
     
     For b = 1 To MAX_GUILD_RANKS_PERMISSION
         GuildData(GuildSlot).Guild_Ranks(MAX_GUILD_RANKS).RankPermission(b) = 1
-    Next b
+    Next
     
     'Set up rest of the ranks with default permission
     For i = 1 To MAX_GUILD_RANKS - 1
@@ -202,9 +202,8 @@ Public Sub MakeGuild(Founder_Index As Long, Name As String, Tag As String)
         
         For b = 1 To MAX_GUILD_RANKS_PERMISSION
             GuildData(GuildSlot).Guild_Ranks(i).RankPermission(b) = Default_Ranks(b)
-        Next b
-
-    Next i
+        Next
+    Next
     
     Player(Founder_Index).GuildFileId = GuildFileId
     Player(Founder_Index).GuildMemberId = 1
@@ -367,7 +366,7 @@ Public Function FindOpenGuildSlot() As Long
         
         'No slot found how?
         FindOpenGuildSlot = 0
-    Next i
+    Next
 End Function
 Public Function FindOpenGuildMemberSlot(GuildSlot As Long) As Long
 Dim i As Integer
@@ -377,7 +376,7 @@ Dim i As Integer
             FindOpenGuildMemberSlot = i
             Exit Function
         End If
-    Next i
+    Next
     
     'Guild is full sorry bub
     FindOpenGuildMemberSlot = 0
@@ -417,7 +416,7 @@ If Not FileExist("\Data\guilds\Guild" & GuildFileId & ".dat") Then Exit Sub
             If GuildData(GuildSlot).Guild_Members(i).Online = True Then
                 GuildData(GuildSlot).Guild_Members(i).Online = False
             End If
-        Next i
+        Next
         
 End Sub
 Public Sub SaveGuild(GuildSlot As Long)
@@ -447,7 +446,7 @@ Dim i As Long
 
     For i = 1 To MAX_PLAYERS
         Call ClearGuild(i)
-    Next i
+    Next
 End Sub
 Public Sub ClearGuild(Index As Long)
     Call ZeroMemory(ByVal VarPtr(GuildData(Index)), LenB(GuildData(Index)))
@@ -474,7 +473,7 @@ If GuildData(GuildSlot).In_Use = False Then Exit Sub
                 Exit For
             End If
         End If
-    Next i
+    Next
     
     If UnloadGuild = True Then
         Call UnloadGuildSlot(GuildSlot)
@@ -554,7 +553,7 @@ Dim i As Integer
                 MemberSlot = i
                 Exit For
             End If
-        Next i
+        Next
         
         If FoundOffline = True Then
         
@@ -645,7 +644,7 @@ GuildLoaded = False
                 Exit For
             End If
         End If
-    Next i
+    Next
     
     'If the guild is not loaded we need to load it
     If GuildLoaded = False Then
@@ -718,7 +717,7 @@ TmpGuildFileId = GuildData(tmpGuildSlot).Guild_Fileid
                         Call SendPlayerData(i)
                     End If
                 End If
-            Next i
+            Next
             
             'Unload Guild from memory
             Call UnloadGuildSlot(tmpGuildSlot)
@@ -771,7 +770,7 @@ Sub SendGuild(ByVal SendToWholeGuild As Boolean, ByVal Index As Long, ByVal Guil
         Buffer.WriteInteger GuildData(GuildSlot).Guild_Members(i).Rank
         Buffer.WriteString GuildData(GuildSlot).Guild_Members(i).Comment
         Buffer.WriteByte GuildData(GuildSlot).Guild_Members(i).Online
-    Next i
+    Next
     
     'Send Ranks
     For i = 1 To MAX_GUILD_RANKS
@@ -779,8 +778,8 @@ Sub SendGuild(ByVal SendToWholeGuild As Boolean, ByVal Index As Long, ByVal Guil
         For b = 1 To MAX_GUILD_RANKS_PERMISSION
             Buffer.WriteByte GuildData(GuildSlot).Guild_Ranks(i).RankPermission(b)
             Buffer.WriteString Guild_Ranks_Premission_Names(b)
-        Next b
-    Next i
+        Next
+    Next
     
     If SendToWholeGuild = False Then
         SendDataTo Index, Buffer.ToArray()
@@ -937,7 +936,7 @@ Dim i As Integer
             GuildData(TempPlayer(Index).tmpGuildSlot).Guild_Ranks(SentIndex).Name = Buffer.ReadString
                 For i = 1 To MAX_GUILD_RANKS_PERMISSION
                     GuildData(TempPlayer(Index).tmpGuildSlot).Guild_Ranks(SentIndex).RankPermission(i) = Buffer.ReadByte
-                Next i
+                Next
         Else
             PlayerMsg Index, "You are not allowed to save ranks.", BrightRed
         End If
@@ -1019,7 +1018,7 @@ Public Sub HandleGuildCommands(ByVal Index As Long, ByRef Data() As Byte, ByVal 
                         MembersCount = MembersCount + 1
                     End If
                 End If
-            Next i
+            Next
             
             PlayerMsg Index, "Total: " & MembersCount, Green
         
@@ -1030,7 +1029,7 @@ Public Sub HandleGuildCommands(ByVal Index As Long, ByRef Data() As Byte, ByVal 
                     PlayerMsg Index, GuildData(TempPlayer(Index).tmpGuildSlot).Guild_Members(i).User_Name, Green
                     MembersCount = MembersCount + 1
                 End If
-            Next i
+            Next
             
             PlayerMsg Index, "Total: " & MembersCount, Green
         
@@ -1043,7 +1042,7 @@ Public Sub HandleGuildCommands(ByVal Index As Long, ByRef Data() As Byte, ByVal 
                         MembersCount = MembersCount + 1
                     End If
                 End If
-            Next i
+            Next
             
             PlayerMsg Index, "Total: " & MembersCount, Green
         

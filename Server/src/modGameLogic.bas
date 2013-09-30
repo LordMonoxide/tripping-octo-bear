@@ -171,8 +171,8 @@ Public Sub SpawnNpc(ByVal mapNpcNum As Long, ByVal mapNum As Long, Optional Forc
                         Exit For
                     End If
                 End If
-            Next y
-        Next x
+            Next
+        Next
         
         If Not Spawned Then
     
