@@ -6,7 +6,7 @@ Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 Sub ServerLoop()
     Dim i As Long, x As Long
-    Dim Tick As Long, TickCPS As Long, CPS As Long, FrameTime As Long
+    Dim Tick As Long, TickCPS As Long, CPS As Long
     Dim tmr25 As Long, tmr500 As Long, tmr1000 As Long
     Dim LastUpdateSavePlayers, LastUpdateMapSpawnItems As Long, LastUpdateVitals As Long, LastUpdatePlayerTime As Long
 Dim BuffTimer As Long
@@ -14,7 +14,6 @@ Dim BuffTimer As Long
 
     Do While ServerOnline
         Tick = timeGetTime
-        FrameTime = Tick
         
         ' Player loop
         If Tick > tmr25 Then

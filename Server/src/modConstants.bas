@@ -211,6 +211,3 @@ Public Const START_Y As Long = 10
 Public Const ACTIONMSG_STATIC As Long = 0
 Public Const ACTIONMSG_SCROLL As Long = 1
 Public Const ACTIONMSG_SCREEN As Long = 2
-
-' Do Events
-Public Const nLng As Long = (&H80 Or &H1 Or &H4 Or &H20) + (&H8 Or &H40)

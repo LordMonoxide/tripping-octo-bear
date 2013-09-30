@@ -279,7 +279,7 @@ Sub HackingAttempt(ByVal Index As Long, ByVal Reason As String)
     Call AlertMsg(Index, "You have lost your connection with " & Options.Game_Name & ".")
 End Sub
 
-Sub AcceptConnection(ByVal Index As Long, ByVal SocketId As Long)
+Sub AcceptConnection(ByVal SocketId As Long)
     Dim i As Long
 
     i = FindOpenPlayerSlot

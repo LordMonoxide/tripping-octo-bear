@@ -788,7 +788,7 @@ Sub SendGuild(ByVal SendToWholeGuild As Boolean, ByVal Index As Long, ByVal Guil
     
     Set Buffer = Nothing
 End Sub
-Sub ToggleGuildAdmin(ByVal Index As Long, ByVal GuildSlot, ByVal OpenAdmin As Boolean)
+Sub ToggleGuildAdmin(ByVal Index As Long, ByVal OpenAdmin As Boolean)
     Dim Buffer As clsBuffer
 
     Set Buffer = New clsBuffer
@@ -996,7 +996,7 @@ Public Sub HandleGuildCommands(ByVal Index As Long, ByRef Data() As Byte, ByVal 
     Case 4
         'admin
         If CheckGuildPermission(Index, 1) = True Then
-            Call ToggleGuildAdmin(Index, TempPlayer(Index).tmpGuildSlot, True)
+            Call ToggleGuildAdmin(Index, True)
         Else
             PlayerMsg Index, "You are not allowed to open the admin panel.", BrightRed
         End If

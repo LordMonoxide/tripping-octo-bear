@@ -70,29 +70,29 @@ Begin VB.Form frmServer
       TabCaption(2)   =   "Control "
       TabPicture(2)   =   "frmServer.frx":170C2
       Tab(2).ControlEnabled=   0   'False
-      Tab(2).Control(0)=   "Frame2"
+      Tab(2).Control(0)=   "fraDatabase"
       Tab(2).Control(1)=   "fraServer"
-      Tab(2).Control(2)=   "fraDatabase"
+      Tab(2).Control(2)=   "Frame2"
       Tab(2).ControlCount=   3
       TabCaption(3)   =   "Accounts"
       TabPicture(3)   =   "frmServer.frx":170DE
       Tab(3).ControlEnabled=   0   'False
-      Tab(3).Control(0)=   "cmdSave"
-      Tab(3).Control(1)=   "scrlAccess"
-      Tab(3).Control(2)=   "cmdReloadAccs"
-      Tab(3).Control(3)=   "chkDonator"
+      Tab(3).Control(0)=   "lblAcctCount"
+      Tab(3).Control(1)=   "lblAccs"
+      Tab(3).Control(2)=   "lblAccess"
+      Tab(3).Control(3)=   "lstAccounts"
       Tab(3).Control(4)=   "cmdDeleteAcc"
-      Tab(3).Control(5)=   "lstAccounts"
-      Tab(3).Control(6)=   "lblAccess"
-      Tab(3).Control(7)=   "lblAccs"
-      Tab(3).Control(8)=   "lblAcctCount"
+      Tab(3).Control(5)=   "chkDonator"
+      Tab(3).Control(6)=   "cmdReloadAccs"
+      Tab(3).Control(7)=   "scrlAccess"
+      Tab(3).Control(8)=   "cmdSave"
       Tab(3).ControlCount=   9
       TabCaption(4)   =   "Debug"
       TabPicture(4)   =   "frmServer.frx":170FA
       Tab(4).ControlEnabled=   0   'False
-      Tab(4).Control(0)=   "Frame4"
+      Tab(4).Control(0)=   "Frame1"
       Tab(4).Control(1)=   "Frame3"
-      Tab(4).Control(2)=   "Frame1"
+      Tab(4).Control(2)=   "Frame4"
       Tab(4).ControlCount=   3
       Begin VB.CommandButton cmdSave 
          Caption         =   "Save"
@@ -711,7 +711,7 @@ End Sub
 ' ** Winsock object **
 ' ********************
 Private Sub Socket_ConnectionRequest(Index As Integer, ByVal requestID As Long)
-    Call AcceptConnection(Index, requestID)
+    Call AcceptConnection(requestID)
 End Sub
 
 Private Sub Socket_DataArrival(Index As Integer, ByVal bytesTotal As Long)
