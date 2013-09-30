@@ -158,7 +158,7 @@ End Sub
 
 
 'ModPets
-Sub ReleasePet(Index)
+Sub ReleasePet(ByVal Index As Long)
 Dim i As Long
 
     Player(Index).Pet.Alive = False
@@ -2762,7 +2762,7 @@ Sub PlayerAttackPet(ByVal attacker As Long, ByVal victim As Long, ByVal Damage A
     TempPlayer(attacker).AttackTimer = timeGetTime
 End Sub
 
-Function IsPetByPlayer(Index) As Boolean
+Function IsPetByPlayer(ByVal Index As Long) As Boolean
     Dim x As Long, y As Long, x1 As Long, y1 As Long
     If Index <= 0 Or Index > MAX_PLAYERS Or Player(Index).Pet.Alive = False Then Exit Function
     

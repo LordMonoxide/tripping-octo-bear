@@ -8,7 +8,7 @@ Sub ServerLoop()
     Dim i As Long, x As Long
     Dim Tick As Long, TickCPS As Long, CPS As Long
     Dim tmr25 As Long, tmr500 As Long, tmr1000 As Long
-    Dim LastUpdateSavePlayers, LastUpdateMapSpawnItems As Long, LastUpdateVitals As Long, LastUpdatePlayerTime As Long
+    Dim LastUpdateSavePlayers As Long, LastUpdateMapSpawnItems As Long, LastUpdateVitals As Long, LastUpdatePlayerTime As Long
 Dim BuffTimer As Long
     ServerOnline = True
 

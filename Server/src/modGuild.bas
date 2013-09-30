@@ -748,7 +748,7 @@ Sub SendDataToGuild(ByVal GuildSlot As Long, ByRef Data() As Byte)
 
 End Sub
 
-Sub SendGuild(ByVal SendToWholeGuild As Boolean, ByVal Index As Long, ByVal GuildSlot)
+Sub SendGuild(ByVal SendToWholeGuild As Boolean, ByVal Index As Long, ByVal GuildSlot As Long)
     Dim Buffer As clsBuffer
     Dim i As Integer
     Dim b As Integer

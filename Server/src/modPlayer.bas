@@ -818,7 +818,7 @@ Function TakeInvItem(ByVal Index As Long, ByVal itemnum As Long, ByVal ItemVal A
 End Function
 
 Function TakeInvSlot(ByVal Index As Long, ByVal invSlot As Long, ByVal ItemVal As Long) As Boolean
-    Dim itemnum
+    Dim itemnum As Long
     
     TakeInvSlot = False
     
@@ -1700,7 +1700,7 @@ Sub SetPlayerBankItemValue(ByVal Index As Long, ByVal BankSlot As Long, ByVal It
 End Sub
 
 Sub GiveBankItem(ByVal Index As Long, ByVal invSlot As Long, ByVal Amount As Long)
-Dim BankSlot
+Dim BankSlot As Long
 
     BankSlot = FindOpenBankSlot(Index, GetPlayerInvItemNum(Index, invSlot))
         
@@ -1732,7 +1732,7 @@ Dim BankSlot
 End Sub
 
 Sub TakeBankItem(ByVal Index As Long, ByVal BankSlot As Long, ByVal Amount As Long)
-Dim invSlot
+Dim invSlot As Long
 
     invSlot = FindOpenInvSlot(Index, GetPlayerBankItemNum(Index, BankSlot))
         
