@@ -1,7 +1,7 @@
 VERSION 5.00
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCN.OCX"
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "Tabctl32.ocx"
-Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "mscomctl32.ocx"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.OCX"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TABCTL32.OCX"
+Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmServer 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Loading..."
@@ -70,29 +70,29 @@ Begin VB.Form frmServer
       TabCaption(2)   =   "Control "
       TabPicture(2)   =   "frmServer.frx":170C2
       Tab(2).ControlEnabled=   0   'False
-      Tab(2).Control(0)=   "fraDatabase"
+      Tab(2).Control(0)=   "Frame2"
       Tab(2).Control(1)=   "fraServer"
-      Tab(2).Control(2)=   "Frame2"
+      Tab(2).Control(2)=   "fraDatabase"
       Tab(2).ControlCount=   3
       TabCaption(3)   =   "Accounts"
       TabPicture(3)   =   "frmServer.frx":170DE
       Tab(3).ControlEnabled=   0   'False
-      Tab(3).Control(0)=   "lblAcctCount"
-      Tab(3).Control(1)=   "lblAccs"
-      Tab(3).Control(2)=   "lblAccess"
-      Tab(3).Control(3)=   "lstAccounts"
+      Tab(3).Control(0)=   "cmdSave"
+      Tab(3).Control(1)=   "scrlAccess"
+      Tab(3).Control(2)=   "cmdReloadAccs"
+      Tab(3).Control(3)=   "chkDonator"
       Tab(3).Control(4)=   "cmdDeleteAcc"
-      Tab(3).Control(5)=   "chkDonator"
-      Tab(3).Control(6)=   "cmdReloadAccs"
-      Tab(3).Control(7)=   "scrlAccess"
-      Tab(3).Control(8)=   "cmdSave"
+      Tab(3).Control(5)=   "lstAccounts"
+      Tab(3).Control(6)=   "lblAccess"
+      Tab(3).Control(7)=   "lblAccs"
+      Tab(3).Control(8)=   "lblAcctCount"
       Tab(3).ControlCount=   9
       TabCaption(4)   =   "Debug"
       TabPicture(4)   =   "frmServer.frx":170FA
       Tab(4).ControlEnabled=   0   'False
-      Tab(4).Control(0)=   "Frame1"
+      Tab(4).Control(0)=   "Frame4"
       Tab(4).Control(1)=   "Frame3"
-      Tab(4).Control(2)=   "Frame4"
+      Tab(4).Control(2)=   "Frame1"
       Tab(4).ControlCount=   3
       Begin VB.CommandButton cmdSave 
          Caption         =   "Save"
@@ -609,13 +609,13 @@ Option Explicit
 
 Private Sub cmdDeleteAcc_Click()
 Dim filename As String
-Dim f As Long
+Dim F As Long
     If Len(Trim$(lstAccounts.text)) > 0 Then
         filename = App.Path & "\data\accounts\" & Trim$(lstAccounts.text) & ".bin"
-        f = FreeFile
-        Open filename For Binary As #f
-        Get #f, , AEditor
-        Close #f
+        F = FreeFile
+        Open filename For Binary As #F
+        Get #F, , AEditor
+        Close #F
 
         If LenB(Trim$(AEditor.Name)) > 0 Then
             Call DeleteName(AEditor.Name)
@@ -639,14 +639,14 @@ End Sub
 
 Private Sub cmdSave_Click()
 Dim filename As String
-Dim f As Long
+Dim F As Long
 Dim Index As Long
     If Len(Trim$(lstAccounts.text)) > 0 Then
         filename = App.Path & "\data\accounts\" & Trim$(lstAccounts.text) & ".bin"
-        f = FreeFile
-        Open filename For Binary As #f
-        Get #f, , AEditor
-        Close #f
+        F = FreeFile
+        Open filename For Binary As #F
+        Get #F, , AEditor
+        Close #F
         
         AEditorPlayer = Trim$(lstAccounts.text)
         AEditor.Donator = chkDonator.Value
@@ -661,10 +661,10 @@ Dim Index As Long
             End If
         Else
             filename = App.Path & "\data\accounts\" & Trim$(AEditorPlayer) & ".bin"
-            f = FreeFile
-            Open filename For Binary As #f
-            Put #f, , AEditor
-            Close #f
+            F = FreeFile
+            Open filename For Binary As #F
+            Put #F, , AEditor
+            Close #F
         End If
     End If
 End Sub
@@ -996,13 +996,13 @@ Private Sub Form_MouseMove(Button As Integer, Shift As Integer, x As Single, y A
 End Sub
 Private Sub lstAccounts_Click()
 Dim filename As String
-Dim f As Long
+Dim F As Long
     If Len(Trim$(lstAccounts.text)) > 0 Then
         filename = App.Path & "\data\accounts\" & Trim$(lstAccounts.text) & ".bin"
-        f = FreeFile
-        Open filename For Binary As #f
-        Get #f, , AEditor
-        Close #f
+        F = FreeFile
+        Open filename For Binary As #F
+        Get #F, , AEditor
+        Close #F
         
         AEditorPlayer = Trim$(lstAccounts.text)
         chkDonator.Value = AEditor.Donator
