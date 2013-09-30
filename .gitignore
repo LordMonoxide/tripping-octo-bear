@@ -2,3 +2,5 @@
 *.scc
 *.oca
 *.vbw
+*.obj
+*.exe
