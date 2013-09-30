@@ -2,21 +2,10 @@ Attribute VB_Name = "modHandleData"
 Option Explicit
 
 Private Function GetAddress(FunAddr As Long) As Long
-   On Error GoTo ErrorHandler
-
     GetAddress = FunAddr
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetAddress", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Sub InitMessages()
-   On Error GoTo ErrorHandler
-
     HandleDataSub(CNewAccount) = GetAddress(AddressOf HandleNewAccount)
     HandleDataSub(CDelAccount) = GetAddress(AddressOf HandleDelAccount)
     HandleDataSub(CLogin) = GetAddress(AddressOf HandleLogin)
@@ -128,20 +117,12 @@ Public Sub InitMessages()
     HandleDataSub(CReleasePet) = GetAddress(AddressOf HandleReleasePet)
     HandleDataSub(CPetSpell) = GetAddress(AddressOf HandlePetSpell)
     HandleDataSub(CSendChest) = GetAddress(AddressOf HandleSaveChest)
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "InitMessages", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleData(ByVal Index As Long, ByRef Data() As Byte)
 Dim Buffer As clsBuffer
 Dim MsgType As Long
         
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -159,13 +140,6 @@ Dim MsgType As Long
     PacketsIn = PacketsIn + 1
     
     CallWindowProc HandleDataSub(MsgType), Index, Buffer.ReadBytes(Buffer.Length), 0, 0
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleData", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub HandleNewAccount(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -174,8 +148,6 @@ Private Sub HandleNewAccount(ByVal Index As Long, ByRef Data() As Byte, ByVal St
     Dim Password As String
     Dim i As Long
     Dim n As Long
-
-   On Error GoTo ErrorHandler
 
     If Not IsPlaying(Index) Then
         If Not IsLoggedIn(Index) Then
@@ -244,14 +216,6 @@ Private Sub HandleNewAccount(ByVal Index As Long, ByRef Data() As Byte, ByVal St
             Set Buffer = Nothing
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleNewAccount", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' :::::::::::::::::::::::::::
@@ -261,8 +225,6 @@ Private Sub HandleDelAccount(ByVal Index As Long, ByRef Data() As Byte, ByVal St
     Dim Buffer As clsBuffer
     Dim Name As String
     Dim Password As String
-
-   On Error GoTo ErrorHandler
 
     If Not IsPlaying(Index) Then
         If Not IsLoggedIn(Index) Then
@@ -304,14 +266,6 @@ Private Sub HandleDelAccount(ByVal Index As Long, ByRef Data() As Byte, ByVal St
             Set Buffer = Nothing
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleDelAccount", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' ::::::::::::::::::
@@ -321,8 +275,6 @@ Private Sub HandleLogin(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAd
     Dim Buffer As clsBuffer
     Dim Name As String
     Dim Password As String
-
-   On Error GoTo ErrorHandler
 
     If Not IsPlaying(Index) Then
         If Not IsLoggedIn(Index) Then
@@ -395,14 +347,6 @@ Private Sub HandleLogin(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAd
             Set Buffer = Nothing
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleLogin", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' ::::::::::::::::::::::::::
@@ -418,8 +362,6 @@ Private Sub HandleAddChar(ByVal Index As Long, ByRef Data() As Byte, ByVal Start
     Dim Headgear As Long
     Dim i As Long
     Dim n As Long
-
-   On Error GoTo ErrorHandler
 
     If Not IsPlaying(Index) Then
         Set Buffer = New clsBuffer
@@ -473,14 +415,6 @@ Private Sub HandleAddChar(ByVal Index As Long, ByRef Data() As Byte, ByVal Start
         
         Set Buffer = Nothing
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleAddChar", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' ::::::::::::::::::::
@@ -490,7 +424,6 @@ Private Sub HandleSayMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal StartA
     Dim Msg As String
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -515,20 +448,12 @@ Private Sub HandleSayMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal StartA
     Call SendChatBubble(GetPlayerMap(Index), Index, TARGET_TYPE_PLAYER, Msg, White)
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSayMsg", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub HandleEmoteMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Msg As String
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -547,13 +472,6 @@ Private Sub HandleEmoteMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal Star
     Call MapMsg(GetPlayerMap(Index), GetPlayerName(Index) & " " & Right$(Msg, Len(Msg) - 1), EmoteColor)
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleEmoteMsg", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub HandleBroadcastMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -561,7 +479,6 @@ Private Sub HandleBroadcastMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal 
     Dim s As String
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -587,13 +504,6 @@ Private Sub HandleBroadcastMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal 
     Call TextAdd(s)
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleBroadcastMsg", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub HandlePlayerMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -601,7 +511,6 @@ Private Sub HandlePlayerMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal Sta
     Dim i As Long
     Dim MsgTo As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -632,14 +541,6 @@ Private Sub HandlePlayerMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal Sta
     End If
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandlePlayerMsg", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' :::::::::::::::::::::::::::::
@@ -650,7 +551,6 @@ Sub HandlePlayerMove(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr 
     Dim movement As Long
     Dim Buffer As clsBuffer
     Dim tmpX As Long, tmpY As Long
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -721,13 +621,6 @@ Sub HandlePlayerMove(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr 
     End If
     
     Call PlayerMove(Index, dir, movement)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandlePlayerMove", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::::::::::
@@ -736,7 +629,6 @@ End Sub
 Sub HandlePlayerDir(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim dir As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -759,13 +651,6 @@ Sub HandlePlayerDir(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     Buffer.WriteLong Index
     Buffer.WriteLong GetPlayerDir(Index)
     SendDataToMapBut Index, GetPlayerMap(Index), Buffer.ToArray()
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandlePlayerDir", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::
@@ -775,22 +660,12 @@ Sub HandleUseItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
 Dim invNum As Long
 Dim Buffer As clsBuffer
     
-    ' get inventory slot number
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     invNum = Buffer.ReadLong
     Set Buffer = Nothing
 
     UseItem Index, invNum
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleUseItem", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::::
@@ -799,9 +674,6 @@ End Sub
 Sub HandleAttack(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim i As Long, TempIndex As Long, x As Long, y As Long, shoot As Boolean
     
-    ' can't attack whilst casting
-   On Error GoTo ErrorHandler
-
     If TempPlayer(Index).spellBuffer.spell > 0 Then Exit Sub
     
     ' can't attack whilst stunned
@@ -891,13 +763,6 @@ Dim i As Long, TempIndex As Long, x As Long, y As Long, shoot As Boolean
     
     CheckResource Index, x, y
     CheckEvent Index, x, y
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleAttack", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::
@@ -908,8 +773,6 @@ Dim PointType As Byte
 Dim Buffer As clsBuffer
 Dim sMes As String
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     PointType = Buffer.ReadByte 'CLng(Parse(1))
@@ -963,13 +826,6 @@ Dim sMes As String
 
     ' Send the update
     SendPlayerData Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleUseStatPoint", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::::::::::
@@ -979,20 +835,12 @@ Sub HandlePlayerInfoRequest(ByVal Index As Long, ByRef Data() As Byte, ByVal Sta
     Dim Name As String
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     Name = Buffer.ReadString 'Parse(1)
     Set Buffer = Nothing
     i = FindPlayer(Name)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandlePlayerInfoRequest", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::::
@@ -1001,7 +849,6 @@ End Sub
 Sub HandleWarpMeTo(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -1028,14 +875,6 @@ Sub HandleWarpMeTo(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As
     Else
         Call PlayerMsg(Index, "You cannot warp to yourself!", White)
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleWarpMeTo", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' :::::::::::::::::::::::
@@ -1044,7 +883,6 @@ End Sub
 Sub HandleWarpToMe(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -1071,14 +909,6 @@ Sub HandleWarpToMe(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As
     Else
         Call PlayerMsg(Index, "You cannot warp yourself to yourself!", White)
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleWarpToMe", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' ::::::::::::::::::::::::
@@ -1087,7 +917,6 @@ End Sub
 Sub HandleWarpTo(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -1109,30 +938,13 @@ Sub HandleWarpTo(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As L
     Call PlayerWarp(Index, n, GetPlayerX(Index), GetPlayerY(Index))
     Call PlayerMsg(Index, "You have been warped to map #" & n, BrightBlue)
     Call AddLog(GetPlayerName(Index) & " warped to map #" & n & ".", ADMIN_LOG)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleWarpTo", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::::
 ' :: Stats request packet ::
 ' ::::::::::::::::::::::::::
 Sub HandleGetStats(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-
-   On Error GoTo ErrorHandler
-
     
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleGetStats", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::::::::::::
@@ -1141,7 +953,6 @@ End Sub
 Sub HandleRequestNewMap(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim dir As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -1154,13 +965,6 @@ Sub HandleRequestNewMap(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAd
     End If
 
     Call PlayerMove(Index, dir, 1)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestNewMap", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::
@@ -1172,7 +976,6 @@ Sub HandleMapData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
     Dim x As Long
     Dim y As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -1264,13 +1067,6 @@ Sub HandleMapData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
     Next i
 
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleMapData", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::::::
@@ -1280,7 +1076,6 @@ Sub HandleNeedMap(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
     Dim s As String
     Dim Buffer As clsBuffer
     Dim i As Long
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -1306,29 +1101,13 @@ Sub HandleNeedMap(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SMapDone
     SendDataTo Index, Buffer.ToArray()
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleNeedMap", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::::::::::::::::::::::::::::
 ' :: Player trying to pick up something packet ::
 ' :::::::::::::::::::::::::::::::::::::::::::::::
 Sub HandleMapGetItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     Call PlayerMapGetItem(Index)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleMapGetItem", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::::::::::::::::::::::
@@ -1338,7 +1117,6 @@ Sub HandleMapDropItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     Dim invNum As Long
     Dim Amount As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -1360,13 +1138,6 @@ Sub HandleMapDropItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     
     ' everything worked out fine
     Call PlayerMapDropItem(Index, invNum, Amount)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleMapDropItem", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::
@@ -1374,9 +1145,6 @@ End Sub
 ' ::::::::::::::::::::::::
 Sub HandleMapRespawn(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim i As Long
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_MAPPER Then
         Exit Sub
@@ -1399,13 +1167,6 @@ Sub HandleMapRespawn(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr 
     CacheResources GetPlayerMap(Index)
     Call PlayerMsg(Index, "Map respawned.", Blue)
     Call AddLog(GetPlayerName(Index) & " has respawned map #" & GetPlayerMap(Index), ADMIN_LOG)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleMapRespawn", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::::
@@ -1414,9 +1175,6 @@ End Sub
 Sub HandleMapReport(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim i As Long
     Dim Buffer As clsBuffer
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_MAPPER Then
         Exit Sub
@@ -1431,13 +1189,6 @@ Sub HandleMapReport(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleMapReport", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::
@@ -1446,7 +1197,6 @@ End Sub
 Sub HandleKickPlayer(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -1477,14 +1227,6 @@ Sub HandleKickPlayer(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr 
     Else
         Call PlayerMsg(Index, "You cannot kick yourself!", White)
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleKickPlayer", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' :::::::::::::::::::::
@@ -1495,9 +1237,6 @@ Sub HandleBanlist(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
     Dim F As Long
     Dim s As String
     Dim Name As String
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_MAPPER Then
         Exit Sub
@@ -1515,13 +1254,6 @@ Sub HandleBanlist(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
     Loop
 
     Close #F
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleBanlist", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::
@@ -1530,9 +1262,6 @@ End Sub
 Sub HandleBanDestroy(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim filename As String
     Dim F As Long
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_CREATOR Then
         Exit Sub
@@ -1548,13 +1277,6 @@ Sub HandleBanDestroy(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr 
 
     Kill filename
     Call PlayerMsg(Index, "Ban list destroyed.", White)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleBanDestroy", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::::
@@ -1563,7 +1285,6 @@ End Sub
 Sub HandleBanPlayer(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -1592,14 +1313,6 @@ Sub HandleBanPlayer(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     Else
         Call PlayerMsg(Index, "You cannot ban yourself!", White)
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleBanPlayer", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' :::::::::::::::::::::::::::::
@@ -1607,9 +1320,6 @@ End Sub
 ' :::::::::::::::::::::::::::::
 Sub HandleRequestEditMap(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_MAPPER Then
         Exit Sub
@@ -1619,13 +1329,6 @@ Sub HandleRequestEditMap(ByVal Index As Long, ByRef Data() As Byte, ByVal StartA
     Buffer.WriteLong SEditMap
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestEditMap", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::::::::
@@ -1633,9 +1336,6 @@ End Sub
 ' ::::::::::::::::::::::::::::::
 Sub HandleRequestEditItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_DEVELOPER Then
         Exit Sub
@@ -1645,13 +1345,6 @@ Sub HandleRequestEditItem(ByVal Index As Long, ByRef Data() As Byte, ByVal Start
     Buffer.WriteLong SItemEditor
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestEditItem", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::
@@ -1662,7 +1355,6 @@ Sub HandleSaveItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As
     Dim Buffer As clsBuffer
     Dim ItemSize As Long
     Dim ItemData() As Byte
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -1689,13 +1381,6 @@ Sub HandleSaveItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As
     Call SendUpdateItemToAll(n)
     Call SaveItem(n)
     Call AddLog(GetPlayerName(Index) & " saved item #" & n & ".", ADMIN_LOG)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSaveItem", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::::::::
@@ -1703,9 +1388,6 @@ End Sub
 ' ::::::::::::::::::::::::::::::
 Sub HandleRequestEditAnimation(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_DEVELOPER Then
         Exit Sub
@@ -1715,13 +1397,6 @@ Sub HandleRequestEditAnimation(ByVal Index As Long, ByRef Data() As Byte, ByVal 
     Buffer.WriteLong SAnimationEditor
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestEditAnimation", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::
@@ -1732,7 +1407,6 @@ Sub HandleSaveAnimation(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAd
     Dim Buffer As clsBuffer
     Dim AnimationSize As Long
     Dim AnimationData() As Byte
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -1759,13 +1433,6 @@ Sub HandleSaveAnimation(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAd
     Call SendUpdateAnimationToAll(n)
     Call SaveAnimation(n)
     Call AddLog(GetPlayerName(Index) & " saved Animation #" & n & ".", ADMIN_LOG)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSaveAnimation", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::::::::::
@@ -1773,9 +1440,6 @@ End Sub
 ' :::::::::::::::::::::::::::::
 Sub HandleRequestEditNpc(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_DEVELOPER Then
         Exit Sub
@@ -1785,13 +1449,6 @@ Sub HandleRequestEditNpc(ByVal Index As Long, ByRef Data() As Byte, ByVal StartA
     Buffer.WriteLong SNpcEditor
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestEditNpc", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::
@@ -1802,9 +1459,6 @@ Private Sub HandleSaveNpc(ByVal Index As Long, ByRef Data() As Byte, ByVal Start
     Dim Buffer As clsBuffer
     Dim NPCSize As Long
     Dim NPCData() As Byte
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_DEVELOPER Then
         Exit Sub
@@ -1827,13 +1481,6 @@ Private Sub HandleSaveNpc(ByVal Index As Long, ByRef Data() As Byte, ByVal Start
     Call SendUpdateNpcToAll(npcNum)
     Call SaveNpc(npcNum)
     Call AddLog(GetPlayerName(Index) & " saved Npc #" & npcNum & ".", ADMIN_LOG)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSaveNpc", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::::::::::
@@ -1841,9 +1488,6 @@ End Sub
 ' :::::::::::::::::::::::::::::
 Sub HandleRequestEditResource(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_DEVELOPER Then
         Exit Sub
@@ -1853,13 +1497,6 @@ Sub HandleRequestEditResource(ByVal Index As Long, ByRef Data() As Byte, ByVal S
     Buffer.WriteLong SResourceEditor
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestEditResource", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::
@@ -1870,9 +1507,6 @@ Private Sub HandleSaveResource(ByVal Index As Long, ByRef Data() As Byte, ByVal 
     Dim Buffer As clsBuffer
     Dim ResourceSize As Long
     Dim ResourceData() As Byte
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_DEVELOPER Then
         Exit Sub
@@ -1895,13 +1529,6 @@ Private Sub HandleSaveResource(ByVal Index As Long, ByRef Data() As Byte, ByVal 
     Call SendUpdateResourceToAll(ResourceNum)
     Call SaveResource(ResourceNum)
     Call AddLog(GetPlayerName(Index) & " saved Resource #" & ResourceNum & ".", ADMIN_LOG)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSaveResource", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::::::::
@@ -1909,9 +1536,6 @@ End Sub
 ' ::::::::::::::::::::::::::::::
 Sub HandleRequestEditShop(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_DEVELOPER Then
         Exit Sub
@@ -1921,13 +1545,6 @@ Sub HandleRequestEditShop(ByVal Index As Long, ByRef Data() As Byte, ByVal Start
     Buffer.WriteLong SShopEditor
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestEditShop", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::
@@ -1938,7 +1555,6 @@ Sub HandleSaveShop(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As
     Dim Buffer As clsBuffer
     Dim ShopSize As Long
     Dim ShopData() As Byte
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -1965,13 +1581,6 @@ Sub HandleSaveShop(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As
     Call SendUpdateShopToAll(shopNum)
     Call SaveShop(shopNum)
     Call AddLog(GetPlayerName(Index) & " saving shop #" & shopNum & ".", ADMIN_LOG)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSaveShop", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::::::::::
@@ -1979,9 +1588,6 @@ End Sub
 ' :::::::::::::::::::::::::::::
 Sub HandleRequestEditspell(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_DEVELOPER Then
         Exit Sub
@@ -1991,13 +1597,6 @@ Sub HandleRequestEditspell(ByVal Index As Long, ByRef Data() As Byte, ByVal Star
     Buffer.WriteLong SSpellEditor
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestEditspell", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::::
@@ -2008,9 +1607,6 @@ Sub HandleSaveSpell(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     Dim Buffer As clsBuffer
     Dim SpellSize As Long
     Dim SpellData() As Byte
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_DEVELOPER Then
         Exit Sub
@@ -2033,13 +1629,6 @@ Sub HandleSaveSpell(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     Call SendUpdateSpellToAll(spellnum)
     Call SaveSpell(spellnum)
     Call AddLog(GetPlayerName(Index) & " saved Spell #" & spellnum & ".", ADMIN_LOG)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSaveSpell", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::::
@@ -2049,7 +1638,6 @@ Sub HandleSetAccess(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     Dim n As Long
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -2091,30 +1679,13 @@ Sub HandleSetAccess(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     Else
         Call PlayerMsg(Index, "Invalid access level.", Red)
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSetAccess", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' :::::::::::::::::::::::
 ' :: Who online packet ::
 ' :::::::::::::::::::::::
 Sub HandleWhosOnline(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     Call SendWhosOnline(Index)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleWhosOnline", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::::
@@ -2122,7 +1693,6 @@ End Sub
 ' :::::::::::::::::::::
 Sub HandleSetMotd(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -2137,13 +1707,6 @@ Sub HandleSetMotd(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
     Set Buffer = Nothing
     Call GlobalMsg("MOTD changed to: " & Options.MOTD, BrightCyan)
     Call AddLog(GetPlayerName(Index) & " changed MOTD to: " & Options.MOTD, ADMIN_LOG)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSetMotd", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::
@@ -2151,8 +1714,6 @@ End Sub
 ' :::::::::::::::::::
 Sub HandleTarget(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim Buffer As clsBuffer, target As Long, targetType As Long
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -2166,29 +1727,13 @@ Dim Buffer As clsBuffer, target As Long, targetType As Long
     ' set player's target - no need to send, it's client side
     TempPlayer(Index).target = target
     TempPlayer(Index).targetType = targetType
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleTarget", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::::
 ' :: Spells packet ::
 ' :::::::::::::::::::
 Sub HandleSpells(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     Call SendPlayerSpells(Index)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSpells", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' :::::::::::::::::
@@ -2197,7 +1742,6 @@ End Sub
 Sub HandleCast(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -2206,29 +1750,13 @@ Sub HandleCast(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Lon
     Set Buffer = Nothing
     ' set the spell buffer before castin
     Call BufferSpell(Index, n)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleCast", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::
 ' :: Quit game packet ::
 ' ::::::::::::::::::::::
 Sub HandleQuit(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     Call CloseSocket(Index)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleQuit", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::::::::::::
@@ -2238,8 +1766,6 @@ Sub HandleSwapInvSlots(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAdd
     Dim Buffer As clsBuffer
     Dim oldSlot As Long, newSlot As Long
     
-   On Error GoTo ErrorHandler
-
     If TempPlayer(Index).InTrade > 0 Or TempPlayer(Index).InBank Or TempPlayer(Index).InShop Then Exit Sub
     
     Set Buffer = New clsBuffer
@@ -2249,21 +1775,12 @@ Sub HandleSwapInvSlots(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAdd
     newSlot = Buffer.ReadLong
     Set Buffer = Nothing
     PlayerSwitchInvSlots Index, oldSlot, newSlot
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSwapInvSlots", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleSwapSpellSlots(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
     Dim oldSlot As Long, newSlot As Long, n As Long
     
-   On Error GoTo ErrorHandler
-
     If TempPlayer(Index).InTrade > 0 Or TempPlayer(Index).InBank Or TempPlayer(Index).InShop Then Exit Sub
     
     If TempPlayer(Index).spellBuffer.spell > 0 Then
@@ -2285,13 +1802,6 @@ Sub HandleSwapSpellSlots(ByVal Index As Long, ByRef Data() As Byte, ByVal StartA
     newSlot = Buffer.ReadLong
     Set Buffer = Nothing
     PlayerSwitchSpellSlots Index, oldSlot, newSlot
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSwapSpellSlots", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ::::::::::::::::
@@ -2299,127 +1809,48 @@ End Sub
 ' ::::::::::::::::
 Sub HandleCheckPing(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SSendPing
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleCheckPing", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleUnequip(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     PlayerUnequipItem Index, Buffer.ReadLong
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleUnequip", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleRequestPlayerData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     SendPlayerData Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestPlayerData", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleRequestItems(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     SendItems Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestItems", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleRequestAnimations(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     SendAnimations Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestAnimations", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleRequestNPCS(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     SendNpcs Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestNPCS", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleRequestResources(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     SendResources Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestResources", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleRequestSpells(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     SendSpells Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestSpells", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleRequestShops(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     SendShops Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestShops", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleSpawnItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -2427,8 +1858,6 @@ Sub HandleSpawnItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     Dim tmpItem As Long
     Dim tmpAmount As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -2440,36 +1869,18 @@ Sub HandleSpawnItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     
     SpawnItem tmpItem, tmpAmount, GetPlayerMap(Index), GetPlayerX(Index), GetPlayerY(Index), GetPlayerName(Index)
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSpawnItem", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleRequestLevelUp(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     If GetPlayerAccess(Index) < ADMIN_CREATOR Then Exit Sub
     SetPlayerExp Index, GetPlayerNextLevel(Index)
     CheckPlayerLevelUp Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestLevelUp", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleForgetSpell(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
     Dim spellslot As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -2496,27 +1907,11 @@ Sub HandleForgetSpell(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     SendPlayerSpells Index
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleForgetSpell", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleCloseShop(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     TempPlayer(Index).InShop = 0
     ResetShopAction Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleCloseShop", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleBuyItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -2527,8 +1922,6 @@ Sub HandleBuyItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
     Dim itemamount2 As Long
     Dim i As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -2606,13 +1999,6 @@ Sub HandleBuyItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
     ResetShopAction Index
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleBuyItem", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleSellItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -2622,8 +2008,6 @@ Sub HandleSellItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As
     Dim Price As Long
     Dim multiplier As Double
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -2658,13 +2042,6 @@ Sub HandleSellItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As
     ResetShopAction Index
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSellItem", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleChangeBankSlots(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -2672,8 +2049,6 @@ Sub HandleChangeBankSlots(ByVal Index As Long, ByRef Data() As Byte, ByVal Start
     Dim newSlot As Long
     Dim oldSlot As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -2683,13 +2058,6 @@ Sub HandleChangeBankSlots(ByVal Index As Long, ByRef Data() As Byte, ByVal Start
     PlayerSwitchBankSlots Index, oldSlot, newSlot
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleChangeBankSlots", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleWithdrawItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -2697,8 +2065,6 @@ Sub HandleWithdrawItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAdd
     Dim BankSlot As Long
     Dim Amount As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -2708,13 +2074,6 @@ Sub HandleWithdrawItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAdd
     TakeBankItem Index, BankSlot, Amount
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleWithdrawItem", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleDepositItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -2722,8 +2081,6 @@ Sub HandleDepositItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     Dim invSlot As Long
     Dim Amount As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -2733,20 +2090,11 @@ Sub HandleDepositItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     GiveBankItem Index, invSlot, Amount
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleDepositItem", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleCloseBank(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -2756,13 +2104,6 @@ Sub HandleCloseBank(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     TempPlayer(Index).InBank = False
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleCloseBank", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleAdminWarp(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -2770,8 +2111,6 @@ Sub HandleAdminWarp(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     Dim x As Long
     Dim y As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -2786,19 +2125,10 @@ Sub HandleAdminWarp(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     End If
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleAdminWarp", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleTradeRequest(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim tradeTarget As Long, sX As Long, sY As Long, tX As Long, tY As Long
-    ' can't trade npcs
-   On Error GoTo ErrorHandler
 
     If TempPlayer(Index).targetType <> TARGET_TYPE_PLAYER Then Exit Sub
 
@@ -2842,20 +2172,11 @@ Dim tradeTarget As Long, sX As Long, sY As Long, tX As Long, tY As Long
     ' send the trade request
     TempPlayer(tradeTarget).TradeRequest = Index
     SendTradeRequest tradeTarget, Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleTradeRequest", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleAcceptTradeRequest(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim tradeTarget As Long
 Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     tradeTarget = TempPlayer(Index).TradeRequest
     ' let them know they're trading
@@ -2882,29 +2203,13 @@ Dim i As Long
     SendTradeUpdate Index, 1
     SendTradeUpdate tradeTarget, 0
     SendTradeUpdate tradeTarget, 1
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleAcceptTradeRequest", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleDeclineTradeRequest(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     PlayerMsg TempPlayer(Index).TradeRequest, GetPlayerName(Index) & " has declined your trade request.", BrightRed
     PlayerMsg Index, "You decline the trade request.", BrightRed
     ' clear the tradeRequest server-side
     TempPlayer(Index).TradeRequest = 0
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleDeclineTradeRequest", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -2914,8 +2219,6 @@ Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     Dim tmpTradeItem2(1 To MAX_INV) As PlayerInvRec
     Dim itemnum As Long
     
-   On Error GoTo ErrorHandler
-
     TempPlayer(Index).AcceptTrade = True
     
     tradeTarget = TempPlayer(Index).InTrade
@@ -2986,20 +2289,11 @@ Sub HandleAcceptTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     
     SendCloseTrade Index
     SendCloseTrade tradeTarget
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleAcceptTrade", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleDeclineTrade(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim i As Long
 Dim tradeTarget As Long
-
-   On Error GoTo ErrorHandler
 
     tradeTarget = TempPlayer(Index).InTrade
 
@@ -3018,13 +2312,6 @@ Dim tradeTarget As Long
     
     SendCloseTrade Index
     SendCloseTrade tradeTarget
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleDeclineTrade", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleTradeItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -3035,8 +2322,6 @@ Sub HandleTradeItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     Dim itemnum As Long
     Dim i As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -3107,21 +2392,12 @@ Sub HandleTradeItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     
     SendTradeUpdate Index, 0
     SendTradeUpdate TempPlayer(Index).InTrade, 1
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleTradeItem", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleUntradeItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
     Dim tradeSlot As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -3143,13 +2419,6 @@ Sub HandleUntradeItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr
     
     SendTradeUpdate Index, 0
     SendTradeUpdate TempPlayer(Index).InTrade, 1
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleUntradeItem", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleHotbarChange(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -3158,8 +2427,6 @@ Sub HandleHotbarChange(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAdd
     Dim Slot As Long
     Dim hotbarNum As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -3194,13 +2461,6 @@ Sub HandleHotbarChange(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAdd
     SendHotbar Index
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleHotbarChange", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleHotbarUse(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -3208,8 +2468,6 @@ Sub HandleHotbarUse(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     Dim Slot As Long
     Dim i As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
@@ -3237,19 +2495,9 @@ Sub HandleHotbarUse(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     End Select
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleHotbarUse", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandlePartyRequest(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    ' make sure it's a valid target
-   On Error GoTo ErrorHandler
-
     If TempPlayer(Index).targetType <> TARGET_TYPE_PLAYER Then Exit Sub
     If TempPlayer(Index).target = Index Then Exit Sub
     
@@ -3259,89 +2507,35 @@ Sub HandlePartyRequest(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAdd
     
     ' init the request
     Party_Invite Index, TempPlayer(Index).target
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandlePartyRequest", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleAcceptParty(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-   
 If Not IsConnected(TempPlayer(Index).partyInvite) Or Not IsPlaying(TempPlayer(Index).partyInvite) Then
 TempPlayer(Index).partyInvite = 0
 Exit Sub
 End If
     Party_InviteAccept TempPlayer(Index).partyInvite, Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleAcceptParty", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleDeclineParty(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     Party_InviteDecline TempPlayer(Index).partyInvite, Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleDeclineParty", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandlePartyLeave(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     Party_PlayerLeave Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandlePartyLeave", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleFinishTutorial(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     Player(Index).TutorialState = 1
     SavePlayer Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleFinishTutorial", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleRequestSwitchesAndVariables(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-   On Error GoTo ErrorHandler
-
     SendSwitchesAndVariables (Index)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleRequestSwitchesAndVariables", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HandleSwitchesAndVariables(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer, i As Long
-    
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -3360,20 +2554,11 @@ Sub HandleSwitchesAndVariables(ByVal Index As Long, ByRef Data() As Byte, ByVal 
     Set Buffer = Nothing
     
     SendSwitchesAndVariables 0, True
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleSwitchesAndVariables", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Events_HandleChooseEventOption(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer, Opt As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data
     
@@ -3381,21 +2566,11 @@ Public Sub Events_HandleChooseEventOption(ByVal Index As Long, ByRef Data() As B
     Call DoEventLogic(Index, Opt)
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Events_HandleChooseEventOption", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Events_HandleSaveEventData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
     Dim EIndex As Long, s As Long, SCount As Long, D As Long, DCount As Long
-
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
 
     If GetPlayerAccess(Index) < ADMIN_DEVELOPER Then
         Exit Sub
@@ -3465,20 +2640,11 @@ Public Sub Events_HandleSaveEventData(ByVal Index As Long, ByRef Data() As Byte,
     Call SaveEvent(EIndex)
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Events_HandleSaveEventData", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Events_HandleRequestEventData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
     Dim EIndex As Long
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -3489,36 +2655,17 @@ Public Sub Events_HandleRequestEventData(ByVal Index As Long, ByRef Data() As By
     Call Events_SendEventData(Index, EIndex)
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Events_HandleRequestEventData", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Events_HandleRequestEventsData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim i As Long
 
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_EVENTS
         Call Events_SendEventData(Index, i)
     Next i
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Events_HandleRequestEventsData", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Events_HandleRequestEditEvents(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
-
     If GetPlayerAccess(Index) < ADMIN_DEVELOPER Then
         Exit Sub
     End If
@@ -3528,19 +2675,11 @@ Public Sub Events_HandleRequestEditEvents(ByVal Index As Long, ByRef Data() As B
     Buffer.WriteLong SEventEditor
     SendDataTo Index, Buffer.ToArray
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Events_HandleRequestEditEvents", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub HandleAfk(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim Buffer As clsBuffer
 Dim AFK As Byte
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
@@ -3554,13 +2693,6 @@ Dim AFK As Byte
     End If
     TempPlayer(Index).AFK = AFK
     SendAfk Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleAfk", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Sub HandlePartyChatMsg(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer

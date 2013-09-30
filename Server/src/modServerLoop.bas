@@ -9,7 +9,6 @@ Sub ServerLoop()
     Dim Tick As Long, TickCPS As Long, CPS As Long, FrameTime As Long
     Dim tmr25 As Long, tmr500 As Long, tmr1000 As Long
     Dim LastUpdateSavePlayers, LastUpdateMapSpawnItems As Long, LastUpdateVitals As Long, LastUpdatePlayerTime As Long
-   On Error GoTo ErrorHandler
 Dim BuffTimer As Long
     ServerOnline = True
 
@@ -211,13 +210,6 @@ If Tick > BuffTimer Then
         ' Set server CPS on label
         frmServer.lblCPS.Caption = "CPS: " & Format$(GameCPS, "#,###,###,###")
     Loop
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ServerLoop", "modServerLoop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub UpdateMapSpawnItems(ByVal i As Long)
@@ -226,7 +218,6 @@ Private Sub UpdateMapSpawnItems(ByVal i As Long)
     ' ///////////////////////////////////////////
     ' // This is used for respawning map items //
     ' ///////////////////////////////////////////
-   On Error GoTo ErrorHandler
     If Not PlayersOnMap(i) Then
         ' Clear out unnecessary junk
         For x = 1 To MAX_MAP_ITEMS
@@ -237,14 +228,6 @@ Private Sub UpdateMapSpawnItems(ByVal i As Long)
         Call SpawnMapItems(i)
         Call SendMapItemsToAll(i)
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "UpdateMapSpawnItems", "modServerLoop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Private Sub UpdateMapLogic()
@@ -253,7 +236,6 @@ Private Sub UpdateMapLogic()
     Dim target As Long, targetType As Byte, DidWalk As Boolean, Resource_index As Long
     Dim targetx As Long, targety As Long, target_verify As Boolean, mapNum As Long
 
-   On Error GoTo ErrorHandler
     For mapNum = 1 To MAX_MAPS
         ' items appearing to everyone
         For i = 1 To MAX_MAP_ITEMS
@@ -1232,18 +1214,9 @@ Private Sub UpdateMapLogic()
     If timeGetTime > GiveNPCHPTimer + 10000 Then
         GiveNPCHPTimer = timeGetTime
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "UpdateMapLogic", "modServerLoop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Private Sub UpdatePlayerVitals(ByVal i As Long)
-   On Error GoTo ErrorHandler
             If Not TempPlayer(i).stopRegen Then
                 If GetPlayerVital(i, Vitals.HP) <> GetPlayerMaxVital(i, Vitals.HP) Then
                     Call SetPlayerVital(i, Vitals.HP, GetPlayerVital(i, Vitals.HP) + GetPlayerVitalRegen(i, Vitals.HP))
@@ -1259,17 +1232,9 @@ Private Sub UpdatePlayerVitals(ByVal i As Long)
                     If TempPlayer(i).inParty > 0 Then SendPartyVitals TempPlayer(i).inParty, i
                 End If
             End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "UpdatePlayerVitals", "modServerLoop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub UpdatePetVitals(ByVal x As Long)
-    On Error GoTo ErrorHandler
     ' Check to see if we want to regen some of the npc's hp
     If Not TempPlayer(x).PetstopRegen Then
         If Player(x).Pet.Alive = True Then
@@ -1284,38 +1249,19 @@ Private Sub UpdatePetVitals(ByVal x As Long)
             End If
         End If
     End If
-    ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "UpdatePetVitals", "modServerLoop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub UpdateSavePlayers(ByVal u As Long)
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     If TotalOnlinePlayers > 0 Then
         Call TextAdd("Saving all online players...")
         Call SavePlayer(i)
         Call SaveBank(i)
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "UpdateSavePlayers", "modServerLoop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Private Sub HandleShutdown()
-
-   On Error GoTo ErrorHandler
-
     If Secs <= 0 Then Secs = 30
     If Secs Mod 5 = 0 Or Secs <= 5 Then
         Call GlobalMsg("Server Shutdown in " & Secs & " seconds.", BrightBlue)
@@ -1328,22 +1274,12 @@ Private Sub HandleShutdown()
         Call GlobalMsg("Server Shutdown.", BrightRed)
         Call DestroyServer
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleShutdown", "modServerLoop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Public Sub CheckLockUnlockServer()
         Dim p As Long, A As Byte
    
         ' Change this number to change the amount of people it requires to induce unlocking/locking!
-   On Error GoTo ErrorHandler
-
         A = 4
    
         ' First, we check how much we have online.
@@ -1357,13 +1293,6 @@ Public Sub CheckLockUnlockServer()
             CPSUnlock = False
             frmServer.lblCpsLock.Caption = "[Unlock]"
         End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CheckLockUnlockServer", "modServerLoop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ProcessTime()

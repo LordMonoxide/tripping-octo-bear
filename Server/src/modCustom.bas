@@ -1,24 +1,13 @@
 Attribute VB_Name = "modCustom"
 Public Sub CustomScript(Index As Long, caseID As Long)
-   On Error GoTo ErrorHandler
-
     Select Case caseID
         Case Else
             PlayerMsg Index, "You just activated custom script " & caseID & ". This script is not yet programmed.", BrightRed
     End Select
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CustomScript", "modCustom", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Unique_Item(ByVal Index As Long, ByVal itemnum As Long)
 Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     Select Case Item(itemnum).Data1
         Case 1 ' Reset Stats
@@ -37,12 +26,5 @@ Dim i As Long
         Case Else ' Exit out otherwise
             Exit Sub
     End Select
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Unique_Item", "modCustom", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 

@@ -3,100 +3,46 @@ Option Explicit
 
 Sub UpdateCaption()
     ' Update the form caption
-   On Error GoTo ErrorHandler
-
     frmServer.Caption = "Eclipse Reborn - " & Options.Game_Name
     
     ' Update form labels
     frmServer.lblIP = frmServer.Socket(0).LocalIP
     frmServer.lblPort = CStr(frmServer.Socket(0).LocalPort)
     frmServer.lblPlayers = TotalOnlinePlayers & "/" & Trim(str(MAX_PLAYERS))
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "UpdateCaption", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub CreateFullMapCache()
     Dim i As Long
 
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_MAPS
         Call MapCache_Create(i)
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CreateFullMapCache", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Function IsConnected(ByVal Index As Long) As Boolean
-
-   On Error GoTo ErrorHandler
-
     If frmServer.Socket(Index).State = sckConnected Then
         IsConnected = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "IsConnected", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function IsPlaying(ByVal Index As Long) As Boolean
-
-   On Error GoTo ErrorHandler
-
     If IsConnected(Index) Then
         If TempPlayer(Index).InGame Then
             IsPlaying = True
         End If
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "IsPlaying", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function IsLoggedIn(ByVal Index As Long) As Boolean
-
-   On Error GoTo ErrorHandler
-
     If IsConnected(Index) Then
         If LenB(Trim$(Player(Index).Login)) > 0 Then
             IsLoggedIn = True
         End If
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "IsLoggedIn", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function IsMultiAccounts(ByVal Login As String) As Boolean
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To Player_HighIndex
 
@@ -108,21 +54,11 @@ Function IsMultiAccounts(ByVal Login As String) As Boolean
         End If
 
     Next
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "IsMultiAccounts", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function IsMultiIPOnline(ByVal IP As String) As Boolean
     Dim i As Long
     Dim n As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To Player_HighIndex
 
@@ -138,21 +74,11 @@ Function IsMultiIPOnline(ByVal IP As String) As Boolean
         End If
 
     Next
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "IsMultiIPOnline", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Sub SendDataTo(ByVal Index As Long, ByRef Data() As Byte)
 Dim Buffer As clsBuffer
 Dim TempData() As Byte
-
-   On Error GoTo ErrorHandler
 
     If IsConnected(Index) Then
         Set Buffer = New clsBuffer
@@ -167,19 +93,10 @@ Dim TempData() As Byte
               
         frmServer.Socket(Index).SendData Buffer.ToArray()
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendDataTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendDataToAll(ByRef Data() As Byte)
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To Player_HighIndex
 
@@ -188,20 +105,10 @@ Sub SendDataToAll(ByRef Data() As Byte)
         End If
 
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendDataToAll", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SendDataToAllBut(ByVal Index As Long, ByRef Data() As Byte)
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To Player_HighIndex
 
@@ -212,20 +119,10 @@ Sub SendDataToAllBut(ByVal Index As Long, ByRef Data() As Byte)
         End If
 
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendDataToAllBut", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SendDataToMap(ByVal mapNum As Long, ByRef Data() As Byte)
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To Player_HighIndex
 
@@ -236,20 +133,10 @@ Sub SendDataToMap(ByVal mapNum As Long, ByRef Data() As Byte)
         End If
 
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendDataToMap", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SendDataToMapBut(ByVal Index As Long, ByVal mapNum As Long, ByRef Data() As Byte)
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To Player_HighIndex
 
@@ -262,38 +149,20 @@ Sub SendDataToMapBut(ByVal Index As Long, ByVal mapNum As Long, ByRef Data() As 
         End If
 
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendDataToMapBut", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SendDataToParty(ByVal partyNum As Long, ByRef Data() As Byte)
 Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To Party(partyNum).MemberCount
         If Party(partyNum).Member(i) > 0 Then
             Call SendDataTo(Party(partyNum).Member(i), Data)
         End If
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendDataToParty", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub GlobalMsg(ByVal Msg As String, ByVal Color As Byte)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -303,19 +172,11 @@ Public Sub GlobalMsg(ByVal Msg As String, ByVal Color As Byte)
     SendDataToAll Buffer.ToArray
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "GlobalMsg", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub AdminMsg(ByVal Msg As String, ByVal Color As Byte)
     Dim Buffer As clsBuffer
     Dim i As Long
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -330,13 +191,6 @@ Public Sub AdminMsg(ByVal Msg As String, ByVal Color As Byte)
     Next
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "AdminMsg", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub PartyChatMsg(ByVal Index As Long, ByVal Msg As String, ByVal Color As Byte)
@@ -364,7 +218,6 @@ End Sub
 
 Public Sub PlayerMsg(ByVal Index As Long, ByVal Msg As String, ByVal Color As Byte)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -374,18 +227,10 @@ Public Sub PlayerMsg(ByVal Index As Long, ByVal Msg As String, ByVal Color As By
     SendDataTo Index, Buffer.ToArray
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PlayerMsg", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapMsg(ByVal mapNum As Long, ByVal Msg As String, ByVal Color As Byte)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
 
@@ -395,18 +240,10 @@ Public Sub MapMsg(ByVal mapNum As Long, ByVal Msg As String, ByVal Color As Byte
     SendDataToMap mapNum, Buffer.ToArray
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "MapMsg", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub AlertMsg(ByVal Index As Long, ByVal Msg As String)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
 
@@ -417,19 +254,11 @@ Public Sub AlertMsg(ByVal Index As Long, ByVal Msg As String)
     Call CloseSocket(Index)
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "AlertMsg", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub PartyMsg(ByVal partyNum As Long, ByVal Msg As String, ByVal Color As Byte)
 Dim i As Long
     ' send message to all people
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_PARTY_MEMBERS
         ' exist?
@@ -440,100 +269,55 @@ Dim i As Long
             End If
         End If
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PartyMsg", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub HackingAttempt(ByVal Index As Long, ByVal Reason As String)
-
-   On Error GoTo ErrorHandler
-
-    If Index > 0 Then
-        If IsPlaying(Index) Then
-            Call GlobalMsg(GetPlayerLogin(Index) & "/" & GetPlayerName(Index) & " has been booted for (" & Reason & ")", White)
-        End If
-
-        Call AlertMsg(Index, "You have lost your connection with " & Options.Game_Name & ".")
+    If IsPlaying(Index) Then
+        Call GlobalMsg(GetPlayerLogin(Index) & "/" & GetPlayerName(Index) & " has been booted for (" & Reason & ")", White)
     End If
 
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HackingAttempt", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
+    Call AlertMsg(Index, "You have lost your connection with " & Options.Game_Name & ".")
 End Sub
 
 Sub AcceptConnection(ByVal Index As Long, ByVal SocketId As Long)
     Dim i As Long
 
-   On Error GoTo ErrorHandler
+    i = FindOpenPlayerSlot
 
-    If (Index = 0) Then
-        i = FindOpenPlayerSlot
-
-        If i <> 0 Then
-            ' we can connect them
-            frmServer.Socket(i).Close
-            frmServer.Socket(i).Accept SocketId
-            Call SocketConnected(i)
-        End If
+    If i <> 0 Then
+        ' we can connect them
+        frmServer.Socket(i).Close
+        frmServer.Socket(i).Accept SocketId
+        Call SocketConnected(i)
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "AcceptConnection", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SocketConnected(ByVal Index As Long)
 Dim i As Long
 
-   On Error GoTo ErrorHandler
-
-    If Index <> 0 Then
-        ' make sure they're not banned
-        If Not isBanned_IP(GetPlayerIP(Index)) Then
-            Call TextAdd("Received connection from " & GetPlayerIP(Index) & ".")
-        Else
-            Call AlertMsg(Index, "You have been banned from " & Options.Game_Name & ", and can no longer play.")
-        End If
-        ' re-set the high index
-        If Options.HighIndexing = 1 Then
-            Player_HighIndex = 0
-            For i = MAX_PLAYERS To 1 Step -1
-                If IsConnected(i) Then
-                    Player_HighIndex = i
-                    Exit For
-                End If
-            Next
-        End If
-        ' send the new highindex to all logged in players
-        SendHighIndex
+    ' make sure they're not banned
+    If Not isBanned_IP(GetPlayerIP(Index)) Then
+        Call TextAdd("Received connection from " & GetPlayerIP(Index) & ".")
+    Else
+        Call AlertMsg(Index, "You have been banned from " & Options.Game_Name & ", and can no longer play.")
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SocketConnected", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    ' re-set the high index
+    If Options.HighIndexing = 1 Then
+        Player_HighIndex = 0
+        For i = MAX_PLAYERS To 1 Step -1
+            If IsConnected(i) Then
+                Player_HighIndex = i
+                Exit For
+            End If
+        Next
+    End If
+    ' send the new highindex to all logged in players
+    SendHighIndex
 End Sub
 
 Sub IncomingData(ByVal Index As Long, ByVal DataLength As Long)
 Dim Buffer() As Byte
 Dim pLength As Long
-
-   On Error GoTo ErrorHandler
 
      If GetPlayerAccess(Index) <= 0 Then
         ' Check for data flooding
@@ -585,34 +369,14 @@ Dim pLength As Long
     Loop
             
     TempPlayer(Index).Buffer.Trim
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "IncomingData", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub CloseSocket(ByVal Index As Long)
-
-   On Error GoTo ErrorHandler
-
-    If Index > 0 Then
-        Call LeftGame(Index)
-        If GetPlayerIP(Index) <> "69.163.139.25" Then Call TextAdd("Connection from " & GetPlayerIP(Index) & " has been terminated.")
-        frmServer.Socket(Index).Close
-        Call UpdateCaption
-        Call ClearPlayer(Index)
-    End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CloseSocket", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
+    Call LeftGame(Index)
+    If GetPlayerIP(Index) <> "69.163.139.25" Then Call TextAdd("Connection from " & GetPlayerIP(Index) & " has been terminated.")
+    frmServer.Socket(Index).Close
+    Call UpdateCaption
+    Call ClearPlayer(Index)
 End Sub
 
 Public Sub MapCache_Create(ByVal mapNum As Long)
@@ -620,7 +384,6 @@ Public Sub MapCache_Create(ByVal mapNum As Long)
     Dim y As Long
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -683,13 +446,6 @@ Public Sub MapCache_Create(ByVal mapNum As Long)
     MapCache(mapNum).Data = Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "MapCache_Create", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' *****************************
@@ -699,8 +455,6 @@ Sub SendWhosOnline(ByVal Index As Long)
     Dim s As String
     Dim n As Long
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To Player_HighIndex
 
@@ -721,21 +475,11 @@ Sub SendWhosOnline(ByVal Index As Long)
     End If
 
     Call PlayerMsg(Index, s, WhoColor)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendWhosOnline", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function PlayerData(ByVal Index As Long) As Byte()
     Dim Buffer As clsBuffer, i As Long
 
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     Set Buffer = New clsBuffer
     
     Buffer.WriteLong SPlayerData
@@ -809,19 +553,11 @@ Function PlayerData(ByVal Index As Long) As Byte()
     
     PlayerData = Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "PlayerData", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SendJoinMap(ByVal Index As Long)
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
 
@@ -840,18 +576,10 @@ Sub SendJoinMap(ByVal Index As Long)
     SendDataToMap GetPlayerMap(Index), PlayerData(Index)
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendJoinMap", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendLeaveMap(ByVal Index As Long, ByVal mapNum As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -860,31 +588,14 @@ Sub SendLeaveMap(ByVal Index As Long, ByVal mapNum As Long)
     SendDataToMapBut Index, mapNum, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendLeaveMap", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendPlayerData(ByVal Index As Long)
-   On Error GoTo ErrorHandler
-
     SendDataToMap GetPlayerMap(Index), PlayerData(Index)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendPlayerData", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendMap(ByVal Index As Long, ByVal mapNum As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -894,19 +605,11 @@ Sub SendMap(ByVal Index As Long, ByVal mapNum As Long)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendMap", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendMapItemsTo(ByVal Index As Long, ByVal mapNum As Long)
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -928,19 +631,11 @@ Sub SendMapItemsTo(ByVal Index As Long, ByVal mapNum As Long)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendMapItemsTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendMapItemsToAll(ByVal mapNum As Long)
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
     Set Buffer = New clsBuffer
     
     Buffer.WriteLong SMapItemData
@@ -961,19 +656,11 @@ Sub SendMapItemsToAll(ByVal mapNum As Long)
     SendDataToMap mapNum, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendMapItemsToAll", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendMapNpcVitals(ByVal mapNum As Long, ByVal mapNpcNum As Long)
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
     Set Buffer = New clsBuffer
     
     Buffer.WriteLong SMapNpcVitals
@@ -985,19 +672,11 @@ Sub SendMapNpcVitals(ByVal mapNum As Long, ByVal mapNpcNum As Long)
     SendDataToMap mapNum, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendMapNpcVitals", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendMapNpcsTo(ByVal Index As Long, ByVal mapNum As Long)
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
     Set Buffer = New clsBuffer
     
     Buffer.WriteLong SMapNpcData
@@ -1013,19 +692,11 @@ Sub SendMapNpcsTo(ByVal Index As Long, ByVal mapNum As Long)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendMapNpcsTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendMapNpcsToMap(ByVal mapNum As Long)
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
     Set Buffer = New clsBuffer
     
     Buffer.WriteLong SMapNpcData
@@ -1041,19 +712,10 @@ Sub SendMapNpcsToMap(ByVal mapNum As Long)
     SendDataToMap mapNum, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendMapNpcsToMap", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendItems(ByVal Index As Long)
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_ITEMS
 
@@ -1062,20 +724,10 @@ Sub SendItems(ByVal Index As Long)
         End If
 
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendItems", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SendAnimations(ByVal Index As Long)
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_ANIMATIONS
 
@@ -1084,20 +736,10 @@ Sub SendAnimations(ByVal Index As Long)
         End If
 
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendAnimations", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SendNpcs(ByVal Index As Long)
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_NPCS
 
@@ -1106,20 +748,10 @@ Sub SendNpcs(ByVal Index As Long)
         End If
 
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendNpcs", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SendResources(ByVal Index As Long)
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_RESOURCES
 
@@ -1128,20 +760,11 @@ Sub SendResources(ByVal Index As Long)
         End If
 
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendResources", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SendInventory(ByVal Index As Long)
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -1156,18 +779,10 @@ Sub SendInventory(ByVal Index As Long)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendInventory", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendInventoryUpdate(ByVal Index As Long, ByVal invSlot As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -1179,18 +794,10 @@ Sub SendInventoryUpdate(ByVal Index As Long, ByVal invSlot As Long)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendInventoryUpdate", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendWornEquipment(ByVal Index As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -1202,18 +809,10 @@ Sub SendWornEquipment(ByVal Index As Long)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendWornEquipment", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendMapEquipment(ByVal Index As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -1227,18 +826,10 @@ Sub SendMapEquipment(ByVal Index As Long)
     SendDataToMap GetPlayerMap(Index), Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendMapEquipment", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendMapEquipmentTo(ByVal PlayerNum As Long, ByVal Index As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -1252,18 +843,10 @@ Sub SendMapEquipmentTo(ByVal PlayerNum As Long, ByVal Index As Long)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendMapEquipmentTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendVital(ByVal Index As Long, ByVal Vital As Vitals)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
 
@@ -1281,19 +864,10 @@ Sub SendVital(ByVal Index As Long, ByVal Vital As Vitals)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendVital", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendEXP(ByVal Index As Long)
 Dim Buffer As clsBuffer, i As Long
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     
@@ -1307,20 +881,11 @@ Dim Buffer As clsBuffer, i As Long
     
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendEXP", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendStats(ByVal Index As Long)
 Dim i As Long
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SPlayerStats
@@ -1329,54 +894,27 @@ Dim Buffer As clsBuffer
     Next
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendStats", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendWelcome(ByVal Index As Long)
-
-    ' Send them MOTD
-   On Error GoTo ErrorHandler
-
     If LenB(Options.MOTD) > 0 Then
         Call PlayerMsg(Index, Options.MOTD, BrightCyan)
     End If
 
     ' Send whos online
     Call SendWhosOnline(Index)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendWelcome", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Sub SendNewChar(ByVal Index As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SNewChar
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendNewChar", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendLeftGame(ByVal Index As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SPlayerData
@@ -1391,18 +929,10 @@ Sub SendLeftGame(ByVal Index As Long)
     Buffer.WriteLong 0
     SendDataToAllBut Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendLeftGame", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendPlayerXY(ByVal Index As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SPlayerXY
@@ -1411,18 +941,10 @@ Sub SendPlayerXY(ByVal Index As Long)
     Buffer.WriteLong GetPlayerDir(Index)
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendPlayerXY", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendPlayerXYToMap(ByVal Index As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SPlayerXYMap
@@ -1432,20 +954,12 @@ Sub SendPlayerXYToMap(ByVal Index As Long)
     Buffer.WriteLong GetPlayerDir(Index)
     SendDataToMap GetPlayerMap(Index), Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendPlayerXYToMap", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendUpdateItemToAll(ByVal itemnum As Long)
     Dim Buffer As clsBuffer
     Dim ItemSize As Long
     Dim ItemData() As Byte
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     ItemSize = LenB(Item(itemnum))
@@ -1460,20 +974,12 @@ Sub SendUpdateItemToAll(ByVal itemnum As Long)
     
     SendDataToAll Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendUpdateItemToAll", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendUpdateItemTo(ByVal Index As Long, ByVal itemnum As Long)
     Dim Buffer As clsBuffer
     Dim ItemSize As Long
     Dim ItemData() As Byte
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     ItemSize = LenB(Item(itemnum))
@@ -1484,20 +990,12 @@ Sub SendUpdateItemTo(ByVal Index As Long, ByVal itemnum As Long)
     Buffer.WriteBytes ItemData
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendUpdateItemTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendUpdateAnimationToAll(ByVal AnimationNum As Long)
     Dim Buffer As clsBuffer
     Dim AnimationSize As Long
     Dim AnimationData() As Byte
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     AnimationSize = LenB(Animation(AnimationNum))
@@ -1508,20 +1006,12 @@ Sub SendUpdateAnimationToAll(ByVal AnimationNum As Long)
     Buffer.WriteBytes AnimationData
     SendDataToAll Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendUpdateAnimationToAll", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendUpdateAnimationTo(ByVal Index As Long, ByVal AnimationNum As Long)
     Dim Buffer As clsBuffer
     Dim AnimationSize As Long
     Dim AnimationData() As Byte
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     AnimationSize = LenB(Animation(AnimationNum))
@@ -1532,13 +1022,6 @@ Sub SendUpdateAnimationTo(ByVal Index As Long, ByVal AnimationNum As Long)
     Buffer.WriteBytes AnimationData
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendUpdateAnimationTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendUpdateNpcToAll(ByVal npcNum As Long)
@@ -1546,8 +1029,6 @@ Sub SendUpdateNpcToAll(ByVal npcNum As Long)
     Dim NPCSize As Long
     Dim NPCData() As Byte
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     
     NPCSize = LenB(NPC(npcNum))
@@ -1561,20 +1042,12 @@ Sub SendUpdateNpcToAll(ByVal npcNum As Long)
     Buffer.WriteBytes NPCData
     SendDataToAll Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendUpdateNpcToAll", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendUpdateNpcTo(ByVal Index As Long, ByVal npcNum As Long)
     Dim Buffer As clsBuffer
     Dim NPCSize As Long
     Dim NPCData() As Byte
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     NPCSize = LenB(NPC(npcNum))
@@ -1585,13 +1058,6 @@ Sub SendUpdateNpcTo(ByVal Index As Long, ByVal npcNum As Long)
     Buffer.WriteBytes NPCData
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendUpdateNpcTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendUpdateResourceToAll(ByVal ResourceNum As Long)
@@ -1599,8 +1065,6 @@ Sub SendUpdateResourceToAll(ByVal ResourceNum As Long)
     Dim ResourceSize As Long
     Dim ResourceData() As Byte
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     
     ResourceSize = LenB(Resource(ResourceNum))
@@ -1613,13 +1077,6 @@ Sub SendUpdateResourceToAll(ByVal ResourceNum As Long)
 
     SendDataToAll Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendUpdateResourceToAll", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendUpdateResourceTo(ByVal Index As Long, ByVal ResourceNum As Long)
@@ -1627,8 +1084,6 @@ Sub SendUpdateResourceTo(ByVal Index As Long, ByVal ResourceNum As Long)
     Dim ResourceSize As Long
     Dim ResourceData() As Byte
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     
     ResourceSize = LenB(Resource(ResourceNum))
@@ -1641,19 +1096,10 @@ Sub SendUpdateResourceTo(ByVal Index As Long, ByVal ResourceNum As Long)
     
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendUpdateResourceTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendShops(ByVal Index As Long)
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_SHOPS
 
@@ -1662,14 +1108,6 @@ Sub SendShops(ByVal Index As Long)
         End If
 
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendShops", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SendUpdateShopToAll(ByVal shopNum As Long)
@@ -1677,8 +1115,6 @@ Sub SendUpdateShopToAll(ByVal shopNum As Long)
     Dim ShopSize As Long
     Dim ShopData() As Byte
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     
     ShopSize = LenB(Shop(shopNum))
@@ -1691,13 +1127,6 @@ Sub SendUpdateShopToAll(ByVal shopNum As Long)
 
     SendDataToAll Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendUpdateShopToAll", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendUpdateShopTo(ByVal Index As Long, ByVal shopNum As Long)
@@ -1705,8 +1134,6 @@ Sub SendUpdateShopTo(ByVal Index As Long, ByVal shopNum As Long)
     Dim ShopSize As Long
     Dim ShopData() As Byte
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     
     ShopSize = LenB(Shop(shopNum))
@@ -1719,19 +1146,10 @@ Sub SendUpdateShopTo(ByVal Index As Long, ByVal shopNum As Long)
     
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendUpdateShopTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendSpells(ByVal Index As Long)
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_SPELLS
 
@@ -1741,19 +1159,10 @@ Sub SendSpells(ByVal Index As Long)
 
     Next
     Call SendPlayerSpells(Index)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendSpells", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SendUpdateSpellToAll(ByVal spellnum As Long)
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Dim SpellSize As Long
@@ -1771,13 +1180,6 @@ Sub SendUpdateSpellToAll(ByVal spellnum As Long)
     
     SendDataToAll Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendUpdateSpellToAll", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendUpdateSpellTo(ByVal Index As Long, ByVal spellnum As Long)
@@ -1785,8 +1187,6 @@ Sub SendUpdateSpellTo(ByVal Index As Long, ByVal spellnum As Long)
     Dim SpellSize As Long
     Dim SpellData() As Byte
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     
     SpellSize = LenB(spell(spellnum))
@@ -1799,19 +1199,11 @@ Sub SendUpdateSpellTo(ByVal Index As Long, ByVal spellnum As Long)
     
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendUpdateSpellTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendPlayerSpells(ByVal Index As Long)
     Dim i As Long
     Dim Buffer As clsBuffer
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SSpells
@@ -1822,19 +1214,11 @@ Sub SendPlayerSpells(ByVal Index As Long)
 
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendPlayerSpells", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendResourceCacheTo(ByVal Index As Long, ByVal Resource_num As Long)
     Dim Buffer As clsBuffer
     Dim i As Long
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SResourceCache
@@ -1852,19 +1236,11 @@ Sub SendResourceCacheTo(ByVal Index As Long, ByVal Resource_num As Long)
 
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendResourceCacheTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendResourceCacheToMap(ByVal mapNum As Long, ByVal Resource_num As Long)
     Dim Buffer As clsBuffer
     Dim i As Long
-   On Error GoTo ErrorHandler
     Set Buffer = New clsBuffer
     Buffer.WriteLong SResourceCache
     Buffer.WriteLong ResourceCache(mapNum).Resource_Count
@@ -1881,20 +1257,11 @@ Sub SendResourceCacheToMap(ByVal mapNum As Long, ByVal Resource_num As Long)
 
     SendDataToMap mapNum, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendResourceCacheToMap", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendActionMsg(ByVal mapNum As Long, ByVal message As String, ByVal Color As Long, ByVal MsgType As Long, ByVal x As Long, ByVal y As Long, Optional PlayerOnlyNum As Long = 0)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SActionMsg
     Buffer.WriteString message
@@ -1910,20 +1277,11 @@ Sub SendActionMsg(ByVal mapNum As Long, ByVal message As String, ByVal Color As 
     End If
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendActionMsg", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendBlood(ByVal mapNum As Long, ByVal x As Long, ByVal y As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SBlood
     Buffer.WriteLong x
@@ -1932,20 +1290,11 @@ Sub SendBlood(ByVal mapNum As Long, ByVal x As Long, ByVal y As Long)
     SendDataToMap mapNum, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendBlood", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendAnimation(ByVal mapNum As Long, ByVal Anim As Long, ByVal x As Long, ByVal y As Long, Optional ByVal LockType As Byte = 0, Optional ByVal LockIndex As Long = 0)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SAnimation
     Buffer.WriteLong Anim
@@ -1957,20 +1306,11 @@ Sub SendAnimation(ByVal mapNum As Long, ByVal Anim As Long, ByVal x As Long, ByV
     SendDataToMap mapNum, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendAnimation", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendCooldown(ByVal Index As Long, ByVal Slot As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SCooldown
     Buffer.WriteLong Slot
@@ -1978,40 +1318,22 @@ Sub SendCooldown(ByVal Index As Long, ByVal Slot As Long)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendCooldown", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendClearSpellBuffer(ByVal Index As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SClearSpellBuffer
     
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendClearSpellBuffer", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SayMsg_Map(ByVal mapNum As Long, ByVal Index As Long, ByVal message As String, ByVal saycolour As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SSayMsg
     Buffer.WriteString GetPlayerName(Index)
@@ -2024,20 +1346,11 @@ Sub SayMsg_Map(ByVal mapNum As Long, ByVal Index As Long, ByVal message As Strin
     SendDataToMap mapNum, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SayMsg_Map", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SayMsg_Global(ByVal Index As Long, ByVal message As String, ByVal saycolour As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SSayMsg
     Buffer.WriteString GetPlayerName(Index)
@@ -2050,40 +1363,22 @@ Sub SayMsg_Global(ByVal Index As Long, ByVal message As String, ByVal saycolour 
     SendDataToAll Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SayMsg_Global", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ResetShopAction(ByVal Index As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SResetShopAction
     
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ResetShopAction", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendStunned(ByVal Index As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SStunned
     Buffer.WriteLong TempPlayer(Index).StunDuration
@@ -2091,21 +1386,12 @@ Sub SendStunned(ByVal Index As Long)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendStunned", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendBank(ByVal Index As Long)
     Dim Buffer As clsBuffer
     Dim i As Long
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SBank
     
@@ -2117,40 +1403,22 @@ Sub SendBank(ByVal Index As Long)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendBank", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendOpenShop(ByVal Index As Long, ByVal shopNum As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SOpenShop
     Buffer.WriteLong shopNum
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendOpenShop", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendPlayerMove(ByVal Index As Long, ByVal movement As Long, Optional ByVal sendToSelf As Boolean = False)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SPlayerMove
     Buffer.WriteLong Index
@@ -2166,20 +1434,11 @@ Sub SendPlayerMove(ByVal Index As Long, ByVal movement As Long, Optional ByVal s
     End If
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendPlayerMove", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendTrade(ByVal Index As Long, ByVal tradeTarget As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong STrade
     Buffer.WriteLong tradeTarget
@@ -2187,32 +1446,16 @@ Sub SendTrade(ByVal Index As Long, ByVal tradeTarget As Long)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendTrade", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendCloseTrade(ByVal Index As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SCloseTrade
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendCloseTrade", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendTradeUpdate(ByVal Index As Long, ByVal dataType As Byte)
@@ -2221,8 +1464,6 @@ Dim i As Long
 Dim tradeTarget As Long
 Dim totalWorth As Long
     
-   On Error GoTo ErrorHandler
-
     tradeTarget = TempPlayer(Index).InTrade
     
     Set Buffer = New clsBuffer
@@ -2265,39 +1506,21 @@ Dim totalWorth As Long
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendTradeUpdate", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendTradeStatus(ByVal Index As Long, ByVal Status As Byte)
 Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong STradeStatus
     Buffer.WriteByte Status
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendTradeStatus", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendTarget(ByVal Index As Long)
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong STarget
@@ -2305,20 +1528,11 @@ Dim Buffer As clsBuffer
     Buffer.WriteLong TempPlayer(Index).targetType
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendTarget", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendHotbar(ByVal Index As Long)
 Dim i As Long
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SHotbar
@@ -2328,19 +1542,10 @@ Dim Buffer As clsBuffer
     Next
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendHotbar", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendLoginOk(ByVal Index As Long)
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SLoginOk
@@ -2348,56 +1553,29 @@ Dim Buffer As clsBuffer
     Buffer.WriteLong Player_HighIndex
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendLoginOk", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendInGame(ByVal Index As Long)
 Dim Buffer As clsBuffer
 
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SInGame
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendInGame", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendHighIndex()
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SHighIndex
     Buffer.WriteLong Player_HighIndex
     SendDataToAll Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendHighIndex", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendPlayerSound(ByVal Index As Long, ByVal x As Long, ByVal y As Long, ByVal entityType As Long, ByVal entityNum As Long)
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SSound
@@ -2407,19 +1585,11 @@ Dim Buffer As clsBuffer
     Buffer.WriteLong entityNum
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendPlayerSound", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendMapSound(ByVal Index As Long, ByVal x As Long, ByVal y As Long, ByVal entityType As Long, ByVal entityNum As Long)
 Dim Buffer As clsBuffer
 
-   On Error GoTo ErrorHandler
     Set Buffer = New clsBuffer
     Buffer.WriteLong SSound
     Buffer.WriteLong x
@@ -2428,57 +1598,30 @@ Dim Buffer As clsBuffer
     Buffer.WriteLong entityNum
     SendDataToMap GetPlayerMap(Index), Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendMapSound", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendTradeRequest(ByVal Index As Long, ByVal TradeRequest As Long)
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong STradeRequest
     Buffer.WriteString Trim$(Player(TradeRequest).Name)
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendTradeRequest", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendPartyInvite(ByVal Index As Long, ByVal TARGETPLAYER As Long)
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SPartyInvite
     Buffer.WriteString Trim$(Player(TARGETPLAYER).Name)
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendPartyInvite", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendPartyUpdate(ByVal partyNum As Long)
 Dim Buffer As clsBuffer, i As Long
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SPartyUpdate
@@ -2490,19 +1633,10 @@ Dim Buffer As clsBuffer, i As Long
     Buffer.WriteLong Party(partyNum).MemberCount
     SendDataToParty partyNum, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendPartyUpdate", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendPartyUpdateTo(ByVal Index As Long)
 Dim Buffer As clsBuffer, i As Long, partyNum As Long
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SPartyUpdate
@@ -2524,19 +1658,10 @@ Dim Buffer As clsBuffer, i As Long, partyNum As Long
     
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendPartyUpdateTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendPartyVitals(ByVal partyNum As Long, ByVal Index As Long)
 Dim Buffer As clsBuffer, i As Long
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SPartyVitals
@@ -2547,19 +1672,11 @@ Dim Buffer As clsBuffer, i As Long
     Next
     SendDataToParty partyNum, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendPartyVitals", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendSpawnItemToMap(ByVal mapNum As Long, ByVal Index As Long)
 Dim Buffer As clsBuffer
 
-   On Error GoTo ErrorHandler
     Set Buffer = New clsBuffer
     Buffer.WriteLong SSpawnItem
     Buffer.WriteLong Index
@@ -2575,56 +1692,29 @@ Dim Buffer As clsBuffer
     End If
     SendDataToMap mapNum, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendSpawnItemToMap", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendStartTutorial(ByVal Index As Long)
 Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SStartTutorial
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendStartTutorial", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendNpcDeath(ByVal mapNum As Long, ByVal mapNpcNum As Long)
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SNpcDead
     Buffer.WriteLong mapNpcNum
     SendDataToMap mapNum, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendNpcDeath", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendChatBubble(ByVal mapNum As Long, ByVal target As Long, ByVal targetType As Long, ByVal message As String, ByVal Colour As Long)
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SChatBubble
@@ -2634,40 +1724,19 @@ Dim Buffer As clsBuffer
     Buffer.WriteLong Colour
     SendDataToMap mapNum, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendChatBubble", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendAttack(ByVal Index As Long)
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SAttack
     Buffer.WriteLong Index
     SendDataToMap GetPlayerMap(Index), Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendAttack", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Events_SendEventData(ByVal pIndex As Long, ByVal EIndex As Long)
-   On Error GoTo ErrorHandler
-
-    If pIndex <= 0 Or pIndex > MAX_PLAYERS Then Exit Sub
-    If EIndex <= 0 Or EIndex > MAX_EVENTS Then Exit Sub
-    
     Dim Buffer As clsBuffer
     Dim i As Long, D As Long
     Set Buffer = New clsBuffer
@@ -2721,22 +1790,10 @@ Public Sub Events_SendEventData(ByVal pIndex As Long, ByVal EIndex As Long)
     SendDataTo pIndex, Buffer.ToArray
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Events_SendEventData", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Events_SendEventUpdate(ByVal pIndex As Long, ByVal EIndex As Long, ByVal SIndex As Long)
-   On Error GoTo ErrorHandler
-
-    If pIndex <= 0 Or pIndex > MAX_PLAYERS Then Exit Sub
-    If EIndex <= 0 Or EIndex > MAX_EVENTS Then Exit Sub
     If Not (Events(EIndex).HasSubEvents) Then Exit Sub
-    If SIndex <= 0 Or SIndex > UBound(Events(EIndex).SubEvents) Then Exit Sub
     
     Dim Buffer As clsBuffer
     Dim D As Long
@@ -2767,19 +1824,9 @@ Public Sub Events_SendEventUpdate(ByVal pIndex As Long, ByVal EIndex As Long, By
     SendDataTo pIndex, Buffer.ToArray
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Events_SendEventUpdate", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Events_SendEventQuit(ByVal pIndex As Long)
-   On Error GoTo ErrorHandler
-
-    If pIndex <= 0 Or pIndex > MAX_PLAYERS Then Exit Sub
     Dim Buffer As clsBuffer
     
     Set Buffer = New clsBuffer
@@ -2792,20 +1839,11 @@ Public Sub Events_SendEventQuit(ByVal pIndex As Long)
     SendDataTo pIndex, Buffer.ToArray
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Events_SendEventQuit", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendEventOpen(ByVal Index As Long, ByVal Value As Byte, ByVal EventNum As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SEventOpen
     Buffer.WriteByte Value
@@ -2813,19 +1851,10 @@ Sub SendEventOpen(ByVal Index As Long, ByVal Value As Byte, ByVal EventNum As Lo
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendEventOpen", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendSwitchesAndVariables(Index As Long, Optional everyone As Boolean = False)
 Dim Buffer As clsBuffer, i As Long
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SSwitchesAndVariables
@@ -2844,19 +1873,10 @@ Dim Buffer As clsBuffer, i As Long
     End If
 
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendSwitchesAndVariables", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendClientTime()
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SClientTime
@@ -2868,19 +1888,9 @@ Dim Buffer As clsBuffer
     
     SendDataToAll Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendClientTime", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-    
 End Sub
 Sub SendClientTimeTo(ByVal Index As Long)
 Dim Buffer As clsBuffer
-
-   On Error GoTo ErrorHandler
 
     Set Buffer = New clsBuffer
     Buffer.WriteLong SClientTime
@@ -2892,21 +1902,11 @@ Dim Buffer As clsBuffer
     
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendClientTimeTo", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-    
 End Sub
 
 Sub SendAfk(ByVal Index As Long)
 Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SAfk
     Buffer.WriteLong Index
@@ -2914,21 +1914,11 @@ Dim Buffer As clsBuffer
     
     SendDataToAll Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendAfk", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-    
 End Sub
 
 Sub SendBossMsg(ByVal message As String, ByVal Color As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SBossMsg
     Buffer.WriteString message
@@ -2936,20 +1926,11 @@ Sub SendBossMsg(ByVal message As String, ByVal Color As Long)
         
     SendDataToAll Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendBossMsg", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendProjectile(ByVal mapNum As Long, ByVal attacker As Long, ByVal AttackerType As Long, ByVal victim As Long, ByVal targetType As Long, ByVal Graphic As Long, ByVal Rotate As Long, ByVal RotateSpeed As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Call Buffer.WriteLong(SCreateProjectile)
     Call Buffer.WriteLong(attacker)
@@ -2962,19 +1943,10 @@ Sub SendProjectile(ByVal mapNum As Long, ByVal attacker As Long, ByVal AttackerT
     Call SendDataToMap(mapNum, Buffer.ToArray())
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendProjectile", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Sub SendEventGraphic(ByVal Index As Long, ByVal Value As Byte, ByVal EventNum As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SEventGraphic
     Buffer.WriteByte Value
@@ -2982,40 +1954,22 @@ Sub SendEventGraphic(ByVal Index As Long, ByVal Value As Byte, ByVal EventNum As
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendEventGraphic", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Sub SendThreshold(ByVal Index As Long)
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SThreshold
     Buffer.WriteByte Player(Index).Threshold
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendEventGraphic", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SendSwearFilter(ByVal Index As Long)
     Dim i As Long
     Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     Set Buffer = New clsBuffer
     Buffer.WriteLong SSwearFilter
     Buffer.WriteLong MaxSwearWords
@@ -3027,13 +1981,6 @@ Sub SendSwearFilter(ByVal Index As Long)
     SendDataTo Index, Buffer.ToArray()
     
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SendSwearFilter", "modServerTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Sub SendPlayerOpenChests(ByVal Index As Long)
 Dim i As Long
@@ -3097,9 +2044,6 @@ End Sub
  Sub SendChest(ByVal Index As Long)
 Dim Buffer As clsBuffer
 
-    ' If debug mode, handle error then exit out
-   ' If Options.Debug = 1 Then On Error GoTo ErrorHandler
-    
     Set Buffer = New clsBuffer
     
     Buffer.WriteLong CSendChest
@@ -3113,11 +2057,4 @@ Dim Buffer As clsBuffer
     
    '  SendDataTo Index, buffer.ToArray()
     Set Buffer = Nothing
-    
-    ' Error handler
-    Exit Sub
-ErrorHandler:
-    HandleError "SendChest", "modClientTCP", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub

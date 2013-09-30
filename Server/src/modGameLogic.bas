@@ -3,7 +3,6 @@ Option Explicit
 
 Function FindOpenPlayerSlot() As Long
     Dim i As Long
-   On Error GoTo ErrorHandler
 
     FindOpenPlayerSlot = 0
 
@@ -15,19 +14,10 @@ Function FindOpenPlayerSlot() As Long
         End If
 
     Next
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "FindOpenPlayerSlot", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function FindOpenMapItemSlot(ByVal mapNum As Long) As Long
     Dim i As Long
-   On Error GoTo ErrorHandler
 
     FindOpenMapItemSlot = 0
 
@@ -44,19 +34,10 @@ Function FindOpenMapItemSlot(ByVal mapNum As Long) As Long
         End If
 
     Next
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "FindOpenMapItemSlot", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function TotalOnlinePlayers() As Long
     Dim i As Long
-   On Error GoTo ErrorHandler
 
     TotalOnlinePlayers = 0
 
@@ -67,20 +48,10 @@ Function TotalOnlinePlayers() As Long
         End If
 
     Next
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "TotalOnlinePlayers", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function FindPlayer(ByVal Name As String) As Long
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To Player_HighIndex
 
@@ -98,46 +69,18 @@ Function FindPlayer(ByVal Name As String) As Long
     Next
 
     FindPlayer = 0
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "FindPlayer", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SpawnItem(ByVal itemnum As Long, ByVal ItemVal As Long, ByVal mapNum As Long, ByVal x As Long, ByVal y As Long, Optional ByVal playerName As String = vbNullString)
     Dim i As Long
 
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If itemnum < 1 Or itemnum > MAX_ITEMS Or mapNum <= 0 Or mapNum > MAX_MAPS Then
-        Exit Sub
-    End If
-
     ' Find open map item slot
     i = FindOpenMapItemSlot(mapNum)
     Call SpawnItemSlot(i, itemnum, ItemVal, mapNum, x, y, playerName)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SpawnItem", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SpawnItemSlot(ByVal MapItemSlot As Long, ByVal itemnum As Long, ByVal ItemVal As Long, ByVal mapNum As Long, ByVal x As Long, ByVal y As Long, Optional ByVal playerName As String = vbNullString, Optional ByVal canDespawn As Boolean = True, Optional ByVal isSB As Boolean = False)
     Dim i As Long
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If MapItemSlot <= 0 Or MapItemSlot > MAX_MAP_ITEMS Or itemnum < 0 Or itemnum > MAX_ITEMS Or mapNum <= 0 Or mapNum > MAX_MAPS Then
-        Exit Sub
-    End If
 
     i = MapItemSlot
 
@@ -156,44 +99,19 @@ Sub SpawnItemSlot(ByVal MapItemSlot As Long, ByVal itemnum As Long, ByVal ItemVa
             SendSpawnItemToMap mapNum, i
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SpawnItemSlot", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SpawnAllMapsItems()
     Dim i As Long
 
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_MAPS
         Call SpawnMapItems(i)
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SpawnAllMapsItems", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SpawnMapItems(ByVal mapNum As Long)
     Dim x As Long
     Dim y As Long
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If mapNum <= 0 Or mapNum > MAX_MAPS Then
-        Exit Sub
-    End If
 
     ' Spawn what we have
     For x = 0 To Map(mapNum).MaxX
@@ -212,27 +130,10 @@ Sub SpawnMapItems(ByVal mapNum As Long)
 
         Next
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SpawnMapItems", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Function Random(ByVal Low As Long, ByVal High As Long) As Long
-   On Error GoTo ErrorHandler
-
     Random = ((High - Low + 1) * Rnd) + Low
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "Random", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Sub SpawnNpc(ByVal mapNpcNum As Long, ByVal mapNum As Long, Optional ForcedSpawn As Boolean = False)
@@ -243,107 +144,94 @@ Public Sub SpawnNpc(ByVal mapNpcNum As Long, ByVal mapNum As Long, Optional Forc
     Dim y As Long
     Dim Spawned As Boolean
 
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or mapNum <= 0 Or mapNum > MAX_MAPS Then Exit Sub
     npcNum = Map(mapNum).NPC(mapNpcNum)
-    If ForcedSpawn = False And Map(mapNum).NpcSpawnType(mapNpcNum) = 1 Then npcNum = 0
-    If npcNum > 0 Then
-        With MapNpc(mapNum).NPC(mapNpcNum)
-            .Num = npcNum
-            .target = 0
-            .targetType = 0 ' clear
-            .Vital(Vitals.HP) = GetNpcMaxVital(npcNum, Vitals.HP)
-            .Vital(Vitals.MP) = GetNpcMaxVital(npcNum, Vitals.MP)
-            .dir = Int(Rnd * 4)
-            .spellBuffer.spell = 0
-            .spellBuffer.Timer = 0
-            .spellBuffer.target = 0
-            .spellBuffer.tType = 0
+    If ForcedSpawn = False And Map(mapNum).NpcSpawnType(mapNpcNum) = 1 Then Exit Sub
+    
+    With MapNpc(mapNum).NPC(mapNpcNum)
+        .Num = npcNum
+        .target = 0
+        .targetType = 0 ' clear
+        .Vital(Vitals.HP) = GetNpcMaxVital(npcNum, Vitals.HP)
+        .Vital(Vitals.MP) = GetNpcMaxVital(npcNum, Vitals.MP)
+        .dir = Int(Rnd * 4)
+        .spellBuffer.spell = 0
+        .spellBuffer.Timer = 0
+        .spellBuffer.target = 0
+        .spellBuffer.tType = 0
+    
+        'Check if theres a spawn tile for the specific npc
+        For x = 0 To Map(mapNum).MaxX
+            For y = 0 To Map(mapNum).MaxY
+                If Map(mapNum).Tile(x, y).Type = TILE_TYPE_NPCSPAWN Then
+                    If Map(mapNum).Tile(x, y).Data1 = mapNpcNum Then
+                        .x = x
+                        .y = y
+                        .dir = Map(mapNum).Tile(x, y).Data2
+                        Spawned = True
+                        Exit For
+                    End If
+                End If
+            Next y
+        Next x
         
-            'Check if theres a spawn tile for the specific npc
+        If Not Spawned Then
+    
+            ' Well try 100 times to randomly place the sprite
+            For i = 1 To 100
+                x = Random(0, Map(mapNum).MaxX)
+                y = Random(0, Map(mapNum).MaxY)
+    
+                If x > Map(mapNum).MaxX Then x = Map(mapNum).MaxX
+                If y > Map(mapNum).MaxY Then y = Map(mapNum).MaxY
+    
+                ' Check if the tile is walkable
+                If NpcTileIsOpen(mapNum, x, y) Then
+                    .x = x
+                    .y = y
+                    Spawned = True
+                    Exit For
+                End If
+    
+            Next
+            
+        End If
+
+        ' Didn't spawn, so now we'll just try to find a free tile
+        If Not Spawned Then
+
             For x = 0 To Map(mapNum).MaxX
                 For y = 0 To Map(mapNum).MaxY
-                    If Map(mapNum).Tile(x, y).Type = TILE_TYPE_NPCSPAWN Then
-                        If Map(mapNum).Tile(x, y).Data1 = mapNpcNum Then
-                            .x = x
-                            .y = y
-                            .dir = Map(mapNum).Tile(x, y).Data2
-                            Spawned = True
-                            Exit For
-                        End If
-                    End If
-                Next y
-            Next x
-            
-            If Not Spawned Then
-        
-                ' Well try 100 times to randomly place the sprite
-                For i = 1 To 100
-                    x = Random(0, Map(mapNum).MaxX)
-                    y = Random(0, Map(mapNum).MaxY)
-        
-                    If x > Map(mapNum).MaxX Then x = Map(mapNum).MaxX
-                    If y > Map(mapNum).MaxY Then y = Map(mapNum).MaxY
-        
-                    ' Check if the tile is walkable
+
                     If NpcTileIsOpen(mapNum, x, y) Then
                         .x = x
                         .y = y
                         Spawned = True
-                        Exit For
                     End If
-        
-                Next
-                
-            End If
-    
-            ' Didn't spawn, so now we'll just try to find a free tile
-            If Not Spawned Then
-    
-                For x = 0 To Map(mapNum).MaxX
-                    For y = 0 To Map(mapNum).MaxY
-    
-                        If NpcTileIsOpen(mapNum, x, y) Then
-                            .x = x
-                            .y = y
-                            Spawned = True
-                        End If
-    
-                    Next
-                Next
-    
-            End If
-    
-            ' If we suceeded in spawning then send it to everyone
-            If Spawned Then
-                Set Buffer = New clsBuffer
-                Buffer.WriteLong SSpawnNpc
-                Buffer.WriteLong mapNpcNum
-                Buffer.WriteLong .Num
-                Buffer.WriteLong .x
-                Buffer.WriteLong .y
-                Buffer.WriteLong .dir
-                SendDataToMap mapNum, Buffer.ToArray()
-                Set Buffer = Nothing
-            End If
-            
-            SendMapNpcVitals mapNum, mapNpcNum
-        End With
-    End If
 
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SpawnNpc", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+                Next
+            Next
+
+        End If
+
+        ' If we suceeded in spawning then send it to everyone
+        If Spawned Then
+            Set Buffer = New clsBuffer
+            Buffer.WriteLong SSpawnNpc
+            Buffer.WriteLong mapNpcNum
+            Buffer.WriteLong .Num
+            Buffer.WriteLong .x
+            Buffer.WriteLong .y
+            Buffer.WriteLong .dir
+            SendDataToMap mapNum, Buffer.ToArray()
+            Set Buffer = Nothing
+        End If
+        
+        SendMapNpcVitals mapNum, mapNpcNum
+    End With
 End Sub
 
 Public Function NpcTileIsOpen(ByVal mapNum As Long, ByVal x As Long, ByVal y As Long) As Boolean
     Dim LoopI As Long
-   On Error GoTo ErrorHandler
 
     NpcTileIsOpen = True
 
@@ -384,19 +272,10 @@ Public Function NpcTileIsOpen(ByVal mapNum As Long, ByVal x As Long, ByVal y As 
             End If
         End If
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "NpcTileIsOpen", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SpawnMapNpcs(ByVal mapNum As Long)
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_MAP_NPCS
         If Map(mapNum).NPC(i) > 0 And Map(mapNum).NPC(i) <= MAX_NPCS Then
@@ -407,32 +286,14 @@ Sub SpawnMapNpcs(ByVal mapNum As Long)
             End If
         End If
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SpawnMapNpcs", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SpawnAllMapNpcs()
     Dim i As Long
 
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_MAPS
         Call SpawnMapNpcs(i)
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SpawnAllMapNpcs", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As Byte) As Boolean
@@ -440,13 +301,6 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
     Dim n As Long
     Dim x As Long
     Dim y As Long
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If mapNum <= 0 Or mapNum > MAX_MAPS Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or dir < DIR_UP Or dir > DIR_DOWN_RIGHT Then
-        Exit Function
-    End If
 
     x = MapNpc(mapNum).NPC(mapNpcNum).x
     y = MapNpc(mapNum).NPC(mapNpcNum).y
@@ -793,25 +647,10 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
             End If
 
     End Select
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanNpcMove", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Sub NpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As Long, ByVal movement As Long)
     Dim Buffer As clsBuffer
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If mapNum <= 0 Or mapNum > MAX_MAPS Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or dir < DIR_UP Or dir > DIR_DOWN_RIGHT Or movement < 1 Or movement > 2 Then
-        Exit Sub
-    End If
 
     MapNpc(mapNum).NPC(mapNpcNum).dir = dir
 
@@ -909,25 +748,10 @@ Sub NpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As Long, By
             SendDataToMap mapNum, Buffer.ToArray()
             Set Buffer = Nothing
     End Select
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "NpcMove", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub NpcDir(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As Long)
     Dim Buffer As clsBuffer
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If mapNum <= 0 Or mapNum > MAX_MAPS Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or dir < DIR_UP Or dir > DIR_DOWN_RIGHT Then
-        Exit Sub
-    End If
 
     MapNpc(mapNum).NPC(mapNpcNum).dir = dir
     Set Buffer = New clsBuffer
@@ -936,19 +760,11 @@ Sub NpcDir(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As Long)
     Buffer.WriteLong dir
     SendDataToMap mapNum, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "NpcDir", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetTotalMapPlayers(ByVal mapNum As Long) As Long
     Dim i As Long
     Dim n As Long
-   On Error GoTo ErrorHandler
 
     n = 0
 
@@ -961,18 +777,10 @@ Function GetTotalMapPlayers(ByVal mapNum As Long) As Long
     Next
 
     GetTotalMapPlayers = n
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetTotalMapPlayers", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Sub CacheResources(ByVal mapNum As Long)
     Dim x As Long, y As Long, Resource_Count As Long
-   On Error GoTo ErrorHandler
 
     Resource_Count = 0
 
@@ -991,13 +799,6 @@ Public Sub CacheResources(ByVal mapNum As Long)
     Next
 
     ResourceCache(mapNum).Resource_Count = Resource_Count
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CacheResources", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub PlayerSwitchBankSlots(ByVal Index As Long, ByVal oldSlot As Long, ByVal newSlot As Long)
@@ -1006,12 +807,6 @@ Dim OldValue As Long
 Dim NewNum As Long
 Dim NewValue As Long
 
-   On Error GoTo ErrorHandler
-
-    If oldSlot = 0 Or newSlot = 0 Then
-        Exit Sub
-    End If
-    
     OldNum = GetPlayerBankItemNum(Index, oldSlot)
     OldValue = GetPlayerBankItemValue(Index, oldSlot)
     NewNum = GetPlayerBankItemNum(Index, newSlot)
@@ -1024,24 +819,11 @@ Dim NewValue As Long
     SetPlayerBankItemValue Index, oldSlot, NewValue
         
     SendBank Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PlayerSwitchBankSlots", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub PlayerSwitchInvSlots(ByVal Index As Long, ByVal oldSlot As Long, ByVal newSlot As Long)
 Dim OldNum As Long, OldValue As Long, oldBound As Byte
 Dim NewNum As Long, NewValue As Long, newBound As Byte
-
-   On Error GoTo ErrorHandler
-
-    If oldSlot = 0 Or newSlot = 0 Then
-        Exit Sub
-    End If
 
     OldNum = GetPlayerInvItemNum(Index, oldSlot)
     OldValue = GetPlayerInvItemValue(Index, oldSlot)
@@ -1059,23 +841,10 @@ Dim NewNum As Long, NewValue As Long, newBound As Byte
     Player(Index).Inv(oldSlot).Bound = newBound
     
     SendInventory Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PlayerSwitchInvSlots", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub PlayerSwitchSpellSlots(ByVal Index As Long, ByVal oldSlot As Long, ByVal newSlot As Long)
 Dim OldNum As Long, NewNum As Long
-
-   On Error GoTo ErrorHandler
-
-    If oldSlot = 0 Or newSlot = 0 Then
-        Exit Sub
-    End If
 
     OldNum = Player(Index).spell(oldSlot)
     NewNum = Player(Index).spell(newSlot)
@@ -1083,20 +852,9 @@ Dim OldNum As Long, NewNum As Long
     Player(Index).spell(oldSlot) = NewNum
     Player(Index).spell(newSlot) = OldNum
     SendPlayerSpells Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PlayerSwitchSpellSlots", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub PlayerUnequipItem(ByVal Index As Long, ByVal EqSlot As Long)
-
-   On Error GoTo ErrorHandler
-
-    If EqSlot <= 0 Or EqSlot > Equipment.Equipment_Count - 1 Then Exit Sub ' exit out early if error'd
     If FindOpenInvSlot(Index, GetPlayerEquipment(Index, EqSlot)) > 0 Then
         GiveInvItem Index, GetPlayerEquipment(Index, EqSlot), 0, , True
         PlayerMsg Index, "You unequip " & CheckGrammar(Item(GetPlayerEquipment(Index, EqSlot)).Name), Yellow
@@ -1115,21 +873,11 @@ Sub PlayerUnequipItem(ByVal Index As Long, ByVal EqSlot As Long)
     Else
         PlayerMsg Index, "Your inventory is full.", BrightRed
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PlayerUnequipItem", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Public Function CheckGrammar(ByVal Word As String, Optional ByVal Caps As Byte = 0) As String
 Dim FirstLetter As String * 1
    
-   On Error GoTo ErrorHandler
-
     FirstLetter = LCase$(Left$(Word, 1))
    
     If FirstLetter = "$" Then
@@ -1142,60 +890,27 @@ Dim FirstLetter As String * 1
     Else
         If Caps Then CheckGrammar = "A " & Word Else CheckGrammar = "a " & Word
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CheckGrammar", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function isInRange(ByVal Range As Long, ByVal x1 As Long, ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Boolean
 Dim nVal As Long
-   On Error GoTo ErrorHandler
 
     isInRange = False
     nVal = Sqr((x1 - x2) ^ 2 + (y1 - y2) ^ 2)
     If nVal <= Range Then isInRange = True
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "isInRange", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Function isDirBlocked(ByRef blockvar As Byte, ByRef dir As Byte) As Boolean
-   On Error GoTo ErrorHandler
-
     If Not blockvar And (2 ^ dir) Then
         isDirBlocked = False
     Else
         isDirBlocked = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "isDirBlocked", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Function RAND(ByVal Low As Long, ByVal High As Long) As Long
-   On Error GoTo ErrorHandler
-
     Randomize
     RAND = Int((High - Low + 1) * Rnd) + Low
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "RAND", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 ' #####################
@@ -1203,8 +918,6 @@ End Function
 ' #####################
 Public Sub Party_PlayerLeave(ByVal Index As Long)
 Dim partyNum As Long, i As Long
-
-   On Error GoTo ErrorHandler
 
     partyNum = TempPlayer(Index).inParty
     If partyNum > 0 Then
@@ -1278,23 +991,11 @@ Dim partyNum As Long, i As Long
             ClearParty partyNum
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Party_PlayerLeave", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Party_Invite(ByVal Index As Long, ByVal TARGETPLAYER As Long)
 Dim partyNum As Long, i As Long
 
-    ' check if the person is a valid target
-   On Error GoTo ErrorHandler
-
-    If Not IsConnected(TARGETPLAYER) Or Not IsPlaying(TARGETPLAYER) Then Exit Sub
-    
     ' make sure they're not busy
     If TempPlayer(TARGETPLAYER).partyInvite > 0 Or TempPlayer(TARGETPLAYER).TradeRequest > 0 Then
         ' they've already got a request for trade/party
@@ -1344,21 +1045,10 @@ Dim partyNum As Long, i As Long
         PlayerMsg Index, "Invitation sent.", Pink
         Exit Sub
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Party_Invite", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Party_InviteAccept(ByVal Index As Long, ByVal TARGETPLAYER As Long)
 Dim partyNum As Long, i As Long, x As Long
-
-
-    ' check if already in a party
-   On Error GoTo ErrorHandler
 
     If TempPlayer(Index).inParty > 0 Then
         ' get the partynumber
@@ -1418,35 +1108,17 @@ Dim partyNum As Long, i As Long, x As Long
         TempPlayer(TARGETPLAYER).inParty = partyNum
         Exit Sub
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Party_InviteAccept", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Party_InviteDecline(ByVal Index As Long, ByVal TARGETPLAYER As Long)
-   On Error GoTo ErrorHandler
-
     PlayerMsg Index, GetPlayerName(TARGETPLAYER) & " has declined to join the party.", BrightRed
     PlayerMsg TARGETPLAYER, "You declined to join the party.", BrightRed
     ' clear the invitation
     TempPlayer(TARGETPLAYER).partyInvite = 0
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Party_InviteDecline", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Party_CountMembers(ByVal partyNum As Long)
 Dim i As Long, highIndex As Long, x As Long
-    ' find the high index
-   On Error GoTo ErrorHandler
 
     For i = MAX_PARTY_MEMBERS To 1 Step -1
         If Party(partyNum).Member(i) > 0 Then
@@ -1481,23 +1153,10 @@ Dim i As Long, highIndex As Long, x As Long
     Next
     ' if we're here it means that we need to re-count again
     Party_CountMembers partyNum
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Party_CountMembers", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub Party_ShareExp(ByVal partyNum As Long, ByVal exp As Long, ByVal Index As Long, Optional ByVal enemyLevel As Long = 0)
 Dim expShare As Long, leftOver As Long, i As Long, tmpIndex As Long
-
-If Party(partyNum).MemberCount <= 0 Then Exit Sub
-
-   On Error GoTo ErrorHandler
-
-    If Party(partyNum).MemberCount <= 0 Then Exit Sub
 
     ' check if it's worth sharing
     If Not exp >= Party(partyNum).MemberCount Then
@@ -1527,21 +1186,11 @@ If Party(partyNum).MemberCount <= 0 Then Exit Sub
     tmpIndex = Party(partyNum).Member(RAND(1, Party(partyNum).MemberCount))
     ' give the exp
     GivePlayerEXP tmpIndex, leftOver, enemyLevel
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Party_ShareExp", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub GivePlayerEXP(ByVal Index As Long, ByVal exp As Long, Optional ByVal enemyLevel As Long = 0)
 Dim multiplier As Long, partyNum As Long, expBonus As Long
-    ' rte9
-   On Error GoTo ErrorHandler
 
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Sub
     ' make sure we're not max level
     If Not GetPlayerLevel(Index) >= MAX_LEVELS Then
         ' check for exp deduction
@@ -1576,21 +1225,11 @@ Dim multiplier As Long, partyNum As Long, expBonus As Long
         Call SetPlayerExp(Index, 0)
         SendEXP Index
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "GivePlayerEXP", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub GivePlayerSkillEXP(ByVal Index As Long, ByVal exp As Long, ByVal Skill As Skills)
 Dim multiplier As Long, partyNum As Long, expBonus As Long
-    ' rte9
-   On Error GoTo ErrorHandler
 
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Sub
     ' make sure we're not max level
     If Not GetPlayerLevel(Index) >= MAX_LEVELS Then
         ' check if in party
@@ -1614,13 +1253,6 @@ Dim multiplier As Long, partyNum As Long, expBonus As Long
         Call SetPlayerSkillExp(Index, 0, Skill)
         SendEXP Index
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "GivePlayerSkillEXP", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub DespawnNPC(ByVal mapNum As Long, ByVal npcNum As Long)

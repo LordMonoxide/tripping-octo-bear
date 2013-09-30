@@ -11,36 +11,14 @@ Private Declare Sub ZeroMemory Lib "Kernel32.dll" Alias "RtlZeroMemory" (Destina
 ' We need this to make sure players with names = name_length can login
 Private Const PASS_LEN As Byte = NAME_LENGTH + 1
 
-Public Sub HandleError(ByVal procName As String, ByVal contName As String, ByVal erNumber, ByVal erDesc, ByVal erSource, ByVal erHelpContext)
-Dim filename As String
-    filename = App.Path & "\data\logs\errors.txt"
-    Open filename For Append As #1
-        Print #1, "The following error occured at '" & procName & "' in '" & contName & "'."
-        Print #1, "Run-time error '" & erNumber & "': " & erDesc & "."
-        Print #1, ""
-    Close #1
-    End
-End Sub
-
 Public Sub ChkDir(ByVal tDir As String, ByVal tName As String)
-   On Error GoTo ErrorHandler
-
     If LCase$(dir(tDir & tName, vbDirectory)) <> tName Then Call MkDir(tDir & tName)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ChkDir", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' Outputs string to text file
 Sub AddLog(ByVal text As String, ByVal FN As String)
     Dim filename As String
     Dim F As Long
-
-   On Error GoTo ErrorHandler
 
     If Options.Logs = 1 Then
         filename = App.Path & "\data\logs\" & FN
@@ -56,54 +34,26 @@ Sub AddLog(ByVal text As String, ByVal FN As String)
         Print #F, Time & ": " & text
         Close #F
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "AddLog", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' gets a string from a text file
 Public Function GetVar(File As String, Header As String, Var As String) As String
     Dim sSpaces As String   ' Max string length
     Dim szReturn As String  ' Return default value if not found
-   On Error GoTo ErrorHandler
 
     szReturn = vbNullString
     sSpaces = Space$(5000)
     Call GetPrivateProfileString$(Header, Var, szReturn, sSpaces, Len(sSpaces), File)
     GetVar = RTrim$(sSpaces)
     GetVar = Left$(GetVar, Len(GetVar) - 1)
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetVar", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 ' writes a variable to a text file
 Public Sub PutVar(File As String, Header As String, Var As String, Value As String)
-   On Error GoTo ErrorHandler
-
     Call WritePrivateProfileString$(Header, Var, Value, File)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PutVar", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Function FileExist(ByVal filename As String, Optional RAW As Boolean = False) As Boolean
-
-   On Error GoTo ErrorHandler
-
     If Not RAW Then
         If LenB(dir(App.Path & "\" & filename)) > 0 Then
             FileExist = True
@@ -115,61 +65,27 @@ Public Function FileExist(ByVal filename As String, Optional RAW As Boolean = Fa
             FileExist = True
         End If
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "FileExist", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Sub SaveOptions()
-    
-   On Error GoTo ErrorHandler
-
     PutVar App.Path & "\data\options.ini", "OPTIONS", "Game_Name", Options.Game_Name
     PutVar App.Path & "\data\options.ini", "OPTIONS", "Port", str(Options.Port)
     PutVar App.Path & "\data\options.ini", "OPTIONS", "MOTD", Options.MOTD
     PutVar App.Path & "\data\options.ini", "OPTIONS", "Tray", str(Options.Tray)
     PutVar App.Path & "\data\options.ini", "OPTIONS", "Logs", str(Options.Logs)
     PutVar App.Path & "\data\options.ini", "OPTIONS", "HighIndexing", str(Options.HighIndexing)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveOptions", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-    
 End Sub
 
 Public Sub LoadOptions()
-    
-   On Error GoTo ErrorHandler
-
     Options.Game_Name = GetVar(App.Path & "\data\options.ini", "OPTIONS", "Game_Name")
     Options.Port = GetVar(App.Path & "\data\options.ini", "OPTIONS", "Port")
     Options.MOTD = GetVar(App.Path & "\data\options.ini", "OPTIONS", "MOTD")
     Options.Tray = GetVar(App.Path & "\data\options.ini", "OPTIONS", "Tray")
     Options.Logs = GetVar(App.Path & "\data\options.ini", "OPTIONS", "Logs")
     Options.HighIndexing = GetVar(App.Path & "\data\options.ini", "OPTIONS", "Highindexing")
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadOptions", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-    
 End Sub
 
 Public Sub ToggleMute(ByVal Index As Long)
-    ' exit out for rte9
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Sub
-
     ' toggle the player's mute
     If Player(Index).isMuted = 1 Then
         Player(Index).isMuted = 0
@@ -185,20 +101,10 @@ Public Sub ToggleMute(ByVal Index As Long)
     
     ' save the player
     SavePlayer Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ToggleMute", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub BanIndex(ByVal BanPlayerIndex As Long)
 Dim filename As String, IP As String, F As Long
-
-    ' Add banned to the player's index
-   On Error GoTo ErrorHandler
 
     Player(BanPlayerIndex).isBanned = 1
     SavePlayer BanPlayerIndex
@@ -225,20 +131,11 @@ Dim filename As String, IP As String, F As Long
     Call GlobalMsg(GetPlayerName(BanPlayerIndex) & " has been banned from " & Options.Game_Name & ".", White)
     Call AddLog(GetPlayerName(BanPlayerIndex) & " has been banned.", ADMIN_LOG)
     Call AlertMsg(BanPlayerIndex, "You have been banned.")
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "BanIndex", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Function isBanned_IP(ByVal IP As String) As Boolean
 Dim filename As String, fIP As String, F As Long
     
-   On Error GoTo ErrorHandler
-
     filename = App.Path & "\data\banlist_ip.txt"
 
     ' Check if file exists
@@ -263,30 +160,14 @@ Dim filename As String, fIP As String, F As Long
     Loop
 
     Close #F
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "isBanned_IP", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Function isBanned_Account(ByVal Index As Long) As Boolean
-   On Error GoTo ErrorHandler
-
     If Player(Index).isBanned = 1 Then
         isBanned_Account = True
     Else
         isBanned_Account = False
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "isBanned_Account", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 ' **************
@@ -294,29 +175,18 @@ End Function
 ' **************
 Function AccountExist(ByVal Name As String) As Boolean
     Dim filename As String
-   On Error GoTo ErrorHandler
 
     filename = "data\accounts\" & Trim(Name) & ".bin"
 
     If FileExist(filename) Then
         AccountExist = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "AccountExist", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function PasswordOK(ByVal Name As String, ByVal Password As String) As Boolean
     Dim filename As String
     Dim RightPassword As String * PASS_LEN
     Dim nFileNum As Long
-
-   On Error GoTo ErrorHandler
 
     If AccountExist(Name) Then
         filename = App.Path & "\data\accounts\" & Trim$(Name) & ".bin"
@@ -329,39 +199,21 @@ Function PasswordOK(ByVal Name As String, ByVal Password As String) As Boolean
             PasswordOK = True
         End If
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "PasswordOK", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Sub AddAccount(ByVal Index As Long, ByVal Name As String, ByVal Password As String)
-   On Error GoTo ErrorHandler
-
     ClearPlayer Index
     
     Player(Index).Login = Name
     Player(Index).Password = Password
 
     Call SavePlayer(Index)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "AddAccount", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub DeleteName(ByVal Name As String)
     Dim f1 As Long
     Dim f2 As Long
     Dim s As String
-   On Error GoTo ErrorHandler
 
     Call FileCopy(App.Path & "\data\accounts\_charlist.txt", App.Path & "\data\accounts\_chartemp.txt")
     ' Destroy name from charlist
@@ -382,38 +234,20 @@ Sub DeleteName(ByVal Name As String)
     Close #f1
     Close #f2
     Call Kill(App.Path & "\data\accounts\_chartemp.txt")
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "DeleteName", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ****************
 ' ** Characters **
 ' ****************
 Function CharExist(ByVal Index As Long) As Boolean
-   On Error GoTo ErrorHandler
-
     If LenB(Trim$(Player(Index).Name)) > 0 Then
         CharExist = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CharExist", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub AddChar(ByVal Index As Long, ByVal Name As String, ByVal Sex As Byte, ByVal Clothes As Long, ByVal Gear As Long, ByVal Hair As Long, ByVal Headgear As Long)
     Dim F As Long
     Dim n As Long
-
-   On Error GoTo ErrorHandler
 
     If LenB(Trim$(Player(Index).Name)) = 0 Then
         Player(Index).Name = Name
@@ -449,20 +283,11 @@ Sub AddChar(ByVal Index As Long, ByVal Name As String, ByVal Sex As Byte, ByVal 
         Call SavePlayer(Index)
         Exit Sub
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "AddChar", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Function FindChar(ByVal Name As String) As Boolean
     Dim F As Long
     Dim s As String
-   On Error GoTo ErrorHandler
 
     F = FreeFile
     Open App.Path & "\data\accounts\_charlist.txt" For Input As #F
@@ -479,13 +304,6 @@ Function FindChar(ByVal Name As String) As Boolean
     Loop
 
     Close #F
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "FindChar", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 ' *************
@@ -493,8 +311,6 @@ End Function
 ' *************
 Sub SaveAllPlayersOnline()
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To Player_HighIndex
 
@@ -504,22 +320,12 @@ Sub SaveAllPlayersOnline()
         End If
 
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveAllPlayersOnline", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SavePlayer(ByVal Index As Long)
     Dim filename As String
     Dim F As Long
 
-   On Error GoTo ErrorHandler
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Sub
     filename = App.Path & "\data\accounts\" & Trim$(Player(Index).Login) & ".bin"
     
     F = FreeFile
@@ -527,19 +333,11 @@ Sub SavePlayer(ByVal Index As Long)
     Open filename For Binary As #F
     Put #F, , Player(Index)
     Close #F
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SavePlayer", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub LoadPlayer(ByVal Index As Long, ByVal Name As String)
     Dim filename As String
     Dim F As Long
-   On Error GoTo ErrorHandler
 
     Call ClearPlayer(Index)
     filename = App.Path & "\data\accounts\" & Trim(Name) & ".bin"
@@ -547,18 +345,9 @@ Sub LoadPlayer(ByVal Index As Long, ByVal Name As String)
     Open filename For Binary As #F
     Get #F, , Player(Index)
     Close #F
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadPlayer", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ClearPlayer(ByVal Index As Long)
-   On Error GoTo ErrorHandler
-
     Call ZeroMemory(ByVal VarPtr(TempPlayer(Index)), LenB(TempPlayer(Index)))
     Set TempPlayer(Index).Buffer = New clsBuffer
     
@@ -570,13 +359,6 @@ Sub ClearPlayer(ByVal Index As Long)
     frmServer.lvwInfo.ListItems(Index).SubItems(1) = vbNullString
     frmServer.lvwInfo.ListItems(Index).SubItems(2) = vbNullString
     frmServer.lvwInfo.ListItems(Index).SubItems(3) = vbNullString
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearPlayer", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 ' ***********
 ' ** Items **
@@ -585,27 +367,18 @@ End Sub
 Sub SaveItem(ByVal itemnum As Long)
     Dim filename As String
     Dim F  As Long
-   On Error GoTo ErrorHandler
 
     filename = App.Path & "\data\items\item" & itemnum & ".dat"
     F = FreeFile
     Open filename For Binary As #F
     Put #F, , Item(itemnum)
     Close #F
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveItem", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub LoadItems()
     Dim filename As String
     Dim i As Long
     Dim F As Long
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_ITEMS
         filename = App.Path & "\data\Items\Item" & i & ".dat"
@@ -616,48 +389,21 @@ Sub LoadItems()
             Close #F
         End If
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadItems", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub ClearItem(ByVal Index As Long)
-   On Error GoTo ErrorHandler
-
     Call ZeroMemory(ByVal VarPtr(Item(Index)), LenB(Item(Index)))
     Item(Index).Name = vbNullString
     Item(Index).Desc = vbNullString
     Item(Index).Sound = "None."
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearItem", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ClearItems()
     Dim i As Long
 
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_ITEMS
         Call ClearItem(i)
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearItems", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' ***********
@@ -667,27 +413,18 @@ End Sub
 Sub SaveShop(ByVal shopNum As Long)
     Dim filename As String
     Dim F As Long
-   On Error GoTo ErrorHandler
 
     filename = App.Path & "\data\shops\shop" & shopNum & ".dat"
     F = FreeFile
     Open filename For Binary As #F
     Put #F, , Shop(shopNum)
     Close #F
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveShop", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub LoadShops()
     Dim filename As String
     Dim i As Long
     Dim F As Long
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_SHOPS
         filename = App.Path & "\data\shops\shop" & i & ".dat"
@@ -698,46 +435,19 @@ Sub LoadShops()
             Close #F
         End If
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadShops", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub ClearShop(ByVal Index As Long)
-   On Error GoTo ErrorHandler
-
     Call ZeroMemory(ByVal VarPtr(Shop(Index)), LenB(Shop(Index)))
     Shop(Index).Name = vbNullString
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearShop", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ClearShops()
     Dim i As Long
 
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_SHOPS
         Call ClearShop(i)
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearShops", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' ************
@@ -746,27 +456,18 @@ End Sub
 Sub SaveSpell(ByVal spellnum As Long)
     Dim filename As String
     Dim F As Long
-   On Error GoTo ErrorHandler
 
     filename = App.Path & "\data\spells\spells" & spellnum & ".dat"
     F = FreeFile
     Open filename For Binary As #F
     Put #F, , spell(spellnum)
     Close #F
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveSpell", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub LoadSpells()
     Dim filename As String
     Dim i As Long
     Dim F As Long
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_SPELLS
         filename = App.Path & "\data\spells\spells" & i & ".dat"
@@ -777,49 +478,22 @@ Sub LoadSpells()
             Close #F
         End If
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadSpells", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub ClearSpell(ByVal Index As Long)
-   On Error GoTo ErrorHandler
-
     Call ZeroMemory(ByVal VarPtr(spell(Index)), LenB(spell(Index)))
     spell(Index).Name = vbNullString
     spell(Index).LevelReq = 1 'Needs to be 1 for the spell editor
     spell(Index).Desc = vbNullString
     spell(Index).Sound = "None."
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearSpell", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ClearSpells()
     Dim i As Long
 
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_SPELLS
         Call ClearSpell(i)
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearSpells", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' **********
@@ -829,27 +503,18 @@ End Sub
 Sub SaveNpc(ByVal npcNum As Long)
     Dim filename As String
     Dim F As Long
-   On Error GoTo ErrorHandler
 
     filename = App.Path & "\data\npcs\npc" & npcNum & ".dat"
     F = FreeFile
     Open filename For Binary As #F
     Put #F, , NPC(npcNum)
     Close #F
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveNpc", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub LoadNpcs()
     Dim filename As String
     Dim i As Long
     Dim F As Long
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_NPCS
         filename = App.Path & "\data\npcs\npc" & i & ".dat"
@@ -860,48 +525,21 @@ Sub LoadNpcs()
             Close #F
         End If
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadNpcs", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub ClearNpc(ByVal Index As Long)
-   On Error GoTo ErrorHandler
-
     Call ZeroMemory(ByVal VarPtr(NPC(Index)), LenB(NPC(Index)))
     NPC(Index).Name = vbNullString
     NPC(Index).AttackSay = vbNullString
     NPC(Index).Sound = "None."
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearNpc", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ClearNpcs()
     Dim i As Long
 
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_NPCS
         Call ClearNpc(i)
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearNpcs", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' **********
@@ -911,20 +549,12 @@ End Sub
 Sub SaveResource(ByVal ResourceNum As Long)
     Dim filename As String
     Dim F As Long
-   On Error GoTo ErrorHandler
 
     filename = App.Path & "\data\resources\resource" & ResourceNum & ".dat"
     F = FreeFile
     Open filename For Binary As #F
         Put #F, , Resource(ResourceNum)
     Close #F
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveResource", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub LoadResources()
@@ -932,8 +562,6 @@ Sub LoadResources()
     Dim i As Long
     Dim F As Long
     
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_RESOURCES
         filename = App.Path & "\data\resources\resource" & i & ".dat"
         If FileExist(filename, True) Then
@@ -943,48 +571,22 @@ Sub LoadResources()
             Close #F
         End If
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadResources", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub ClearResource(ByVal Index As Long)
-   On Error GoTo ErrorHandler
-
     Call ZeroMemory(ByVal VarPtr(Resource(Index)), LenB(Resource(Index)))
     Resource(Index).Name = vbNullString
     Resource(Index).SuccessMessage = vbNullString
     Resource(Index).EmptyMessage = vbNullString
     Resource(Index).Sound = "None."
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearResource", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ClearResources()
     Dim i As Long
 
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_RESOURCES
         Call ClearResource(i)
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearResources", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' **********
@@ -994,20 +596,12 @@ End Sub
 Sub SaveAnimation(ByVal AnimationNum As Long)
     Dim filename As String
     Dim F As Long
-   On Error GoTo ErrorHandler
 
     filename = App.Path & "\data\animations\animation" & AnimationNum & ".dat"
     F = FreeFile
     Open filename For Binary As #F
         Put #F, , Animation(AnimationNum)
     Close #F
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveAnimation", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub LoadAnimations()
@@ -1015,8 +609,6 @@ Sub LoadAnimations()
     Dim i As Long
     Dim F As Long
     
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_ANIMATIONS
         filename = App.Path & "\data\animations\animation" & i & ".dat"
         If FileExist(filename, True) Then
@@ -1026,46 +618,20 @@ Sub LoadAnimations()
             Close #F
         End If
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadAnimations", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub ClearAnimation(ByVal Index As Long)
-   On Error GoTo ErrorHandler
-
     Call ZeroMemory(ByVal VarPtr(Animation(Index)), LenB(Animation(Index)))
     Animation(Index).Name = vbNullString
     Animation(Index).Sound = "None."
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearAnimation", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ClearAnimations()
     Dim i As Long
 
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_ANIMATIONS
         Call ClearAnimation(i)
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearAnimations", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' **********
@@ -1076,7 +642,6 @@ Sub SaveMap(ByVal mapNum As Long)
     Dim F As Long
     Dim x As Long
     Dim y As Long
-   On Error GoTo ErrorHandler
 
     filename = App.Path & "\data\maps\map" & mapNum & ".dat"
     F = FreeFile
@@ -1125,15 +690,6 @@ Sub SaveMap(ByVal mapNum As Long)
     Next
     
     Close #F
-    
-    DoEvents
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveMap", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub LoadMaps()
@@ -1142,7 +698,6 @@ Sub LoadMaps()
     Dim F As Long
     Dim x As Long
     Dim y As Long
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_MAPS
         filename = App.Path & "\data\maps\map" & i & ".dat"
@@ -1198,88 +753,41 @@ Sub LoadMaps()
             DoEvents
         End If
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadMaps", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ClearMapItem(ByVal Index As Long, ByVal mapNum As Long)
-   On Error GoTo ErrorHandler
-
     Call ZeroMemory(ByVal VarPtr(MapItem(mapNum, Index)), LenB(MapItem(mapNum, Index)))
     MapItem(mapNum, Index).playerName = vbNullString
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearMapItem", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ClearMapItems()
     Dim x As Long
     Dim y As Long
 
-   On Error GoTo ErrorHandler
-
     For y = 1 To MAX_MAPS
         For x = 1 To MAX_MAP_ITEMS
             Call ClearMapItem(x, y)
         Next
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearMapItems", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub ClearMapNpc(ByVal Index As Long, ByVal mapNum As Long)
-   On Error GoTo ErrorHandler
-
     ReDim MapNpc(mapNum).NPC(1 To MAX_MAP_NPCS)
     Call ZeroMemory(ByVal VarPtr(MapNpc(mapNum).NPC(Index)), LenB(MapNpc(mapNum).NPC(Index)))
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearMapNpc", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ClearMapNpcs()
     Dim x As Long
     Dim y As Long
 
-   On Error GoTo ErrorHandler
-
     For y = 1 To MAX_MAPS
         For x = 1 To MAX_MAP_NPCS
             Call ClearMapNpc(x, y)
         Next
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearMapNpcs", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub ClearMap(ByVal mapNum As Long)
-   On Error GoTo ErrorHandler
-
     Call ZeroMemory(ByVal VarPtr(Map(mapNum)), LenB(Map(mapNum)))
     Map(mapNum).Name = vbNullString
     Map(mapNum).MaxX = MAX_MAPX
@@ -1289,59 +797,31 @@ Sub ClearMap(ByVal mapNum As Long)
     PlayersOnMap(mapNum) = NO
     ' Reset the map cache array for this map.
     MapCache(mapNum).Data = vbNullString
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearMap", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ClearMaps()
     Dim i As Long
 
-   On Error GoTo ErrorHandler
-
     For i = 1 To MAX_MAPS
         Call ClearMap(i)
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearMaps", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SaveBank(ByVal Index As Long)
     Dim filename As String
     Dim F As Long
     
-   On Error GoTo ErrorHandler
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Sub
     filename = App.Path & "\data\banks\" & Trim$(Player(Index).Login) & ".bin"
     
     F = FreeFile
     Open filename For Binary As #F
     Put #F, , Bank(Index)
     Close #F
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveBank", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub LoadBank(ByVal Index As Long, ByVal Name As String)
     Dim filename As String
     Dim F As Long
-
-   On Error GoTo ErrorHandler
 
     Call ClearBank(Index)
 
@@ -1356,95 +836,38 @@ Public Sub LoadBank(ByVal Index As Long, ByVal Name As String)
     Open filename For Binary As #F
         Get #F, , Bank(Index)
     Close #F
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadBank", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub ClearBank(ByVal Index As Long)
-   On Error GoTo ErrorHandler
-
     Call ZeroMemory(ByVal VarPtr(Bank(Index)), LenB(Bank(Index)))
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearBank", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub ClearParty(ByVal partyNum As Long)
-   On Error GoTo ErrorHandler
-
     Call ZeroMemory(ByVal VarPtr(Party(partyNum)), LenB(Party(partyNum)))
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearParty", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ClearEvents()
     Dim i As Long
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_EVENTS
         Call ClearEvent(i)
     Next i
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearEvents", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ClearEvent(ByVal Index As Long)
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_EVENTS Then Exit Sub
-    
     Call ZeroMemory(ByVal VarPtr(Events(Index)), LenB(Events(Index)))
     Events(Index).Name = vbNullString
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearEvent", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub LoadEvents()
     Dim i As Long
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_EVENTS
         Call LoadEvent(i)
     Next i
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadEvents", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub LoadEvent(ByVal Index As Long)
-   On Error GoTo ErrorHandler
-
-    On Error GoTo Errorhandle
-    
     Dim F As Long, SCount As Long, s As Long, DCount As Long, D As Long
     Dim filename As String
     filename = App.Path & "\data\events\event" & Index & ".dat"
@@ -1504,23 +927,11 @@ Public Sub LoadEvent(ByVal Index As Long)
             Next
         Close #F
     End If
-    Exit Sub
-Errorhandle:
-    HandleError "LoadEvent(Long)", "modEvents", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Call ClearEvent(Index)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadEvent", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub SaveEvent(ByVal Index As Long)
     Dim F As Long, SCount As Long, s As Long, DCount As Long, D As Long
     Dim filename As String
-   On Error GoTo ErrorHandler
 
     filename = App.Path & "\data\events\event" & Index & ".dat"
     F = FreeFile
@@ -1574,95 +985,52 @@ Public Sub SaveEvent(ByVal Index As Long)
             Put #F, , Events(Index).Graphic(s)
         Next
     Close #F
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveEvent", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub SaveSwitches()
 Dim i As Long, filename As String
-   On Error GoTo ErrorHandler
 
 filename = App.Path & "\data\switches.ini"
 
 For i = 1 To MAX_SWITCHES
     Call PutVar(filename, "Switches", "Switch" & CStr(i) & "Name", Switches(i))
 Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveSwitches", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub SaveVariables()
 Dim i As Long, filename As String
-   On Error GoTo ErrorHandler
 
 filename = App.Path & "\data\variables.ini"
 
 For i = 1 To MAX_VARIABLES
     Call PutVar(filename, "Variables", "Variable" & CStr(i) & "Name", Variables(i))
 Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveVariables", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub LoadSwitches()
 Dim i As Long, filename As String
-   On Error GoTo ErrorHandler
 
     filename = App.Path & "\data\switches.ini"
     
     For i = 1 To MAX_SWITCHES
         Switches(i) = GetVar(filename, "Switches", "Switch" & CStr(i) & "Name")
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadSwitches", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub LoadVariables()
 Dim i As Long, filename As String
-   On Error GoTo ErrorHandler
 
     filename = App.Path & "\data\variables.ini"
     
     For i = 1 To MAX_VARIABLES
         Variables(i) = GetVar(filename, "Variables", "Variable" & CStr(i) & "Name")
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadVariables", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub LoadAccounts()
 Dim strload As String
 Dim i As Long
 Dim TotalCount As Long
-
-   On Error GoTo ErrorHandler
 
     frmServer.lstAccounts.Clear
     strload = dir(App.Path & "\data\accounts\" & "*.bin")
@@ -1677,19 +1045,10 @@ Dim TotalCount As Long
     TotalCount = (i - 1)
     frmServer.lblAcctCount.Caption = TotalCount
     frmServer.chkDonator.Value = 0
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadAccounts", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub LoadSwearFilter()
 Dim i As Long, filename As String, Data As String, Parse() As String
-    
-    On Error GoTo ErrorHandler
     
     filename = App.Path & "\data\swearfilter.ini"
     ' Get the maximum amount of possible words.
@@ -1716,13 +1075,6 @@ Dim i As Long, filename As String, Data As String, Parse() As String
             SwearFilter(i).NewWord = Parse(1)
         End If
     Next
-    
-    ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadSwearFilter", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub SaveTime()

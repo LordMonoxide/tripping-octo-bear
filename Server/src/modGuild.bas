@@ -96,11 +96,6 @@ End Sub
 Public Function GuildCheckName(Index As Long, MemberSlot As Long, AttemptCorrect As Boolean) As Boolean
 Dim i As Integer
 
-    If Player(Index).GuildFileId = 0 Or TempPlayer(Index).tmpGuildSlot = 0 Or IsPlaying(Index) = False Or MemberSlot = 0 Then
-        GuildCheckName = False
-        Exit Function
-    End If
-    
     If GuildData(TempPlayer(Index).tmpGuildSlot).Guild_Members(MemberSlot).User_Login = Player(Index).Login Then
         GuildCheckName = True
         Exit Function
@@ -152,8 +147,6 @@ Public Sub MakeGuild(Founder_Index As Long, Name As String, Tag As String)
     
     GuildFileId = Find_Guild_Save
     GuildSlot = FindOpenGuildSlot
-    
-    If Not IsPlaying(Founder_Index) Then Exit Sub
     
     'We are unable for an unknown reason
     If GuildSlot = 0 Or GuildFileId = 0 Then
@@ -298,10 +291,6 @@ End Sub
 Public Sub Join_Guild(Index As Long, GuildSlot As Long)
 Dim OpenSlot As Long
 
-
-
-    If IsPlaying(Index) = False Then Exit Sub
-    
     OpenSlot = FindOpenGuildMemberSlot(GuildSlot)
         'Guild full?
         If OpenSlot > 0 Then
@@ -406,8 +395,6 @@ Public Sub ClearGuildMemberSlot(GuildSlot As Long, MembersSlot As Long)
 End Sub
 Public Sub LoadGuild(GuildSlot As Long, GuildFileId As Long)
 Dim i As Integer
-'If 0 something is wrong
-If GuildFileId = 0 Then Exit Sub
 
 'Does this file even exist?
 If Not FileExist("\Data\guilds\Guild" & GuildFileId & ".dat") Then Exit Sub
@@ -448,10 +435,6 @@ If GuildData(GuildSlot).Guild_Fileid = 0 Then Exit Sub
     
 End Sub
 Public Sub UnloadGuildSlot(GuildSlot As Long)
-    'Exit on error
-    If GuildSlot = 0 Or GuildSlot > MAX_GUILD_SAVES Then Exit Sub
-    If GuildData(GuildSlot).In_Use = False Then Exit Sub
-    
     'Save it first
     Call SaveGuild(GuildSlot)
     'Clear and reset for next use

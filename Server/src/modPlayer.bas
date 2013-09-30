@@ -2,29 +2,17 @@ Attribute VB_Name = "modPlayer"
 Option Explicit
 
 Sub HandleUseChar(ByVal Index As Long)
-   On Error GoTo ErrorHandler
-
     If Not IsPlaying(Index) Then
         Call JoinGame(Index)
         Call AddLog(GetPlayerLogin(Index) & "/" & GetPlayerName(Index) & " has began playing " & Options.Game_Name & ".", PLAYER_LOG)
         Call TextAdd(GetPlayerLogin(Index) & "/" & GetPlayerName(Index) & " has began playing " & Options.Game_Name & ".")
         Call UpdateCaption
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleUseChar", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub JoinGame(ByVal Index As Long)
     Dim i As Long
     
-    ' Set the flag so we know the person is in the game
-   On Error GoTo ErrorHandler
-
     TempPlayer(Index).InGame = True
     'Update the log
     frmServer.lvwInfo.ListItems(Index).SubItems(1) = GetPlayerIP(Index)
@@ -97,21 +85,12 @@ Sub JoinGame(ByVal Index As Long)
     
     ' tell them to do the damn tutorial
     If Player(Index).TutorialState = 0 Then SendStartTutorial Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "JoinGame", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub LeftGame(ByVal Index As Long)
     Dim i As Long
     Dim tradeTarget As Long
     
-   On Error GoTo ErrorHandler
-
     If TempPlayer(Index).InGame Then
         TempPlayer(Index).InGame = False
 
@@ -163,26 +142,13 @@ Sub LeftGame(ByVal Index As Long)
     End If
 
     Call ClearPlayer(Index)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LeftGame", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerProtection(ByVal Index As Long) As Long
     Dim Armor As Long
     Dim Helm As Long
-   On Error GoTo ErrorHandler
 
     GetPlayerProtection = 0
-
-    ' Check for subscript out of range
-    If IsPlaying(Index) = False Or Index <= 0 Or Index > Player_HighIndex Then
-        Exit Function
-    End If
 
     Armor = GetPlayerEquipment(Index, Armor)
     Helm = GetPlayerEquipment(Index, Aura)
@@ -195,20 +161,9 @@ Function GetPlayerProtection(ByVal Index As Long) As Long
     If Helm > 0 Then
         GetPlayerProtection = GetPlayerProtection + Item(Helm).Data2
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerProtection", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function CanPlayerCriticalHit(ByVal Index As Long) As Boolean
-   On Error GoTo ErrorHandler
-
-    On Error Resume Next
     Dim i As Long
     Dim n As Long
 
@@ -224,21 +179,12 @@ Function CanPlayerCriticalHit(ByVal Index As Long) As Boolean
             End If
         End If
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanPlayerCriticalHit", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function CanPlayerBlockHit(ByVal Index As Long) As Boolean
     Dim i As Long
     Dim n As Long
     Dim ShieldSlot As Long
-   On Error GoTo ErrorHandler
 
     ShieldSlot = GetPlayerEquipment(Index, Shield)
 
@@ -254,27 +200,12 @@ Function CanPlayerBlockHit(ByVal Index As Long) As Boolean
             End If
         End If
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanPlayerBlockHit", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Sub PlayerWarp(ByVal Index As Long, ByVal mapNum As Long, ByVal x As Long, ByVal y As Long)
     Dim OldMap As Long
     Dim i As Long
     Dim Buffer As clsBuffer
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(Index) = False Or mapNum <= 0 Or mapNum > MAX_MAPS Then
-        Exit Sub
-    End If
 
     ' Check if you are out of bounds
     If x > Map(mapNum).MaxX Then x = Map(mapNum).MaxX
@@ -343,13 +274,6 @@ Sub PlayerWarp(ByVal Index As Long, ByVal mapNum As Long, ByVal x As Long, ByVal
     Buffer.WriteLong Map(mapNum).Revision
     SendDataTo Index, Buffer.ToArray()
     Set Buffer = Nothing
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PlayerWarp", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub PlayerMove(ByVal Index As Long, ByVal dir As Long, ByVal movement As Long, Optional ByVal sendToSelf As Boolean = False)
@@ -358,13 +282,6 @@ Sub PlayerMove(ByVal Index As Long, ByVal dir As Long, ByVal movement As Long, O
     Dim Moved As Byte
     Dim NewMapX As Byte, NewMapY As Byte
     Dim VitalType As Long, Colour As Long, Amount As Long
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(Index) = False Or dir < DIR_UP Or dir > DIR_DOWN_RIGHT Or movement < 1 Or movement > 2 Then
-        Exit Sub
-    End If
 
     Call SetPlayerDir(Index, dir)
     Moved = NO
@@ -724,19 +641,9 @@ Sub PlayerMove(ByVal Index As Long, ByVal dir As Long, ByVal movement As Long, O
     If Moved = NO Then
         PlayerWarp Index, GetPlayerMap(Index), GetPlayerX(Index), GetPlayerY(Index)
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PlayerMove", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub ForcePlayerMove(ByVal Index As Long, ByVal movement As Long, ByVal Direction As Long)
-   On Error GoTo ErrorHandler
-
     If Direction < DIR_UP Or Direction > DIR_RIGHT Then Exit Sub
     If movement < 1 Or movement > 2 Then Exit Sub
     
@@ -760,21 +667,11 @@ Sub ForcePlayerMove(ByVal Index As Long, ByVal movement As Long, ByVal Direction
     End Select
     
     PlayerMove Index, Direction, movement, True
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ForcePlayerMove", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub CheckEquippedItems(ByVal Index As Long)
     Dim itemnum As Long
     Dim i As Long
-
-    ' We want to check incase an admin takes away an object but they had it equipped
-   On Error GoTo ErrorHandler
 
     For i = 1 To Equipment.Equipment_Count - 1
         itemnum = GetPlayerEquipment(Index, i)
@@ -801,25 +698,10 @@ Sub CheckEquippedItems(ByVal Index As Long)
         End If
 
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CheckEquippedItems", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Function FindOpenInvSlot(ByVal Index As Long, ByVal itemnum As Long) As Long
     Dim i As Long
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(Index) = False Or itemnum <= 0 Or itemnum > MAX_ITEMS Then
-        Exit Function
-    End If
 
     If Item(itemnum).Type = ITEM_TYPE_CURRENCY Or Item(itemnum).Stackable = YES Then
 
@@ -844,23 +726,10 @@ Function FindOpenInvSlot(ByVal Index As Long, ByVal itemnum As Long) As Long
         End If
 
     Next
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "FindOpenInvSlot", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function FindOpenBankSlot(ByVal Index As Long, ByVal itemnum As Long) As Long
     Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    If Not IsPlaying(Index) Then Exit Function
-    If itemnum <= 0 Or itemnum > MAX_ITEMS Then Exit Function
 
         For i = 1 To MAX_BANK
             If GetPlayerBankItemNum(Index, i) = itemnum Then
@@ -875,25 +744,10 @@ Function FindOpenBankSlot(ByVal Index As Long, ByVal itemnum As Long) As Long
             Exit Function
         End If
     Next i
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "FindOpenBankSlot", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function HasItem(ByVal Index As Long, ByVal itemnum As Long) As Long
     Dim i As Long
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(Index) = False Or itemnum <= 0 Or itemnum > MAX_ITEMS Then
-        Exit Function
-    End If
 
     For i = 1 To MAX_INV
 
@@ -909,25 +763,10 @@ Function HasItem(ByVal Index As Long, ByVal itemnum As Long) As Long
         End If
 
     Next
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "HasItem", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function HasItems(ByVal Index As Long, ByVal itemnum As Long) As Long
     Dim i As Long
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(Index) = False Or itemnum <= 0 Or itemnum > MAX_ITEMS Then
-        Exit Function
-    End If
 
     For i = 1 To MAX_INV
 
@@ -941,27 +780,12 @@ Function HasItems(ByVal Index As Long, ByVal itemnum As Long) As Long
         End If
 
     Next
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "HasItems", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function TakeInvItem(ByVal Index As Long, ByVal itemnum As Long, ByVal ItemVal As Long) As Boolean
     Dim i As Long
     
-   On Error GoTo ErrorHandler
-
     TakeInvItem = False
-
-    ' Check for subscript out of range
-    If IsPlaying(Index) = False Or itemnum <= 0 Or itemnum > MAX_ITEMS Then
-        Exit Function
-    End If
 
     For i = 1 To MAX_INV
 
@@ -991,27 +815,12 @@ Function TakeInvItem(ByVal Index As Long, ByVal itemnum As Long, ByVal ItemVal A
         End If
 
     Next
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "TakeInvItem", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function TakeInvSlot(ByVal Index As Long, ByVal invSlot As Long, ByVal ItemVal As Long) As Boolean
     Dim itemnum
     
-   On Error GoTo ErrorHandler
-
     TakeInvSlot = False
-
-    ' Check for subscript out of range
-    If IsPlaying(Index) = False Or invSlot <= 0 Or invSlot > MAX_ITEMS Then
-        Exit Function
-    End If
     
     itemnum = GetPlayerInvItemNum(Index, invSlot)
 
@@ -1033,26 +842,10 @@ Function TakeInvSlot(ByVal Index As Long, ByVal invSlot As Long, ByVal ItemVal A
         Player(Index).Inv(invSlot).Bound = 0
         Exit Function
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "TakeInvSlot", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function GiveInvItem(ByVal Index As Long, ByVal itemnum As Long, ByVal ItemVal As Long, Optional ByVal sendUpdate As Boolean = True, Optional ByVal forceBound As Boolean = False) As Boolean
     Dim i As Long
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(Index) = False Or itemnum <= 0 Or itemnum > MAX_ITEMS Then
-        GiveInvItem = False
-        Exit Function
-    End If
 
     i = FindOpenInvSlot(Index, itemnum)
 
@@ -1079,20 +872,11 @@ Function GiveInvItem(ByVal Index As Long, ByVal itemnum As Long, ByVal ItemVal A
         Call PlayerMsg(Index, "Your inventory is full.", BrightRed)
         GiveInvItem = False
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GiveInvItem", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Public Sub SetPlayerItems(ByVal Index As Long, ByVal itemID As Long, ByVal itemCount As Long)
     Dim i As Long
     Dim given As Long
-   On Error GoTo ErrorHandler
 
     If Item(itemID).Type = ITEM_TYPE_CURRENCY Or Item(itemID).Stackable = YES Then
         For i = 1 To MAX_INV
@@ -1116,18 +900,10 @@ Public Sub SetPlayerItems(ByVal Index As Long, ByVal itemID As Long, ByVal itemC
             Call SendInventoryUpdate(Index, i)
         End If
     Next i
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerItems", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Public Sub GivePlayerItems(ByVal Index As Long, ByVal itemID As Long, ByVal itemCount As Long)
     Dim i As Long
     Dim given As Long
-   On Error GoTo ErrorHandler
 
     If Item(itemID).Type = ITEM_TYPE_CURRENCY Or Item(itemID).Stackable = YES Then
         For i = 1 To MAX_INV
@@ -1151,17 +927,9 @@ Public Sub GivePlayerItems(ByVal Index As Long, ByVal itemID As Long, ByVal item
             Call SendInventoryUpdate(Index, i)
         End If
     Next i
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "GivePlayerItems", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Public Sub TakePlayerItems(ByVal Index As Long, ByVal itemID As Long, ByVal itemCount As Long)
 Dim i As Long
-   On Error GoTo ErrorHandler
 
     If HasItems(Index, itemID) >= itemCount Then
         If Item(itemID).Type = ITEM_TYPE_CURRENCY Or Item(itemID).Stackable = YES Then
@@ -1180,19 +948,10 @@ Dim i As Long
     Else
         PlayerMsg Index, "You need [" & itemCount & "] of [" & Trim$(Item(itemID).Name) & "]", AlertColor
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "TakePlayerItems", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function HasSpell(ByVal Index As Long, ByVal spellnum As Long) As Boolean
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_PLAYER_SPELLS
 
@@ -1202,20 +961,10 @@ Function HasSpell(ByVal Index As Long, ByVal spellnum As Long) As Boolean
         End If
 
     Next
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "HasSpell", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function FindOpenSpellSlot(ByVal Index As Long) As Long
     Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_PLAYER_SPELLS
 
@@ -1225,14 +974,6 @@ Function FindOpenSpellSlot(ByVal Index As Long) As Long
         End If
 
     Next
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "FindOpenSpellSlot", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Sub PlayerMapGetItem(ByVal Index As Long)
@@ -1241,9 +982,6 @@ Sub PlayerMapGetItem(ByVal Index As Long)
     Dim mapNum As Long
     Dim Msg As String
 
-   On Error GoTo ErrorHandler
-
-    If Not IsPlaying(Index) Then Exit Sub
     mapNum = GetPlayerMap(Index)
 
     For i = 1 To MAX_MAP_ITEMS
@@ -1296,19 +1034,10 @@ Sub PlayerMapGetItem(ByVal Index As Long)
             End If
         End If
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PlayerMapGetItem", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function CanPlayerPickupItem(ByVal Index As Long, ByVal mapItemNum As Long)
 Dim mapNum As Long, tmpIndex As Long, i As Long
-
-   On Error GoTo ErrorHandler
 
     mapNum = GetPlayerMap(Index)
     
@@ -1335,25 +1064,11 @@ Dim mapNum As Long, tmpIndex As Long, i As Long
     
     ' exit out
     CanPlayerPickupItem = False
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanPlayerPickupItem", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub PlayerMapDropItem(ByVal Index As Long, ByVal invNum As Long, ByVal Amount As Long)
     Dim i As Long
 
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(Index) = False Or invNum <= 0 Or invNum > MAX_INV Then
-        Exit Sub
-    End If
-    
     ' check the player isn't doing something
     If TempPlayer(Index).InBank Or TempPlayer(Index).InShop Or TempPlayer(Index).InTrade > 0 Then Exit Sub
 
@@ -1416,22 +1131,12 @@ Sub PlayerMapDropItem(ByVal Index As Long, ByVal invNum As Long, ByVal Amount As
             End If
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PlayerMapDropItem", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub CheckPlayerLevelUp(ByVal Index As Long)
     Dim expRollover As Long
     Dim level_count As Long
     
-   On Error GoTo ErrorHandler
-
     level_count = 0
     
     Do While GetPlayerExp(Index) >= GetPlayerNextLevel(Index)
@@ -1458,21 +1163,12 @@ Sub CheckPlayerLevelUp(ByVal Index As Long)
         SendEXP Index
         SendPlayerData Index
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CheckPlayerLevelUp", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub CheckPlayerSkillLevelUp(ByVal Index As Long, ByVal Skill As Skills)
     Dim expRollover As Long
     Dim level_count As Long
     
-   On Error GoTo ErrorHandler
-
     level_count = 0
     
     Do While GetPlayerSkillExp(Index, Skill) >= GetPlayerNextSkillLevel(Index, Skill)
@@ -1498,172 +1194,52 @@ Sub CheckPlayerSkillLevelUp(ByVal Index As Long, ByVal Skill As Skills)
         SendEXP Index
         SendPlayerData Index
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CheckPlayerSkillLevelUp", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' //////////////////////
 ' // PLAYER FUNCTIONS //
 ' //////////////////////
 Function GetPlayerLogin(ByVal Index As Long) As String
-   On Error GoTo ErrorHandler
-
     GetPlayerLogin = Trim$(Player(Index).Login)
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerLogin", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerLogin(ByVal Index As Long, ByVal Login As String)
-   On Error GoTo ErrorHandler
-
     Player(Index).Login = Login
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerLogin", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerPassword(ByVal Index As Long) As String
-   On Error GoTo ErrorHandler
-
     GetPlayerPassword = Trim$(Player(Index).Password)
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerPassword", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerPassword(ByVal Index As Long, ByVal Password As String)
-   On Error GoTo ErrorHandler
-
     Player(Index).Password = Password
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerPassword", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerName(ByVal Index As Long) As String
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerName = Trim$(Player(Index).Name)
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerName", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerName(ByVal Index As Long, ByVal Name As String)
-   On Error GoTo ErrorHandler
-
     Player(Index).Name = Name
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerName", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Function GetPlayerClothes(ByVal Index As Long) As Long
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerClothes = Player(Index).Clothes
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerClothes", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 Function GetPlayerGear(ByVal Index As Long) As Long
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerGear = Player(Index).Gear
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerGear", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 Function GetPlayerHair(ByVal Index As Long) As Long
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerHair = Player(Index).Hair
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerHair", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 Function GetPlayerHeadgear(ByVal Index As Long) As Long
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerHeadgear = Player(Index).Headgear
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerHeadgear", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function GetPlayerLevel(ByVal Index As Long) As Long
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Function
     GetPlayerLevel = Player(Index).Level
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerLevel", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function SetPlayerLevel(ByVal Index As Long, ByVal Level As Long) As Boolean
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Function
     SetPlayerLevel = False
     If Level > MAX_LEVELS Then
         Player(Index).Level = MAX_LEVELS
@@ -1671,74 +1247,25 @@ Function SetPlayerLevel(ByVal Index As Long, ByVal Level As Long) As Boolean
     End If
     Player(Index).Level = Level
     SetPlayerLevel = True
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "SetPlayerLevel", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function GetPlayerNextLevel(ByVal Index As Long) As Long
-   On Error GoTo ErrorHandler
-
     GetPlayerNextLevel = 100 + (((GetPlayerLevel(Index) ^ 2) * 10) * 2)
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerNextLevel", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function GetPlayerExp(ByVal Index As Long) As Long
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Function
     GetPlayerExp = Player(Index).exp
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerExp", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerExp(ByVal Index As Long, ByVal exp As Long)
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Sub
     Player(Index).exp = exp
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerExp", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerSkillLevel(ByVal Index As Long, ByVal Skill As Skills) As Long
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Function
     GetPlayerSkillLevel = Player(Index).Skill(Skill)
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerSkillLevel", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function SetPlayerSkillLevel(ByVal Index As Long, ByVal Level As Long, ByVal Skill As Skills) As Boolean
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Function
     SetPlayerSkillLevel = False
     If Level > MAX_LEVELS Then
         Player(Index).Skill(Skill) = MAX_LEVELS
@@ -1746,129 +1273,41 @@ Function SetPlayerSkillLevel(ByVal Index As Long, ByVal Level As Long, ByVal Ski
     End If
     Player(Index).Skill(Skill) = Level
     SetPlayerSkillLevel = True
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "SetPlayerSkillLevel", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function GetPlayerNextSkillLevel(ByVal Index As Long, ByVal Skill As Skills) As Long
-   On Error GoTo ErrorHandler
-
     GetPlayerNextSkillLevel = 100 + (((GetPlayerSkillLevel(Index, Skill) ^ 2) * 10) * 2)
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerNextSkillLevel", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function GetPlayerSkillExp(ByVal Index As Long, ByVal Skill As Skills) As Long
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Function
     GetPlayerSkillExp = Player(Index).SkillExp(Skill)
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerSkillExp", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerSkillExp(ByVal Index As Long, ByVal exp As Long, ByVal Skill As Skills)
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Sub
     Player(Index).SkillExp(Skill) = exp
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerSkillExp", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerAccess(ByVal Index As Long) As Long
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerAccess = Player(Index).Access
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerAccess", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerAccess(ByVal Index As Long, ByVal Access As Long)
-   On Error GoTo ErrorHandler
-
     Player(Index).Access = Access
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerAccess", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerPK(ByVal Index As Long) As Long
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerPK = Player(Index).PK
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerPK", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerPK(ByVal Index As Long, ByVal PK As Long)
-   On Error GoTo ErrorHandler
-
     Player(Index).PK = PK
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerPK", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerVital(ByVal Index As Long, ByVal Vital As Vitals) As Long
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerVital = Player(Index).Vital(Vital)
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerVital", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerVital(ByVal Index As Long, ByVal Vital As Vitals, ByVal Value As Long)
-   On Error GoTo ErrorHandler
-
     Player(Index).Vital(Vital) = Value
 
     If GetPlayerVital(Index, Vital) > GetPlayerMaxVital(Index, Vital) Then
@@ -1878,19 +1317,10 @@ Sub SetPlayerVital(ByVal Index As Long, ByVal Vital As Vitals, ByVal Value As Lo
     If GetPlayerVital(Index, Vital) < 0 Then
         Player(Index).Vital(Vital) = 0
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerVital", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Public Function GetPlayerStat(ByVal Index As Long, ByVal Stat As Stats) As Long
     Dim x As Long, i As Long
-    If Index > MAX_PLAYERS Then Exit Function
     
     x = Player(Index).Stat(Stat)
     
@@ -1954,311 +1384,91 @@ Public Function GetPlayerStat(ByVal Index As Long, ByVal Stat As Stats) As Long
 End Function
 
 Public Function GetPlayerRawStat(ByVal Index As Long, ByVal Stat As Stats) As Long
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
-    
     GetPlayerRawStat = Player(Index).Stat(Stat)
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerRawStat", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Sub SetPlayerStat(ByVal Index As Long, ByVal Stat As Stats, ByVal Value As Long)
-   On Error GoTo ErrorHandler
-
     Player(Index).Stat(Stat) = Value
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerStat", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerPOINTS(ByVal Index As Long) As Long
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerPOINTS = Player(Index).POINTS
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerPOINTS", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerPOINTS(ByVal Index As Long, ByVal POINTS As Long)
-   On Error GoTo ErrorHandler
-
-    If POINTS <= 0 Then POINTS = 0
     Player(Index).POINTS = POINTS
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerPOINTS", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerMap(ByVal Index As Long) As Long
-
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Function
     GetPlayerMap = Player(Index).Map
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerMap", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerMap(ByVal Index As Long, ByVal mapNum As Long)
-
-   On Error GoTo ErrorHandler
-
-    If mapNum > 0 And mapNum <= MAX_MAPS Then
-        Player(Index).Map = mapNum
-    End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerMap", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
+    Player(Index).Map = mapNum
 End Sub
 
 Function GetPlayerX(ByVal Index As Long) As Long
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Function
     GetPlayerX = Player(Index).x
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerX", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerX(ByVal Index As Long, ByVal x As Long)
-   On Error GoTo ErrorHandler
-
     Player(Index).x = x
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerX", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerY(ByVal Index As Long) As Long
-   On Error GoTo ErrorHandler
-
-    If Index <= 0 Or Index > MAX_PLAYERS Then Exit Function
     GetPlayerY = Player(Index).y
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerY", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerY(ByVal Index As Long, ByVal y As Long)
-   On Error GoTo ErrorHandler
-
     Player(Index).y = y
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerY", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerDir(ByVal Index As Long) As Long
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerDir = Player(Index).dir
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerDir", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerDir(ByVal Index As Long, ByVal dir As Long)
-   On Error GoTo ErrorHandler
-
     Player(Index).dir = dir
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerDir", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerIP(ByVal Index As Long) As String
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerIP = frmServer.Socket(Index).RemoteHostIP
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerIP", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function GetPlayerInvItemNum(ByVal Index As Long, ByVal invSlot As Long) As Long
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
-    If invSlot = 0 Then Exit Function
-    
     GetPlayerInvItemNum = Player(Index).Inv(invSlot).Num
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerInvItemNum", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerInvItemNum(ByVal Index As Long, ByVal invSlot As Long, ByVal itemnum As Long)
-   On Error GoTo ErrorHandler
-
     Player(Index).Inv(invSlot).Num = itemnum
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerInvItemNum", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerInvItemValue(ByVal Index As Long, ByVal invSlot As Long) As Long
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerInvItemValue = Player(Index).Inv(invSlot).Value
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerInvItemValue", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerInvItemValue(ByVal Index As Long, ByVal invSlot As Long, ByVal ItemValue As Long)
-   On Error GoTo ErrorHandler
-
     Player(Index).Inv(invSlot).Value = ItemValue
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerInvItemValue", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Function GetPlayerSpell(ByVal Index As Long, ByVal spellslot As Long) As Long
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
     GetPlayerSpell = Player(Index).spell(spellslot)
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerSpell", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerSpell(ByVal Index As Long, ByVal spellslot As Long, ByVal spellnum As Long)
-   On Error GoTo ErrorHandler
-
     Player(Index).spell(spellslot) = spellnum
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerSpell", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Function GetPlayerEquipment(ByVal Index As Long, ByVal EquipmentSlot As Equipment) As Long
-
-   On Error GoTo ErrorHandler
-
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
-    If EquipmentSlot = 0 Then Exit Function
-    
     GetPlayerEquipment = Player(Index).Equipment(EquipmentSlot)
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerEquipment", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerEquipment(ByVal Index As Long, ByVal invNum As Long, ByVal EquipmentSlot As Equipment)
-   On Error GoTo ErrorHandler
-
     Player(Index).Equipment(EquipmentSlot) = invNum
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerEquipment", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ToDo
 Sub OnDeath(ByVal Index As Long)
     Dim i As Long
     
-    ' Set HP to nothing
-   On Error GoTo ErrorHandler
-
     Call SetPlayerVital(Index, Vitals.HP, 0)
 
     For i = 1 To MAX_INV
@@ -2341,14 +1551,6 @@ Sub OnDeath(ByVal Index As Long)
         Call SetPlayerPK(Index, NO)
         Call SendPlayerData(Index)
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "OnDeath", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub CheckResource(ByVal Index As Long, ByVal x As Long, ByVal y As Long)
@@ -2357,8 +1559,6 @@ Sub CheckResource(ByVal Index As Long, ByVal x As Long, ByVal y As Long)
     Dim rX As Long, rY As Long
     Dim i As Long
     Dim Damage As Long
-    
-    On Error GoTo ErrorHandler
     
     ' Check attack timer
     If GetPlayerEquipment(Index, Weapon) > 0 Then
@@ -2481,84 +1681,27 @@ Sub CheckResource(ByVal Index As Long, ByVal x As Long, ByVal y As Long)
             End If
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CheckResource", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerBankItemNum(ByVal Index As Long, ByVal BankSlot As Long) As Long
-   On Error GoTo ErrorHandler
-
-    If BankSlot = 0 Then Exit Function
     GetPlayerBankItemNum = Bank(Index).Item(BankSlot).Num
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerBankItemNum", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerBankItemNum(ByVal Index As Long, ByVal BankSlot As Long, ByVal itemnum As Long)
-   On Error GoTo ErrorHandler
-
-    If BankSlot = 0 Then Exit Sub
     Bank(Index).Item(BankSlot).Num = itemnum
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerBankItemNum", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function GetPlayerBankItemValue(ByVal Index As Long, ByVal BankSlot As Long) As Long
-   On Error GoTo ErrorHandler
-
-    If BankSlot = 0 Then Exit Function
     GetPlayerBankItemValue = Bank(Index).Item(BankSlot).Value
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerBankItemValue", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub SetPlayerBankItemValue(ByVal Index As Long, ByVal BankSlot As Long, ByVal ItemValue As Long)
-   On Error GoTo ErrorHandler
-
-    If BankSlot = 0 Then Exit Sub
     Bank(Index).Item(BankSlot).Value = ItemValue
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetPlayerBankItemValue", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub GiveBankItem(ByVal Index As Long, ByVal invSlot As Long, ByVal Amount As Long)
 Dim BankSlot
 
-   On Error GoTo ErrorHandler
-
-    If invSlot < 0 Or invSlot > MAX_INV Then
-        Exit Sub
-    End If
-    
-    If Amount < 0 Or Amount > GetPlayerInvItemValue(Index, invSlot) Then
-        Exit Sub
-    End If
-    
     BankSlot = FindOpenBankSlot(Index, GetPlayerInvItemNum(Index, invSlot))
         
     If BankSlot > 0 Then
@@ -2586,29 +1729,11 @@ Dim BankSlot
     SaveBank Index
     SavePlayer Index
     SendBank Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "GiveBankItem", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub TakeBankItem(ByVal Index As Long, ByVal BankSlot As Long, ByVal Amount As Long)
 Dim invSlot
 
-   On Error GoTo ErrorHandler
-
-    If BankSlot < 0 Or BankSlot > MAX_BANK Then
-        Exit Sub
-    End If
-    
-    If Amount < 0 Or Amount > GetPlayerBankItemValue(Index, BankSlot) Then
-        Exit Sub
-    End If
-    
     invSlot = FindOpenInvSlot(Index, GetPlayerBankItemNum(Index, BankSlot))
         
     If invSlot > 0 Then
@@ -2634,23 +1759,11 @@ Dim invSlot
     SaveBank Index
     SavePlayer Index
     SendBank Index
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "TakeBankItem", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Public Sub KillPlayer(ByVal Index As Long)
 Dim exp As Long
 
-    ' Calculate exp to give attacker
-   On Error GoTo ErrorHandler
-
-    exp = GetPlayerExp(Index) \ 3
 
     ' Make sure we dont get less then 0
     If exp < 0 Then exp = 0
@@ -2663,466 +1776,451 @@ Dim exp As Long
     End If
     
     Call OnDeath(Index)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "KillPlayer", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub UseItem(ByVal Index As Long, ByVal invNum As Long)
 Dim n As Long, i As Long, tempItem As Long, x As Long, itemnum As Long
 
-    ' Prevent hacking
-   On Error GoTo ErrorHandler
-
-    If invNum < 1 Or invNum > MAX_ITEMS Then
-        Exit Sub
-    End If
-
-    If (GetPlayerInvItemNum(Index, invNum) > 0) And (GetPlayerInvItemNum(Index, invNum) <= MAX_ITEMS) Then
-        n = Item(GetPlayerInvItemNum(Index, invNum)).Data2
-        itemnum = GetPlayerInvItemNum(Index, invNum)
+    n = Item(GetPlayerInvItemNum(Index, invNum)).Data2
+    itemnum = GetPlayerInvItemNum(Index, invNum)
+    
+    ' Find out what kind of item it is
+    Select Case Item(itemnum).Type
+    
+     Case ITEM_TYPE_CONTAINER
         
-        ' Find out what kind of item it is
-        Select Case Item(itemnum).Type
-        
-         Case ITEM_TYPE_CONTAINER
+
+            ' stat requirements
+            For i = 1 To Stats.Stat_Count - 1
+                If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
+                    PlayerMsg Index, "You do not meet the stat requirements to equip this item.", BrightRed
+                    Exit Sub
+                End If
+            Next
             
+            ' level requirement
+            If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
+                PlayerMsg Index, "You do not meet the level requirement to equip this item.", BrightRed
+                Exit Sub
+            End If
 
-                ' stat requirements
-                For i = 1 To Stats.Stat_Count - 1
-                    If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
-                        PlayerMsg Index, "You do not meet the stat requirements to equip this item.", BrightRed
-                        Exit Sub
-                    End If
-                Next
-                
-                ' level requirement
-                If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
-                    PlayerMsg Index, "You do not meet the level requirement to equip this item.", BrightRed
-                    Exit Sub
-                End If
-
-                ' access requirement
-                If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
-                    PlayerMsg Index, "You do not meet the access requirement to equip this item.", BrightRed
-                    Exit Sub
-                End If
-        
-                PlayerMsg Index, "You open up the " & Item(itemnum).Name, Green
-                For i = 0 To 4
-                    If Item(itemnum).Container(i) > 0 Then
-                        x = Random(0, 100)
-                        If x <= Item(itemnum).ContainerChance(i) Then
-                            'Award item
-                            Call GiveInvItem(Index, Item(itemnum).Container(i), 0)
-                            PlayerMsg Index, "You discover a " & Item(Item(itemnum).Container(i)).Name, Green
-                        End If
-                    End If
-                Next i
-                        
-                TakeInvItem Index, itemnum, 0
-        
-            Case ITEM_TYPE_ARMOR
-            
-                ' stat requirements
-                For i = 1 To Stats.Stat_Count - 1
-                    If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
-                        PlayerMsg Index, "You do not meet the stat requirements to equip this item.", BrightRed
-                        Exit Sub
-                    End If
-                Next
-                
-                ' level requirement
-                If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
-                    PlayerMsg Index, "You do not meet the level requirement to equip this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' access requirement
-                If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
-                    PlayerMsg Index, "You do not meet the access requirement to equip this item.", BrightRed
-                    Exit Sub
-                End If
-
-                If GetPlayerEquipment(Index, Armor) > 0 Then
-                    tempItem = GetPlayerEquipment(Index, Armor)
-                End If
-
-                SetPlayerEquipment Index, itemnum, Armor
-                
-                PlayerMsg Index, "You equip " & CheckGrammar(Item(itemnum).Name), BrightGreen
-                
-                ' tell them if it's soulbound
-                If Item(itemnum).BindType = 2 Then ' BoE
-                    If Player(Index).Inv(invNum).Bound = 0 Then
-                        PlayerMsg Index, "This item is now bound to your soul.", BrightRed
+            ' access requirement
+            If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
+                PlayerMsg Index, "You do not meet the access requirement to equip this item.", BrightRed
+                Exit Sub
+            End If
+    
+            PlayerMsg Index, "You open up the " & Item(itemnum).Name, Green
+            For i = 0 To 4
+                If Item(itemnum).Container(i) > 0 Then
+                    x = Random(0, 100)
+                    If x <= Item(itemnum).ContainerChance(i) Then
+                        'Award item
+                        Call GiveInvItem(Index, Item(itemnum).Container(i), 0)
+                        PlayerMsg Index, "You discover a " & Item(Item(itemnum).Container(i)).Name, Green
                     End If
                 End If
-                
-                TakeInvItem Index, itemnum, 0
-
-                If tempItem > 0 Then
-                    If Item(tempItem).BindType > 0 Then
-                        GiveInvItem Index, tempItem, 0, , True ' give back the stored item
-                        tempItem = 0
-                    Else
-                        GiveInvItem Index, tempItem, 0
-                        tempItem = 0
-                    End If
-                End If
-
-                Call SendWornEquipment(Index)
-                Call SendMapEquipment(Index)
-                
-                ' send vitals
-                Call SendVital(Index, Vitals.HP)
-                Call SendVital(Index, Vitals.MP)
-                ' send vitals to party if in one
-                If TempPlayer(Index).inParty > 0 Then SendPartyVitals TempPlayer(Index).inParty, Index
-                
-                ' send the sound
-                SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
-            Case ITEM_TYPE_WEAPON
-            
-                ' stat requirements
-                For i = 1 To Stats.Stat_Count - 1
-                    If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
-                        PlayerMsg Index, "You do not meet the stat requirements to equip this item.", BrightRed
-                        Exit Sub
-                    End If
-                Next
-                
-                ' level requirement
-                If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
-                    PlayerMsg Index, "You do not meet the level requirement to equip this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' access requirement
-                If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
-                    PlayerMsg Index, "You do not meet the access requirement to equip this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                If Item(itemnum).isTwoHanded > 0 Then
-                    If GetPlayerEquipment(Index, Shield) > 0 Then
-                        PlayerMsg Index, "This is 2Handed weapon! Please unequip shield first.", BrightRed
-                        Exit Sub
-                    End If
-                End If
-
-                If GetPlayerEquipment(Index, Weapon) > 0 Then
-                    tempItem = GetPlayerEquipment(Index, Weapon)
-                End If
-
-                SetPlayerEquipment Index, itemnum, Weapon
-                PlayerMsg Index, "You equip " & CheckGrammar(Item(itemnum).Name), BrightGreen
-                
-                ' tell them if it's soulbound
-                If Item(itemnum).BindType = 2 Then ' BoE
-                    If Player(Index).Inv(invNum).Bound = 0 Then
-                        PlayerMsg Index, "This item is now bound to your soul.", BrightRed
-                    End If
-                End If
-                
-                TakeInvItem Index, itemnum, 1
-                
-                If tempItem > 0 Then
-                    If Item(tempItem).BindType > 0 Then
-                        GiveInvItem Index, tempItem, 0, , True ' give back the stored item
-                        tempItem = 0
-                    Else
-                        GiveInvItem Index, tempItem, 0
-                        tempItem = 0
-                    End If
-                End If
-
-                Call SendWornEquipment(Index)
-                Call SendMapEquipment(Index)
-                
-                ' send vitals
-                Call SendVital(Index, Vitals.HP)
-                Call SendVital(Index, Vitals.MP)
-                ' send vitals to party if in one
-                If TempPlayer(Index).inParty > 0 Then SendPartyVitals TempPlayer(Index).inParty, Index
-                
-                ' send the sound
-                SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
-            Case ITEM_TYPE_Aura
-            
-                ' stat requirements
-                For i = 1 To Stats.Stat_Count - 1
-                    If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
-                        PlayerMsg Index, "You do not meet the stat requirements to equip this item.", BrightRed
-                        Exit Sub
-                    End If
-                Next
-                
-                ' level requirement
-                If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
-                    PlayerMsg Index, "You do not meet the level requirement to equip this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' access requirement
-                If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
-                    PlayerMsg Index, "You do not meet the access requirement to equip this item.", BrightRed
-                    Exit Sub
-                End If
-
-                If GetPlayerEquipment(Index, Aura) > 0 Then
-                    tempItem = GetPlayerEquipment(Index, Aura)
-                End If
-
-                SetPlayerEquipment Index, itemnum, Aura
-                PlayerMsg Index, "You equip " & CheckGrammar(Item(itemnum).Name), BrightGreen
-                
-                ' tell them if it's soulbound
-                If Item(itemnum).BindType = 2 Then ' BoE
-                    If Player(Index).Inv(invNum).Bound = 0 Then
-                        PlayerMsg Index, "This item is now bound to your soul.", BrightRed
-                    End If
-                End If
-                
-                TakeInvItem Index, itemnum, 1
-
-                If tempItem > 0 Then
-                    If Item(tempItem).BindType > 0 Then
-                        GiveInvItem Index, tempItem, 0, , True ' give back the stored item
-                        tempItem = 0
-                    Else
-                        GiveInvItem Index, tempItem, 0
-                        tempItem = 0
-                    End If
-                End If
-
-                Call SendWornEquipment(Index)
-                Call SendMapEquipment(Index)
-                
-                ' send vitals
-                Call SendVital(Index, Vitals.HP)
-                Call SendVital(Index, Vitals.MP)
-                ' send vitals to party if in one
-                If TempPlayer(Index).inParty > 0 Then SendPartyVitals TempPlayer(Index).inParty, Index
-                
-                ' send the sound
-                SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
-            Case ITEM_TYPE_SHIELD
-            
-                ' stat requirements
-                For i = 1 To Stats.Stat_Count - 1
-                    If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
-                        PlayerMsg Index, "You do not meet the stat requirements to equip this item.", BrightRed
-                        Exit Sub
-                    End If
-                Next
-                
-                ' level requirement
-                If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
-                    PlayerMsg Index, "You do not meet the level requirement to equip this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' access requirement
-                If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
-                    PlayerMsg Index, "You do not meet the access requirement to equip this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                If GetPlayerEquipment(Index, Weapon) > 0 Then
-                    If Item(GetPlayerEquipment(Index, Weapon)).isTwoHanded > 0 Then
-                        PlayerMsg Index, "You have 2Handed weapon equipped! Please unequip it first.", BrightRed
-                        Exit Sub
-                    End If
-                End If
-
-                If GetPlayerEquipment(Index, Shield) > 0 Then
-                    tempItem = GetPlayerEquipment(Index, Shield)
-                End If
-
-                SetPlayerEquipment Index, itemnum, Shield
-                PlayerMsg Index, "You equip " & CheckGrammar(Item(itemnum).Name), BrightGreen
-                
-                ' tell them if it's soulbound
-                If Item(itemnum).BindType = 2 Then ' BoE
-                    If Player(Index).Inv(invNum).Bound = 0 Then
-                        PlayerMsg Index, "This item is now bound to your soul.", BrightRed
-                    End If
-                End If
-                
-                TakeInvItem Index, itemnum, 1
-
-                If tempItem > 0 Then
-                    If Item(tempItem).BindType > 0 Then
-                        GiveInvItem Index, tempItem, 0, , True ' give back the stored item
-                        tempItem = 0
-                    Else
-                        GiveInvItem Index, tempItem, 0
-                        tempItem = 0
-                    End If
-                End If
-                
-                ' send vitals
-                Call SendVital(Index, Vitals.HP)
-                Call SendVital(Index, Vitals.MP)
-                ' send vitals to party if in one
-                If TempPlayer(Index).inParty > 0 Then SendPartyVitals TempPlayer(Index).inParty, Index
-
-                Call SendWornEquipment(Index)
-                Call SendMapEquipment(Index)
-                
-                ' send the sound
-                SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
-            ' consumable
-            Case ITEM_TYPE_CONSUME
-                ' stat requirements
-                For i = 1 To Stats.Stat_Count - 1
-                    If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
-                        PlayerMsg Index, "You do not meet the stat requirements to use this item.", BrightRed
-                        Exit Sub
-                    End If
-                Next
-                
-                ' level requirement
-                If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
-                    PlayerMsg Index, "You do not meet the level requirement to use this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' access requirement
-                If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
-                    PlayerMsg Index, "You do not meet the access requirement to use this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' add hp
-                If Item(itemnum).AddHP > 0 Then
-                    Player(Index).Vital(Vitals.HP) = Player(Index).Vital(Vitals.HP) + Item(itemnum).AddHP
-                    SendActionMsg GetPlayerMap(Index), "+" & Item(itemnum).AddHP, BrightGreen, ACTIONMSG_SCROLL, GetPlayerX(Index) * 32, GetPlayerY(Index) * 32
-                    SendVital Index, HP
-                    ' send vitals to party if in one
-                    If TempPlayer(Index).inParty > 0 Then SendPartyVitals TempPlayer(Index).inParty, Index
-                End If
-                ' add mp
-                If Item(itemnum).AddMP > 0 Then
-                    Player(Index).Vital(Vitals.MP) = Player(Index).Vital(Vitals.MP) + Item(itemnum).AddMP
-                    SendActionMsg GetPlayerMap(Index), "+" & Item(itemnum).AddMP, BrightBlue, ACTIONMSG_SCROLL, GetPlayerX(Index) * 32, GetPlayerY(Index) * 32
-                    SendVital Index, MP
-                    ' send vitals to party if in one
-                    If TempPlayer(Index).inParty > 0 Then SendPartyVitals TempPlayer(Index).inParty, Index
-                End If
-                ' add exp
-                If Item(itemnum).AddEXP > 0 Then
-                    SetPlayerExp Index, GetPlayerExp(Index) + Item(itemnum).AddEXP
-                    CheckPlayerLevelUp Index
-                    SendActionMsg GetPlayerMap(Index), "+" & Item(itemnum).AddEXP & " EXP", White, ACTIONMSG_SCROLL, GetPlayerX(Index) * 32, GetPlayerY(Index) * 32
-                    SendEXP Index
-                End If
-                
-                Call SendAnimation(GetPlayerMap(Index), Item(itemnum).Animation, 0, 0, TARGET_TYPE_PLAYER, Index)
-                Call TakeInvItem(Index, Player(Index).Inv(invNum).Num, 1)
-                
-                ' send the sound
-                SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
-            Case ITEM_TYPE_UNIQUE
-                ' stat requirements
-                For i = 1 To Stats.Stat_Count - 1
-                    If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
-                        PlayerMsg Index, "You do not meet the stat requirements to use this item.", BrightRed
-                        Exit Sub
-                    End If
-                Next
-                
-                ' level requirement
-                If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
-                    PlayerMsg Index, "You do not meet the level requirement to use this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' access requirement
-                If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
-                    PlayerMsg Index, "You do not meet the access requirement to use this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' Go through with it
-                Unique_Item Index, itemnum
-            Case ITEM_TYPE_SPELL
-                ' stat requirements
-                For i = 1 To Stats.Stat_Count - 1
-                    If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
-                        PlayerMsg Index, "You do not meet the stat requirements to use this item.", BrightRed
-                        Exit Sub
-                    End If
-                Next
-                
-
-                
-                ' level requirement
-                If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
-                    PlayerMsg Index, "You do not meet the level requirement to use this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' access requirement
-                If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
-                    PlayerMsg Index, "You do not meet the access requirement to use this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' Get the spell num
-                n = Item(itemnum).Data1
-
-                If n > 0 Then
-
-                        ' make sure they don't already know it
-                        For i = 1 To MAX_PLAYER_SPELLS
-                            If Player(Index).spell(i) > 0 Then
-                                If Player(Index).spell(i) = n Then
-                                    PlayerMsg Index, "You already know this spell.", BrightRed
-                                    Exit Sub
-                                End If
-                            End If
-                        Next
+            Next i
                     
-                        ' Make sure they are the right level
-                        i = spell(n).LevelReq
+            TakeInvItem Index, itemnum, 0
+    
+        Case ITEM_TYPE_ARMOR
+        
+            ' stat requirements
+            For i = 1 To Stats.Stat_Count - 1
+                If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
+                    PlayerMsg Index, "You do not meet the stat requirements to equip this item.", BrightRed
+                    Exit Sub
+                End If
+            Next
+            
+            ' level requirement
+            If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
+                PlayerMsg Index, "You do not meet the level requirement to equip this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' access requirement
+            If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
+                PlayerMsg Index, "You do not meet the access requirement to equip this item.", BrightRed
+                Exit Sub
+            End If
+
+            If GetPlayerEquipment(Index, Armor) > 0 Then
+                tempItem = GetPlayerEquipment(Index, Armor)
+            End If
+
+            SetPlayerEquipment Index, itemnum, Armor
+            
+            PlayerMsg Index, "You equip " & CheckGrammar(Item(itemnum).Name), BrightGreen
+            
+            ' tell them if it's soulbound
+            If Item(itemnum).BindType = 2 Then ' BoE
+                If Player(Index).Inv(invNum).Bound = 0 Then
+                    PlayerMsg Index, "This item is now bound to your soul.", BrightRed
+                End If
+            End If
+            
+            TakeInvItem Index, itemnum, 0
+
+            If tempItem > 0 Then
+                If Item(tempItem).BindType > 0 Then
+                    GiveInvItem Index, tempItem, 0, , True ' give back the stored item
+                    tempItem = 0
+                Else
+                    GiveInvItem Index, tempItem, 0
+                    tempItem = 0
+                End If
+            End If
+
+            Call SendWornEquipment(Index)
+            Call SendMapEquipment(Index)
+            
+            ' send vitals
+            Call SendVital(Index, Vitals.HP)
+            Call SendVital(Index, Vitals.MP)
+            ' send vitals to party if in one
+            If TempPlayer(Index).inParty > 0 Then SendPartyVitals TempPlayer(Index).inParty, Index
+            
+            ' send the sound
+            SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
+        Case ITEM_TYPE_WEAPON
+        
+            ' stat requirements
+            For i = 1 To Stats.Stat_Count - 1
+                If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
+                    PlayerMsg Index, "You do not meet the stat requirements to equip this item.", BrightRed
+                    Exit Sub
+                End If
+            Next
+            
+            ' level requirement
+            If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
+                PlayerMsg Index, "You do not meet the level requirement to equip this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' access requirement
+            If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
+                PlayerMsg Index, "You do not meet the access requirement to equip this item.", BrightRed
+                Exit Sub
+            End If
+            
+            If Item(itemnum).isTwoHanded > 0 Then
+                If GetPlayerEquipment(Index, Shield) > 0 Then
+                    PlayerMsg Index, "This is 2Handed weapon! Please unequip shield first.", BrightRed
+                    Exit Sub
+                End If
+            End If
+
+            If GetPlayerEquipment(Index, Weapon) > 0 Then
+                tempItem = GetPlayerEquipment(Index, Weapon)
+            End If
+
+            SetPlayerEquipment Index, itemnum, Weapon
+            PlayerMsg Index, "You equip " & CheckGrammar(Item(itemnum).Name), BrightGreen
+            
+            ' tell them if it's soulbound
+            If Item(itemnum).BindType = 2 Then ' BoE
+                If Player(Index).Inv(invNum).Bound = 0 Then
+                    PlayerMsg Index, "This item is now bound to your soul.", BrightRed
+                End If
+            End If
+            
+            TakeInvItem Index, itemnum, 1
+            
+            If tempItem > 0 Then
+                If Item(tempItem).BindType > 0 Then
+                    GiveInvItem Index, tempItem, 0, , True ' give back the stored item
+                    tempItem = 0
+                Else
+                    GiveInvItem Index, tempItem, 0
+                    tempItem = 0
+                End If
+            End If
+
+            Call SendWornEquipment(Index)
+            Call SendMapEquipment(Index)
+            
+            ' send vitals
+            Call SendVital(Index, Vitals.HP)
+            Call SendVital(Index, Vitals.MP)
+            ' send vitals to party if in one
+            If TempPlayer(Index).inParty > 0 Then SendPartyVitals TempPlayer(Index).inParty, Index
+            
+            ' send the sound
+            SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
+        Case ITEM_TYPE_Aura
+        
+            ' stat requirements
+            For i = 1 To Stats.Stat_Count - 1
+                If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
+                    PlayerMsg Index, "You do not meet the stat requirements to equip this item.", BrightRed
+                    Exit Sub
+                End If
+            Next
+            
+            ' level requirement
+            If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
+                PlayerMsg Index, "You do not meet the level requirement to equip this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' access requirement
+            If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
+                PlayerMsg Index, "You do not meet the access requirement to equip this item.", BrightRed
+                Exit Sub
+            End If
+
+            If GetPlayerEquipment(Index, Aura) > 0 Then
+                tempItem = GetPlayerEquipment(Index, Aura)
+            End If
+
+            SetPlayerEquipment Index, itemnum, Aura
+            PlayerMsg Index, "You equip " & CheckGrammar(Item(itemnum).Name), BrightGreen
+            
+            ' tell them if it's soulbound
+            If Item(itemnum).BindType = 2 Then ' BoE
+                If Player(Index).Inv(invNum).Bound = 0 Then
+                    PlayerMsg Index, "This item is now bound to your soul.", BrightRed
+                End If
+            End If
+            
+            TakeInvItem Index, itemnum, 1
+
+            If tempItem > 0 Then
+                If Item(tempItem).BindType > 0 Then
+                    GiveInvItem Index, tempItem, 0, , True ' give back the stored item
+                    tempItem = 0
+                Else
+                    GiveInvItem Index, tempItem, 0
+                    tempItem = 0
+                End If
+            End If
+
+            Call SendWornEquipment(Index)
+            Call SendMapEquipment(Index)
+            
+            ' send vitals
+            Call SendVital(Index, Vitals.HP)
+            Call SendVital(Index, Vitals.MP)
+            ' send vitals to party if in one
+            If TempPlayer(Index).inParty > 0 Then SendPartyVitals TempPlayer(Index).inParty, Index
+            
+            ' send the sound
+            SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
+        Case ITEM_TYPE_SHIELD
+        
+            ' stat requirements
+            For i = 1 To Stats.Stat_Count - 1
+                If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
+                    PlayerMsg Index, "You do not meet the stat requirements to equip this item.", BrightRed
+                    Exit Sub
+                End If
+            Next
+            
+            ' level requirement
+            If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
+                PlayerMsg Index, "You do not meet the level requirement to equip this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' access requirement
+            If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
+                PlayerMsg Index, "You do not meet the access requirement to equip this item.", BrightRed
+                Exit Sub
+            End If
+            
+            If GetPlayerEquipment(Index, Weapon) > 0 Then
+                If Item(GetPlayerEquipment(Index, Weapon)).isTwoHanded > 0 Then
+                    PlayerMsg Index, "You have 2Handed weapon equipped! Please unequip it first.", BrightRed
+                    Exit Sub
+                End If
+            End If
+
+            If GetPlayerEquipment(Index, Shield) > 0 Then
+                tempItem = GetPlayerEquipment(Index, Shield)
+            End If
+
+            SetPlayerEquipment Index, itemnum, Shield
+            PlayerMsg Index, "You equip " & CheckGrammar(Item(itemnum).Name), BrightGreen
+            
+            ' tell them if it's soulbound
+            If Item(itemnum).BindType = 2 Then ' BoE
+                If Player(Index).Inv(invNum).Bound = 0 Then
+                    PlayerMsg Index, "This item is now bound to your soul.", BrightRed
+                End If
+            End If
+            
+            TakeInvItem Index, itemnum, 1
+
+            If tempItem > 0 Then
+                If Item(tempItem).BindType > 0 Then
+                    GiveInvItem Index, tempItem, 0, , True ' give back the stored item
+                    tempItem = 0
+                Else
+                    GiveInvItem Index, tempItem, 0
+                    tempItem = 0
+                End If
+            End If
+            
+            ' send vitals
+            Call SendVital(Index, Vitals.HP)
+            Call SendVital(Index, Vitals.MP)
+            ' send vitals to party if in one
+            If TempPlayer(Index).inParty > 0 Then SendPartyVitals TempPlayer(Index).inParty, Index
+
+            Call SendWornEquipment(Index)
+            Call SendMapEquipment(Index)
+            
+            ' send the sound
+            SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
+        ' consumable
+        Case ITEM_TYPE_CONSUME
+            ' stat requirements
+            For i = 1 To Stats.Stat_Count - 1
+                If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
+                    PlayerMsg Index, "You do not meet the stat requirements to use this item.", BrightRed
+                    Exit Sub
+                End If
+            Next
+            
+            ' level requirement
+            If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
+                PlayerMsg Index, "You do not meet the level requirement to use this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' access requirement
+            If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
+                PlayerMsg Index, "You do not meet the access requirement to use this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' add hp
+            If Item(itemnum).AddHP > 0 Then
+                Player(Index).Vital(Vitals.HP) = Player(Index).Vital(Vitals.HP) + Item(itemnum).AddHP
+                SendActionMsg GetPlayerMap(Index), "+" & Item(itemnum).AddHP, BrightGreen, ACTIONMSG_SCROLL, GetPlayerX(Index) * 32, GetPlayerY(Index) * 32
+                SendVital Index, HP
+                ' send vitals to party if in one
+                If TempPlayer(Index).inParty > 0 Then SendPartyVitals TempPlayer(Index).inParty, Index
+            End If
+            ' add mp
+            If Item(itemnum).AddMP > 0 Then
+                Player(Index).Vital(Vitals.MP) = Player(Index).Vital(Vitals.MP) + Item(itemnum).AddMP
+                SendActionMsg GetPlayerMap(Index), "+" & Item(itemnum).AddMP, BrightBlue, ACTIONMSG_SCROLL, GetPlayerX(Index) * 32, GetPlayerY(Index) * 32
+                SendVital Index, MP
+                ' send vitals to party if in one
+                If TempPlayer(Index).inParty > 0 Then SendPartyVitals TempPlayer(Index).inParty, Index
+            End If
+            ' add exp
+            If Item(itemnum).AddEXP > 0 Then
+                SetPlayerExp Index, GetPlayerExp(Index) + Item(itemnum).AddEXP
+                CheckPlayerLevelUp Index
+                SendActionMsg GetPlayerMap(Index), "+" & Item(itemnum).AddEXP & " EXP", White, ACTIONMSG_SCROLL, GetPlayerX(Index) * 32, GetPlayerY(Index) * 32
+                SendEXP Index
+            End If
+            
+            Call SendAnimation(GetPlayerMap(Index), Item(itemnum).Animation, 0, 0, TARGET_TYPE_PLAYER, Index)
+            Call TakeInvItem(Index, Player(Index).Inv(invNum).Num, 1)
+            
+            ' send the sound
+            SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
+        Case ITEM_TYPE_UNIQUE
+            ' stat requirements
+            For i = 1 To Stats.Stat_Count - 1
+                If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
+                    PlayerMsg Index, "You do not meet the stat requirements to use this item.", BrightRed
+                    Exit Sub
+                End If
+            Next
+            
+            ' level requirement
+            If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
+                PlayerMsg Index, "You do not meet the level requirement to use this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' access requirement
+            If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
+                PlayerMsg Index, "You do not meet the access requirement to use this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' Go through with it
+            Unique_Item Index, itemnum
+        Case ITEM_TYPE_SPELL
+            ' stat requirements
+            For i = 1 To Stats.Stat_Count - 1
+                If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
+                    PlayerMsg Index, "You do not meet the stat requirements to use this item.", BrightRed
+                    Exit Sub
+                End If
+            Next
+            
+
+            
+            ' level requirement
+            If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
+                PlayerMsg Index, "You do not meet the level requirement to use this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' access requirement
+            If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
+                PlayerMsg Index, "You do not meet the access requirement to use this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' Get the spell num
+            n = Item(itemnum).Data1
+
+            If n > 0 Then
+
+                    ' make sure they don't already know it
+                    For i = 1 To MAX_PLAYER_SPELLS
+                        If Player(Index).spell(i) > 0 Then
+                            If Player(Index).spell(i) = n Then
+                                PlayerMsg Index, "You already know this spell.", BrightRed
+                                Exit Sub
+                            End If
+                        End If
+                    Next
+                
+                    ' Make sure they are the right level
+                    i = spell(n).LevelReq
 
 
-                        If i <= GetPlayerLevel(Index) Then
-                            i = FindOpenSpellSlot(Index)
+                    If i <= GetPlayerLevel(Index) Then
+                        i = FindOpenSpellSlot(Index)
 
-                            ' Make sure they have an open spell slot
-                            If i > 0 Then
+                        ' Make sure they have an open spell slot
+                        If i > 0 Then
 
-                                ' Make sure they dont already have the spell
-                                If Not HasSpell(Index, n) Then
-                                    Player(Index).spell(i) = n
-                                    Call SendAnimation(GetPlayerMap(Index), Item(itemnum).Animation, 0, 0, TARGET_TYPE_PLAYER, Index)
-                                    Call TakeInvItem(Index, itemnum, 0)
-                                    Call PlayerMsg(Index, "You feel the rush of knowledge fill your mind. You can now use " & Trim$(spell(n).Name) & ".", BrightGreen)
-                                    SendPlayerSpells Index
-                                Else
-                                    Call PlayerMsg(Index, "You already have knowledge of this skill.", BrightRed)
-                                End If
-
+                            ' Make sure they dont already have the spell
+                            If Not HasSpell(Index, n) Then
+                                Player(Index).spell(i) = n
+                                Call SendAnimation(GetPlayerMap(Index), Item(itemnum).Animation, 0, 0, TARGET_TYPE_PLAYER, Index)
+                                Call TakeInvItem(Index, itemnum, 0)
+                                Call PlayerMsg(Index, "You feel the rush of knowledge fill your mind. You can now use " & Trim$(spell(n).Name) & ".", BrightGreen)
+                                SendPlayerSpells Index
                             Else
-                                Call PlayerMsg(Index, "You cannot learn any more skills.", BrightRed)
+                                Call PlayerMsg(Index, "You already have knowledge of this skill.", BrightRed)
                             End If
 
                         Else
-                            Call PlayerMsg(Index, "You must be level " & i & " to learn this skill.", BrightRed)
+                            Call PlayerMsg(Index, "You cannot learn any more skills.", BrightRed)
                         End If
-                End If
-                
-                ' send the sound
-                SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
-                
-                                Case ITEM_TYPE_LOGO_GUILD
+
+                    Else
+                        Call PlayerMsg(Index, "You must be level " & i & " to learn this skill.", BrightRed)
+                    End If
+            End If
+            
+            ' send the sound
+            SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
+            
+                            Case ITEM_TYPE_LOGO_GUILD
 
 ' stat requirements
 For i = 1 To Stats.Stat_Count - 1
@@ -3158,343 +2256,323 @@ End If
 ' send the sound
 SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
 
-            Case ITEM_TYPE_PET
+        Case ITEM_TYPE_PET
+        
+            ' stat requirements
+            For i = 1 To Stats.Stat_Count - 1
+                If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
+                    PlayerMsg Index, "You do not meet the stat requirements to use this item.", BrightRed
+                    Exit Sub
+                End If
+            Next
             
-                ' stat requirements
-                For i = 1 To Stats.Stat_Count - 1
-                    If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
-                        PlayerMsg Index, "You do not meet the stat requirements to use this item.", BrightRed
-                        Exit Sub
-                    End If
-                Next
-                
-                ' level requirement
-                If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
-                    PlayerMsg Index, "You do not meet the level requirement to use this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' access requirement
-                If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
-                    PlayerMsg Index, "You do not meet the access requirement to use this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' Get the pet num
-                n = Item(itemnum).Data1
+            ' level requirement
+            If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
+                PlayerMsg Index, "You do not meet the level requirement to use this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' access requirement
+            If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
+                PlayerMsg Index, "You do not meet the access requirement to use this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' Get the pet num
+            n = Item(itemnum).Data1
 
-                If n > 0 Then
-                    Call SummonPet(Index, n)
-                End If
-                
-                ' send the sound
-                SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
-            Case ITEM_TYPE_PET_STATS
+            If n > 0 Then
+                Call SummonPet(Index, n)
+            End If
             
-                ' stat requirements
-                For i = 1 To Stats.Stat_Count - 1
-                    If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
-                        PlayerMsg Index, "You do not meet the stat requirements to use this item.", BrightRed
-                        Exit Sub
+            ' send the sound
+            SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
+        Case ITEM_TYPE_PET_STATS
+        
+            ' stat requirements
+            For i = 1 To Stats.Stat_Count - 1
+                If GetPlayerRawStat(Index, i) < Item(itemnum).Stat_Req(i) Then
+                    PlayerMsg Index, "You do not meet the stat requirements to use this item.", BrightRed
+                    Exit Sub
+                End If
+            Next
+            
+            ' level requirement
+            If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
+                PlayerMsg Index, "You do not meet the level requirement to use this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' access requirement
+            If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
+                PlayerMsg Index, "You do not meet the access requirement to use this item.", BrightRed
+                Exit Sub
+            End If
+            
+            ' Get the pet stat
+            Select Case Item(itemnum).Data1
+                
+                Case 0 ' Health
+                    ' Check For Increase Or Decrease
+                    If Item(itemnum).Data2 = 0 Then ' Increase
+                        Player(Index).Pet.Health = Player(Index).Pet.Health + (Item(itemnum).Data3 / Player(Index).Pet.MaxHp) * 100
+                        
+                        ' Check If Health Is Over MaxHP
+                        If Player(Index).Pet.Health > Player(Index).Pet.MaxHp Then
+                            Player(Index).Pet.Health = Player(Index).Pet.MaxHp
+                        End If
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's health has increased to " & Player(Index).Pet.Health & "!", Green
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                        
+                    ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
+                        ' Check If Health Isnt 0
+                        If Player(Index).Pet.Health = 0 Then
+                            PlayerMsg Index, "You can't decrease your pet's health!", Red
+                            Exit Sub
+                        End If
+                        
+                        Player(Index).Pet.Health = Player(Index).Pet.Health - (Item(itemnum).Data3 / Player(Index).Pet.MaxHp) * 100
+                        
+                        ' Check If Health Is Over MaxHP
+                        If Player(Index).Pet.Health <= 0 Then
+                            ReleasePet Index
+                        End If
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's health has decreased to " & Player(Index).Pet.Health & "!", Red
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
                     End If
-                Next
-                
-                ' level requirement
-                If GetPlayerLevel(Index) < Item(itemnum).LevelReq Then
-                    PlayerMsg Index, "You do not meet the level requirement to use this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' access requirement
-                If Not GetPlayerAccess(Index) >= Item(itemnum).AccessReq Then
-                    PlayerMsg Index, "You do not meet the access requirement to use this item.", BrightRed
-                    Exit Sub
-                End If
-                
-                ' Get the pet stat
-                Select Case Item(itemnum).Data1
                     
-                    Case 0 ' Health
-                        ' Check For Increase Or Decrease
-                        If Item(itemnum).Data2 = 0 Then ' Increase
-                            Player(Index).Pet.Health = Player(Index).Pet.Health + (Item(itemnum).Data3 / Player(Index).Pet.MaxHp) * 100
-                            
-                            ' Check If Health Is Over MaxHP
-                            If Player(Index).Pet.Health > Player(Index).Pet.MaxHp Then
-                                Player(Index).Pet.Health = Player(Index).Pet.MaxHp
-                            End If
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's health has increased to " & Player(Index).Pet.Health & "!", Green
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                            
-                        ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
-                            ' Check If Health Isnt 0
-                            If Player(Index).Pet.Health = 0 Then
-                                PlayerMsg Index, "You can't decrease your pet's health!", Red
-                                Exit Sub
-                            End If
-                            
-                            Player(Index).Pet.Health = Player(Index).Pet.Health - (Item(itemnum).Data3 / Player(Index).Pet.MaxHp) * 100
-                            
-                            ' Check If Health Is Over MaxHP
-                            If Player(Index).Pet.Health <= 0 Then
-                                ReleasePet Index
-                            End If
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's health has decreased to " & Player(Index).Pet.Health & "!", Red
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
+                Case 1 ' Mana
+                    ' Check For Increase Or Decrease
+                    If Item(itemnum).Data2 = 0 Then ' Increase
+                        Player(Index).Pet.Mana = Player(Index).Pet.Mana + (Item(itemnum).Data3 / Player(Index).Pet.MaxMp) * 100
+                        
+                        ' Check If Mana Is Over MaxMP
+                        If Player(Index).Pet.Mana > Player(Index).Pet.MaxMp Then
+                            Player(Index).Pet.Mana = Player(Index).Pet.MaxMp
                         End If
                         
-                    Case 1 ' Mana
-                        ' Check For Increase Or Decrease
-                        If Item(itemnum).Data2 = 0 Then ' Increase
-                            Player(Index).Pet.Mana = Player(Index).Pet.Mana + (Item(itemnum).Data3 / Player(Index).Pet.MaxMp) * 100
-                            
-                            ' Check If Mana Is Over MaxMP
-                            If Player(Index).Pet.Mana > Player(Index).Pet.MaxMp Then
-                                Player(Index).Pet.Mana = Player(Index).Pet.MaxMp
-                            End If
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's mana has increased to " & Player(Index).Pet.Mana & "!", Green
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                            
-                        ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
-                            Player(Index).Pet.Mana = Player(Index).Pet.Mana - (Item(itemnum).Data3 / Player(Index).Pet.MaxMp) * 100
-                            
-                            ' Check If Health Is Over MaxHP
-                            If Player(Index).Pet.Mana < 0 Then
-                                Player(Index).Pet.Mana = 0
-                            End If
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's mana has decreased to " & Player(Index).Pet.Mana & "!", Red
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                        End If
-                    
-                    Case 2 ' MaxHP
-                        ' Check For Increase Or Decrease
-                        If Item(itemnum).Data2 = 0 Then ' Increase
-                            Player(Index).Pet.MaxHp = Player(Index).Pet.MaxHp + (Item(itemnum).Data3 / Player(Index).Pet.MaxHp) * 100
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's max health has increased to " & Player(Index).Pet.MaxHp & "!", Green
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                            
-                        ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
-                            Player(Index).Pet.MaxHp = Player(Index).Pet.MaxHp - (Item(itemnum).Data3 / Player(Index).Pet.MaxHp) * 100
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's max health has decreased to " & Player(Index).Pet.MaxHp & "!", Red
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's mana has increased to " & Player(Index).Pet.Mana & "!", Green
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                        
+                    ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
+                        Player(Index).Pet.Mana = Player(Index).Pet.Mana - (Item(itemnum).Data3 / Player(Index).Pet.MaxMp) * 100
+                        
+                        ' Check If Health Is Over MaxHP
+                        If Player(Index).Pet.Mana < 0 Then
+                            Player(Index).Pet.Mana = 0
                         End If
                         
-                    Case 3 ' MaxMP
-                        ' Check For Increase Or Decrease
-                        If Item(itemnum).Data2 = 0 Then ' Increase
-                            Player(Index).Pet.MaxMp = Player(Index).Pet.MaxMp + (Item(itemnum).Data3 / Player(Index).Pet.MaxMp) * 100
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's max mana has increased to " & Player(Index).Pet.MaxMp & "!", Green
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                            
-                        ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
-                            Player(Index).Pet.MaxMp = Player(Index).Pet.MaxMp - (Item(itemnum).Data3 / Player(Index).Pet.MaxMp) * 100
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's max mana has decreased to " & Player(Index).Pet.MaxMp & "!", Red
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                        End If
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's mana has decreased to " & Player(Index).Pet.Mana & "!", Red
                         
-                    Case 4 ' Str
-                        ' Check For Increase Or Decrease
-                        If Item(itemnum).Data2 = 0 Then ' Increase
-                            Player(Index).Pet.Stat(1) = Player(Index).Pet.Stat(1) + Item(itemnum).Data3
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's strength has increased to " & Player(Index).Pet.Stat(1) & "!", Green
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                            
-                        ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
-                            If Player(Index).Pet.Stat(1) - Item(itemnum).Data3 < 0 Then
-                                Player(Index).Pet.Stat(1) = 0
-                            
-                            Else
-                                Player(Index).Pet.Stat(1) = Player(Index).Pet.Stat(1) - Item(itemnum).Data3
-                            End If
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's strength has decreased to " & Player(Index).Pet.Stat(1) & "!", Red
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                        End If
-                        
-                    Case 5 ' End
-                        ' Check For Increase Or Decrease
-                        If Item(itemnum).Data2 = 0 Then ' Increase
-                            Player(Index).Pet.Stat(2) = Player(Index).Pet.Stat(2) + Item(itemnum).Data3
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's endurance has increased to " & Player(Index).Pet.Stat(2) & "!", Green
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                            
-                        ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
-                            If Player(Index).Pet.Stat(2) - Item(itemnum).Data3 < 0 Then
-                                Player(Index).Pet.Stat(2) = 0
-                            
-                            Else
-                                Player(Index).Pet.Stat(2) = Player(Index).Pet.Stat(2) - Item(itemnum).Data3
-                            End If
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's endurance has decreased to " & Player(Index).Pet.Stat(2) & "!", Red
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                        End If
-                        
-                    Case 6 ' Int
-                        ' Check For Increase Or Decrease
-                        If Item(itemnum).Data2 = 0 Then ' Increase
-                            Player(Index).Pet.Stat(3) = Player(Index).Pet.Stat(3) + Item(itemnum).Data3
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's intelligence has increased to " & Player(Index).Pet.Stat(3) & "!", Green
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                            
-                        ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
-                            If Player(Index).Pet.Stat(3) - Item(itemnum).Data3 < 0 Then
-                                Player(Index).Pet.Stat(3) = 0
-                            
-                            Else
-                                Player(Index).Pet.Stat(3) = Player(Index).Pet.Stat(3) - Item(itemnum).Data3
-                            End If
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's intelligence has decreased to " & Player(Index).Pet.Stat(3) & "!", Red
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                        End If
-                        
-                    Case 7 ' Agi
-                        ' Check For Increase Or Decrease
-                        If Item(itemnum).Data2 = 0 Then ' Increase
-                            Player(Index).Pet.Stat(4) = Player(Index).Pet.Stat(4) + Item(itemnum).Data3
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's agility has increased to " & Player(Index).Pet.Stat(4) & "!", Green
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                            
-                        ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
-                            If Player(Index).Pet.Stat(4) - Item(itemnum).Data3 < 0 Then
-                                Player(Index).Pet.Stat(4) = 0
-                            
-                            Else
-                                Player(Index).Pet.Stat(4) = Player(Index).Pet.Stat(4) - Item(itemnum).Data3
-                            End If
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's agility has decreased to " & Player(Index).Pet.Stat(4) & "!", Red
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                        End If
-                    
-                    Case 8 ' Will
-                        ' Check For Increase Or Decrease
-                        If Item(itemnum).Data2 = 0 Then ' Increase
-                            Player(Index).Pet.Stat(5) = Player(Index).Pet.Stat(5) + Item(itemnum).Data3
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's willpower has increased to " & Player(Index).Pet.Stat(5) & "!", Green
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                            
-                        ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
-                            If Player(Index).Pet.Stat(5) - Item(itemnum).Data3 < 0 Then
-                                Player(Index).Pet.Stat(5) = 0
-                            
-                            Else
-                                Player(Index).Pet.Stat(5) = Player(Index).Pet.Stat(5) - Item(itemnum).Data3
-                            End If
-                            
-                            Call TakeInvItem(Index, itemnum, 0)
-                            PlayerMsg Index, "Your pet's willpower has decreased to " & Player(Index).Pet.Stat(5) & "!", Red
-                            
-                            ' Break Out Of Select Case
-                            GoTo PlySnd
-                        End If
-                        
-                End Select
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                    End If
                 
+                Case 2 ' MaxHP
+                    ' Check For Increase Or Decrease
+                    If Item(itemnum).Data2 = 0 Then ' Increase
+                        Player(Index).Pet.MaxHp = Player(Index).Pet.MaxHp + (Item(itemnum).Data3 / Player(Index).Pet.MaxHp) * 100
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's max health has increased to " & Player(Index).Pet.MaxHp & "!", Green
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                        
+                    ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
+                        Player(Index).Pet.MaxHp = Player(Index).Pet.MaxHp - (Item(itemnum).Data3 / Player(Index).Pet.MaxHp) * 100
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's max health has decreased to " & Player(Index).Pet.MaxHp & "!", Red
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                    End If
+                    
+                Case 3 ' MaxMP
+                    ' Check For Increase Or Decrease
+                    If Item(itemnum).Data2 = 0 Then ' Increase
+                        Player(Index).Pet.MaxMp = Player(Index).Pet.MaxMp + (Item(itemnum).Data3 / Player(Index).Pet.MaxMp) * 100
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's max mana has increased to " & Player(Index).Pet.MaxMp & "!", Green
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                        
+                    ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
+                        Player(Index).Pet.MaxMp = Player(Index).Pet.MaxMp - (Item(itemnum).Data3 / Player(Index).Pet.MaxMp) * 100
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's max mana has decreased to " & Player(Index).Pet.MaxMp & "!", Red
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                    End If
+                    
+                Case 4 ' Str
+                    ' Check For Increase Or Decrease
+                    If Item(itemnum).Data2 = 0 Then ' Increase
+                        Player(Index).Pet.Stat(1) = Player(Index).Pet.Stat(1) + Item(itemnum).Data3
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's strength has increased to " & Player(Index).Pet.Stat(1) & "!", Green
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                        
+                    ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
+                        If Player(Index).Pet.Stat(1) - Item(itemnum).Data3 < 0 Then
+                            Player(Index).Pet.Stat(1) = 0
+                        
+                        Else
+                            Player(Index).Pet.Stat(1) = Player(Index).Pet.Stat(1) - Item(itemnum).Data3
+                        End If
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's strength has decreased to " & Player(Index).Pet.Stat(1) & "!", Red
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                    End If
+                    
+                Case 5 ' End
+                    ' Check For Increase Or Decrease
+                    If Item(itemnum).Data2 = 0 Then ' Increase
+                        Player(Index).Pet.Stat(2) = Player(Index).Pet.Stat(2) + Item(itemnum).Data3
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's endurance has increased to " & Player(Index).Pet.Stat(2) & "!", Green
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                        
+                    ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
+                        If Player(Index).Pet.Stat(2) - Item(itemnum).Data3 < 0 Then
+                            Player(Index).Pet.Stat(2) = 0
+                        
+                        Else
+                            Player(Index).Pet.Stat(2) = Player(Index).Pet.Stat(2) - Item(itemnum).Data3
+                        End If
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's endurance has decreased to " & Player(Index).Pet.Stat(2) & "!", Red
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                    End If
+                    
+                Case 6 ' Int
+                    ' Check For Increase Or Decrease
+                    If Item(itemnum).Data2 = 0 Then ' Increase
+                        Player(Index).Pet.Stat(3) = Player(Index).Pet.Stat(3) + Item(itemnum).Data3
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's intelligence has increased to " & Player(Index).Pet.Stat(3) & "!", Green
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                        
+                    ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
+                        If Player(Index).Pet.Stat(3) - Item(itemnum).Data3 < 0 Then
+                            Player(Index).Pet.Stat(3) = 0
+                        
+                        Else
+                            Player(Index).Pet.Stat(3) = Player(Index).Pet.Stat(3) - Item(itemnum).Data3
+                        End If
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's intelligence has decreased to " & Player(Index).Pet.Stat(3) & "!", Red
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                    End If
+                    
+                Case 7 ' Agi
+                    ' Check For Increase Or Decrease
+                    If Item(itemnum).Data2 = 0 Then ' Increase
+                        Player(Index).Pet.Stat(4) = Player(Index).Pet.Stat(4) + Item(itemnum).Data3
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's agility has increased to " & Player(Index).Pet.Stat(4) & "!", Green
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                        
+                    ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
+                        If Player(Index).Pet.Stat(4) - Item(itemnum).Data3 < 0 Then
+                            Player(Index).Pet.Stat(4) = 0
+                        
+                        Else
+                            Player(Index).Pet.Stat(4) = Player(Index).Pet.Stat(4) - Item(itemnum).Data3
+                        End If
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's agility has decreased to " & Player(Index).Pet.Stat(4) & "!", Red
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                    End If
+                
+                Case 8 ' Will
+                    ' Check For Increase Or Decrease
+                    If Item(itemnum).Data2 = 0 Then ' Increase
+                        Player(Index).Pet.Stat(5) = Player(Index).Pet.Stat(5) + Item(itemnum).Data3
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's willpower has increased to " & Player(Index).Pet.Stat(5) & "!", Green
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                        
+                    ElseIf Item(itemnum).Data2 = 1 Then ' Decrease
+                        If Player(Index).Pet.Stat(5) - Item(itemnum).Data3 < 0 Then
+                            Player(Index).Pet.Stat(5) = 0
+                        
+                        Else
+                            Player(Index).Pet.Stat(5) = Player(Index).Pet.Stat(5) - Item(itemnum).Data3
+                        End If
+                        
+                        Call TakeInvItem(Index, itemnum, 0)
+                        PlayerMsg Index, "Your pet's willpower has decreased to " & Player(Index).Pet.Stat(5) & "!", Red
+                        
+                        ' Break Out Of Select Case
+                        GoTo PlySnd
+                    End If
+                    
+            End Select
+            
 PlySnd:
-                ' send the sound
-                SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
-        End Select
-    End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "UseItem", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+            ' send the sound
+            SendPlayerSound Index, GetPlayerX(Index), GetPlayerY(Index), SoundEntity.seItem, itemnum
+    End Select
 End Sub
 
 ' *****************
 ' ** Event Logic **
 ' *****************
 Private Function IsForwardingEvent(ByVal EType As EventType) As Boolean
-   On Error GoTo ErrorHandler
-
     Select Case EType
         Case Evt_Menu, Evt_Message
             IsForwardingEvent = False
         Case Else
             IsForwardingEvent = True
     End Select
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "IsForwardingEvent", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Sub InitEvent(ByVal Index As Long, ByVal EventIndex As Long)
-   On Error GoTo ErrorHandler
-
-    If TempPlayer(Index).CurrentEvent > 0 And TempPlayer(Index).CurrentEvent <= MAX_EVENTS Then Exit Sub
     If Events(EventIndex).chkVariable > 0 Then
         If Not CheckComparisonOperator(Player(Index).Variables(Events(EventIndex).VariableIndex), Events(EventIndex).VariableCondition, Events(EventIndex).VariableCompare) = True Then
             Exit Sub
@@ -3515,18 +2593,9 @@ Public Sub InitEvent(ByVal Index As Long, ByVal EventIndex As Long)
     
     TempPlayer(Index).CurrentEvent = EventIndex
     Call DoEventLogic(Index, 1)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "InitEvent", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Function CheckComparisonOperator(ByVal numOne As Long, ByVal numTwo As Long, ByVal opr As ComparisonOperator) As Boolean
-   On Error GoTo ErrorHandler
-
     CheckComparisonOperator = False
     Select Case opr
         Case GEQUAL
@@ -3542,21 +2611,11 @@ Public Function CheckComparisonOperator(ByVal numOne As Long, ByVal numTwo As Lo
         Case NOTEQUAL
             If Not (numOne = numTwo) Then CheckComparisonOperator = True
     End Select
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CheckComparisonOperator", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Sub DoEventLogic(ByVal Index As Long, ByVal Opt As Long)
 Dim x As Long, y As Long, i As Long
     
-   On Error GoTo ErrorHandler
-
-    If TempPlayer(Index).CurrentEvent <= 0 Or TempPlayer(Index).CurrentEvent > MAX_EVENTS Then GoTo EventQuit
     If Not (Events(TempPlayer(Index).CurrentEvent).HasSubEvents) Then GoTo EventQuit
     If Opt <= 0 Or Opt > UBound(Events(TempPlayer(Index).CurrentEvent).SubEvents) Then GoTo EventQuit
     
@@ -3796,21 +2855,11 @@ Exit Sub
 EventQuit:
     TempPlayer(Index).CurrentEvent = -1
     Events_SendEventQuit Index
-    Exit Sub
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "DoEventLogic", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub CheckEvent(ByVal Index As Long, ByVal x As Long, ByVal y As Long)
     Dim Event_index As Long
     
-   On Error GoTo ErrorHandler
-
     If Map(GetPlayerMap(Index)).Tile(x, y).Type = TILE_TYPE_EVENT Then
         Event_index = Map(GetPlayerMap(Index)).Tile(x, y).Data1
     End If
@@ -3820,13 +2869,6 @@ Sub CheckEvent(ByVal Index As Long, ByVal x As Long, ByVal y As Long)
             InitEvent Index, Event_index
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CheckEvent", "modPlayer", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ApplyBuff(ByVal Index As Long, ByVal BuffType As Long, ByVal Duration As Long, ByVal Amount As Long)

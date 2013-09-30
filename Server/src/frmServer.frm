@@ -714,10 +714,6 @@ Private Sub Socket_ConnectionRequest(Index As Integer, ByVal requestID As Long)
     Call AcceptConnection(Index, requestID)
 End Sub
 
-Private Sub Socket_Accept(Index As Integer, SocketId As Integer)
-    Call AcceptConnection(Index, SocketId)
-End Sub
-
 Private Sub Socket_DataArrival(Index As Integer, ByVal bytesTotal As Long)
 
     If IsConnected(Index) Then

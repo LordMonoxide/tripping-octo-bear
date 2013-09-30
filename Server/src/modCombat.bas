@@ -6,7 +6,6 @@ Option Explicit
 ' ################################
 
 Function GetPlayerMaxVital(ByVal Index As Long, ByVal Vital As Vitals) As Long
-   On Error GoTo ErrorHandler
 Dim i As Long
 
     Select Case Vital
@@ -32,25 +31,10 @@ Dim i As Long
                 End If
             Next
     End Select
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerMaxVital", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function GetPlayerVitalRegen(ByVal Index As Long, ByVal Vital As Vitals) As Long
     Dim i As Long
-
-    ' Prevent subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(Index) = False Or Index <= 0 Or Index > MAX_PLAYERS Then
-        GetPlayerVitalRegen = 0
-        Exit Function
-    End If
 
     Select Case Vital
         Case HP
@@ -61,19 +45,11 @@ Function GetPlayerVitalRegen(ByVal Index As Long, ByVal Vital As Vitals) As Long
 
     If i < 2 Then i = 2
     GetPlayerVitalRegen = i
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerVitalRegen", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function GetPlayerDamage(ByVal Index As Long) As Long
 Dim weaponNum As Long
     Dim i As Long
-   On Error GoTo ErrorHandler
 
     GetPlayerDamage = 0
 
@@ -95,19 +71,11 @@ For i = 1 To 10
             GetPlayerDamage = GetPlayerDamage - TempPlayer(Index).BuffValue(i)
         End If
     Next
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerDamage", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 Function GetPlayerPDef(ByVal Index As Long) As Long
     Dim DefNum As Long
     Dim DEF As Long
     Dim i As Long
-   On Error GoTo ErrorHandler
 
     GetPlayerPDef = 0
     DEF = 0
@@ -139,19 +107,11 @@ For i = 1 To 10
             GetPlayerPDef = GetPlayerPDef - TempPlayer(Index).BuffValue(i)
         End If
     Next
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerPDef", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 Function GetPlayerRDef(ByVal Index As Long) As Long
     Dim DefNum As Long
     Dim DEF As Long
     
-   On Error GoTo ErrorHandler
-
     GetPlayerRDef = 0
     DEF = 0
     ' Check for subscript out of range
@@ -174,20 +134,11 @@ Function GetPlayerRDef(ByVal Index As Long) As Long
     Else
         GetPlayerRDef = DEF + 0.085 * GetPlayerStat(Index, Endurance) + (GetPlayerLevel(Index) / 5)
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerRDef", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 Function GetPlayerMDef(ByVal Index As Long) As Long
     Dim DefNum As Long
     Dim DEF As Long
     
-   On Error GoTo ErrorHandler
-
     GetPlayerMDef = 0
     DEF = 0
     ' Check for subscript out of range
@@ -210,96 +161,39 @@ Function GetPlayerMDef(ByVal Index As Long) As Long
     Else
         GetPlayerMDef = DEF + 0.085 * GetPlayerStat(Index, Endurance) + (GetPlayerLevel(Index) / 5)
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerMDef", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function GetPlayerSpellDamage(ByVal Index As Long, ByVal spellnum As Long, ByVal Vital As Vitals) As Long
 Dim Damage As Long
 
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(Index) = False Or Index <= 0 Or Index > MAX_PLAYERS Then
-        Exit Function
-    End If
-    
     ' return damage
     Damage = spell(spellnum).Vital(Vital)
     ' 10% modifier
     If Damage <= 0 Then Damage = 1
     GetPlayerSpellDamage = RAND(Damage - ((Damage / 100) * 10), Damage + ((Damage / 100) * 10))
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetPlayerSpellDamage", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function GetNpcSpellDamage(ByVal npcNum As Long, ByVal spellnum As Long, ByVal Vital As Vitals) As Long
 Dim Damage As Long
 
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If npcNum <= 0 Or npcNum > MAX_NPCS Then Exit Function
-    
     ' return damage
     Damage = spell(spellnum).Vital(Vital)
     ' 10% modifier
     If Damage <= 0 Then Damage = 1
     GetNpcSpellDamage = RAND(Damage - ((Damage / 100) * 10), Damage + ((Damage / 100) * 10))
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetNpcSpellDamage", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function GetNpcMaxVital(ByVal npcNum As Long, ByVal Vital As Vitals) As Long
-    ' Prevent subscript out of range
-   On Error GoTo ErrorHandler
-
-    If npcNum <= 0 Or npcNum > MAX_NPCS Then
-        GetNpcMaxVital = 0
-        Exit Function
-    End If
-
     Select Case Vital
         Case HP
             GetNpcMaxVital = NPC(npcNum).HP
         Case MP
             GetNpcMaxVital = 30 + (NPC(npcNum).Stat(Intelligence) * 10) + 2
     End Select
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetNpcMaxVital", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function GetNpcVitalRegen(ByVal npcNum As Long, ByVal Vital As Vitals) As Long
     Dim i As Long
-
-    'Prevent subscript out of range
-   On Error GoTo ErrorHandler
-
-    If npcNum <= 0 Or npcNum > MAX_NPCS Then
-        GetNpcVitalRegen = 0
-        Exit Function
-    End If
 
     Select Case Vital
         Case HP
@@ -309,47 +203,19 @@ Function GetNpcVitalRegen(ByVal npcNum As Long, ByVal Vital As Vitals) As Long
     End Select
     
     GetNpcVitalRegen = i
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetNpcVitalRegen", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Function GetNpcDamage(ByVal npcNum As Long) As Long
-    ' return the calculation
-   On Error GoTo ErrorHandler
-
     GetNpcDamage = NPC(npcNum).Damage + (((NPC(npcNum).Damage / 100) * 5) * NPC(npcNum).Stat(Stats.Strength))
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetNpcDamage", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function GetNpcDefence(ByVal npcNum As Long) As Long
 Dim Defence As Long
     
-    ' base defence
-   On Error GoTo ErrorHandler
-
     Defence = 2
     
     ' add in a player's agility
     GetNpcDefence = Defence + (((Defence / 100) * 2.5) * (NPC(npcNum).Stat(Stats.Agility) / 2))
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "GetNpcDefence", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 ' ###############################
@@ -359,26 +225,15 @@ Public Function CanPlayerBlock(ByVal Index As Long) As Boolean
 Dim rate As Long
 Dim rndNum As Long
 
-   On Error GoTo ErrorHandler
-
     CanPlayerBlock = False
 
     rate = 0
     ' TODO : make it based on shield lulz
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanPlayerBlock", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Function CanPlayerCrit(ByVal Index As Long) As Boolean
 Dim rate As Long
 Dim rndNum As Long
-
-   On Error GoTo ErrorHandler
 
     CanPlayerCrit = False
 
@@ -387,20 +242,11 @@ Dim rndNum As Long
     If rndNum <= rate Then
         CanPlayerCrit = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanPlayerCrit", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Function CanPlayerDodge(ByVal Index As Long) As Boolean
 Dim rate As Long
 Dim rndNum As Long
-
-   On Error GoTo ErrorHandler
 
     CanPlayerDodge = False
 
@@ -409,20 +255,11 @@ Dim rndNum As Long
     If rndNum <= rate Then
         CanPlayerDodge = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanPlayerDodge", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Function CanPlayerParry(ByVal Index As Long) As Boolean
 Dim rate As Long
 Dim rndNum As Long
-
-   On Error GoTo ErrorHandler
 
     CanPlayerParry = False
 
@@ -431,39 +268,21 @@ Dim rndNum As Long
     If rndNum <= rate Then
         CanPlayerParry = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanPlayerParry", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Function CanNpcBlock(ByVal npcNum As Long) As Boolean
 Dim rate As Long
 Dim rndNum As Long
 
-   On Error GoTo ErrorHandler
-
     CanNpcBlock = False
 
     rate = 0
     ' TODO : make it based on shield lol
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanNpcBlock", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Function CanNpcCrit(ByVal npcNum As Long) As Boolean
 Dim rate As Long
 Dim rndNum As Long
-
-   On Error GoTo ErrorHandler
 
     CanNpcCrit = False
 
@@ -472,20 +291,11 @@ Dim rndNum As Long
     If rndNum <= rate Then
         CanNpcCrit = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanNpcCrit", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Function CanNpcDodge(ByVal npcNum As Long) As Boolean
 Dim rate As Long
 Dim rndNum As Long
-
-   On Error GoTo ErrorHandler
 
     CanNpcDodge = False
 
@@ -494,20 +304,11 @@ Dim rndNum As Long
     If rndNum <= rate Then
         CanNpcDodge = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanNpcDodge", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Function CanNpcParry(ByVal npcNum As Long) As Boolean
 Dim rate As Long
 Dim rndNum As Long
-
-   On Error GoTo ErrorHandler
 
     CanNpcParry = False
 
@@ -516,13 +317,6 @@ Dim rndNum As Long
     If rndNum <= rate Then
         CanNpcParry = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanNpcParry", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 ' ###################################
@@ -533,8 +327,6 @@ Dim blockAmount As Long
 Dim npcNum As Long
 Dim mapNum As Long
 Dim Damage As Long
-
-   On Error GoTo ErrorHandler
 
     Damage = 0
 
@@ -582,13 +374,6 @@ Dim Damage As Long
             Call PlayerMsg(Index, "Your attack does nothing.", BrightRed)
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "TryPlayerAttackNpc", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Function CanPlayerAttackNpc(ByVal attacker As Long, ByVal mapNpcNum As Long, Optional ByVal IsSpell As Boolean = False) As Boolean
@@ -598,18 +383,6 @@ Public Function CanPlayerAttackNpc(ByVal attacker As Long, ByVal mapNpcNum As Lo
     Dim NpcY As Long
     Dim attackspeed As Long
 
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(attacker) = False Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Then
-        Exit Function
-    End If
-
-    ' Check for subscript out of range
-    If MapNpc(GetPlayerMap(attacker)).NPC(mapNpcNum).Num <= 0 Then
-        Exit Function
-    End If
-
     mapNum = GetPlayerMap(attacker)
     npcNum = MapNpc(mapNum).NPC(mapNpcNum).Num
     
@@ -618,113 +391,97 @@ Public Function CanPlayerAttackNpc(ByVal attacker As Long, ByVal mapNpcNum As Lo
         Exit Function
     End If
 
-    ' Make sure they are on the same map
-    If IsPlaying(attacker) Then
-    
-        ' exit out early
-        If IsSpell Then
-             If npcNum > 0 Then
+    ' exit out early
+    If IsSpell Then
+        If NPC(npcNum).Behaviour <> NPC_BEHAVIOUR_FRIENDLY And NPC(npcNum).Behaviour <> NPC_BEHAVIOUR_SHOPKEEPER Then
+            TempPlayer(attacker).targetType = TARGET_TYPE_NPC
+            TempPlayer(attacker).target = mapNpcNum
+            SendTarget attacker
+            CanPlayerAttackNpc = True
+            Exit Function
+        End If
+    End If
+
+    ' attack speed from weapon
+    If GetPlayerEquipment(attacker, Weapon) > 0 Then
+        attackspeed = Item(GetPlayerEquipment(attacker, Weapon)).Speed
+    Else
+        attackspeed = 1000
+    End If
+
+    If timeGetTime > TempPlayer(attacker).AttackTimer + attackspeed Then
+        ' Check if at same coordinates
+        Select Case GetPlayerDir(attacker)
+            Case DIR_UP, DIR_UP_LEFT, DIR_UP_RIGHT
+                NpcX = MapNpc(mapNum).NPC(mapNpcNum).x
+                NpcY = MapNpc(mapNum).NPC(mapNpcNum).y + 1
+            Case DIR_DOWN, DIR_DOWN_LEFT, DIR_DOWN_RIGHT
+                NpcX = MapNpc(mapNum).NPC(mapNpcNum).x
+                NpcY = MapNpc(mapNum).NPC(mapNpcNum).y - 1
+            Case DIR_UP
+                NpcX = MapNpc(mapNum).NPC(mapNpcNum).x
+                NpcY = MapNpc(mapNum).NPC(mapNpcNum).y + 1
+            Case DIR_DOWN
+                NpcX = MapNpc(mapNum).NPC(mapNpcNum).x
+                NpcY = MapNpc(mapNum).NPC(mapNpcNum).y - 1
+            Case DIR_LEFT
+                NpcX = MapNpc(mapNum).NPC(mapNpcNum).x + 1
+                NpcY = MapNpc(mapNum).NPC(mapNpcNum).y
+            Case DIR_RIGHT
+                NpcX = MapNpc(mapNum).NPC(mapNpcNum).x - 1
+                NpcY = MapNpc(mapNum).NPC(mapNpcNum).y
+        End Select
+
+        If NpcX = GetPlayerX(attacker) Then
+            If NpcY = GetPlayerY(attacker) Then
                 If NPC(npcNum).Behaviour <> NPC_BEHAVIOUR_FRIENDLY And NPC(npcNum).Behaviour <> NPC_BEHAVIOUR_SHOPKEEPER Then
                     TempPlayer(attacker).targetType = TARGET_TYPE_NPC
                     TempPlayer(attacker).target = mapNpcNum
                     SendTarget attacker
                     CanPlayerAttackNpc = True
-                    Exit Function
-                End If
-            End If
-        End If
-
-        ' attack speed from weapon
-        If GetPlayerEquipment(attacker, Weapon) > 0 Then
-            attackspeed = Item(GetPlayerEquipment(attacker, Weapon)).Speed
-        Else
-            attackspeed = 1000
-        End If
-
-        If npcNum > 0 And timeGetTime > TempPlayer(attacker).AttackTimer + attackspeed Then
-            ' Check if at same coordinates
-            Select Case GetPlayerDir(attacker)
-                Case DIR_UP, DIR_UP_LEFT, DIR_UP_RIGHT
-                    NpcX = MapNpc(mapNum).NPC(mapNpcNum).x
-                    NpcY = MapNpc(mapNum).NPC(mapNpcNum).y + 1
-                Case DIR_DOWN, DIR_DOWN_LEFT, DIR_DOWN_RIGHT
-                    NpcX = MapNpc(mapNum).NPC(mapNpcNum).x
-                    NpcY = MapNpc(mapNum).NPC(mapNpcNum).y - 1
-                Case DIR_UP
-                    NpcX = MapNpc(mapNum).NPC(mapNpcNum).x
-                    NpcY = MapNpc(mapNum).NPC(mapNpcNum).y + 1
-                Case DIR_DOWN
-                    NpcX = MapNpc(mapNum).NPC(mapNpcNum).x
-                    NpcY = MapNpc(mapNum).NPC(mapNpcNum).y - 1
-                Case DIR_LEFT
-                    NpcX = MapNpc(mapNum).NPC(mapNpcNum).x + 1
-                    NpcY = MapNpc(mapNum).NPC(mapNpcNum).y
-                Case DIR_RIGHT
-                    NpcX = MapNpc(mapNum).NPC(mapNpcNum).x - 1
-                    NpcY = MapNpc(mapNum).NPC(mapNpcNum).y
-            End Select
-
-            If NpcX = GetPlayerX(attacker) Then
-                If NpcY = GetPlayerY(attacker) Then
-                    If NPC(npcNum).Behaviour <> NPC_BEHAVIOUR_FRIENDLY And NPC(npcNum).Behaviour <> NPC_BEHAVIOUR_SHOPKEEPER Then
-                        TempPlayer(attacker).targetType = TARGET_TYPE_NPC
-                        TempPlayer(attacker).target = mapNpcNum
-                        SendTarget attacker
-                        CanPlayerAttackNpc = True
-                    Else
-                    If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_FRIENDLY Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Then
-                            Call CheckTasks(attacker, QUEST_TYPE_GOTALK, npcNum)
-                            Call CheckTasks(attacker, QUEST_TYPE_GOGIVE, npcNum)
-                            Call CheckTasks(attacker, QUEST_TYPE_GOGET, npcNum)
-                            
-                            If NPC(npcNum).Quest = YES Then
-                                If Player(attacker).PlayerQuest(NPC(npcNum).Quest).Status = QUEST_COMPLETED Then
-                                    If Quest(NPC(npcNum).Quest).Repeat = YES Then
-                                        Player(attacker).PlayerQuest(NPC(npcNum).Quest).Status = QUEST_COMPLETED_BUT
-                                        Exit Function
-                                    End If
-                                End If
-                                If CanStartQuest(attacker, NPC(npcNum).QuestNum) Then
-                                    'if can start show the request message (speech1)
-                                    QuestMessage attacker, NPC(npcNum).QuestNum, Trim$(Quest(NPC(npcNum).QuestNum).Speech(1)), NPC(npcNum).QuestNum
-                                    Exit Function
-                                End If
-                                If QuestInProgress(attacker, NPC(npcNum).QuestNum) Then
-                                    'if the quest is in progress show the meanwhile message (speech2)
-                                    QuestMessage attacker, NPC(npcNum).QuestNum, Trim$(Quest(NPC(npcNum).QuestNum).Speech(2)), 0
+                Else
+                If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_FRIENDLY Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Then
+                        Call CheckTasks(attacker, QUEST_TYPE_GOTALK, npcNum)
+                        Call CheckTasks(attacker, QUEST_TYPE_GOGIVE, npcNum)
+                        Call CheckTasks(attacker, QUEST_TYPE_GOGET, npcNum)
+                        
+                        If NPC(npcNum).Quest = YES Then
+                            If Player(attacker).PlayerQuest(NPC(npcNum).Quest).Status = QUEST_COMPLETED Then
+                                If Quest(NPC(npcNum).Quest).Repeat = YES Then
+                                    Player(attacker).PlayerQuest(NPC(npcNum).Quest).Status = QUEST_COMPLETED_BUT
                                     Exit Function
                                 End If
                             End If
+                            If CanStartQuest(attacker, NPC(npcNum).QuestNum) Then
+                                'if can start show the request message (speech1)
+                                QuestMessage attacker, NPC(npcNum).QuestNum, Trim$(Quest(NPC(npcNum).QuestNum).Speech(1)), NPC(npcNum).QuestNum
+                                Exit Function
+                            End If
+                            If QuestInProgress(attacker, NPC(npcNum).QuestNum) Then
+                                'if the quest is in progress show the meanwhile message (speech2)
+                                QuestMessage attacker, NPC(npcNum).QuestNum, Trim$(Quest(NPC(npcNum).QuestNum).Speech(2)), 0
+                                Exit Function
+                            End If
                         End If
-                        ' init conversation if it's friendly
-                        If NPC(npcNum).Event > 0 Then
-                            InitEvent attacker, NPC(npcNum).Event
-                            Exit Function
-                        End If
-                        If Len(Trim$(NPC(npcNum).AttackSay)) > 0 Then
-                            Call SendChatBubble(mapNum, mapNpcNum, TARGET_TYPE_NPC, Trim$(NPC(npcNum).AttackSay), DarkBrown)
-                        End If
+                    End If
+                    ' init conversation if it's friendly
+                    If NPC(npcNum).Event > 0 Then
+                        InitEvent attacker, NPC(npcNum).Event
+                        Exit Function
+                    End If
+                    If Len(Trim$(NPC(npcNum).AttackSay)) > 0 Then
+                        Call SendChatBubble(mapNum, mapNpcNum, TARGET_TYPE_NPC, Trim$(NPC(npcNum).AttackSay), DarkBrown)
                     End If
                 End If
             End If
         End If
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanPlayerAttackNpc", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 Public Sub TryPlayerShootNpc(ByVal Index As Long, ByVal mapNpcNum As Long)
 Dim blockAmount As Long
 Dim npcNum As Long
 Dim mapNum As Long
 Dim Damage As Long
-
-   On Error GoTo ErrorHandler
 
     Damage = 0
 
@@ -771,13 +528,6 @@ Dim Damage As Long
             Call PlayerMsg(Index, "Your attack does nothing.", BrightRed)
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "TryPlayerShootNpc", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Public Function CanPlayerShootNpc(ByVal attacker As Long, ByVal mapNpcNum As Long) As Boolean
     Dim mapNum As Long
@@ -785,18 +535,6 @@ Public Function CanPlayerShootNpc(ByVal attacker As Long, ByVal mapNpcNum As Lon
     Dim NpcX As Long
     Dim NpcY As Long
     Dim attackspeed As Long
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(attacker) = False Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Then
-        Exit Function
-    End If
-
-    ' Check for subscript out of range
-    If MapNpc(GetPlayerMap(attacker)).NPC(mapNpcNum).Num <= 0 Then
-        Exit Function
-    End If
 
     mapNum = GetPlayerMap(attacker)
     npcNum = MapNpc(mapNum).NPC(mapNpcNum).Num
@@ -820,7 +558,7 @@ Public Function CanPlayerShootNpc(ByVal attacker As Long, ByVal mapNpcNum As Lon
             attackspeed = 1000
         End If
 
-        If npcNum > 0 And timeGetTime > TempPlayer(attacker).AttackTimer + attackspeed Then
+        If timeGetTime > TempPlayer(attacker).AttackTimer + attackspeed Then
             ' Check if at same coordinates
             Select Case GetPlayerDir(attacker)
                 Case DIR_UP, DIR_UP_LEFT, DIR_UP_RIGHT
@@ -866,14 +604,6 @@ Public Function CanPlayerShootNpc(ByVal attacker As Long, ByVal mapNpcNum As Lon
             End If
         End If
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanPlayerShootNpc", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Public Sub PlayerAttackNpc(ByVal attacker As Long, ByVal mapNpcNum As Long, ByVal Damage As Long, Optional ByVal spellnum As Long, Optional ByVal overTime As Boolean = False)
@@ -883,13 +613,6 @@ Public Sub PlayerAttackNpc(ByVal attacker As Long, ByVal mapNpcNum As Long, ByVa
     Dim mapNum As Long
     Dim npcNum As Long
     Dim Num As Byte
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(attacker) = False Or mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or Damage < 0 Then
-        Exit Sub
-    End If
 
     mapNum = GetPlayerMap(attacker)
     npcNum = MapNpc(mapNum).NPC(mapNpcNum).Num
@@ -1071,13 +794,6 @@ Call CheckTasks(attacker, QUEST_TYPE_GOSLAY, npcNum)
         ' Reset attack timer
         TempPlayer(attacker).AttackTimer = timeGetTime
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PlayerAttackNpc", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ###################################
@@ -1086,9 +802,6 @@ End Sub
 
 Public Sub TryNpcAttackPlayer(ByVal mapNpcNum As Long, ByVal Index As Long)
 Dim mapNum As Long, npcNum As Long, blockAmount As Long, Damage As Long, Defence As Long
-
-    ' Can the npc attack the player?
-   On Error GoTo ErrorHandler
 
     If CanNpcAttackPlayer(mapNpcNum, Index) Then
         mapNum = GetPlayerMap(Index)
@@ -1134,20 +847,10 @@ Dim mapNum As Long, npcNum As Long, blockAmount As Long, Damage As Long, Defence
             Call NpcAttackPlayer(mapNpcNum, Index, Damage)
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "TryNpcAttackPlayer", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub TryNpcShootPlayer(ByVal mapNpcNum As Long, ByVal Index As Long)
 Dim mapNum As Long, npcNum As Long, blockAmount As Long, Damage As Long, Defence As Long
-
-    ' Can the npc attack the player?
-   On Error GoTo ErrorHandler
 
     If CanNpcShootPlayer(mapNpcNum, Index) Then
         mapNum = GetPlayerMap(Index)
@@ -1193,30 +896,11 @@ Dim mapNum As Long, npcNum As Long, blockAmount As Long, Damage As Long, Defence
             Call NpcAttackPlayer(mapNpcNum, Index, Damage)
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "TryNpcShootPlayer", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function CanNpcAttackPlayer(ByVal mapNpcNum As Long, ByVal Index As Long, Optional ByVal IsSpell As Boolean = False) As Boolean
     Dim mapNum As Long
     Dim npcNum As Long
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or Not IsPlaying(Index) Then
-        Exit Function
-    End If
-
-    ' Check for subscript out of range
-    If MapNpc(GetPlayerMap(Index)).NPC(mapNpcNum).Num <= 0 Then
-        Exit Function
-    End If
 
     mapNum = GetPlayerMap(Index)
     npcNum = MapNpc(mapNum).NPC(mapNpcNum).Num
@@ -1247,52 +931,27 @@ Function CanNpcAttackPlayer(ByVal mapNpcNum As Long, ByVal Index As Long, Option
     End If
     MapNpc(mapNum).NPC(mapNpcNum).AttackTimer = timeGetTime
 
-    ' Make sure they are on the same map
-    If IsPlaying(Index) Then
-        If npcNum > 0 Then
-
-            ' Check if at same coordinates
-            If (GetPlayerY(Index) + 1 = MapNpc(mapNum).NPC(mapNpcNum).y) And (GetPlayerX(Index) = MapNpc(mapNum).NPC(mapNpcNum).x) Then
+    ' Check if at same coordinates
+    If (GetPlayerY(Index) + 1 = MapNpc(mapNum).NPC(mapNpcNum).y) And (GetPlayerX(Index) = MapNpc(mapNum).NPC(mapNpcNum).x) Then
+        CanNpcAttackPlayer = True
+    Else
+        If (GetPlayerY(Index) - 1 = MapNpc(mapNum).NPC(mapNpcNum).y) And (GetPlayerX(Index) = MapNpc(mapNum).NPC(mapNpcNum).x) Then
+            CanNpcAttackPlayer = True
+        Else
+            If (GetPlayerY(Index) = MapNpc(mapNum).NPC(mapNpcNum).y) And (GetPlayerX(Index) + 1 = MapNpc(mapNum).NPC(mapNpcNum).x) Then
                 CanNpcAttackPlayer = True
             Else
-                If (GetPlayerY(Index) - 1 = MapNpc(mapNum).NPC(mapNpcNum).y) And (GetPlayerX(Index) = MapNpc(mapNum).NPC(mapNpcNum).x) Then
+                If (GetPlayerY(Index) = MapNpc(mapNum).NPC(mapNpcNum).y) And (GetPlayerX(Index) - 1 = MapNpc(mapNum).NPC(mapNpcNum).x) Then
                     CanNpcAttackPlayer = True
-                Else
-                    If (GetPlayerY(Index) = MapNpc(mapNum).NPC(mapNpcNum).y) And (GetPlayerX(Index) + 1 = MapNpc(mapNum).NPC(mapNpcNum).x) Then
-                        CanNpcAttackPlayer = True
-                    Else
-                        If (GetPlayerY(Index) = MapNpc(mapNum).NPC(mapNpcNum).y) And (GetPlayerX(Index) - 1 = MapNpc(mapNum).NPC(mapNpcNum).x) Then
-                            CanNpcAttackPlayer = True
-                        End If
-                    End If
                 End If
             End If
         End If
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanNpcAttackPlayer", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Function CanNpcShootPlayer(ByVal mapNpcNum As Long, ByVal Index As Long) As Boolean
     Dim mapNum As Long
     Dim npcNum As Long
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or Not IsPlaying(Index) Then
-        Exit Function
-    End If
-
-    ' Check for subscript out of range
-    If MapNpc(GetPlayerMap(Index)).NPC(mapNpcNum).Num <= 0 Then
-        Exit Function
-    End If
 
     mapNum = GetPlayerMap(Index)
     npcNum = MapNpc(mapNum).NPC(mapNpcNum).Num
@@ -1315,38 +974,15 @@ Function CanNpcShootPlayer(ByVal mapNpcNum As Long, ByVal Index As Long) As Bool
     MapNpc(mapNum).NPC(mapNpcNum).AttackTimer = timeGetTime
 
     ' Make sure they are on the same map
-    If IsPlaying(Index) Then
-        If npcNum > 0 Then
-            If isInRange(NPC(npcNum).ProjectileRange, MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y, GetPlayerX(Index), GetPlayerY(Index)) Then
-                CanNpcShootPlayer = True
-            End If
-        End If
+    If isInRange(NPC(npcNum).ProjectileRange, MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y, GetPlayerX(Index), GetPlayerY(Index)) Then
+        CanNpcShootPlayer = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanNpcShootPlayer", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub NpcAttackPlayer(ByVal mapNpcNum As Long, ByVal victim As Long, ByVal Damage As Long, Optional ByVal spellnum As Long, Optional ByVal overTime As Boolean = False)
     Dim Name As String
     Dim mapNum As Long
     Dim Buffer As clsBuffer
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If mapNpcNum <= 0 Or mapNpcNum > MAX_MAP_NPCS Or IsPlaying(victim) = False Then
-        Exit Sub
-    End If
-
-    ' Check for subscript out of range
-    If MapNpc(GetPlayerMap(victim)).NPC(mapNpcNum).Num <= 0 Then
-        Exit Sub
-    End If
 
     mapNum = GetPlayerMap(victim)
     Name = Trim$(NPC(MapNpc(mapNum).NPC(mapNpcNum).Num).Name)
@@ -1420,14 +1056,6 @@ Sub NpcAttackPlayer(ByVal mapNpcNum As Long, ByVal victim As Long, ByVal Damage 
         TempPlayer(victim).stopRegen = True
         TempPlayer(victim).stopRegenTimer = timeGetTime
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "NpcAttackPlayer", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 ' ###################################
@@ -1436,8 +1064,6 @@ End Sub
 
 Public Sub TryPlayerAttackPlayer(ByVal attacker As Long, ByVal victim As Long)
 Dim blockAmount As Long, mapNum As Long, Damage As Long, Defence As Long
-
-   On Error GoTo ErrorHandler
 
     Damage = 0
 
@@ -1488,19 +1114,10 @@ Dim blockAmount As Long, mapNum As Long, Damage As Long, Defence As Long
             Call PlayerMsg(attacker, "Your attack does nothing.", BrightRed)
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "TryPlayerAttackPlayer", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function CanPlayerAttackPlayer(ByVal attacker As Long, ByVal victim As Long, Optional ByVal IsSpell As Boolean = False) As Boolean
 Dim partyNum As Long, i As Long
-
-   On Error GoTo ErrorHandler
 
     If Not IsSpell Then
         ' Check attack timer
@@ -1611,13 +1228,6 @@ Dim partyNum As Long, i As Long
     TempPlayer(attacker).target = victim
     SendTarget attacker
     CanPlayerAttackPlayer = True
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanPlayerAttackPlayer", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Sub TryPlayerShootPlayer(ByVal attacker As Long, ByVal victim As Long)
@@ -1625,8 +1235,6 @@ Dim blockAmount As Long
 Dim mapNum As Long
 Dim Damage As Long
 Dim Defence As Long
-
-   On Error GoTo ErrorHandler
 
     Damage = 0
 
@@ -1676,19 +1284,8 @@ Dim Defence As Long
             Call PlayerMsg(attacker, "Your attack does nothing.", BrightRed)
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "TryPlayerShootPlayer", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Function CanPlayerShootPlayer(ByVal attacker As Long, ByVal victim As Long) As Boolean
-
-    ' Check attack timer
-   On Error GoTo ErrorHandler
-
     If GetPlayerEquipment(attacker, Weapon) > 0 Then
         If timeGetTime < TempPlayer(attacker).AttackTimer + Item(GetPlayerEquipment(attacker, Weapon)).Speed Then Exit Function
     Else
@@ -1724,26 +1321,12 @@ Function CanPlayerShootPlayer(ByVal attacker As Long, ByVal victim As Long) As B
     TempPlayer(attacker).target = victim
     SendTarget attacker
     CanPlayerShootPlayer = True
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanPlayerShootPlayer", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub PlayerAttackPlayer(ByVal attacker As Long, ByVal victim As Long, ByVal Damage As Long, Optional ByVal spellnum As Long = 0)
     Dim exp As Long
     Dim n As Long
     Dim i As Long
-
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If IsPlaying(attacker) = False Or IsPlaying(victim) = False Or Damage < 0 Then
-        Exit Sub
-    End If
 
     ' Check for weapon
     n = 0
@@ -1870,13 +1453,6 @@ Sub PlayerAttackPlayer(ByVal attacker As Long, ByVal victim As Long, ByVal Damag
 
     ' Reset attack timer
     TempPlayer(attacker).AttackTimer = timeGetTime
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "PlayerAttackPlayer", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ###################################
@@ -1886,9 +1462,6 @@ End Sub
 Public Sub TryNpcAttackNPC(ByVal mapNum As Long, ByVal attacker As Long, ByVal victim As Long)
 Dim aNpcNum As Long, vNpcNum As Long, blockAmount As Long, Damage As Long
     
-    ' Can the npc attack the player?
-   On Error GoTo ErrorHandler
-
     If CanNpcAttackNPC(mapNum, attacker, victim) Then
         aNpcNum = MapNpc(mapNum).NPC(attacker).Num
         vNpcNum = MapNpc(mapNum).NPC(victim).Num
@@ -1929,21 +1502,11 @@ Dim aNpcNum As Long, vNpcNum As Long, blockAmount As Long, Damage As Long
             Call NpcAttackNPC(mapNum, attacker, victim, Damage)
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "TryNpcAttackNPC", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub TryNpcShootNPC(ByVal mapNum As Long, ByVal attacker As Long, ByVal victim As Long)
 Dim aNpcNum As Long, vNpcNum As Long, blockAmount As Long, Damage As Long
     
-    ' Can the npc attack the player?
-   On Error GoTo ErrorHandler
-
     If CanNpcShootNPC(mapNum, attacker, victim) Then
         aNpcNum = MapNpc(mapNum).NPC(attacker).Num
         vNpcNum = MapNpc(mapNum).NPC(victim).Num
@@ -1984,13 +1547,6 @@ Dim aNpcNum As Long, vNpcNum As Long, blockAmount As Long, Damage As Long
             Call NpcAttackNPC(mapNum, attacker, victim, Damage)
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "TryNpcShootNPC", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Function CanNpcAttackNPC(ByVal mapNum As Long, ByVal attacker As Long, ByVal victim As Long) As Boolean
@@ -2000,23 +1556,8 @@ Function CanNpcAttackNPC(ByVal mapNum As Long, ByVal attacker As Long, ByVal vic
     Dim AttackerX As Long
     Dim AttackerY As Long
 
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If attacker <= 0 Or attacker > MAX_MAP_NPCS Then Exit Function
-    If victim <= 0 Or victim > MAX_MAP_NPCS Then Exit Function
-
     aNpcNum = MapNpc(mapNum).NPC(attacker).Num
     vNpcNum = MapNpc(mapNum).NPC(victim).Num
-    
-    ' Check for subscript out of range
-    If aNpcNum <= 0 Then
-        Exit Function
-    End If
-    
-    If vNpcNum <= 0 Then
-        Exit Function
-    End If
     
     ' Make sure the npc isn't already dead
     If MapNpc(mapNum).NPC(attacker).Vital(Vitals.HP) <= 0 Then
@@ -2054,13 +1595,6 @@ Function CanNpcAttackNPC(ByVal mapNum As Long, ByVal attacker As Long, ByVal vic
             End If
         End If
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanNpcAttackNPC", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 Function CanNpcShootNPC(ByVal mapNum As Long, ByVal attacker As Long, ByVal victim As Long) As Boolean
     Dim aNpcNum As Long, vNpcNum As Long
@@ -2069,23 +1603,8 @@ Function CanNpcShootNPC(ByVal mapNum As Long, ByVal attacker As Long, ByVal vict
     Dim AttackerX As Long
     Dim AttackerY As Long
 
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If attacker <= 0 Or attacker > MAX_MAP_NPCS Then Exit Function
-    If victim <= 0 Or victim > MAX_MAP_NPCS Then Exit Function
-
     aNpcNum = MapNpc(mapNum).NPC(attacker).Num
     vNpcNum = MapNpc(mapNum).NPC(victim).Num
-    
-    ' Check for subscript out of range
-    If aNpcNum <= 0 Then
-        Exit Function
-    End If
-    
-    If vNpcNum <= 0 Then
-        Exit Function
-    End If
     
     ' Make sure the npc isn't already dead
     If MapNpc(mapNum).NPC(attacker).Vital(Vitals.HP) <= 0 Then
@@ -2111,13 +1630,6 @@ Function CanNpcShootNPC(ByVal mapNum As Long, ByVal attacker As Long, ByVal vict
     If isInRange(NPC(aNpcNum).ProjectileRange, AttackerX, AttackerY, VictimX, VictimY) Then
         CanNpcShootNPC = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "CanNpcShootNPC", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Sub NpcAttackNPC(ByVal mapNum As Long, ByVal attacker As Long, ByVal victim As Long, ByVal Damage As Long)
@@ -2126,23 +1638,8 @@ Sub NpcAttackNPC(ByVal mapNum As Long, ByVal attacker As Long, ByVal victim As L
     Dim vNpcNum As Long
     Dim Buffer As clsBuffer
 
-    ' Check for subscript out of range
-   On Error GoTo ErrorHandler
-
-    If attacker <= 0 Or attacker > MAX_MAP_NPCS Then Exit Sub
-    If victim <= 0 Or victim > MAX_MAP_NPCS Then Exit Sub
-
     aNpcNum = MapNpc(mapNum).NPC(attacker).Num
     vNpcNum = MapNpc(mapNum).NPC(victim).Num
-    
-    ' Check for subscript out of range
-    If aNpcNum <= 0 Then
-        Exit Sub
-    End If
-    
-    If vNpcNum <= 0 Then
-        Exit Sub
-    End If
     
     ' Send this packet so they can see the npc attacking
     Set Buffer = New clsBuffer
@@ -2247,13 +1744,6 @@ Sub NpcAttackNPC(ByVal mapNum As Long, ByVal attacker As Long, ByVal victim As L
         SendMapNpcVitals mapNum, victim
     End If
     MapNpc(mapNum).NPC(attacker).AttackTimer = timeGetTime
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "NpcAttackNPC", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ############
@@ -2263,15 +1753,8 @@ Public Sub BufferSpell(ByVal Index As Long, ByVal spellslot As Long)
 Dim spellnum As Long, MPCost As Long, LevelReq As Long, mapNum As Long, SpellCastType As Long
 Dim AccessReq As Long, Range As Long, HasBuffered As Boolean, targetType As Byte, target As Long
     
-    ' Prevent subscript out of range
-   On Error GoTo ErrorHandler
-
-    If spellslot <= 0 Or spellslot > MAX_PLAYER_SPELLS Then Exit Sub
-    
     spellnum = Player(Index).spell(spellslot)
     mapNum = GetPlayerMap(Index)
-    
-    If spellnum <= 0 Or spellnum > MAX_SPELLS Then Exit Sub
     
     ' Make sure player has the spell
     If Not HasSpell(Index, spellnum) Then Exit Sub
@@ -2401,23 +1884,11 @@ Dim AccessReq As Long, Range As Long, HasBuffered As Boolean, targetType As Byte
     Else
         SendClearSpellBuffer Index
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "BufferSpell", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub NpcBufferSpell(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal npcSpellSlot As Long)
 Dim spellnum As Long, MPCost As Long, Range As Long, HasBuffered As Boolean, targetType As Byte, target As Long, SpellCastType As Long, i As Long
 
-    ' prevent rte9
-   On Error GoTo ErrorHandler
-
-    If npcSpellSlot <= 0 Or npcSpellSlot > MAX_NPC_SPELLS Then Exit Sub
-    
     With MapNpc(mapNum).NPC(mapNpcNum)
         ' set the spell number
         spellnum = NPC(.Num).spell(npcSpellSlot)
@@ -2500,24 +1971,12 @@ Dim spellnum As Long, MPCost As Long, Range As Long, HasBuffered As Boolean, tar
             .spellBuffer.tType = targetType
         End If
     End With
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "NpcBufferSpell", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub NpcCastSpell(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal spellslot As Long, ByVal target As Long, ByVal targetType As Long)
 Dim spellnum As Long, MPCost As Long, Vital As Long, DidCast As Boolean, i As Long, AoE As Long, Range As Long, x As Long, y As Long, SpellCastType As Long
 
-   On Error GoTo ErrorHandler
-
     DidCast = False
-    
-    ' rte9
-    If spellslot <= 0 Or spellslot > MAX_NPC_SPELLS Then Exit Sub
     
     With MapNpc(mapNum).NPC(mapNpcNum)
         ' cache spell num
@@ -2682,13 +2141,6 @@ Dim spellnum As Long, MPCost As Long, Vital As Long, DidCast As Boolean, i As Lo
             .SpellCD(spellslot) = timeGetTime + (spell(spellnum).CDTime * 1000)
         End If
     End With
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "NpcCastSpell", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub CastSpell(ByVal Index As Long, ByVal spellslot As Long, ByVal target As Long, ByVal targetType As Byte)
@@ -2697,9 +2149,6 @@ Dim AccessReq As Long, i As Long, AoE As Long, Range As Long, x As Long, y As Lo
 Dim SpellCastType As Long
     Dim Dur As Long
     DidCast = False
-
-    ' Prevent subscript out of range
-    If spellslot <= 0 Or spellslot > MAX_PLAYER_SPELLS Then Exit Sub
 
     spellnum = Player(Index).spell(spellslot)
     mapNum = GetPlayerMap(Index)
@@ -3003,8 +2452,6 @@ Public Sub SpellPlayer_Effect(ByVal Vital As Byte, ByVal increment As Boolean, B
 Dim sSymbol As String * 1
 Dim Colour As Long
 
-   On Error GoTo ErrorHandler
-
     If Damage > 0 Then
         If increment Then
             sSymbol = "+"
@@ -3033,20 +2480,11 @@ Dim Colour As Long
         ' send update
         SendVital Index, Vital
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SpellPlayer_Effect", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub SpellNpc_Effect(ByVal Vital As Byte, ByVal increment As Boolean, ByVal Index As Long, ByVal Damage As Long, ByVal spellnum As Long, ByVal mapNum As Long)
 Dim sSymbol As String * 1
 Dim Colour As Long
-
-   On Error GoTo ErrorHandler
 
     If Damage > 0 Then
         If increment Then
@@ -3073,19 +2511,10 @@ Dim Colour As Long
             MapNpc(mapNum).NPC(Index).Vital(Vital) = MapNpc(mapNum).NPC(Index).Vital(Vital) - Damage
         End If
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SpellNpc_Effect", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub AddDoT_Player(ByVal Index As Long, ByVal spellnum As Long, ByVal Caster As Long)
 Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_DOTS
         With TempPlayer(Index).DoT(i)
@@ -3106,19 +2535,10 @@ Dim i As Long
             End If
         End With
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "AddDoT_Player", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub AddHoT_Player(ByVal Index As Long, ByVal spellnum As Long)
 Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_DOTS
         With TempPlayer(Index).HoT(i)
@@ -3137,19 +2557,10 @@ Dim i As Long
             End If
         End With
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "AddHoT_Player", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub AddDoT_Npc(ByVal mapNum As Long, ByVal Index As Long, ByVal spellnum As Long, ByVal Caster As Long)
 Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_DOTS
         With MapNpc(mapNum).NPC(Index).DoT(i)
@@ -3170,19 +2581,10 @@ Dim i As Long
             End If
         End With
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "AddDoT_Npc", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub AddHoT_Npc(ByVal mapNum As Long, ByVal Index As Long, ByVal spellnum As Long)
 Dim i As Long
-
-   On Error GoTo ErrorHandler
 
     For i = 1 To MAX_DOTS
         With MapNpc(mapNum).NPC(Index).HoT(i)
@@ -3201,18 +2603,9 @@ Dim i As Long
             End If
         End With
     Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "AddHoT_Npc", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub HandleDoT_Player(ByVal Index As Long, ByVal dotNum As Long)
-   On Error GoTo ErrorHandler
-
     With TempPlayer(Index).DoT(dotNum)
         If .Used And .spell > 0 Then
             ' time to tick?
@@ -3235,18 +2628,9 @@ Public Sub HandleDoT_Player(ByVal Index As Long, ByVal dotNum As Long)
             End If
         End If
     End With
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleDoT_Player", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub HandleHoT_Player(ByVal Index As Long, ByVal hotNum As Long)
-   On Error GoTo ErrorHandler
-
     With TempPlayer(Index).HoT(hotNum)
         If .Used And .spell > 0 Then
             ' time to tick?
@@ -3268,18 +2652,9 @@ Public Sub HandleHoT_Player(ByVal Index As Long, ByVal hotNum As Long)
             End If
         End If
     End With
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleHoT_Player", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub HandleDoT_Npc(ByVal mapNum As Long, ByVal Index As Long, ByVal dotNum As Long)
-   On Error GoTo ErrorHandler
-
     With MapNpc(mapNum).NPC(Index).DoT(dotNum)
         If .Used And .spell > 0 Then
             ' time to tick?
@@ -3302,18 +2677,9 @@ Public Sub HandleDoT_Npc(ByVal mapNum As Long, ByVal Index As Long, ByVal dotNum
             End If
         End If
     End With
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleDoT_Npc", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub HandleHoT_Npc(ByVal mapNum As Long, ByVal Index As Long, ByVal hotNum As Long)
-   On Error GoTo ErrorHandler
-
     With MapNpc(mapNum).NPC(Index).HoT(hotNum)
         If .Used And .spell > 0 Then
             ' time to tick?
@@ -3335,19 +2701,9 @@ Public Sub HandleHoT_Npc(ByVal mapNum As Long, ByVal Index As Long, ByVal hotNum
             End If
         End If
     End With
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "HandleHoT_Npc", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub StunPlayer(ByVal Index As Long, ByVal spellnum As Long)
-    ' check if it's a stunning spell
-   On Error GoTo ErrorHandler
-
     If spell(spellnum).StunDuration > 0 Then
         ' set the values on index
         TempPlayer(Index).StunDuration = spell(spellnum).StunDuration
@@ -3357,38 +2713,19 @@ Public Sub StunPlayer(ByVal Index As Long, ByVal spellnum As Long)
         ' tell him he's stunned
         PlayerMsg Index, "You have been stunned.", BrightRed
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "StunPlayer", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub StunNPC(ByVal Index As Long, ByVal mapNum As Long, ByVal spellnum As Long)
-    ' check if it's a stunning spell
-   On Error GoTo ErrorHandler
-
     If spell(spellnum).StunDuration > 0 Then
         ' set the values on index
         MapNpc(mapNum).NPC(Index).StunDuration = spell(spellnum).StunDuration
         MapNpc(mapNum).NPC(Index).StunTimer = timeGetTime
     End If
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "StunNPC", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Sub CreateProjectile(ByVal mapNum As Long, ByVal attacker As Long, ByVal AttackerType As Long, ByVal victim As Long, ByVal targetType As Long, ByVal Graphic As Long, ByVal RotateSpeed As Long)
 Dim Rotate As Long
 Dim Buffer As clsBuffer
     
-   On Error GoTo ErrorHandler
-
     If AttackerType = TARGET_TYPE_PLAYER Then
         ' ****** Initial Rotation Value ******
         Select Case targetType
@@ -3427,13 +2764,6 @@ Dim Buffer As clsBuffer
     End If
 
     Call SendProjectile(mapNum, attacker, AttackerType, victim, targetType, Graphic, Rotate, RotateSpeed)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CreateProjectile", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Function Engine_GetAngle(ByVal CenterX As Integer, ByVal CenterY As Integer, ByVal targetx As Integer, ByVal targety As Integer) As Single
@@ -3442,8 +2772,6 @@ Public Function Engine_GetAngle(ByVal CenterX As Integer, ByVal CenterY As Integ
 '************************************************************
 Dim SideA As Single
 Dim SideC As Single
-
-   On Error GoTo ErrorHandler
 
     'Check for horizontal lines (90 or 270 degrees)
     If CenterY = targety Then
@@ -3488,11 +2816,4 @@ Dim SideC As Single
 
     'If the angle is >180, subtract from 360
     If targetx < CenterX Then Engine_GetAngle = 360 - Engine_GetAngle
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "Engine_GetAngle", "modCombat", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function

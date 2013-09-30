@@ -49,8 +49,6 @@ Declare Function Shell_NotifyIcon Lib "shell32" Alias "Shell_NotifyIconA" (ByVal
 Global nid As NOTIFYICONDATA
 
 Public Sub DestroySystemTray()
-   On Error GoTo ErrorHandler
-
     nid.cbSize = Len(nid)
     nid.hWnd = frmServer.hWnd
     nid.uId = vbNull
@@ -59,18 +57,9 @@ Public Sub DestroySystemTray()
     nid.hIcon = frmServer.Icon
     nid.szTip = "Server" & vbNullChar
     Call Shell_NotifyIcon(NIM_DELETE, nid) ' Add to the sys tray
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "DestroySystemTray", "modSysTray", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub LoadSystemTray()
-   On Error GoTo ErrorHandler
-
     nid.cbSize = Len(nid)
     nid.hWnd = frmServer.hWnd
     nid.uId = vbNull
@@ -79,11 +68,4 @@ Public Sub LoadSystemTray()
     nid.hIcon = frmServer.Icon
     nid.szTip = "Server" & vbNullChar   'You can add your game name or something.
     Call Shell_NotifyIcon(NIM_ADD, nid) 'Add to the sys tray
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadSystemTray", "modSysTray", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub

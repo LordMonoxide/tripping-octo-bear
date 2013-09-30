@@ -5,16 +5,7 @@ Private GetSystemTimeOffset As Currency
 Private Declare Sub GetSystemTime Lib "Kernel32.dll" Alias "GetSystemTimeAsFileTime" (ByRef lpSystemTimeAsFileTime As Currency)
 Public Declare Function timeBeginPeriod Lib "winmm.dll" (ByVal uPeriod As Long) As Long
 Public Sub Main()
-   On Error GoTo ErrorHandler
-
     Call InitServer
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "Main", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub InitServer()
@@ -23,9 +14,6 @@ Public Sub InitServer()
     Dim time1 As Long
     Dim time2 As Long
     
-     'Set the high-resolution timer
-   On Error GoTo ErrorHandler
-
     timeBeginPeriod 1
     
     'This MUST be called before any timeGetTime calls because it states what the
@@ -133,18 +121,10 @@ Public Sub InitServer()
     
     ' Starts the server loop
     ServerLoop
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "InitServer", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub DestroyServer()
     Dim i As Long
-   On Error GoTo ErrorHandler
 
     ServerOnline = False
     Call SetStatus("Destroying System Tray...")
@@ -161,32 +141,14 @@ Public Sub DestroyServer()
     Next
 
     End
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "DestroyServer", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub SetStatus(ByVal Status As String)
-   On Error GoTo ErrorHandler
-
     Call TextAdd(Status)
     DoEvents
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SetStatus", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ClearGameData()
-   On Error GoTo ErrorHandler
-
     Call SetStatus("Clearing maps...")
     Call ClearMaps
     Call SetStatus("Clearing map items...")
@@ -215,17 +177,9 @@ Public Sub ClearGameData()
     Call ClearQuests
     Call SetStatus("Clearing chests...")
     Call ClearChests
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "ClearGameData", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub LoadGameData()
-   On Error GoTo ErrorHandler
-
     Call SetStatus("Loading maps...")
     Call LoadMaps
     Call SetStatus("Loading items...")
@@ -252,17 +206,9 @@ Private Sub LoadGameData()
     Call LoadQuests
     Call SetStatus("Loading chests...")
     Call LoadChests
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadGameData", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub TextAdd(Msg As String)
-   On Error GoTo ErrorHandler
-
     NumLines = NumLines + 1
 
     If NumLines >= MAX_LINES Then
@@ -272,48 +218,21 @@ Public Sub TextAdd(Msg As String)
 
     frmServer.txtText.text = frmServer.txtText.text & vbNewLine & Msg
     frmServer.txtText.SelStart = Len(frmServer.txtText.text)
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "TextAdd", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' Used for checking validity of names
 Function isNameLegal(ByVal sInput As Integer) As Boolean
-
-   On Error GoTo ErrorHandler
-
     If (sInput >= 65 And sInput <= 90) Or (sInput >= 97 And sInput <= 122) Or (sInput = 95) Or (sInput = 32) Or (sInput >= 48 And sInput <= 57) Then
         isNameLegal = True
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "isNameLegal", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
 
 Public Function KeepTwoDigit(Num As Byte)
-   On Error GoTo ErrorHandler
-
     If (Num < 10) Then
         KeepTwoDigit = "0" & Num
     Else
         KeepTwoDigit = Num
     End If
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "KeepTwoDigit", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Sub InitTimeGetTime()
@@ -323,18 +242,7 @@ Public Sub InitTimeGetTime()
 'the program is running for 25 days
 '*****************************************************************
 
-    'Get the initial time
-   On Error GoTo ErrorHandler
-
     GetSystemTime GetSystemTimeOffset
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "InitTimeGetTime", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Public Function timeGetTime() As Long
@@ -346,20 +254,8 @@ Public Function timeGetTime() As Long
 '*****************************************************************
 Dim CurrentTime As Currency
 
-    'Grab the current time (we have to pass a variable ByRef instead of a function return like the other timers)
-   On Error GoTo ErrorHandler
-
     GetSystemTime CurrentTime
     
     'Calculate the difference between the 64-bit times, return as a 32-bit time
     timeGetTime = CurrentTime - GetSystemTimeOffset
-
-   ' Error handler
-   Exit Function
-ErrorHandler:
-    HandleError "timeGetTime", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-
 End Function
-
