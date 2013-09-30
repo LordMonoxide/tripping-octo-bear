@@ -8,7 +8,7 @@ Sub UpdateCaption()
     ' Update form labels
     frmServer.lblIP = frmServer.Socket(0).LocalIP
     frmServer.lblPort = CStr(frmServer.Socket(0).LocalPort)
-    frmServer.lblPlayers = TotalOnlinePlayers & "/" & Trim(str(MAX_PLAYERS))
+    frmServer.lblPlayers = TotalOnlinePlayers & "/" & Trim(Str(MAX_PLAYERS))
 End Sub
 
 Sub CreateFullMapCache()
@@ -92,6 +92,7 @@ Dim TempData() As Byte
         PacketsOut = PacketsOut + 1
               
         frmServer.Socket(Index).SendData Buffer.ToArray()
+        DoEvents
     End If
 End Sub
 
