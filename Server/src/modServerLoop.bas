@@ -1251,9 +1251,7 @@ Private Sub UpdatePetVitals(ByVal x As Long)
     End If
 End Sub
 
-Private Sub UpdateSavePlayers(ByVal u As Long)
-    Dim i As Long
-
+Private Sub UpdateSavePlayers(ByVal i As Long)
     If TotalOnlinePlayers > 0 Then
         Call TextAdd("Saving all online players...")
         Call SavePlayer(i)
