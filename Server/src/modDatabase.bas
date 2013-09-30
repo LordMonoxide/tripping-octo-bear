@@ -440,7 +440,7 @@ Sub AddChar(ByVal Index As Long, ByVal Name As String, ByVal Sex As Byte, ByVal 
         Next n
 
         Player(Index).dir = DIR_DOWN
-        Player(Index).map = START_MAP
+        Player(Index).Map = START_MAP
         Player(Index).x = START_X
         Player(Index).y = START_Y
         Player(Index).dir = DIR_DOWN
@@ -568,7 +568,7 @@ Sub ClearPlayer(ByVal Index As Long)
    On Error GoTo ErrorHandler
 
     Call ZeroMemory(ByVal VarPtr(TempPlayer(Index)), LenB(TempPlayer(Index)))
-    Set TempPlayer(Index).buffer = New clsBuffer
+    Set TempPlayer(Index).Buffer = New clsBuffer
     
     Call ZeroMemory(ByVal VarPtr(Player(Index)), LenB(Player(Index)))
     Player(Index).Login = vbNullString
@@ -632,42 +632,20 @@ Sub LoadItems()
     Dim F As Long
    On Error GoTo ErrorHandler
 
-    Call CheckItems
-
     For i = 1 To MAX_ITEMS
         filename = App.Path & "\data\Items\Item" & i & ".dat"
-        F = FreeFile
-        Open filename For Binary As #F
-        Get #F, , Item(i)
-        Close #F
+        If FileExist(filename, True) Then
+            F = FreeFile
+            Open filename For Binary As #F
+                Get #F, , Item(i)
+            Close #F
+        End If
     Next
 
    ' Error handler
    Exit Sub
 ErrorHandler:
     HandleError "LoadItems", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
-End Sub
-
-Sub CheckItems()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_ITEMS
-
-        If Not FileExist("\Data\Items\Item" & i & ".dat") Then
-            Call SaveItem(i)
-        End If
-
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CheckItems", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 
@@ -753,42 +731,20 @@ Sub LoadShops()
     Dim F As Long
    On Error GoTo ErrorHandler
 
-    Call CheckShops
-
     For i = 1 To MAX_SHOPS
         filename = App.Path & "\data\shops\shop" & i & ".dat"
-        F = FreeFile
-        Open filename For Binary As #F
-        Get #F, , Shop(i)
-        Close #F
+        If FileExist(filename, True) Then
+            F = FreeFile
+            Open filename For Binary As #F
+                Get #F, , Shop(i)
+            Close #F
+        End If
     Next
 
    ' Error handler
    Exit Sub
 ErrorHandler:
     HandleError "LoadShops", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
-End Sub
-
-Sub CheckShops()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_SHOPS
-
-        If Not FileExist("\Data\shops\shop" & i & ".dat") Then
-            Call SaveShop(i)
-        End If
-
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CheckShops", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 
@@ -873,42 +829,20 @@ Sub LoadSpells()
     Dim F As Long
    On Error GoTo ErrorHandler
 
-    Call CheckSpells
-
     For i = 1 To MAX_SPELLS
         filename = App.Path & "\data\spells\spells" & i & ".dat"
-        F = FreeFile
-        Open filename For Binary As #F
-        Get #F, , spell(i)
-        Close #F
+        If FileExist(filename, True) Then
+            F = FreeFile
+            Open filename For Binary As #F
+                Get #F, , spell(i)
+            Close #F
+        End If
     Next
 
    ' Error handler
    Exit Sub
 ErrorHandler:
     HandleError "LoadSpells", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
-End Sub
-
-Sub CheckSpells()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_SPELLS
-
-        If Not FileExist("\Data\spells\spells" & i & ".dat") Then
-            Call SaveSpell(i)
-        End If
-
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CheckSpells", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 
@@ -995,42 +929,20 @@ Sub LoadNpcs()
     Dim F As Long
    On Error GoTo ErrorHandler
 
-    Call CheckNpcs
-
     For i = 1 To MAX_NPCS
         filename = App.Path & "\data\npcs\npc" & i & ".dat"
-        F = FreeFile
-        Open filename For Binary As #F
-        Get #F, , NPC(i)
-        Close #F
+        If FileExist(filename, True) Then
+            F = FreeFile
+            Open filename For Binary As #F
+                Get #F, , NPC(i)
+            Close #F
+        End If
     Next
 
    ' Error handler
    Exit Sub
 ErrorHandler:
     HandleError "LoadNpcs", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
-End Sub
-
-Sub CheckNpcs()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_NPCS
-
-        If Not FileExist("\Data\npcs\npc" & i & ".dat") Then
-            Call SaveNpc(i)
-        End If
-
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CheckNpcs", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 
@@ -1118,40 +1030,20 @@ Sub LoadResources()
     
    On Error GoTo ErrorHandler
 
-    Call CheckResources
-
     For i = 1 To MAX_RESOURCES
         filename = App.Path & "\data\resources\resource" & i & ".dat"
-        F = FreeFile
-        Open filename For Binary As #F
-            Get #F, , Resource(i)
-        Close #F
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "LoadResources", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
-End Sub
-
-Sub CheckResources()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_RESOURCES
-        If Not FileExist("\Data\Resources\Resource" & i & ".dat") Then
-            Call SaveResource(i)
+        If FileExist(filename, True) Then
+            F = FreeFile
+            Open filename For Binary As #F
+                Get #F, , Resource(i)
+            Close #F
         End If
     Next
 
    ' Error handler
    Exit Sub
 ErrorHandler:
-    HandleError "CheckResources", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
+    HandleError "LoadResources", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 
@@ -1239,42 +1131,20 @@ Sub LoadAnimations()
     
    On Error GoTo ErrorHandler
 
-    Call CheckAnimations
-
     For i = 1 To MAX_ANIMATIONS
         filename = App.Path & "\data\animations\animation" & i & ".dat"
-        F = FreeFile
-        Open filename For Binary As #F
-            Get #F, , Animation(i)
-        Close #F
+        If FileExist(filename, True) Then
+            F = FreeFile
+            Open filename For Binary As #F
+                Get #F, , Animation(i)
+            Close #F
+        End If
     Next
 
    ' Error handler
    Exit Sub
 ErrorHandler:
     HandleError "LoadAnimations", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
-End Sub
-
-Sub CheckAnimations()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_ANIMATIONS
-
-        If Not FileExist("\Data\animations\animation" & i & ".dat") Then
-            Call SaveAnimation(i)
-        End If
-
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CheckAnimations", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 
@@ -1326,46 +1196,46 @@ Sub SaveMap(ByVal mapNum As Long)
     F = FreeFile
     
     Open filename For Binary As #F
-    Put #F, , map(mapNum).Name
-    Put #F, , map(mapNum).Music
-    Put #F, , map(mapNum).Revision
-    Put #F, , map(mapNum).Moral
-    Put #F, , map(mapNum).Up
-    Put #F, , map(mapNum).Down
-    Put #F, , map(mapNum).Left
-    Put #F, , map(mapNum).Right
-    Put #F, , map(mapNum).BootMap
-    Put #F, , map(mapNum).BootX
-    Put #F, , map(mapNum).BootY
-    Put #F, , map(mapNum).MaxX
-    Put #F, , map(mapNum).MaxY
+    Put #F, , Map(mapNum).Name
+    Put #F, , Map(mapNum).Music
+    Put #F, , Map(mapNum).Revision
+    Put #F, , Map(mapNum).Moral
+    Put #F, , Map(mapNum).Up
+    Put #F, , Map(mapNum).Down
+    Put #F, , Map(mapNum).Left
+    Put #F, , Map(mapNum).Right
+    Put #F, , Map(mapNum).BootMap
+    Put #F, , Map(mapNum).BootX
+    Put #F, , Map(mapNum).BootY
+    Put #F, , Map(mapNum).MaxX
+    Put #F, , Map(mapNum).MaxY
 
-    For x = 0 To map(mapNum).MaxX
-        For y = 0 To map(mapNum).MaxY
-            Put #F, , map(mapNum).Tile(x, y)
+    For x = 0 To Map(mapNum).MaxX
+        For y = 0 To Map(mapNum).MaxY
+            Put #F, , Map(mapNum).Tile(x, y)
         Next
     Next
 
     For x = 1 To MAX_MAP_NPCS
-        Put #F, , map(mapNum).NPC(x)
+        Put #F, , Map(mapNum).NPC(x)
     Next
     
-    Put #F, , map(mapNum).BossNpc
+    Put #F, , Map(mapNum).BossNpc
     
-    Put #F, , map(mapNum).Fog
-    Put #F, , map(mapNum).FogSpeed
-    Put #F, , map(mapNum).FogOpacity
+    Put #F, , Map(mapNum).Fog
+    Put #F, , Map(mapNum).FogSpeed
+    Put #F, , Map(mapNum).FogOpacity
     
-    Put #F, , map(mapNum).Red
-    Put #F, , map(mapNum).Green
-    Put #F, , map(mapNum).Blue
-    Put #F, , map(mapNum).Alpha
+    Put #F, , Map(mapNum).Red
+    Put #F, , Map(mapNum).Green
+    Put #F, , Map(mapNum).Blue
+    Put #F, , Map(mapNum).Alpha
     
-    Put #F, , map(mapNum).Panorama
-    Put #F, , map(mapNum).DayNight
+    Put #F, , Map(mapNum).Panorama
+    Put #F, , Map(mapNum).DayNight
     
     For x = 1 To MAX_MAP_NPCS
-        Put #F, , map(mapNum).NpcSpawnType(x)
+        Put #F, , Map(mapNum).NpcSpawnType(x)
     Next
     
     Close #F
@@ -1406,60 +1276,59 @@ Sub LoadMaps()
     Dim y As Long
    On Error GoTo ErrorHandler
 
-    Call CheckMaps
-
     For i = 1 To MAX_MAPS
         filename = App.Path & "\data\maps\map" & i & ".dat"
-        F = FreeFile
-        Open filename For Binary As #F
-        Get #F, , map(i).Name
-        Get #F, , map(i).Music
-        Get #F, , map(i).Revision
-        Get #F, , map(i).Moral
-        Get #F, , map(i).Up
-        Get #F, , map(i).Down
-        Get #F, , map(i).Left
-        Get #F, , map(i).Right
-        Get #F, , map(i).BootMap
-        Get #F, , map(i).BootX
-        Get #F, , map(i).BootY
-        Get #F, , map(i).MaxX
-        Get #F, , map(i).MaxY
-        ' have to set the tile()
-        ReDim map(i).Tile(0 To map(i).MaxX, 0 To map(i).MaxY)
+        If FileExist(filename, True) Then
+            F = FreeFile
+            Open filename For Binary As #F
+                Get #F, , Map(i).Name
+                Get #F, , Map(i).Music
+                Get #F, , Map(i).Revision
+                Get #F, , Map(i).Moral
+                Get #F, , Map(i).Up
+                Get #F, , Map(i).Down
+                Get #F, , Map(i).Left
+                Get #F, , Map(i).Right
+                Get #F, , Map(i).BootMap
+                Get #F, , Map(i).BootX
+                Get #F, , Map(i).BootY
+                Get #F, , Map(i).MaxX
+                Get #F, , Map(i).MaxY
+                ' have to set the tile()
+                ReDim Map(i).Tile(0 To Map(i).MaxX, 0 To Map(i).MaxY)
+                
+                For x = 0 To Map(i).MaxX
+                    For y = 0 To Map(i).MaxY
+                        Get #F, , Map(i).Tile(x, y)
+                    Next
+                Next
+                
+                For x = 1 To MAX_MAP_NPCS
+                    Get #F, , Map(i).NPC(x)
+                    MapNpc(i).NPC(x).Num = Map(i).NPC(x)
+                Next
+                
+                Get #F, , Map(i).BossNpc
+                Get #F, , Map(i).Fog
+                Get #F, , Map(i).FogSpeed
+                Get #F, , Map(i).FogOpacity
+                
+                Get #F, , Map(i).Red
+                Get #F, , Map(i).Green
+                Get #F, , Map(i).Blue
+                Get #F, , Map(i).Alpha
+                
+                Get #F, , Map(i).Panorama
+                Get #F, , Map(i).DayNight
+                
+                For x = 1 To MAX_MAP_NPCS
+                    Get #F, , Map(i).NpcSpawnType(x)
+                Next
+            Close #F
 
-        For x = 0 To map(i).MaxX
-            For y = 0 To map(i).MaxY
-                Get #F, , map(i).Tile(x, y)
-            Next
-        Next
-
-        For x = 1 To MAX_MAP_NPCS
-            Get #F, , map(i).NPC(x)
-            MapNpc(i).NPC(x).Num = map(i).NPC(x)
-        Next
-        
-        Get #F, , map(i).BossNpc
-        Get #F, , map(i).Fog
-        Get #F, , map(i).FogSpeed
-        Get #F, , map(i).FogOpacity
-        
-        Get #F, , map(i).Red
-        Get #F, , map(i).Green
-        Get #F, , map(i).Blue
-        Get #F, , map(i).Alpha
-        
-        Get #F, , map(i).Panorama
-        Get #F, , map(i).DayNight
-        
-        For x = 1 To MAX_MAP_NPCS
-            Get #F, , map(i).NpcSpawnType(x)
-        Next
-        
-        Close #F
-
-        CacheResources i
-        DoEvents
+            CacheResources i
+            DoEvents
+        End If
     Next
 
    ' Error handler
@@ -1468,28 +1337,6 @@ ErrorHandler:
     HandleError "LoadMaps", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
-End Sub
-
-Sub CheckMaps()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_MAPS
-
-        If Not FileExist("\Data\maps\map" & i & ".dat") Then
-            Call SaveMap(i)
-        End If
-
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "CheckMaps", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub ClearMapItem(ByVal Index As Long, ByVal mapNum As Long)
@@ -1565,15 +1412,15 @@ End Sub
 Sub ClearMap(ByVal mapNum As Long)
    On Error GoTo ErrorHandler
 
-    Call ZeroMemory(ByVal VarPtr(map(mapNum)), LenB(map(mapNum)))
-    map(mapNum).Name = vbNullString
-    map(mapNum).MaxX = MAX_MAPX
-    map(mapNum).MaxY = MAX_MAPY
-    ReDim map(mapNum).Tile(0 To map(mapNum).MaxX, 0 To map(mapNum).MaxY)
+    Call ZeroMemory(ByVal VarPtr(Map(mapNum)), LenB(Map(mapNum)))
+    Map(mapNum).Name = vbNullString
+    Map(mapNum).MaxX = MAX_MAPX
+    Map(mapNum).MaxY = MAX_MAPY
+    ReDim Map(mapNum).Tile(0 To Map(mapNum).MaxX, 0 To Map(mapNum).MaxY)
     ' Reset the values for if a player is on the map or not
     PlayersOnMap(mapNum) = NO
     ' Reset the map cache array for this map.
-    MapCache(mapNum).data = vbNullString
+    MapCache(mapNum).Data = vbNullString
 
    ' Error handler
    Exit Sub
@@ -1770,12 +1617,12 @@ Public Sub LoadEvent(ByVal Index As Long)
                         Get #F, , DCount
                         If DCount <= 0 Then
                             .HasData = False
-                            Erase .data
+                            Erase .Data
                         Else
                             .HasData = True
-                            ReDim .data(1 To DCount)
+                            ReDim .Data(1 To DCount)
                             For D = 1 To DCount
-                                Get #F, , .data(D)
+                                Get #F, , .Data(D)
                             Next D
                         End If
                     End With
@@ -1788,9 +1635,6 @@ Public Sub LoadEvent(ByVal Index As Long)
                 Get #F, , Events(Index).Graphic(s)
             Next
         Close #F
-    Else
-        Call ClearEvent(Index)
-        Call SaveEvent(Index)
     End If
     Exit Sub
 Errorhandle:
@@ -1861,10 +1705,10 @@ Public Sub SaveEvent(ByVal Index As Long)
                         DCount = 0
                         Put #F, , DCount
                     Else
-                        DCount = UBound(.data)
+                        DCount = UBound(.Data)
                         Put #F, , DCount
                         For D = 1 To DCount
-                            Put #F, , .data(D)
+                            Put #F, , .Data(D)
                         Next D
                     End If
                 End With
@@ -1990,7 +1834,7 @@ ErrorHandler:
 End Sub
 
 Public Sub LoadSwearFilter()
-Dim i As Long, filename As String, data As String, Parse() As String
+Dim i As Long, filename As String, Data As String, Parse() As String
     
     On Error GoTo ErrorHandler
     
@@ -2007,12 +1851,12 @@ Dim i As Long, filename As String, data As String, Parse() As String
     ' Loop through all of the words.
     For i = 1 To MaxSwearWords
         ' Get the bad word from the INI file.
-        data = GetVar(filename, "SWEAR_FILTER", "Word_" & CStr(i))
+        Data = GetVar(filename, "SWEAR_FILTER", "Word_" & CStr(i))
 
         ' If the data isn't blank, then load it.
-        If LenB(data) <> 0 Then
+        If LenB(Data) <> 0 Then
             ' Split the words to be set in the database.
-            Parse = Split(data, ";")
+            Parse = Split(Data, ";")
 
             ' Set the values in the database.
             SwearFilter(i).BadWord = Parse(0)
@@ -2090,27 +1934,15 @@ Sub LoadChests()
     Dim filename As String
     Dim i As Long
     Dim F As Long
-    Call CheckChests
 
     For i = 1 To MAX_CHESTS
         filename = App.Path & "\data\chests\chest" & i & ".dat"
-        F = FreeFile
-        Open filename For Binary As #F
-        Get #F, , Chest(i)
-        Close #F
-    Next
-
-End Sub
-
-Sub CheckChests()
-    Dim i As Long
-
-    For i = 1 To MAX_CHESTS
-
-        If Not FileExist("\Data\Chests\Chest" & i & ".dat") Then
-            Call SaveChest(i)
+        If FileExist(filename, True) Then
+            F = FreeFile
+            Open filename For Binary As #F
+                Get #F, , Chest(i)
+            Close #F
         End If
-
     Next
 
 End Sub
