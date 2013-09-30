@@ -589,23 +589,6 @@ End Sub
 ' ***********
 ' ** Items **
 ' ***********
-Sub SaveItems()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_ITEMS
-        Call SaveItem(i)
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveItems", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
-End Sub
 
 Sub SaveItem(ByVal itemnum As Long)
     Dim filename As String
@@ -688,23 +671,6 @@ End Sub
 ' ***********
 ' ** Shops **
 ' ***********
-Sub SaveShops()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_SHOPS
-        Call SaveShop(i)
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveShops", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
-End Sub
 
 Sub SaveShop(ByVal shopNum As Long)
     Dim filename As String
@@ -804,25 +770,6 @@ ErrorHandler:
     Exit Sub
 End Sub
 
-Sub SaveSpells()
-    Dim i As Long
-   On Error GoTo ErrorHandler
-
-    Call SetStatus("Saving spells... ")
-
-    For i = 1 To MAX_SPELLS
-        Call SaveSpell(i)
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveSpells", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
-End Sub
-
 Sub LoadSpells()
     Dim filename As String
     Dim i As Long
@@ -886,23 +833,6 @@ End Sub
 ' **********
 ' ** NPCs **
 ' **********
-Sub SaveNpcs()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_NPCS
-        Call SaveNpc(i)
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveNpcs", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
-End Sub
 
 Sub SaveNpc(ByVal npcNum As Long)
     Dim filename As String
@@ -985,23 +915,6 @@ End Sub
 ' **********
 ' ** Resources **
 ' **********
-Sub SaveResources()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_RESOURCES
-        Call SaveResource(i)
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveResources", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
-End Sub
 
 Sub SaveResource(ByVal ResourceNum As Long)
     Dim filename As String
@@ -1086,23 +999,6 @@ End Sub
 ' **********
 ' ** animations **
 ' **********
-Sub SaveAnimations()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_ANIMATIONS
-        Call SaveAnimation(i)
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveAnimations", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
-End Sub
 
 Sub SaveAnimation(ByVal AnimationNum As Long)
     Dim filename As String
@@ -1248,24 +1144,6 @@ ErrorHandler:
     HandleError "SaveMap", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
-End Sub
-
-Sub SaveMaps()
-    Dim i As Long
-
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_MAPS
-        Call SaveMap(i)
-    Next
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveMaps", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 
 Sub LoadMaps()
@@ -1649,21 +1527,6 @@ ErrorHandler:
     Exit Sub
 End Sub
 
-Public Sub SaveEvents()
-    Dim i As Long
-   On Error GoTo ErrorHandler
-
-    For i = 1 To MAX_EVENTS
-        Call SaveEvent(i)
-    Next i
-
-   ' Error handler
-   Exit Sub
-ErrorHandler:
-    HandleError "SaveEvents", "modDatabase", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-End Sub
 Public Sub SaveEvent(ByVal Index As Long)
     Dim F As Long, SCount As Long, s As Long, DCount As Long, D As Long
     Dim filename As String
@@ -1911,14 +1774,6 @@ End Sub
 ' ***********
 ' ** Chests **
 ' ***********
-Sub SaveChests()
-    Dim i As Long
-
-    For i = 1 To MAX_CHESTS
-        Call SaveChest(i)
-    Next
-
-End Sub
 
 Sub SaveChest(ByVal ChestNum As Long)
     Dim filename As String

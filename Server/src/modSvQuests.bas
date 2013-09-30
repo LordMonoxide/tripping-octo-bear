@@ -93,13 +93,6 @@ End Type
 ' // DATABASE //
 ' //////////////
 
-Sub SaveQuests()
-    Dim i As Long
-    For i = 1 To MAX_QUESTS
-        Call SaveQuest(i)
-    Next
-End Sub
-
 Sub SaveQuest(ByVal QuestNum As Long)
     Dim filename As String
     Dim F As Long, i As Long
