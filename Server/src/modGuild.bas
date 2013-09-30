@@ -1,4 +1,6 @@
 Attribute VB_Name = "modGuild"
+Option Explicit
+
 'For Clear functions
 Private Declare Sub ZeroMemory Lib "Kernel32.dll" Alias "RtlZeroMemory" (Destination As Any, ByVal Length As Long)
 
@@ -220,7 +222,7 @@ Public Sub MakeGuild(Founder_Index As Long, Name As String, Tag As String)
     PlayerMsg Founder_Index, "Guild Successfully Created!", BrightGreen
     PlayerMsg Founder_Index, "Welcome to " & GuildData(GuildSlot).Guild_Name & ".", BrightGreen
     PlayerMsg Founder_Index, "Your Guild Logo Randomly [" & GuildData(GuildSlot).Guild_Logo & "].", BrightGreen
-    PlayerMsg Index, "You can talk in guild chat with:  ;Message ", BrightRed
+    PlayerMsg Founder_Index, "You can talk in guild chat with:  ;Message ", BrightRed
     
     'Update user for guild name display
     Call SendPlayerData(Founder_Index)
@@ -597,8 +599,8 @@ Public Sub GuildLeave(Index As Long)
         TempPlayer(Index).tmpGuildSlot = 0
         
         'Update user for guild name display
-        Call SendGuild(True, OnlineIndex, GuildSlot)
-        Call SendGuild(True, Index, GuildSlot)
+        '''''''''''''''''''Call SendGuild(True, OnlineIndex, GuildSlot)
+        '''''''''''''''''''Call SendGuild(True, Index, GuildSlot)
         Call SendPlayerData(Index)
         
         PlayerMsg Index, "You have left the guild.", BrightRed

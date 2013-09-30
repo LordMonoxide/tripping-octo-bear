@@ -1,4 +1,6 @@
 Attribute VB_Name = "modPets"
+Option Explicit
+
 Private Declare Sub ZeroMemory Lib "Kernel32.dll" Alias "RtlZeroMemory" (Destination As Any, ByVal Length As Long)
 
 Public Const MAX_PETS As Long = 255
@@ -157,6 +159,8 @@ End Sub
 
 'ModPets
 Sub ReleasePet(Index)
+Dim i As Long
+
     Player(Index).Pet.Alive = False
     Player(Index).Pet.AttackBehaviour = 0
     Player(Index).Pet.dir = 0
@@ -186,6 +190,8 @@ Sub ReleasePet(Index)
     Call SendDataToMap(GetPlayerMap(Index), PlayerData(Index))
 End Sub
 Sub SummonPet(Index As Long, petNum As Long)
+Dim i As Long
+
     If Player(Index).Pet.Health > 0 Then
         If Trim$(Player(Index).Pet.Name) = vbNullString Then
             Call PlayerMsg(Index, BrightRed, "You have summoned a " & Trim$(Pet(petNum).Name))
@@ -302,7 +308,7 @@ Function CanPetMove(Index As Long, ByVal mapNum As Long, ByVal dir As Byte) As B
     Dim y As Long
 
     ' Check for subscript out of range
-    If mapNum <= 0 Or mapNum > MAX_MAPS Or Index <= 0 Or mapNpcNum > MAX_PLAYERS Or dir < DIR_UP Or dir > DIR_RIGHT Then
+    If mapNum <= 0 Or mapNum > MAX_MAPS Or Index <= 0 Or dir < DIR_UP Or dir > DIR_RIGHT Then
         Exit Function
     End If
 
@@ -509,6 +515,7 @@ Function PetTryWalk(Index As Long, targetx As Long, targety As Long) As Boolean
     Dim i As Long
     Dim x As Long
     Dim mapNum As Long
+    Dim DidWalk As Boolean
     mapNum = GetPlayerMap(Index)
     x = Index
                                                 i = Int(Rnd * 5)
@@ -1478,67 +1485,67 @@ Public Sub BufferPetSpell(ByVal Index As Long, ByVal spellslot As Long)
     Range = spell(spellnum).Range
     HasBuffered = False
     
-    Select Case SpellCastType
-        'PET
-        Case 0, 1, SPELL_TYPE_PET ' self-cast & self-cast AOE
-            HasBuffered = True
-        Case 2, 3 ' targeted & targeted AOE
-            ' check if have target
-            If Not target > 0 Then
-                If SpellCastType = SPELL_TYPE_HEALHP Or SpellCastType = SPELL_TYPE_HEALMP Then
-                    target = Index
-                    targetType = TARGET_TYPE_PET
-                Else
-                    PlayerMsg Index, "Your " & Trim$(Player(Index).Pet.Name) & " does not have a target.", BrightRed
-                End If
-            End If
-            If targetType = TARGET_TYPE_PLAYER Then
-                ' if have target, check in range
-                If Not isInRange(Range, Player(Index).Pet.x, Player(Index).Pet.y, GetPlayerX(target), GetPlayerY(target)) Then
-                    PlayerMsg Index, "Target not in range of " & Trim$(Player(Index).Pet.Name) & ".", BrightRed
-                Else
-                    ' go through spell types
-                    If spell(spellnum).Type <> SPELL_TYPE_DAMAGEHP And spell(spellnum).Type <> SPELL_TYPE_DAMAGEMP Then
-                        HasBuffered = True
-                    Else
-                        If CanPetAttackPlayer(Index, target, True) Then
-                            HasBuffered = True
-                        End If
-                    End If
-                End If
-            ElseIf targetType = TARGET_TYPE_NPC Then
-                ' if have target, check in range
-                If Not isInRange(Range, Player(Index).Pet.x, Player(Index).Pet.y, MapNpc(mapNum).NPC(target).x, MapNpc(mapNum).NPC(target).y) Then
-                    PlayerMsg Index, "Target not in range of " & Trim$(Player(Index).Pet.Name) & ".", BrightRed
-                    HasBuffered = False
-                Else
-                    ' go through spell types
-                    If spell(spellnum).Type <> SPELL_TYPE_DAMAGEHP And spell(spellnum).Type <> SPELL_TYPE_DAMAGEMP Then
-                        HasBuffered = True
-                    Else
-                        If CanPetAttackNpc(Index, target, True) Then
-                            HasBuffered = True
-                        End If
-                    End If
-                End If
-            'PET
-            ElseIf targetType = TARGET_TYPE_PET Then
-                ' if have target, check in range
-                If Not isInRange(Range, Player(Index).Pet.x, Player(Index).Pet.y, Player(target).Pet.x, Player(target).Pet.y) Then
-                    PlayerMsg Index, "Target not in range of " & Trim$(Player(Index).Pet.Name) & ".", BrightRed
-                    HasBuffered = False
-                Else
-                    ' go through spell types
-                    If spell(spellnum).Type <> SPELL_TYPE_DAMAGEHP And spell(spellnum).Type <> SPELL_TYPE_DAMAGEMP Then
-                        HasBuffered = True
-                    Else
-                        If CanPetAttackPet(Index, target, True) Then
-                            HasBuffered = True
-                        End If
-                    End If
-                End If
-            End If
-    End Select
+'    Select Case SpellCastType
+'        'PET
+'        Case 0, 1 ' self-cast & self-cast AOE
+'            HasBuffered = True
+'        Case 2, 3 ' targeted & targeted AOE
+'            ' check if have target
+'            If Not target > 0 Then
+'                If SpellCastType = SPELL_TYPE_HEALHP Or SpellCastType = SPELL_TYPE_HEALMP Then
+'                    target = Index
+'                    targetType = TARGET_TYPE_PET
+'                Else
+'                    PlayerMsg Index, "Your " & Trim$(Player(Index).Pet.Name) & " does not have a target.", BrightRed
+'                End If
+'            End If
+'            If targetType = TARGET_TYPE_PLAYER Then
+'                ' if have target, check in range
+'                If Not isInRange(Range, Player(Index).Pet.x, Player(Index).Pet.y, GetPlayerX(target), GetPlayerY(target)) Then
+'                    PlayerMsg Index, "Target not in range of " & Trim$(Player(Index).Pet.Name) & ".", BrightRed
+'                Else
+'                    ' go through spell types
+'                    If spell(spellnum).Type <> SPELL_TYPE_DAMAGEHP And spell(spellnum).Type <> SPELL_TYPE_DAMAGEMP Then
+'                        HasBuffered = True
+'                    Else
+'                        If CanPetAttackPlayer(Index, target, True) Then
+'                            HasBuffered = True
+'                        End If
+'                    End If
+'                End If
+'            ElseIf targetType = TARGET_TYPE_NPC Then
+'                ' if have target, check in range
+'                If Not isInRange(Range, Player(Index).Pet.x, Player(Index).Pet.y, MapNpc(mapNum).NPC(target).x, MapNpc(mapNum).NPC(target).y) Then
+'                    PlayerMsg Index, "Target not in range of " & Trim$(Player(Index).Pet.Name) & ".", BrightRed
+'                    HasBuffered = False
+'                Else
+'                    ' go through spell types
+'                    If spell(spellnum).Type <> SPELL_TYPE_DAMAGEHP And spell(spellnum).Type <> SPELL_TYPE_DAMAGEMP Then
+'                        HasBuffered = True
+'                    Else
+'                        If CanPetAttackNpc(Index, target, True) Then
+'                            HasBuffered = True
+'                        End If
+'                    End If
+'                End If
+'            'PET
+'            ElseIf targetType = TARGET_TYPE_PET Then
+'                ' if have target, check in range
+'                If Not isInRange(Range, Player(Index).Pet.x, Player(Index).Pet.y, Player(target).Pet.x, Player(target).Pet.y) Then
+'                    PlayerMsg Index, "Target not in range of " & Trim$(Player(Index).Pet.Name) & ".", BrightRed
+'                    HasBuffered = False
+'                Else
+'                    ' go through spell types
+'                    If spell(spellnum).Type <> SPELL_TYPE_DAMAGEHP And spell(spellnum).Type <> SPELL_TYPE_DAMAGEMP Then
+'                        HasBuffered = True
+'                    Else
+'                        If CanPetAttackPet(Index, target, True) Then
+'                            HasBuffered = True
+'                        End If
+'                    End If
+'                End If
+'            End If
+'    End Select
     
     If HasBuffered Then
         SendAnimation mapNum, spell(spellnum).CastAnim, 0, 0, TARGET_TYPE_PET, Index
@@ -1635,198 +1642,198 @@ Public Sub PetCastSpell(ByVal Index As Long, ByVal spellslot As Long, ByVal targ
     AoE = spell(spellnum).AoE
     Range = spell(spellnum).Range
     
-    Select Case SpellCastType
-        Case 0 ' self-cast target
-            Select Case spell(spellnum).Type
-                Case SPELL_TYPE_HEALHP
-                    SpellPet_Effect Vitals.HP, True, Index, Vital, spellnum
-                    DidCast = True
-                Case SPELL_TYPE_HEALMP
-                    SpellPet_Effect Vitals.MP, True, Index, Vital, spellnum
-                    DidCast = True
-            End Select
-        Case 1, 3 ' self-cast AOE & targetted AOE
-            If SpellCastType = 1 Then
-                x = Player(Index).Pet.x
-                y = Player(Index).Pet.y
-            ElseIf SpellCastType = 3 Then
-                If targetType = 0 Then Exit Sub
-                If target = 0 Then Exit Sub
-                
-                If targetType = TARGET_TYPE_PLAYER Then
-                    x = GetPlayerX(target)
-                    y = GetPlayerY(target)
-                ElseIf targetType = TARGET_TYPE_NPC Then
-                    x = MapNpc(mapNum).NPC(target).x
-                    y = MapNpc(mapNum).NPC(target).y
-                ElseIf targetType = TARGET_TYPE_PET Then
-                    x = Player(target).Pet.x
-                    y = Player(target).Pet.y
-                End If
-                
-                If Not isInRange(Range, Player(Index).Pet.x, Player(Index).Pet.y, x, y) Then
-                    PlayerMsg Index, Trim$(Player(Index).Pet.Name) & "'s target not in range.", BrightRed
-                    SendClearPetSpellBuffer Index
-                End If
-            End If
-            Select Case spell(spellnum).Type
-                Case SPELL_TYPE_DAMAGEHP
-                    DidCast = True
-                    For i = 1 To Player_HighIndex
-                        If IsPlaying(i) Then
-                            If i <> Index Then
-                                If GetPlayerMap(i) = GetPlayerMap(Index) Then
-                                    If isInRange(AoE, x, y, GetPlayerX(i), GetPlayerY(i)) Then
-                                        If CanPetAttackPlayer(Index, i, True) And Index <> target Then
-                                            SendAnimation mapNum, spell(spellnum).SpellAnim, 0, 0, TARGET_TYPE_PLAYER, i
-                                            PetAttackPlayer Index, i, Vital, spellnum
-                                        End If
-                                    End If
-                                    If Player(i).Pet.Alive = True Then
-                                        If isInRange(AoE, x, y, Player(i).Pet.x, Player(i).Pet.y) Then
-                                            If CanPetAttackPet(Index, i, True) Then
-                                                SendAnimation mapNum, spell(spellnum).SpellAnim, 0, 0, TARGET_TYPE_PET, i
-                                                PetAttackPet Index, i, Vital, spellnum
-                                            End If
-                                        End If
-                                    End If
-                                End If
-                            End If
-                        End If
-                    Next
-                    For i = 1 To MAX_MAP_NPCS
-                        If MapNpc(mapNum).NPC(i).Num > 0 Then
-                            If MapNpc(mapNum).NPC(i).Vital(HP) > 0 Then
-                                If isInRange(AoE, x, y, MapNpc(mapNum).NPC(i).x, MapNpc(mapNum).NPC(i).y) Then
-                                    If CanPetAttackNpc(Index, i, True) Then
-                                        SendAnimation mapNum, spell(spellnum).SpellAnim, 0, 0, TARGET_TYPE_NPC, i
-                                        PetAttackNpc Index, i, Vital, spellnum
-                                    End If
-                                End If
-                            End If
-                        End If
-                    Next
-                Case SPELL_TYPE_HEALHP, SPELL_TYPE_HEALMP, SPELL_TYPE_DAMAGEMP
-                    If spell(spellnum).Type = SPELL_TYPE_HEALHP Then
-                        VitalType = Vitals.HP
-                        increment = True
-                    ElseIf spell(spellnum).Type = SPELL_TYPE_HEALMP Then
-                        VitalType = Vitals.MP
-                        increment = True
-                    ElseIf spell(spellnum).Type = SPELL_TYPE_DAMAGEMP Then
-                        VitalType = Vitals.MP
-                        increment = False
-                    End If
-                    
-                    DidCast = True
-                    For i = 1 To Player_HighIndex
-                        If IsPlaying(i) Then
-                            If GetPlayerMap(i) = GetPlayerMap(Index) Then
-                                If isInRange(AoE, x, y, GetPlayerX(i), GetPlayerY(i)) Then
-                                    SpellPlayer_Effect VitalType, increment, i, Vital, spellnum
-                                End If
-                                If Player(i).Pet.Alive Then
-                                    If isInRange(AoE, x, y, Player(i).Pet.x, Player(i).Pet.y) Then
-                                        SpellPet_Effect VitalType, increment, i, Vital, spellnum
-                                    End If
-                                End If
-                            End If
-                        End If
-                    Next
-            End Select
-        Case 2 ' targetted
-            If targetType = 0 Then Exit Sub
-            If target = 0 Then Exit Sub
-            
-            If targetType = TARGET_TYPE_PLAYER Then
-                x = GetPlayerX(target)
-                y = GetPlayerY(target)
-            ElseIf targetType = TARGET_TYPE_NPC Then
-                x = MapNpc(mapNum).NPC(target).x
-                y = MapNpc(mapNum).NPC(target).y
-            ElseIf targetType = TARGET_TYPE_PET Then
-                x = Player(target).Pet.x
-                y = Player(target).Pet.y
-            End If
-                
-            If Not isInRange(Range, Player(Index).Pet.x, Player(Index).Pet.y, x, y) Then
-                PlayerMsg Index, "Target is not in range of your " & Trim$(Player(Index).Pet.Name) & "!", BrightRed
-                SendClearPetSpellBuffer Index
-                Exit Sub
-            End If
-            
-            Select Case spell(spellnum).Type
-                Case SPELL_TYPE_DAMAGEHP
-                    If targetType = TARGET_TYPE_PLAYER Then
-                        If CanPetAttackPlayer(Index, target, True) And Index <> target Then
-                            If Vital > 0 Then
-                                SendAnimation mapNum, spell(spellnum).SpellAnim, 0, 0, TARGET_TYPE_PLAYER, target
-                                PetAttackPlayer Index, target, Vital, spellnum
-                                DidCast = True
-                            End If
-                        End If
-                    ElseIf targetType = TARGET_TYPE_NPC Then
-                        If CanPetAttackNpc(Index, target, True) Then
-                            If Vital > 0 Then
-                                SendAnimation mapNum, spell(spellnum).SpellAnim, 0, 0, TARGET_TYPE_NPC, target
-                                PetAttackNpc Index, target, Vital, spellnum
-                                DidCast = True
-                            End If
-                        End If
-                    ElseIf targetType = TARGET_TYPE_PET Then
-                        If CanPetAttackPet(Index, target, True) Then
-                            If Vital > 0 Then
-                                SendAnimation mapNum, spell(spellnum).SpellAnim, 0, 0, TARGET_TYPE_PET, target
-                                PetAttackPet Index, target, Vital, spellnum
-                                DidCast = True
-                            End If
-                        End If
-                    End If
-                    
-                Case SPELL_TYPE_DAMAGEMP, SPELL_TYPE_HEALMP, SPELL_TYPE_HEALHP
-                    If spell(spellnum).Type = SPELL_TYPE_DAMAGEMP Then
-                        VitalType = Vitals.MP
-                        increment = False
-                    ElseIf spell(spellnum).Type = SPELL_TYPE_HEALMP Then
-                        VitalType = Vitals.MP
-                        increment = True
-                    ElseIf spell(spellnum).Type = SPELL_TYPE_HEALHP Then
-                        VitalType = Vitals.HP
-                        increment = True
-                    End If
-                    
-                    If targetType = TARGET_TYPE_PLAYER Then
-                        If spell(spellnum).Type = SPELL_TYPE_DAMAGEMP Then
-                            If CanPetAttackPlayer(Index, target, True) Then
-                                SpellPlayer_Effect VitalType, increment, target, Vital, spellnum
-                            End If
-                        Else
-                            SpellPlayer_Effect VitalType, increment, target, Vital, spellnum
-                        End If
-                    ElseIf targetType = TARGET_TYPE_NPC Then
-                        If spell(spellnum).Type = SPELL_TYPE_DAMAGEMP Then
-                            If CanPetAttackNpc(Index, target, True) Then
-                                SpellNpc_Effect VitalType, increment, target, Vital, spellnum, mapNum
-                            End If
-                        Else
-                            If spell(spellnum).Type = SPELL_TYPE_HEALHP Or spell(spellnum).Type = SPELL_TYPE_HEALMP Then
-                                SpellPet_Effect VitalType, increment, Index, Vital, spellnum
-                            Else
-                                SpellNpc_Effect VitalType, increment, target, Vital, spellnum, mapNum
-                            End If
-                        End If
-                    ElseIf targetType = TARGET_TYPE_PET Then
-                        If spell(spellnum).Type = SPELL_TYPE_DAMAGEMP Then
-                            If CanPetAttackPet(Index, target, True) Then
-                                SpellPet_Effect VitalType, increment, target, Vital, spellnum
-                            End If
-                        Else
-                            SpellPet_Effect VitalType, increment, target, Vital, spellnum
-                            Call SendPetVital(target, Vital)
-                        End If
-                    End If
-            End Select
-    End Select
+'    Select Case SpellCastType
+'        Case 0 ' self-cast target
+'            Select Case spell(spellnum).Type
+'                Case SPELL_TYPE_HEALHP
+'                    SpellPet_Effect Vitals.HP, True, Index, Vital, spellnum
+'                    DidCast = True
+'                Case SPELL_TYPE_HEALMP
+'                    SpellPet_Effect Vitals.MP, True, Index, Vital, spellnum
+'                    DidCast = True
+'            End Select
+'        Case 1, 3 ' self-cast AOE & targetted AOE
+'            If SpellCastType = 1 Then
+'                x = Player(Index).Pet.x
+'                y = Player(Index).Pet.y
+'            ElseIf SpellCastType = 3 Then
+'                If targetType = 0 Then Exit Sub
+'                If target = 0 Then Exit Sub
+'
+'                If targetType = TARGET_TYPE_PLAYER Then
+'                    x = GetPlayerX(target)
+'                    y = GetPlayerY(target)
+'                ElseIf targetType = TARGET_TYPE_NPC Then
+'                    x = MapNpc(mapNum).NPC(target).x
+'                    y = MapNpc(mapNum).NPC(target).y
+'                ElseIf targetType = TARGET_TYPE_PET Then
+'                    x = Player(target).Pet.x
+'                    y = Player(target).Pet.y
+'                End If
+'
+'                If Not isInRange(Range, Player(Index).Pet.x, Player(Index).Pet.y, x, y) Then
+'                    PlayerMsg Index, Trim$(Player(Index).Pet.Name) & "'s target not in range.", BrightRed
+'                    SendClearPetSpellBuffer Index
+'                End If
+'            End If
+'            Select Case spell(spellnum).Type
+'                Case SPELL_TYPE_DAMAGEHP
+'                    DidCast = True
+'                    For i = 1 To Player_HighIndex
+'                        If IsPlaying(i) Then
+'                            If i <> Index Then
+'                                If GetPlayerMap(i) = GetPlayerMap(Index) Then
+'                                    If isInRange(AoE, x, y, GetPlayerX(i), GetPlayerY(i)) Then
+'                                        If CanPetAttackPlayer(Index, i, True) And Index <> target Then
+'                                            SendAnimation mapNum, spell(spellnum).SpellAnim, 0, 0, TARGET_TYPE_PLAYER, i
+'                                            PetAttackPlayer Index, i, Vital, spellnum
+'                                        End If
+'                                    End If
+'                                    If Player(i).Pet.Alive = True Then
+'                                        If isInRange(AoE, x, y, Player(i).Pet.x, Player(i).Pet.y) Then
+'                                            If CanPetAttackPet(Index, i, True) Then
+'                                                SendAnimation mapNum, spell(spellnum).SpellAnim, 0, 0, TARGET_TYPE_PET, i
+'                                                PetAttackPet Index, i, Vital, spellnum
+'                                            End If
+'                                        End If
+'                                    End If
+'                                End If
+'                            End If
+'                        End If
+'                    Next
+'                    For i = 1 To MAX_MAP_NPCS
+'                        If MapNpc(mapNum).NPC(i).Num > 0 Then
+'                            If MapNpc(mapNum).NPC(i).Vital(HP) > 0 Then
+'                                If isInRange(AoE, x, y, MapNpc(mapNum).NPC(i).x, MapNpc(mapNum).NPC(i).y) Then
+'                                    If CanPetAttackNpc(Index, i, True) Then
+'                                        SendAnimation mapNum, spell(spellnum).SpellAnim, 0, 0, TARGET_TYPE_NPC, i
+'                                        PetAttackNpc Index, i, Vital, spellnum
+'                                    End If
+'                                End If
+'                            End If
+'                        End If
+'                    Next
+'                Case SPELL_TYPE_HEALHP, SPELL_TYPE_HEALMP, SPELL_TYPE_DAMAGEMP
+'                    If spell(spellnum).Type = SPELL_TYPE_HEALHP Then
+'                        VitalType = Vitals.HP
+'                        increment = True
+'                    ElseIf spell(spellnum).Type = SPELL_TYPE_HEALMP Then
+'                        VitalType = Vitals.MP
+'                        increment = True
+'                    ElseIf spell(spellnum).Type = SPELL_TYPE_DAMAGEMP Then
+'                        VitalType = Vitals.MP
+'                        increment = False
+'                    End If
+'
+'                    DidCast = True
+'                    For i = 1 To Player_HighIndex
+'                        If IsPlaying(i) Then
+'                            If GetPlayerMap(i) = GetPlayerMap(Index) Then
+'                                If isInRange(AoE, x, y, GetPlayerX(i), GetPlayerY(i)) Then
+'                                    SpellPlayer_Effect VitalType, increment, i, Vital, spellnum
+'                                End If
+'                                If Player(i).Pet.Alive Then
+'                                    If isInRange(AoE, x, y, Player(i).Pet.x, Player(i).Pet.y) Then
+'                                        SpellPet_Effect VitalType, increment, i, Vital, spellnum
+'                                    End If
+'                                End If
+'                            End If
+'                        End If
+'                    Next
+'            End Select
+'        Case 2 ' targetted
+'            If targetType = 0 Then Exit Sub
+'            If target = 0 Then Exit Sub
+'
+'            If targetType = TARGET_TYPE_PLAYER Then
+'                x = GetPlayerX(target)
+'                y = GetPlayerY(target)
+'            ElseIf targetType = TARGET_TYPE_NPC Then
+'                x = MapNpc(mapNum).NPC(target).x
+'                y = MapNpc(mapNum).NPC(target).y
+'            ElseIf targetType = TARGET_TYPE_PET Then
+'                x = Player(target).Pet.x
+'                y = Player(target).Pet.y
+'            End If
+'
+'            If Not isInRange(Range, Player(Index).Pet.x, Player(Index).Pet.y, x, y) Then
+'                PlayerMsg Index, "Target is not in range of your " & Trim$(Player(Index).Pet.Name) & "!", BrightRed
+'                SendClearPetSpellBuffer Index
+'                Exit Sub
+'            End If
+'
+'            Select Case spell(spellnum).Type
+'                Case SPELL_TYPE_DAMAGEHP
+'                    If targetType = TARGET_TYPE_PLAYER Then
+'                        If CanPetAttackPlayer(Index, target, True) And Index <> target Then
+'                            If Vital > 0 Then
+'                                SendAnimation mapNum, spell(spellnum).SpellAnim, 0, 0, TARGET_TYPE_PLAYER, target
+'                                PetAttackPlayer Index, target, Vital, spellnum
+'                                DidCast = True
+'                            End If
+'                        End If
+'                    ElseIf targetType = TARGET_TYPE_NPC Then
+'                        If CanPetAttackNpc(Index, target, True) Then
+'                            If Vital > 0 Then
+'                                SendAnimation mapNum, spell(spellnum).SpellAnim, 0, 0, TARGET_TYPE_NPC, target
+'                                PetAttackNpc Index, target, Vital, spellnum
+'                                DidCast = True
+'                            End If
+'                        End If
+'                    ElseIf targetType = TARGET_TYPE_PET Then
+'                        If CanPetAttackPet(Index, target, True) Then
+'                            If Vital > 0 Then
+'                                SendAnimation mapNum, spell(spellnum).SpellAnim, 0, 0, TARGET_TYPE_PET, target
+'                                PetAttackPet Index, target, Vital, spellnum
+'                                DidCast = True
+'                            End If
+'                        End If
+'                    End If
+'
+'                Case SPELL_TYPE_DAMAGEMP, SPELL_TYPE_HEALMP, SPELL_TYPE_HEALHP
+'                    If spell(spellnum).Type = SPELL_TYPE_DAMAGEMP Then
+'                        VitalType = Vitals.MP
+'                        increment = False
+'                    ElseIf spell(spellnum).Type = SPELL_TYPE_HEALMP Then
+'                        VitalType = Vitals.MP
+'                        increment = True
+'                    ElseIf spell(spellnum).Type = SPELL_TYPE_HEALHP Then
+'                        VitalType = Vitals.HP
+'                        increment = True
+'                    End If
+'
+'                    If targetType = TARGET_TYPE_PLAYER Then
+'                        If spell(spellnum).Type = SPELL_TYPE_DAMAGEMP Then
+'                            If CanPetAttackPlayer(Index, target, True) Then
+'                                SpellPlayer_Effect VitalType, increment, target, Vital, spellnum
+'                            End If
+'                        Else
+'                            SpellPlayer_Effect VitalType, increment, target, Vital, spellnum
+'                        End If
+'                    ElseIf targetType = TARGET_TYPE_NPC Then
+'                        If spell(spellnum).Type = SPELL_TYPE_DAMAGEMP Then
+'                            If CanPetAttackNpc(Index, target, True) Then
+'                                SpellNpc_Effect VitalType, increment, target, Vital, spellnum, mapNum
+'                            End If
+'                        Else
+'                            If spell(spellnum).Type = SPELL_TYPE_HEALHP Or spell(spellnum).Type = SPELL_TYPE_HEALMP Then
+'                                SpellPet_Effect VitalType, increment, Index, Vital, spellnum
+'                            Else
+'                                SpellNpc_Effect VitalType, increment, target, Vital, spellnum, mapNum
+'                            End If
+'                        End If
+'                    ElseIf targetType = TARGET_TYPE_PET Then
+'                        If spell(spellnum).Type = SPELL_TYPE_DAMAGEMP Then
+'                            If CanPetAttackPet(Index, target, True) Then
+'                                SpellPet_Effect VitalType, increment, target, Vital, spellnum
+'                            End If
+'                        Else
+'                            SpellPet_Effect VitalType, increment, target, Vital, spellnum
+'                            Call SendPetVital(target, Vital)
+'                        End If
+'                    End If
+'            End Select
+'    End Select
     
     If DidCast Then
         Player(Index).Pet.Mana = Player(Index).Pet.Mana - MPCost
@@ -2019,7 +2026,7 @@ Sub PetAttackPlayer(ByVal attacker As Long, ByVal victim As Long, ByVal Damage A
         Buffer.WriteLong SAttack
         Buffer.WriteLong attacker
         Buffer.WriteLong 1
-        SendDataToMap mapNum, Buffer.ToArray()
+        ''''''''''''''''''SendDataToMap mapNum, Buffer.ToArray()
         Set Buffer = Nothing
     End If
     
@@ -2217,7 +2224,7 @@ Sub PetAttackPet(ByVal attacker As Long, ByVal victim As Long, ByVal Damage As L
         Buffer.WriteLong SAttack
         Buffer.WriteLong attacker
         Buffer.WriteLong 1
-        SendDataToMap mapNum, Buffer.ToArray()
+        ''''''''''''''''''SendDataToMap mapNum, Buffer.ToArray()
         Set Buffer = Nothing
     End If
     
@@ -2467,7 +2474,7 @@ Dim rndChance2 As Long
         End If
 
         If Damage > 0 Then
-            Call PetAttackPlayer(mapNpcNum, Index, Damage)
+            ''''''''''''''''''Call PetAttackPlayer(mapNpcNum, Index, Damage)
         End If
     End If
 End Sub

@@ -1,4 +1,6 @@
 Attribute VB_Name = "modCustom"
+Option Explicit
+
 Public Sub CustomScript(Index As Long, caseID As Long)
     Select Case caseID
         Case Else
