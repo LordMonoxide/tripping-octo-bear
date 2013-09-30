@@ -8,7 +8,7 @@ Option Explicit
 Function GetPlayerMaxVital(ByVal Index As Long, ByVal Vital As Vitals) As Long
    On Error GoTo ErrorHandler
 Dim i As Long
-    If Index < 0 And Index > MAX_PLAYERS Then Exit Function
+
     Select Case Vital
         Case HP
             GetPlayerMaxVital = ((GetPlayerLevel(Index) / 2) + (GetPlayerStat(Index, Endurance) / 2)) * 13 + 120
