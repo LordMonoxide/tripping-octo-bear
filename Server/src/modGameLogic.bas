@@ -130,9 +130,7 @@ ErrorHandler:
 End Sub
 
 Sub SpawnItemSlot(ByVal MapItemSlot As Long, ByVal itemnum As Long, ByVal ItemVal As Long, ByVal mapNum As Long, ByVal x As Long, ByVal y As Long, Optional ByVal playerName As String = vbNullString, Optional ByVal canDespawn As Boolean = True, Optional ByVal isSB As Boolean = False)
-    Dim packet As String
     Dim i As Long
-    Dim Buffer As clsBuffer
 
     ' Check for subscript out of range
    On Error GoTo ErrorHandler
@@ -806,7 +804,6 @@ ErrorHandler:
 End Function
 
 Sub NpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As Long, ByVal movement As Long)
-    Dim packet As String
     Dim Buffer As clsBuffer
 
     ' Check for subscript out of range
@@ -923,7 +920,6 @@ ErrorHandler:
 End Sub
 
 Sub NpcDir(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As Long)
-    Dim packet As String
     Dim Buffer As clsBuffer
 
     ' Check for subscript out of range

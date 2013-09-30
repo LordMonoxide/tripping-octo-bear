@@ -60,9 +60,6 @@ Public Sub InitServer()
     ChkDir App.Path & "\Data\", "pets"
     ChkDir App.Path & "\Data\", "quests"
     ChkDir App.Path & "\Data\", "chests"
-
-    ' set quote character
-    vbQuote = ChrW$(34) ' "
     
     ' load options, set if they dont exist
     If Not FileExist(App.Path & "\data\options.ini", True) Then

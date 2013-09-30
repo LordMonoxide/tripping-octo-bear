@@ -195,7 +195,7 @@ ErrorHandler:
 End Sub
 
 Public Sub BanIndex(ByVal BanPlayerIndex As Long)
-Dim filename As String, IP As String, F As Long, i As Long
+Dim filename As String, IP As String, F As Long
 
     ' Add banned to the player's index
    On Error GoTo ErrorHandler
@@ -340,8 +340,6 @@ ErrorHandler:
 End Function
 
 Sub AddAccount(ByVal Index As Long, ByVal Name As String, ByVal Password As String)
-    Dim i As Long
-    
    On Error GoTo ErrorHandler
 
     ClearPlayer Index
@@ -414,14 +412,10 @@ End Function
 Sub AddChar(ByVal Index As Long, ByVal Name As String, ByVal Sex As Byte, ByVal Clothes As Long, ByVal Gear As Long, ByVal Hair As Long, ByVal Headgear As Long)
     Dim F As Long
     Dim n As Long
-    Dim spritecheck As Boolean
 
    On Error GoTo ErrorHandler
 
     If LenB(Trim$(Player(Index).Name)) = 0 Then
-        
-        spritecheck = False
-        
         Player(Index).Name = Name
         Player(Index).Sex = Sex
         Player(Index).Clothes = Clothes
@@ -563,8 +557,6 @@ ErrorHandler:
 End Sub
 
 Sub ClearPlayer(ByVal Index As Long)
-    Dim i As Long
-    
    On Error GoTo ErrorHandler
 
     Call ZeroMemory(ByVal VarPtr(TempPlayer(Index)), LenB(TempPlayer(Index)))
@@ -939,7 +931,6 @@ Sub LoadResources()
     Dim filename As String
     Dim i As Long
     Dim F As Long
-    Dim sLen As Long
     
    On Error GoTo ErrorHandler
 
@@ -1023,7 +1014,6 @@ Sub LoadAnimations()
     Dim filename As String
     Dim i As Long
     Dim F As Long
-    Dim sLen As Long
     
    On Error GoTo ErrorHandler
 

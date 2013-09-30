@@ -107,7 +107,7 @@ ErrorHandler:
 End Sub
 
 Sub LeftGame(ByVal Index As Long)
-    Dim n As Long, i As Long
+    Dim i As Long
     Dim tradeTarget As Long
     
    On Error GoTo ErrorHandler
@@ -265,7 +265,6 @@ ErrorHandler:
 End Function
 
 Sub PlayerWarp(ByVal Index As Long, ByVal mapNum As Long, ByVal x As Long, ByVal y As Long)
-    Dim shopNum As Long
     Dim OldMap As Long
     Dim i As Long
     Dim Buffer As clsBuffer
@@ -354,11 +353,11 @@ ErrorHandler:
 End Sub
 
 Sub PlayerMove(ByVal Index As Long, ByVal dir As Long, ByVal movement As Long, Optional ByVal sendToSelf As Boolean = False)
-    Dim Buffer As clsBuffer, mapNum As Long
+    Dim mapNum As Long
     Dim x As Long, y As Long
-    Dim Moved As Byte, MovedSoFar As Boolean
+    Dim Moved As Byte
     Dim NewMapX As Byte, NewMapY As Byte
-    Dim TileType As Long, VitalType As Long, Colour As Long, Amount As Long
+    Dim VitalType As Long, Colour As Long, Amount As Long
 
     ' Check for subscript out of range
    On Error GoTo ErrorHandler
@@ -771,7 +770,6 @@ ErrorHandler:
 End Sub
 
 Sub CheckEquippedItems(ByVal Index As Long)
-    Dim Slot As Long
     Dim itemnum As Long
     Dim i As Long
 
@@ -955,7 +953,6 @@ End Function
 
 Function TakeInvItem(ByVal Index As Long, ByVal itemnum As Long, ByVal ItemVal As Long) As Boolean
     Dim i As Long
-    Dim n As Long
     
    On Error GoTo ErrorHandler
 
@@ -1005,8 +1002,6 @@ ErrorHandler:
 End Function
 
 Function TakeInvSlot(ByVal Index As Long, ByVal invSlot As Long, ByVal ItemVal As Long) As Boolean
-    Dim i As Long
-    Dim n As Long
     Dim itemnum
     
    On Error GoTo ErrorHandler
@@ -1432,7 +1427,6 @@ ErrorHandler:
 End Sub
 
 Sub CheckPlayerLevelUp(ByVal Index As Long)
-    Dim i As Long
     Dim expRollover As Long
     Dim level_count As Long
     
@@ -1474,7 +1468,6 @@ ErrorHandler:
 End Sub
 
 Sub CheckPlayerSkillLevelUp(ByVal Index As Long, ByVal Skill As Skills)
-    Dim i As Long
     Dim expRollover As Long
     Dim level_count As Long
     
@@ -2680,7 +2673,7 @@ ErrorHandler:
 End Sub
 
 Public Sub UseItem(ByVal Index As Long, ByVal invNum As Long)
-Dim n As Long, i As Long, tempItem As Long, x As Long, y As Long, itemnum As Long
+Dim n As Long, i As Long, tempItem As Long, x As Long, itemnum As Long
 
     ' Prevent hacking
    On Error GoTo ErrorHandler
@@ -3559,7 +3552,7 @@ ErrorHandler:
 End Function
 
 Public Sub DoEventLogic(ByVal Index As Long, ByVal Opt As Long)
-Dim x As Long, y As Long, i As Long, Buffer As clsBuffer
+Dim x As Long, y As Long, i As Long
     
    On Error GoTo ErrorHandler
 
@@ -3814,11 +3807,7 @@ ErrorHandler:
 End Sub
 
 Sub CheckEvent(ByVal Index As Long, ByVal x As Long, ByVal y As Long)
-    Dim Event_num As Long
     Dim Event_index As Long
-    Dim rX As Long, rY As Long
-    Dim i As Long
-    Dim Damage As Long
     
    On Error GoTo ErrorHandler
 

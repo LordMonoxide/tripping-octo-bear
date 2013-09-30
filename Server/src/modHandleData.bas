@@ -261,7 +261,6 @@ Private Sub HandleDelAccount(ByVal Index As Long, ByRef Data() As Byte, ByVal St
     Dim Buffer As clsBuffer
     Dim Name As String
     Dim Password As String
-    Dim i As Long
 
    On Error GoTo ErrorHandler
 
@@ -322,8 +321,6 @@ Private Sub HandleLogin(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAd
     Dim Buffer As clsBuffer
     Dim Name As String
     Dim Password As String
-    Dim i As Long
-    Dim n As Long
 
    On Error GoTo ErrorHandler
 
@@ -414,7 +411,6 @@ End Sub
 Private Sub HandleAddChar(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
     Dim Name As String
-    Dim Password As String
     Dim Sex As Long
     Dim Clothes As Long
     Dim Gear As Long
@@ -801,7 +797,7 @@ End Sub
 ' :: Player attack packet ::
 ' ::::::::::::::::::::::::::
 Sub HandleAttack(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-Dim i As Long, n As Long, Damage As Long, TempIndex As Long, x As Long, y As Long, mapNum As Long, dirReq As Long, shoot As Boolean
+Dim i As Long, TempIndex As Long, x As Long, y As Long, shoot As Boolean
     
     ' can't attack whilst casting
    On Error GoTo ErrorHandler
@@ -982,7 +978,6 @@ End Sub
 Sub HandlePlayerInfoRequest(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Name As String
     Dim i As Long
-    Dim n As Long
     Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
@@ -1534,7 +1529,6 @@ End Sub
 ' ::::::::::::::::::::::::
 Sub HandleBanDestroy(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim filename As String
-    Dim File As Long
     Dim F As Long
 
     ' Prevent hacking
@@ -1941,7 +1935,6 @@ End Sub
 ' ::::::::::::::::::::::
 Sub HandleSaveShop(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim shopNum As Long
-    Dim i As Long
     Dim Buffer As clsBuffer
     Dim ShopSize As Long
     Dim ShopData() As Byte
@@ -2242,7 +2235,6 @@ End Sub
 ' :: Swap Inventory Slots ::
 ' ::::::::::::::::::::::::::
 Sub HandleSwapInvSlots(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim n As Long
     Dim Buffer As clsBuffer
     Dim oldSlot As Long, newSlot As Long
     
@@ -2306,7 +2298,6 @@ End Sub
 ' :: Check Ping ::
 ' ::::::::::::::::
 Sub HandleCheckPing(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim n As Long
     Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
@@ -2630,7 +2621,6 @@ Sub HandleSellItem(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As
     Dim itemnum As Long
     Dim Price As Long
     Dim multiplier As Double
-    Dim Amount As Long
     
    On Error GoTo ErrorHandler
 
@@ -3486,7 +3476,7 @@ End Sub
 
 Public Sub Events_HandleRequestEventData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-    Dim EIndex As Long, s As Long, SCount As Long, D As Long, DCount As Long
+    Dim EIndex As Long
 
    On Error GoTo ErrorHandler
 

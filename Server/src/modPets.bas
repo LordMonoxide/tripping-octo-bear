@@ -70,7 +70,6 @@ Sub Loadpets()
     Dim filename As String
     Dim i As Long
     Dim F As Long
-    Dim sLen As Long
     
     Call Checkpets
 
@@ -125,7 +124,6 @@ Sub SendPets(ByVal Index As Long)
 
 End Sub
 Sub SendUpdatePetToAll(ByVal petNum As Long)
-    Dim packet As String
     Dim Buffer As clsBuffer
     Dim PetSize As Long
     Dim PetData() As Byte
@@ -141,7 +139,6 @@ Sub SendUpdatePetToAll(ByVal petNum As Long)
 End Sub
 
 Sub SendUpdatePetTo(ByVal Index As Long, ByVal petNum As Long)
-    Dim packet As String
     Dim Buffer As clsBuffer
     Dim PetSize As Long
     Dim PetData() As Byte
@@ -797,8 +794,6 @@ Dim rndNum As Long
 End Function
 
 Function GetPetDamage(ByVal Index As Long) As Long
-    Dim weaponNum As Long
-    
     GetPetDamage = 0
 
     ' Check for subscript out of range
@@ -886,12 +881,9 @@ Public Function CanPetAttackNpc(ByVal attacker As Long, ByVal mapNpcNum As Long,
 End Function
 
 Public Sub PetAttackNpc(ByVal attacker As Long, ByVal mapNpcNum As Long, ByVal Damage As Long, Optional ByVal spellnum As Long, Optional ByVal overTime As Boolean = False)
-    Dim Name As String
     Dim exp As Long
     Dim n As Integer
     Dim i As Long
-    Dim str As Long
-    Dim DEF As Long
     Dim mapNum As Long
     Dim npcNum As Long
     Dim Buffer As clsBuffer
@@ -903,7 +895,6 @@ Public Sub PetAttackNpc(ByVal attacker As Long, ByVal mapNpcNum As Long, ByVal D
 
     mapNum = GetPlayerMap(attacker)
     npcNum = MapNpc(mapNum).NPC(mapNpcNum).Num
-    Name = Trim$(NPC(npcNum).Name)
     
     If spellnum = 0 Then
         ' Send this packet so they can see the pet attacking
@@ -1185,10 +1176,7 @@ Function CanNpcAttackPet(ByVal mapNpcNum As Long, ByVal Index As Long) As Boolea
 End Function
 
 Sub NpcAttackPet(ByVal mapNpcNum As Long, ByVal victim As Long, ByVal Damage As Long)
-    Dim Name As String
-    Dim exp As Long
     Dim mapNum As Long
-    Dim i As Long
     Dim Buffer As clsBuffer
 
     ' Check for subscript out of range
@@ -1202,7 +1190,6 @@ Sub NpcAttackPet(ByVal mapNpcNum As Long, ByVal victim As Long, ByVal Damage As 
     End If
 
     mapNum = GetPlayerMap(victim)
-    Name = Trim$(NPC(MapNpc(mapNum).NPC(mapNpcNum).Num).Name)
     
     ' Send this packet so they can see the npc attacking
     Set Buffer = New clsBuffer
@@ -1385,7 +1372,6 @@ End Function
 
 'Pet Vital Stuffs
 Sub SendPetVital(ByVal Index As Long, ByVal Vital As Vitals)
-    Dim packet As String
     Dim Buffer As clsBuffer
     Set Buffer = New clsBuffer
     
@@ -1426,7 +1412,6 @@ Public Sub BufferPetSpell(ByVal Index As Long, ByVal spellslot As Long)
     Dim LevelReq As Long
     Dim mapNum As Long
     Dim SpellCastType As Long
-    Dim ClassReq As Long
     Dim AccessReq As Long
     Dim Range As Long
     Dim HasBuffered As Boolean
@@ -1586,7 +1571,6 @@ Public Sub PetCastSpell(ByVal Index As Long, ByVal spellslot As Long, ByVal targ
     Dim mapNum As Long
     Dim Vital As Long
     Dim DidCast As Boolean
-    Dim ClassReq As Long
     Dim AccessReq As Long
     Dim i As Long
     Dim AoE As Long
@@ -1595,7 +1579,6 @@ Public Sub PetCastSpell(ByVal Index As Long, ByVal spellslot As Long, ByVal targ
     Dim increment As Boolean
     Dim x As Long, y As Long
     
-    Dim Buffer As clsBuffer
     Dim SpellCastType As Long
     
     DidCast = False
@@ -2022,7 +2005,6 @@ End Function
 
 Sub PetAttackPlayer(ByVal attacker As Long, ByVal victim As Long, ByVal Damage As Long, Optional ByVal spellnum As Long = 0)
     Dim exp As Long
-    Dim n As Long
     Dim i As Long
     Dim Buffer As clsBuffer
 
@@ -2031,9 +2013,6 @@ Sub PetAttackPlayer(ByVal attacker As Long, ByVal victim As Long, ByVal Damage A
         Exit Sub
     End If
 
-    ' Check for weapon
-    n = 0 'No Weapon, PET!
-    
     If spellnum = 0 Then
         ' Send this packet so they can see the pet attacking
         Set Buffer = New clsBuffer
@@ -2224,7 +2203,6 @@ Function CanPetAttackPet(ByVal attacker As Long, ByVal victim As Long, Optional 
 End Function
 Sub PetAttackPet(ByVal attacker As Long, ByVal victim As Long, ByVal Damage As Long, Optional ByVal spellnum As Long = 0)
     Dim exp As Long
-    Dim n As Long
     Dim i As Long
     Dim Buffer As clsBuffer
 
@@ -2233,9 +2211,6 @@ Sub PetAttackPet(ByVal attacker As Long, ByVal victim As Long, ByVal Damage As L
         Exit Sub
     End If
 
-    ' Check for weapon
-    n = 0 'No Weapon, PET!
-    
     If spellnum = 0 Then
         ' Send this packet so they can see the pet attacking
         Set Buffer = New clsBuffer
@@ -2429,7 +2404,7 @@ Public Sub HandleHoT_Pet(ByVal Index As Long, ByVal hotNum As Long)
 End Sub
 
 Public Sub TryPetAttackPlayer(ByVal Index As Long, victim As Long)
-Dim mapNum As Long, npcNum As Long, blockAmount As Long, Damage As Long
+Dim mapNum As Long, blockAmount As Long, Damage As Long
 Dim rndChance As Long
 Dim rndChance2 As Long
     
@@ -2528,7 +2503,7 @@ Dim rndNum As Long
 End Function
 
 Public Sub TryPetAttackPet(ByVal Index As Long, victim As Long)
-Dim mapNum As Long, npcNum As Long, blockAmount As Long, Damage As Long
+Dim mapNum As Long, blockAmount As Long, Damage As Long
 Dim rndChance As Long
 Dim rndChance2 As Long
     
@@ -2678,7 +2653,6 @@ Sub PlayerAttackPet(ByVal attacker As Long, ByVal victim As Long, ByVal Damage A
     Dim exp As Long
     Dim n As Long
     Dim i As Long
-    Dim Buffer As clsBuffer
 
     ' Check for subscript out of range
     If IsPlaying(attacker) = False Or IsPlaying(victim) = False Or Damage < 0 Or Player(victim).Pet.Alive = False Then
@@ -3002,7 +2976,6 @@ Public Sub HandleSetPetBehaviour(ByVal Index As Long, ByRef Data() As Byte, ByVa
     Set Buffer = Nothing
 End Sub
 Public Sub HandleReleasePet(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-Dim i As Long
     If Player(Index).Pet.Alive = True Then ReleasePet (Index)
 End Sub
 Public Sub HandlePetSpell(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)

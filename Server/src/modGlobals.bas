@@ -1,9 +1,6 @@
 Attribute VB_Name = "modGlobals"
 Option Explicit
 
-' Text vars
-Public vbQuote As String
-
 ' Used for gradually giving back npcs hp
 Public GiveNPCHPTimer As Long
 
@@ -20,7 +17,6 @@ Public TotalPlayersOnline As Long
 
 ' GameCPS
 Public GameCPS As Long
-Public ElapsedTime As Long
 
 ' high indexing
 Public Player_HighIndex As Long

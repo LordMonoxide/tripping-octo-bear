@@ -135,7 +135,6 @@ Sub LoadQuests()
     Dim filename As String
     Dim i As Integer
     Dim F As Long, n As Long
-    Dim sLen As Long
     
     Call CheckQuests
 
@@ -215,7 +214,6 @@ Sub SendQuests(ByVal Index As Long)
 End Sub
 
 Sub SendUpdateQuestToAll(ByVal QuestNum As Long)
-    Dim packet As String
     Dim Buffer As clsBuffer
     Dim QuestSize As Long
     Dim QuestData() As Byte
@@ -231,7 +229,6 @@ Sub SendUpdateQuestToAll(ByVal QuestNum As Long)
 End Sub
 
 Sub SendUpdateQuestTo(ByVal Index As Long, ByVal QuestNum As Long)
-    Dim packet As String
     Dim Buffer As clsBuffer
     Dim QuestSize As Long
     Dim QuestData() As Byte
@@ -293,7 +290,7 @@ End Sub
 ' ///////////////
 
 Public Function CanStartQuest(ByVal Index As Long, ByVal QuestNum As Long) As Boolean
-    Dim i As Long, n As Long
+    Dim i As Long
     CanStartQuest = False
     If QuestNum < 1 Or QuestNum > MAX_QUESTS Then Exit Function
     If QuestInProgress(Index, QuestNum) Then Exit Function

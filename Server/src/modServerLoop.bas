@@ -15,7 +15,6 @@ Dim BuffTimer As Long
 
     Do While ServerOnline
         Tick = timeGetTime
-        ElapsedTime = Tick - FrameTime
         FrameTime = Tick
         
         ' Player loop
@@ -249,9 +248,9 @@ ErrorHandler:
 End Sub
 
 Private Sub UpdateMapLogic()
-    Dim i As Long, x As Long, n As Long, x1 As Long, y1 As Long
-    Dim TickCount As Long, Damage As Long, DistanceX As Long, DistanceY As Long, npcNum As Long
-    Dim target As Long, targetType As Byte, DidWalk As Boolean, buffer As clsBuffer, Resource_index As Long
+    Dim i As Long, x As Long, n As Long
+    Dim TickCount As Long, DistanceX As Long, DistanceY As Long, npcNum As Long
+    Dim target As Long, targetType As Byte, DidWalk As Boolean, Resource_index As Long
     Dim targetx As Long, targety As Long, target_verify As Boolean, mapNum As Long
 
    On Error GoTo ErrorHandler
@@ -296,7 +295,7 @@ Private Sub UpdateMapLogic()
         ' Respawning Resources
         If ResourceCache(mapNum).Resource_Count > 0 Then
             For i = 0 To ResourceCache(mapNum).Resource_Count
-                Resource_index = map(mapNum).Tile(ResourceCache(mapNum).ResourceData(i).x, ResourceCache(mapNum).ResourceData(i).y).Data1
+                Resource_index = Map(mapNum).Tile(ResourceCache(mapNum).ResourceData(i).x, ResourceCache(mapNum).ResourceData(i).y).Data1
 
                 If Resource_index > 0 Then
                     If ResourceCache(mapNum).ResourceData(i).ResourceState = 1 Or ResourceCache(mapNum).ResourceData(i).cur_health < 1 Then  ' dead or fucked up
@@ -320,7 +319,7 @@ Private Sub UpdateMapLogic()
                 ' // This is used for ATTACKING ON SIGHT //
                 ' /////////////////////////////////////////
                 ' Make sure theres a npc with the map
-                If map(mapNum).NPC(x) > 0 And MapNpc(mapNum).NPC(x).Num > 0 Then
+                If Map(mapNum).NPC(x) > 0 And MapNpc(mapNum).NPC(x).Num > 0 Then
 
                     ' If the npc is a attack on sight, search for a player on the map
                     If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_ATTACKONSIGHT Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_GUARD Then
@@ -413,7 +412,7 @@ Private Sub UpdateMapLogic()
                 ' // This is used for NPC walking/targetting //
                 ' /////////////////////////////////////////////
                 ' Make sure theres a npc with the map
-                If map(mapNum).NPC(x) > 0 And MapNpc(mapNum).NPC(x).Num > 0 Then
+                If Map(mapNum).NPC(x) > 0 And MapNpc(mapNum).NPC(x).Num > 0 Then
                     If MapNpc(mapNum).NPC(x).StunDuration > 0 Then
                         ' check if we can unstun them
                         If timeGetTime > MapNpc(mapNum).NPC(x).StunTimer + (MapNpc(mapNum).NPC(x).StunDuration * 1000) Then
@@ -849,7 +848,7 @@ Private Sub UpdateMapLogic()
                 ' // This is used for npcs to attack targets //
                 ' /////////////////////////////////////////////
                 ' Make sure theres a npc with the map
-                If map(mapNum).NPC(x) > 0 And MapNpc(mapNum).NPC(x).Num > 0 Then
+                If Map(mapNum).NPC(x) > 0 And MapNpc(mapNum).NPC(x).Num > 0 Then
                     target = MapNpc(mapNum).NPC(x).target
                     targetType = MapNpc(mapNum).NPC(x).targetType
 
@@ -919,15 +918,15 @@ Private Sub UpdateMapLogic()
                 ' // This is used for spawning an NPC //
                 ' //////////////////////////////////////
                 ' Check if we are supposed to spawn an npc or not
-                If MapNpc(mapNum).NPC(x).Num = 0 And map(mapNum).NPC(x) > 0 Then
-                    If TickCount > MapNpc(mapNum).NPC(x).SpawnWait + (NPC(map(mapNum).NPC(x)).SpawnSecs * 1000) Then
+                If MapNpc(mapNum).NPC(x).Num = 0 And Map(mapNum).NPC(x) > 0 Then
+                    If TickCount > MapNpc(mapNum).NPC(x).SpawnWait + (NPC(Map(mapNum).NPC(x)).SpawnSecs * 1000) Then
                         ' if it's a boss chamber then don't let them respawn
-                        If map(mapNum).Moral = MAP_MORAL_BOSS Then
+                        If Map(mapNum).Moral = MAP_MORAL_BOSS Then
                             ' make sure the boss is alive
-                            If map(mapNum).BossNpc > 0 Then
-                                If map(mapNum).NPC(map(mapNum).BossNpc) > 0 Then
-                                    If x <> map(mapNum).BossNpc Then
-                                        If MapNpc(mapNum).NPC(map(mapNum).BossNpc).Num > 0 Then
+                            If Map(mapNum).BossNpc > 0 Then
+                                If Map(mapNum).NPC(Map(mapNum).BossNpc) > 0 Then
+                                    If x <> Map(mapNum).BossNpc Then
+                                        If MapNpc(mapNum).NPC(Map(mapNum).BossNpc).Num > 0 Then
                                             Call SpawnNpc(x, mapNum)
                                         End If
                                     Else
@@ -942,10 +941,10 @@ Private Sub UpdateMapLogic()
                 End If
                 ' Righto, let's see if we need to despawn an NPC until the time of the day changes.
                 ' Ignore this if the NPC has a target.
-                If MapNpc(mapNum).NPC(x).target = 0 And map(mapNum).NPC(x) > 0 And map(mapNum).NPC(x) <= MAX_NPCS Then
-                    If DayTime = True And NPC(map(mapNum).NPC(x)).SpawnAtDay = 1 Then
+                If MapNpc(mapNum).NPC(x).target = 0 And Map(mapNum).NPC(x) > 0 And Map(mapNum).NPC(x) <= MAX_NPCS Then
+                    If DayTime = True And NPC(Map(mapNum).NPC(x)).SpawnAtDay = 1 Then
                         DespawnNPC mapNum, x
-                    ElseIf DayTime = False And NPC(map(mapNum).NPC(x)).SpawnAtNight = 1 Then
+                    ElseIf DayTime = False And NPC(Map(mapNum).NPC(x)).SpawnAtNight = 1 Then
                         DespawnNPC mapNum, x
                     End If
                 End If

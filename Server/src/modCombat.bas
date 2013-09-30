@@ -266,8 +266,6 @@ ErrorHandler:
 End Function
 
 Function GetNpcMaxVital(ByVal npcNum As Long, ByVal Vital As Vitals) As Long
-    Dim x As Long
-
     ' Prevent subscript out of range
    On Error GoTo ErrorHandler
 
@@ -725,8 +723,6 @@ Dim blockAmount As Long
 Dim npcNum As Long
 Dim mapNum As Long
 Dim Damage As Long
-Dim n As Long
-Dim Stat As Stats
 
    On Error GoTo ErrorHandler
 
@@ -881,16 +877,12 @@ ErrorHandler:
 End Function
 
 Public Sub PlayerAttackNpc(ByVal attacker As Long, ByVal mapNpcNum As Long, ByVal Damage As Long, Optional ByVal spellnum As Long, Optional ByVal overTime As Boolean = False)
-    Dim Name As String
     Dim exp As Long
     Dim n As Long
     Dim i As Long
-    Dim str As Long
-    Dim DEF As Long
     Dim mapNum As Long
     Dim npcNum As Long
     Dim Num As Byte
-    Dim Buffer As clsBuffer
 
     ' Check for subscript out of range
    On Error GoTo ErrorHandler
@@ -901,7 +893,6 @@ Public Sub PlayerAttackNpc(ByVal attacker As Long, ByVal mapNpcNum As Long, ByVa
 
     mapNum = GetPlayerMap(attacker)
     npcNum = MapNpc(mapNum).NPC(mapNpcNum).Num
-    Name = Trim$(NPC(npcNum).Name)
     
     ' Check for weapon
     n = 0
@@ -1342,9 +1333,7 @@ End Function
 
 Sub NpcAttackPlayer(ByVal mapNpcNum As Long, ByVal victim As Long, ByVal Damage As Long, Optional ByVal spellnum As Long, Optional ByVal overTime As Boolean = False)
     Dim Name As String
-    Dim exp As Long
     Dim mapNum As Long
-    Dim i As Long
     Dim Buffer As clsBuffer
 
     ' Check for subscript out of range
@@ -1446,7 +1435,7 @@ End Sub
 ' ###################################
 
 Public Sub TryPlayerAttackPlayer(ByVal attacker As Long, ByVal victim As Long)
-Dim blockAmount As Long, npcNum As Long, mapNum As Long, Damage As Long, Defence As Long
+Dim blockAmount As Long, mapNum As Long, Damage As Long, Defence As Long
 
    On Error GoTo ErrorHandler
 
@@ -1633,12 +1622,9 @@ End Function
 
 Public Sub TryPlayerShootPlayer(ByVal attacker As Long, ByVal victim As Long)
 Dim blockAmount As Long
-Dim npcNum As Long
 Dim mapNum As Long
 Dim Damage As Long
 Dim Defence As Long
-Dim n As Long
-Dim Stat As Stats
 
    On Error GoTo ErrorHandler
 
@@ -1751,7 +1737,6 @@ Sub PlayerAttackPlayer(ByVal attacker As Long, ByVal victim As Long, ByVal Damag
     Dim exp As Long
     Dim n As Long
     Dim i As Long
-    Dim Buffer As clsBuffer
 
     ' Check for subscript out of range
    On Error GoTo ErrorHandler
@@ -2525,7 +2510,7 @@ ErrorHandler:
 End Sub
 
 Public Sub NpcCastSpell(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal spellslot As Long, ByVal target As Long, ByVal targetType As Long)
-Dim spellnum As Long, MPCost As Long, Vital As Long, DidCast As Boolean, i As Long, AoE As Long, Range As Long, VitalType As Byte, increment As Boolean, x As Long, y As Long, SpellCastType As Long
+Dim spellnum As Long, MPCost As Long, Vital As Long, DidCast As Boolean, i As Long, AoE As Long, Range As Long, x As Long, y As Long, SpellCastType As Long
 
    On Error GoTo ErrorHandler
 
@@ -2707,9 +2692,9 @@ ErrorHandler:
 End Sub
 
 Public Sub CastSpell(ByVal Index As Long, ByVal spellslot As Long, ByVal target As Long, ByVal targetType As Byte)
-Dim spellnum As Long, MPCost As Long, LevelReq As Long, mapNum As Long, Vital As Long, DidCast As Boolean, ClassReq As Long
-Dim AccessReq As Long, i As Long, AoE As Long, Range As Long, VitalType As Byte, increment As Boolean, x As Long, y As Long
-Dim Buffer As clsBuffer, SpellCastType As Long
+Dim spellnum As Long, MPCost As Long, LevelReq As Long, mapNum As Long, Vital As Long, DidCast As Boolean
+Dim AccessReq As Long, i As Long, AoE As Long, Range As Long, x As Long, y As Long
+Dim SpellCastType As Long
     Dim Dur As Long
     DidCast = False
 

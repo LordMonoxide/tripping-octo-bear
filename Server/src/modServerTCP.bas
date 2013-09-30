@@ -148,24 +148,24 @@ ErrorHandler:
 
 End Function
 
-Sub SendDataTo(ByVal Index As Long, ByRef data() As Byte)
-Dim buffer As clsBuffer
+Sub SendDataTo(ByVal Index As Long, ByRef Data() As Byte)
+Dim Buffer As clsBuffer
 Dim TempData() As Byte
 
    On Error GoTo ErrorHandler
 
     If IsConnected(Index) Then
-        Set buffer = New clsBuffer
-        TempData = data
+        Set Buffer = New clsBuffer
+        TempData = Data
         
-        buffer.PreAllocate 4 + (UBound(TempData) - LBound(TempData)) + 1
-        buffer.WriteLong (UBound(TempData) - LBound(TempData)) + 1
-        buffer.WriteBytes TempData()
+        Buffer.PreAllocate 4 + (UBound(TempData) - LBound(TempData)) + 1
+        Buffer.WriteLong (UBound(TempData) - LBound(TempData)) + 1
+        Buffer.WriteBytes TempData()
         
         ' Add a packet to the packets/second number.
         PacketsOut = PacketsOut + 1
               
-        frmServer.Socket(Index).SendData buffer.ToArray()
+        frmServer.Socket(Index).SendData Buffer.ToArray()
     End If
 
    ' Error handler
@@ -176,7 +176,7 @@ ErrorHandler:
     Exit Sub
 End Sub
 
-Sub SendDataToAll(ByRef data() As Byte)
+Sub SendDataToAll(ByRef Data() As Byte)
     Dim i As Long
 
    On Error GoTo ErrorHandler
@@ -184,7 +184,7 @@ Sub SendDataToAll(ByRef data() As Byte)
     For i = 1 To Player_HighIndex
 
         If IsPlaying(i) Then
-            Call SendDataTo(i, data)
+            Call SendDataTo(i, Data)
         End If
 
     Next
@@ -198,7 +198,7 @@ ErrorHandler:
 
 End Sub
 
-Sub SendDataToAllBut(ByVal Index As Long, ByRef data() As Byte)
+Sub SendDataToAllBut(ByVal Index As Long, ByRef Data() As Byte)
     Dim i As Long
 
    On Error GoTo ErrorHandler
@@ -207,7 +207,7 @@ Sub SendDataToAllBut(ByVal Index As Long, ByRef data() As Byte)
 
         If IsPlaying(i) Then
             If i <> Index Then
-                Call SendDataTo(i, data)
+                Call SendDataTo(i, Data)
             End If
         End If
 
@@ -222,7 +222,7 @@ ErrorHandler:
 
 End Sub
 
-Sub SendDataToMap(ByVal mapNum As Long, ByRef data() As Byte)
+Sub SendDataToMap(ByVal mapNum As Long, ByRef Data() As Byte)
     Dim i As Long
 
    On Error GoTo ErrorHandler
@@ -231,7 +231,7 @@ Sub SendDataToMap(ByVal mapNum As Long, ByRef data() As Byte)
 
         If IsPlaying(i) Then
             If GetPlayerMap(i) = mapNum Then
-                Call SendDataTo(i, data)
+                Call SendDataTo(i, Data)
             End If
         End If
 
@@ -246,7 +246,7 @@ ErrorHandler:
 
 End Sub
 
-Sub SendDataToMapBut(ByVal Index As Long, ByVal mapNum As Long, ByRef data() As Byte)
+Sub SendDataToMapBut(ByVal Index As Long, ByVal mapNum As Long, ByRef Data() As Byte)
     Dim i As Long
 
    On Error GoTo ErrorHandler
@@ -256,7 +256,7 @@ Sub SendDataToMapBut(ByVal Index As Long, ByVal mapNum As Long, ByRef data() As 
         If IsPlaying(i) Then
             If GetPlayerMap(i) = mapNum Then
                 If i <> Index Then
-                    Call SendDataTo(i, data)
+                    Call SendDataTo(i, Data)
                 End If
             End If
         End If
@@ -272,14 +272,14 @@ ErrorHandler:
 
 End Sub
 
-Sub SendDataToParty(ByVal partyNum As Long, ByRef data() As Byte)
+Sub SendDataToParty(ByVal partyNum As Long, ByRef Data() As Byte)
 Dim i As Long
 
    On Error GoTo ErrorHandler
 
     For i = 1 To Party(partyNum).MemberCount
         If Party(partyNum).Member(i) > 0 Then
-            Call SendDataTo(Party(partyNum).Member(i), data)
+            Call SendDataTo(Party(partyNum).Member(i), Data)
         End If
     Next
 
@@ -292,17 +292,17 @@ ErrorHandler:
 End Sub
 
 Public Sub GlobalMsg(ByVal Msg As String, ByVal Color As Byte)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SGlobalMsg
-    buffer.WriteString Msg
-    buffer.WriteLong Color
-    SendDataToAll buffer.ToArray
+    Buffer.WriteLong SGlobalMsg
+    Buffer.WriteString Msg
+    Buffer.WriteLong Color
+    SendDataToAll Buffer.ToArray
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -313,23 +313,23 @@ ErrorHandler:
 End Sub
 
 Public Sub AdminMsg(ByVal Msg As String, ByVal Color As Byte)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim i As Long
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SAdminMsg
-    buffer.WriteString Msg
-    buffer.WriteLong Color
+    Buffer.WriteLong SAdminMsg
+    Buffer.WriteString Msg
+    Buffer.WriteLong Color
 
     For i = 1 To Player_HighIndex
         If IsPlaying(i) And GetPlayerAccess(i) > 0 Then
-            SendDataTo i, buffer.ToArray
+            SendDataTo i, Buffer.ToArray
         End If
     Next
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -363,17 +363,17 @@ partyNum = TempPlayer(Index).inParty
 End Sub
 
 Public Sub PlayerMsg(ByVal Index As Long, ByVal Msg As String, ByVal Color As Byte)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SPlayerMsg
-    buffer.WriteString Msg
-    buffer.WriteLong Color
-    SendDataTo Index, buffer.ToArray
+    Buffer.WriteLong SPlayerMsg
+    Buffer.WriteString Msg
+    Buffer.WriteLong Color
+    SendDataTo Index, Buffer.ToArray
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -384,17 +384,17 @@ ErrorHandler:
 End Sub
 
 Public Sub MapMsg(ByVal mapNum As Long, ByVal Msg As String, ByVal Color As Byte)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
 
-    buffer.WriteLong SMapMsg
-    buffer.WriteString Msg
-    buffer.WriteLong Color
-    SendDataToMap mapNum, buffer.ToArray
+    Buffer.WriteLong SMapMsg
+    Buffer.WriteString Msg
+    Buffer.WriteLong Color
+    SendDataToMap mapNum, Buffer.ToArray
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -405,18 +405,18 @@ ErrorHandler:
 End Sub
 
 Public Sub AlertMsg(ByVal Index As Long, ByVal Msg As String)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
 
-    buffer.WriteLong SAlertMsg
-    buffer.WriteString Msg
-    SendDataTo Index, buffer.ToArray
+    Buffer.WriteLong SAlertMsg
+    Buffer.WriteString Msg
+    SendDataTo Index, Buffer.ToArray
     DoEvents
     Call CloseSocket(Index)
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -530,7 +530,7 @@ ErrorHandler:
 End Sub
 
 Sub IncomingData(ByVal Index As Long, ByVal DataLength As Long)
-Dim buffer() As Byte
+Dim Buffer() As Byte
 Dim pLength As Long
 
    On Error GoTo ErrorHandler
@@ -556,27 +556,27 @@ Dim pLength As Long
     End If
     
     ' Get the data from the socket now
-    frmServer.Socket(Index).GetData buffer(), vbUnicode, DataLength
-    TempPlayer(Index).buffer.WriteBytes buffer()
+    frmServer.Socket(Index).GetData Buffer(), vbUnicode, DataLength
+    TempPlayer(Index).Buffer.WriteBytes Buffer()
     
-    If TempPlayer(Index).buffer.Length >= 4 Then
-        pLength = TempPlayer(Index).buffer.ReadLong(False)
+    If TempPlayer(Index).Buffer.Length >= 4 Then
+        pLength = TempPlayer(Index).Buffer.ReadLong(False)
     
         If pLength < 0 Then
             Exit Sub
         End If
     End If
     
-    Do While pLength > 0 And pLength <= TempPlayer(Index).buffer.Length - 4
-        If pLength <= TempPlayer(Index).buffer.Length - 4 Then
+    Do While pLength > 0 And pLength <= TempPlayer(Index).Buffer.Length - 4
+        If pLength <= TempPlayer(Index).Buffer.Length - 4 Then
             TempPlayer(Index).DataPackets = TempPlayer(Index).DataPackets + 1
-            TempPlayer(Index).buffer.ReadLong
-            HandleData Index, TempPlayer(Index).buffer.ReadBytes(pLength)
+            TempPlayer(Index).Buffer.ReadLong
+            HandleData Index, TempPlayer(Index).Buffer.ReadBytes(pLength)
         End If
         
         pLength = 0
-        If TempPlayer(Index).buffer.Length >= 4 Then
-            pLength = TempPlayer(Index).buffer.ReadLong(False)
+        If TempPlayer(Index).Buffer.Length >= 4 Then
+            pLength = TempPlayer(Index).Buffer.ReadLong(False)
         
             If pLength < 0 Then
                 Exit Sub
@@ -584,7 +584,7 @@ Dim pLength As Long
         End If
     Loop
             
-    TempPlayer(Index).buffer.Trim
+    TempPlayer(Index).Buffer.Trim
 
    ' Error handler
    Exit Sub
@@ -616,74 +616,73 @@ ErrorHandler:
 End Sub
 
 Public Sub MapCache_Create(ByVal mapNum As Long)
-    Dim MapData As String
     Dim x As Long
     Dim y As Long
     Dim i As Long
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong mapNum
-    buffer.WriteString Trim$(map(mapNum).Name)
-    buffer.WriteString Trim$(map(mapNum).Music)
-    buffer.WriteLong map(mapNum).Revision
-    buffer.WriteByte map(mapNum).Moral
-    buffer.WriteLong map(mapNum).Up
-    buffer.WriteLong map(mapNum).Down
-    buffer.WriteLong map(mapNum).Left
-    buffer.WriteLong map(mapNum).Right
-    buffer.WriteLong map(mapNum).BootMap
-    buffer.WriteByte map(mapNum).BootX
-    buffer.WriteByte map(mapNum).BootY
-    buffer.WriteByte map(mapNum).MaxX
-    buffer.WriteByte map(mapNum).MaxY
-    buffer.WriteLong map(mapNum).BossNpc
+    Buffer.WriteLong mapNum
+    Buffer.WriteString Trim$(Map(mapNum).Name)
+    Buffer.WriteString Trim$(Map(mapNum).Music)
+    Buffer.WriteLong Map(mapNum).Revision
+    Buffer.WriteByte Map(mapNum).Moral
+    Buffer.WriteLong Map(mapNum).Up
+    Buffer.WriteLong Map(mapNum).Down
+    Buffer.WriteLong Map(mapNum).Left
+    Buffer.WriteLong Map(mapNum).Right
+    Buffer.WriteLong Map(mapNum).BootMap
+    Buffer.WriteByte Map(mapNum).BootX
+    Buffer.WriteByte Map(mapNum).BootY
+    Buffer.WriteByte Map(mapNum).MaxX
+    Buffer.WriteByte Map(mapNum).MaxY
+    Buffer.WriteLong Map(mapNum).BossNpc
 
-    For x = 0 To map(mapNum).MaxX
-        For y = 0 To map(mapNum).MaxY
+    For x = 0 To Map(mapNum).MaxX
+        For y = 0 To Map(mapNum).MaxY
 
-            With map(mapNum).Tile(x, y)
+            With Map(mapNum).Tile(x, y)
                 For i = 1 To MapLayer.Layer_Count - 1
-                    buffer.WriteLong .Layer(i).x
-                    buffer.WriteLong .Layer(i).y
-                    buffer.WriteLong .Layer(i).Tileset
-                    buffer.WriteByte .Autotile(i)
+                    Buffer.WriteLong .Layer(i).x
+                    Buffer.WriteLong .Layer(i).y
+                    Buffer.WriteLong .Layer(i).Tileset
+                    Buffer.WriteByte .Autotile(i)
                 Next
-                buffer.WriteByte .Type
-                buffer.WriteLong .Data1
-                buffer.WriteLong .Data2
-                buffer.WriteLong .Data3
-                buffer.WriteByte .DirBlock
+                Buffer.WriteByte .Type
+                Buffer.WriteLong .Data1
+                Buffer.WriteLong .Data2
+                Buffer.WriteLong .Data3
+                Buffer.WriteByte .DirBlock
             End With
 
         Next
     Next
 
     For x = 1 To MAX_MAP_NPCS
-        buffer.WriteLong map(mapNum).NPC(x)
+        Buffer.WriteLong Map(mapNum).NPC(x)
     Next
     
-    buffer.WriteByte map(mapNum).Fog
-    buffer.WriteByte map(mapNum).FogSpeed
-    buffer.WriteByte map(mapNum).FogOpacity
+    Buffer.WriteByte Map(mapNum).Fog
+    Buffer.WriteByte Map(mapNum).FogSpeed
+    Buffer.WriteByte Map(mapNum).FogOpacity
     
-    buffer.WriteByte map(mapNum).Red
-    buffer.WriteByte map(mapNum).Green
-    buffer.WriteByte map(mapNum).Blue
-    buffer.WriteByte map(mapNum).Alpha
+    Buffer.WriteByte Map(mapNum).Red
+    Buffer.WriteByte Map(mapNum).Green
+    Buffer.WriteByte Map(mapNum).Blue
+    Buffer.WriteByte Map(mapNum).Alpha
     
-    buffer.WriteByte map(mapNum).Panorama
-    buffer.WriteByte map(mapNum).DayNight
+    Buffer.WriteByte Map(mapNum).Panorama
+    Buffer.WriteByte Map(mapNum).DayNight
     
     For x = 1 To MAX_MAP_NPCS
-        buffer.WriteLong map(mapNum).NpcSpawnType(x)
+        Buffer.WriteLong Map(mapNum).NpcSpawnType(x)
     Next
 
-    MapCache(mapNum).data = buffer.ToArray()
+    MapCache(mapNum).Data = Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -732,84 +731,84 @@ ErrorHandler:
 End Sub
 
 Function PlayerData(ByVal Index As Long) As Byte()
-    Dim buffer As clsBuffer, i As Long
+    Dim Buffer As clsBuffer, i As Long
 
    On Error GoTo ErrorHandler
 
     If Index < 0 And Index > MAX_PLAYERS Then Exit Function
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SPlayerData
-    buffer.WriteLong Index
-    buffer.WriteString GetPlayerName(Index)
-    buffer.WriteLong GetPlayerLevel(Index)
-    buffer.WriteLong GetPlayerPOINTS(Index)
-    buffer.WriteByte Player(Index).Sex
-    buffer.WriteLong GetPlayerClothes(Index)
-    buffer.WriteLong GetPlayerGear(Index)
-    buffer.WriteLong GetPlayerHair(Index)
-    buffer.WriteLong GetPlayerHeadgear(Index)
-    buffer.WriteLong GetPlayerMap(Index)
-    buffer.WriteLong GetPlayerX(Index)
-    buffer.WriteLong GetPlayerY(Index)
-    buffer.WriteLong GetPlayerDir(Index)
-    buffer.WriteLong GetPlayerAccess(Index)
-    buffer.WriteLong GetPlayerPK(Index)
-    buffer.WriteByte Player(Index).Threshold
-    buffer.WriteByte Player(Index).Donator
+    Buffer.WriteLong SPlayerData
+    Buffer.WriteLong Index
+    Buffer.WriteString GetPlayerName(Index)
+    Buffer.WriteLong GetPlayerLevel(Index)
+    Buffer.WriteLong GetPlayerPOINTS(Index)
+    Buffer.WriteByte Player(Index).Sex
+    Buffer.WriteLong GetPlayerClothes(Index)
+    Buffer.WriteLong GetPlayerGear(Index)
+    Buffer.WriteLong GetPlayerHair(Index)
+    Buffer.WriteLong GetPlayerHeadgear(Index)
+    Buffer.WriteLong GetPlayerMap(Index)
+    Buffer.WriteLong GetPlayerX(Index)
+    Buffer.WriteLong GetPlayerY(Index)
+    Buffer.WriteLong GetPlayerDir(Index)
+    Buffer.WriteLong GetPlayerAccess(Index)
+    Buffer.WriteLong GetPlayerPK(Index)
+    Buffer.WriteByte Player(Index).Threshold
+    Buffer.WriteByte Player(Index).Donator
     
     For i = 1 To Stats.Stat_Count - 1
-        buffer.WriteLong GetPlayerStat(Index, i)
+        Buffer.WriteLong GetPlayerStat(Index, i)
     Next
     
     For i = 1 To Skills.Skill_Count - 1
-        buffer.WriteLong GetPlayerSkillLevel(Index, i)
+        Buffer.WriteLong GetPlayerSkillLevel(Index, i)
     Next
     
     If Player(Index).GuildFileId > 0 Then
         If TempPlayer(Index).tmpGuildSlot > 0 Then
-            buffer.WriteByte 1
-            buffer.WriteString GuildData(TempPlayer(Index).tmpGuildSlot).Guild_Name
-            buffer.WriteString GuildData(TempPlayer(Index).tmpGuildSlot).Guild_Tag
-            buffer.WriteLong GuildData(TempPlayer(Index).tmpGuildSlot).Guild_Color
-            buffer.WriteLong GuildData(TempPlayer(Index).tmpGuildSlot).Guild_Logo
+            Buffer.WriteByte 1
+            Buffer.WriteString GuildData(TempPlayer(Index).tmpGuildSlot).Guild_Name
+            Buffer.WriteString GuildData(TempPlayer(Index).tmpGuildSlot).Guild_Tag
+            Buffer.WriteLong GuildData(TempPlayer(Index).tmpGuildSlot).Guild_Color
+            Buffer.WriteLong GuildData(TempPlayer(Index).tmpGuildSlot).Guild_Logo
         End If
     Else
-        buffer.WriteByte 0
+        Buffer.WriteByte 0
     End If
     
     If Player(Index).Pet.Alive = True Then
-        buffer.WriteByte 1
-        buffer.WriteString Player(Index).Pet.Name
-        buffer.WriteLong Player(Index).Pet.Sprite
-        buffer.WriteLong Player(Index).Pet.Health
-        buffer.WriteLong Player(Index).Pet.Mana
-        buffer.WriteLong Player(Index).Pet.Level
+        Buffer.WriteByte 1
+        Buffer.WriteString Player(Index).Pet.Name
+        Buffer.WriteLong Player(Index).Pet.Sprite
+        Buffer.WriteLong Player(Index).Pet.Health
+        Buffer.WriteLong Player(Index).Pet.Mana
+        Buffer.WriteLong Player(Index).Pet.Level
         
         For i = 1 To Stats.Stat_Count - 1
-            buffer.WriteLong Player(Index).Pet.Stat(i)
+            Buffer.WriteLong Player(Index).Pet.Stat(i)
         Next
         
         For i = 1 To 4
-            buffer.WriteLong Player(Index).Pet.spell(i)
+            Buffer.WriteLong Player(Index).Pet.spell(i)
         Next
         
-        buffer.WriteLong Player(Index).Pet.x
-        buffer.WriteLong Player(Index).Pet.y
-        buffer.WriteLong Player(Index).Pet.dir
+        Buffer.WriteLong Player(Index).Pet.x
+        Buffer.WriteLong Player(Index).Pet.y
+        Buffer.WriteLong Player(Index).Pet.dir
         
-        buffer.WriteLong Player(Index).Pet.MaxHp
-        buffer.WriteLong Player(Index).Pet.MaxMp
+        Buffer.WriteLong Player(Index).Pet.MaxHp
+        Buffer.WriteLong Player(Index).Pet.MaxMp
         
         
         
-        buffer.WriteLong Player(Index).Pet.AttackBehaviour
+        Buffer.WriteLong Player(Index).Pet.AttackBehaviour
     Else
-        buffer.WriteByte 0
+        Buffer.WriteByte 0
     End If
     
-    PlayerData = buffer.ToArray()
-    Set buffer = Nothing
+    PlayerData = Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Function
@@ -820,12 +819,11 @@ ErrorHandler:
 End Function
 
 Sub SendJoinMap(ByVal Index As Long)
-    Dim packet As String
     Dim i As Long
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
 
     ' Send all players on current map to index
     For i = 1 To Player_HighIndex
@@ -841,7 +839,7 @@ Sub SendJoinMap(ByVal Index As Long)
     ' Send index's player data to everyone on the map including himself
     SendDataToMap GetPlayerMap(Index), PlayerData(Index)
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -852,17 +850,16 @@ ErrorHandler:
 End Sub
 
 Sub SendLeaveMap(ByVal Index As Long, ByVal mapNum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SLeft
-    buffer.WriteLong Index
-    SendDataToMapBut Index, mapNum, buffer.ToArray()
+    Buffer.WriteLong SLeft
+    Buffer.WriteLong Index
+    SendDataToMapBut Index, mapNum, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -873,7 +870,6 @@ ErrorHandler:
 End Sub
 
 Sub SendPlayerData(ByVal Index As Long)
-    Dim packet As String
    On Error GoTo ErrorHandler
 
     SendDataToMap GetPlayerMap(Index), PlayerData(Index)
@@ -887,17 +883,17 @@ ErrorHandler:
 End Sub
 
 Sub SendMap(ByVal Index As Long, ByVal mapNum As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
     'Buffer.PreAllocate (UBound(MapCache(mapNum).Data) - LBound(MapCache(mapNum).Data)) + 5
-    buffer.WriteLong SMapData
-    buffer.WriteBytes MapCache(mapNum).data()
-    SendDataTo Index, buffer.ToArray()
+    Buffer.WriteLong SMapData
+    Buffer.WriteBytes MapCache(mapNum).Data()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -908,31 +904,30 @@ ErrorHandler:
 End Sub
 
 Sub SendMapItemsTo(ByVal Index As Long, ByVal mapNum As Long)
-    Dim packet As String
     Dim i As Long
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SMapItemData
+    Buffer.WriteLong SMapItemData
 
     For i = 1 To MAX_MAP_ITEMS
-        buffer.WriteString MapItem(mapNum, i).playerName
-        buffer.WriteLong MapItem(mapNum, i).Num
-        buffer.WriteLong MapItem(mapNum, i).Value
-        buffer.WriteLong MapItem(mapNum, i).x
-        buffer.WriteLong MapItem(mapNum, i).y
+        Buffer.WriteString MapItem(mapNum, i).playerName
+        Buffer.WriteLong MapItem(mapNum, i).Num
+        Buffer.WriteLong MapItem(mapNum, i).Value
+        Buffer.WriteLong MapItem(mapNum, i).x
+        Buffer.WriteLong MapItem(mapNum, i).y
         If MapItem(mapNum, i).Bound Then
-            buffer.WriteLong 1
+            Buffer.WriteLong 1
         Else
-            buffer.WriteLong 0
+            Buffer.WriteLong 0
         End If
     Next
 
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -943,30 +938,29 @@ ErrorHandler:
 End Sub
 
 Sub SendMapItemsToAll(ByVal mapNum As Long)
-    Dim packet As String
     Dim i As Long
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SMapItemData
+    Buffer.WriteLong SMapItemData
 
     For i = 1 To MAX_MAP_ITEMS
-        buffer.WriteString MapItem(mapNum, i).playerName
-        buffer.WriteLong MapItem(mapNum, i).Num
-        buffer.WriteLong MapItem(mapNum, i).Value
-        buffer.WriteLong MapItem(mapNum, i).x
-        buffer.WriteLong MapItem(mapNum, i).y
+        Buffer.WriteString MapItem(mapNum, i).playerName
+        Buffer.WriteLong MapItem(mapNum, i).Num
+        Buffer.WriteLong MapItem(mapNum, i).Value
+        Buffer.WriteLong MapItem(mapNum, i).x
+        Buffer.WriteLong MapItem(mapNum, i).y
         If MapItem(mapNum, i).Bound Then
-            buffer.WriteLong 1
+            Buffer.WriteLong 1
         Else
-            buffer.WriteLong 0
+            Buffer.WriteLong 0
         End If
     Next
 
-    SendDataToMap mapNum, buffer.ToArray()
+    SendDataToMap mapNum, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -978,19 +972,19 @@ End Sub
 
 Sub SendMapNpcVitals(ByVal mapNum As Long, ByVal mapNpcNum As Long)
     Dim i As Long
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SMapNpcVitals
-    buffer.WriteLong mapNpcNum
+    Buffer.WriteLong SMapNpcVitals
+    Buffer.WriteLong mapNpcNum
     For i = 1 To Vitals.Vital_Count - 1
-        buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).Vital(i)
+        Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).Vital(i)
     Next
 
-    SendDataToMap mapNum, buffer.ToArray()
+    SendDataToMap mapNum, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1001,25 +995,24 @@ ErrorHandler:
 End Sub
 
 Sub SendMapNpcsTo(ByVal Index As Long, ByVal mapNum As Long)
-    Dim packet As String
     Dim i As Long
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SMapNpcData
+    Buffer.WriteLong SMapNpcData
 
     For i = 1 To MAX_MAP_NPCS
-        buffer.WriteLong MapNpc(mapNum).NPC(i).Num
-        buffer.WriteLong MapNpc(mapNum).NPC(i).x
-        buffer.WriteLong MapNpc(mapNum).NPC(i).y
-        buffer.WriteLong MapNpc(mapNum).NPC(i).dir
-        buffer.WriteLong MapNpc(mapNum).NPC(i).Vital(HP)
+        Buffer.WriteLong MapNpc(mapNum).NPC(i).Num
+        Buffer.WriteLong MapNpc(mapNum).NPC(i).x
+        Buffer.WriteLong MapNpc(mapNum).NPC(i).y
+        Buffer.WriteLong MapNpc(mapNum).NPC(i).dir
+        Buffer.WriteLong MapNpc(mapNum).NPC(i).Vital(HP)
     Next
 
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1030,25 +1023,24 @@ ErrorHandler:
 End Sub
 
 Sub SendMapNpcsToMap(ByVal mapNum As Long)
-    Dim packet As String
     Dim i As Long
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SMapNpcData
+    Buffer.WriteLong SMapNpcData
 
     For i = 1 To MAX_MAP_NPCS
-        buffer.WriteLong MapNpc(mapNum).NPC(i).Num
-        buffer.WriteLong MapNpc(mapNum).NPC(i).x
-        buffer.WriteLong MapNpc(mapNum).NPC(i).y
-        buffer.WriteLong MapNpc(mapNum).NPC(i).dir
-        buffer.WriteLong MapNpc(mapNum).NPC(i).Vital(HP)
+        Buffer.WriteLong MapNpc(mapNum).NPC(i).Num
+        Buffer.WriteLong MapNpc(mapNum).NPC(i).x
+        Buffer.WriteLong MapNpc(mapNum).NPC(i).y
+        Buffer.WriteLong MapNpc(mapNum).NPC(i).dir
+        Buffer.WriteLong MapNpc(mapNum).NPC(i).Vital(HP)
     Next
 
-    SendDataToMap mapNum, buffer.ToArray()
+    SendDataToMap mapNum, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1147,24 +1139,23 @@ ErrorHandler:
 End Sub
 
 Sub SendInventory(ByVal Index As Long)
-    Dim packet As String
     Dim i As Long
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SPlayerInv
+    Buffer.WriteLong SPlayerInv
 
     For i = 1 To MAX_INV
-        buffer.WriteLong GetPlayerInvItemNum(Index, i)
-        buffer.WriteLong GetPlayerInvItemValue(Index, i)
-        buffer.WriteByte Player(Index).Inv(i).Bound
+        Buffer.WriteLong GetPlayerInvItemNum(Index, i)
+        Buffer.WriteLong GetPlayerInvItemValue(Index, i)
+        Buffer.WriteByte Player(Index).Inv(i).Bound
     Next
 
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1175,20 +1166,19 @@ ErrorHandler:
 End Sub
 
 Sub SendInventoryUpdate(ByVal Index As Long, ByVal invSlot As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SPlayerInvUpdate
-    buffer.WriteLong invSlot
-    buffer.WriteLong GetPlayerInvItemNum(Index, invSlot)
-    buffer.WriteLong GetPlayerInvItemValue(Index, invSlot)
-    buffer.WriteByte Player(Index).Inv(invSlot).Bound
-    SendDataTo Index, buffer.ToArray()
+    Buffer.WriteLong SPlayerInvUpdate
+    Buffer.WriteLong invSlot
+    Buffer.WriteLong GetPlayerInvItemNum(Index, invSlot)
+    Buffer.WriteLong GetPlayerInvItemValue(Index, invSlot)
+    Buffer.WriteByte Player(Index).Inv(invSlot).Bound
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1199,20 +1189,19 @@ ErrorHandler:
 End Sub
 
 Sub SendWornEquipment(ByVal Index As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SPlayerWornEq
-    buffer.WriteLong GetPlayerEquipment(Index, Armor)
-    buffer.WriteLong GetPlayerEquipment(Index, Weapon)
-    buffer.WriteLong GetPlayerEquipment(Index, Aura)
-    buffer.WriteLong GetPlayerEquipment(Index, Shield)
-    SendDataTo Index, buffer.ToArray()
+    Buffer.WriteLong SPlayerWornEq
+    Buffer.WriteLong GetPlayerEquipment(Index, Armor)
+    Buffer.WriteLong GetPlayerEquipment(Index, Weapon)
+    Buffer.WriteLong GetPlayerEquipment(Index, Aura)
+    Buffer.WriteLong GetPlayerEquipment(Index, Shield)
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1223,21 +1212,21 @@ ErrorHandler:
 End Sub
 
 Sub SendMapEquipment(ByVal Index As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SMapWornEq
-    buffer.WriteLong Index
-    buffer.WriteLong GetPlayerEquipment(Index, Armor)
-    buffer.WriteLong GetPlayerEquipment(Index, Weapon)
-    buffer.WriteLong GetPlayerEquipment(Index, Aura)
-    buffer.WriteLong GetPlayerEquipment(Index, Shield)
+    Buffer.WriteLong SMapWornEq
+    Buffer.WriteLong Index
+    Buffer.WriteLong GetPlayerEquipment(Index, Armor)
+    Buffer.WriteLong GetPlayerEquipment(Index, Weapon)
+    Buffer.WriteLong GetPlayerEquipment(Index, Aura)
+    Buffer.WriteLong GetPlayerEquipment(Index, Shield)
     
-    SendDataToMap GetPlayerMap(Index), buffer.ToArray()
+    SendDataToMap GetPlayerMap(Index), Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1248,21 +1237,21 @@ ErrorHandler:
 End Sub
 
 Sub SendMapEquipmentTo(ByVal PlayerNum As Long, ByVal Index As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SMapWornEq
-    buffer.WriteLong PlayerNum
-    buffer.WriteLong GetPlayerEquipment(PlayerNum, Armor)
-    buffer.WriteLong GetPlayerEquipment(PlayerNum, Weapon)
-    buffer.WriteLong GetPlayerEquipment(PlayerNum, Aura)
-    buffer.WriteLong GetPlayerEquipment(PlayerNum, Shield)
+    Buffer.WriteLong SMapWornEq
+    Buffer.WriteLong PlayerNum
+    Buffer.WriteLong GetPlayerEquipment(PlayerNum, Armor)
+    Buffer.WriteLong GetPlayerEquipment(PlayerNum, Weapon)
+    Buffer.WriteLong GetPlayerEquipment(PlayerNum, Aura)
+    Buffer.WriteLong GetPlayerEquipment(PlayerNum, Shield)
     
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1273,26 +1262,25 @@ ErrorHandler:
 End Sub
 
 Sub SendVital(ByVal Index As Long, ByVal Vital As Vitals)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
 
     Select Case Vital
         Case HP
-            buffer.WriteLong SPlayerHp
-            buffer.WriteLong GetPlayerMaxVital(Index, Vitals.HP)
-            buffer.WriteLong GetPlayerVital(Index, Vitals.HP)
+            Buffer.WriteLong SPlayerHp
+            Buffer.WriteLong GetPlayerMaxVital(Index, Vitals.HP)
+            Buffer.WriteLong GetPlayerVital(Index, Vitals.HP)
         Case MP
-            buffer.WriteLong SPlayerMp
-            buffer.WriteLong GetPlayerMaxVital(Index, Vitals.MP)
-            buffer.WriteLong GetPlayerVital(Index, Vitals.MP)
+            Buffer.WriteLong SPlayerMp
+            Buffer.WriteLong GetPlayerMaxVital(Index, Vitals.MP)
+            Buffer.WriteLong GetPlayerVital(Index, Vitals.MP)
     End Select
 
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1303,22 +1291,22 @@ ErrorHandler:
 End Sub
 
 Sub SendEXP(ByVal Index As Long)
-Dim buffer As clsBuffer, i As Long
+Dim Buffer As clsBuffer, i As Long
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SPlayerEXP
-    buffer.WriteLong GetPlayerExp(Index)
-    buffer.WriteLong GetPlayerNextLevel(Index)
+    Buffer.WriteLong SPlayerEXP
+    Buffer.WriteLong GetPlayerExp(Index)
+    Buffer.WriteLong GetPlayerNextLevel(Index)
     For i = 1 To Skills.Skill_Count - 1
-        buffer.WriteLong GetPlayerSkillExp(Index, i)
-        buffer.WriteLong GetPlayerNextSkillLevel(Index, i)
+        Buffer.WriteLong GetPlayerSkillExp(Index, i)
+        Buffer.WriteLong GetPlayerNextSkillLevel(Index, i)
     Next
     
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1330,18 +1318,17 @@ End Sub
 
 Sub SendStats(ByVal Index As Long)
 Dim i As Long
-Dim packet As String
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPlayerStats
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SPlayerStats
     For i = 1 To Stats.Stat_Count - 1
-        buffer.WriteLong GetPlayerStat(Index, i)
+        Buffer.WriteLong GetPlayerStat(Index, i)
     Next
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1371,13 +1358,13 @@ ErrorHandler:
     Exit Sub
 End Sub
 Sub SendNewChar(ByVal Index As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SNewChar
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SNewChar
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1388,23 +1375,22 @@ ErrorHandler:
 End Sub
 
 Sub SendLeftGame(ByVal Index As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPlayerData
-    buffer.WriteLong Index
-    buffer.WriteString vbNullString
-    buffer.WriteLong 0
-    buffer.WriteLong 0
-    buffer.WriteLong 0
-    buffer.WriteLong 0
-    buffer.WriteLong 0
-    buffer.WriteLong 0
-    buffer.WriteLong 0
-    SendDataToAllBut Index, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SPlayerData
+    Buffer.WriteLong Index
+    Buffer.WriteString vbNullString
+    Buffer.WriteLong 0
+    Buffer.WriteLong 0
+    Buffer.WriteLong 0
+    Buffer.WriteLong 0
+    Buffer.WriteLong 0
+    Buffer.WriteLong 0
+    Buffer.WriteLong 0
+    SendDataToAllBut Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1415,17 +1401,16 @@ ErrorHandler:
 End Sub
 
 Sub SendPlayerXY(ByVal Index As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPlayerXY
-    buffer.WriteLong GetPlayerX(Index)
-    buffer.WriteLong GetPlayerY(Index)
-    buffer.WriteLong GetPlayerDir(Index)
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SPlayerXY
+    Buffer.WriteLong GetPlayerX(Index)
+    Buffer.WriteLong GetPlayerY(Index)
+    Buffer.WriteLong GetPlayerDir(Index)
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1436,18 +1421,17 @@ ErrorHandler:
 End Sub
 
 Sub SendPlayerXYToMap(ByVal Index As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPlayerXYMap
-    buffer.WriteLong Index
-    buffer.WriteLong GetPlayerX(Index)
-    buffer.WriteLong GetPlayerY(Index)
-    buffer.WriteLong GetPlayerDir(Index)
-    SendDataToMap GetPlayerMap(Index), buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SPlayerXYMap
+    Buffer.WriteLong Index
+    Buffer.WriteLong GetPlayerX(Index)
+    Buffer.WriteLong GetPlayerY(Index)
+    Buffer.WriteLong GetPlayerDir(Index)
+    SendDataToMap GetPlayerMap(Index), Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1458,25 +1442,24 @@ ErrorHandler:
 End Sub
 
 Sub SendUpdateItemToAll(ByVal itemnum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim ItemSize As Long
     Dim ItemData() As Byte
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     ItemSize = LenB(Item(itemnum))
     
     ReDim ItemData(ItemSize - 1)
     
     CopyMemory ItemData(0), ByVal VarPtr(Item(itemnum)), ItemSize
     
-    buffer.WriteLong SUpdateItem
-    buffer.WriteLong itemnum
-    buffer.WriteBytes ItemData
+    Buffer.WriteLong SUpdateItem
+    Buffer.WriteLong itemnum
+    Buffer.WriteBytes ItemData
     
-    SendDataToAll buffer.ToArray()
-    Set buffer = Nothing
+    SendDataToAll Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1487,21 +1470,20 @@ ErrorHandler:
 End Sub
 
 Sub SendUpdateItemTo(ByVal Index As Long, ByVal itemnum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim ItemSize As Long
     Dim ItemData() As Byte
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     ItemSize = LenB(Item(itemnum))
     ReDim ItemData(ItemSize - 1)
     CopyMemory ItemData(0), ByVal VarPtr(Item(itemnum)), ItemSize
-    buffer.WriteLong SUpdateItem
-    buffer.WriteLong itemnum
-    buffer.WriteBytes ItemData
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Buffer.WriteLong SUpdateItem
+    Buffer.WriteLong itemnum
+    Buffer.WriteBytes ItemData
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1512,21 +1494,20 @@ ErrorHandler:
 End Sub
 
 Sub SendUpdateAnimationToAll(ByVal AnimationNum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim AnimationSize As Long
     Dim AnimationData() As Byte
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     AnimationSize = LenB(Animation(AnimationNum))
     ReDim AnimationData(AnimationSize - 1)
     CopyMemory AnimationData(0), ByVal VarPtr(Animation(AnimationNum)), AnimationSize
-    buffer.WriteLong SUpdateAnimation
-    buffer.WriteLong AnimationNum
-    buffer.WriteBytes AnimationData
-    SendDataToAll buffer.ToArray()
-    Set buffer = Nothing
+    Buffer.WriteLong SUpdateAnimation
+    Buffer.WriteLong AnimationNum
+    Buffer.WriteBytes AnimationData
+    SendDataToAll Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1537,21 +1518,20 @@ ErrorHandler:
 End Sub
 
 Sub SendUpdateAnimationTo(ByVal Index As Long, ByVal AnimationNum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim AnimationSize As Long
     Dim AnimationData() As Byte
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     AnimationSize = LenB(Animation(AnimationNum))
     ReDim AnimationData(AnimationSize - 1)
     CopyMemory AnimationData(0), ByVal VarPtr(Animation(AnimationNum)), AnimationSize
-    buffer.WriteLong SUpdateAnimation
-    buffer.WriteLong AnimationNum
-    buffer.WriteBytes AnimationData
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Buffer.WriteLong SUpdateAnimation
+    Buffer.WriteLong AnimationNum
+    Buffer.WriteBytes AnimationData
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1562,14 +1542,13 @@ ErrorHandler:
 End Sub
 
 Sub SendUpdateNpcToAll(ByVal npcNum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim NPCSize As Long
     Dim NPCData() As Byte
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
     NPCSize = LenB(NPC(npcNum))
     
@@ -1577,11 +1556,11 @@ Sub SendUpdateNpcToAll(ByVal npcNum As Long)
     
     CopyMemory NPCData(0), ByVal VarPtr(NPC(npcNum)), NPCSize
     
-    buffer.WriteLong SUpdateNpc
-    buffer.WriteLong npcNum
-    buffer.WriteBytes NPCData
-    SendDataToAll buffer.ToArray()
-    Set buffer = Nothing
+    Buffer.WriteLong SUpdateNpc
+    Buffer.WriteLong npcNum
+    Buffer.WriteBytes NPCData
+    SendDataToAll Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1592,21 +1571,20 @@ ErrorHandler:
 End Sub
 
 Sub SendUpdateNpcTo(ByVal Index As Long, ByVal npcNum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim NPCSize As Long
     Dim NPCData() As Byte
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     NPCSize = LenB(NPC(npcNum))
     ReDim NPCData(NPCSize - 1)
     CopyMemory NPCData(0), ByVal VarPtr(NPC(npcNum)), NPCSize
-    buffer.WriteLong SUpdateNpc
-    buffer.WriteLong npcNum
-    buffer.WriteBytes NPCData
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Buffer.WriteLong SUpdateNpc
+    Buffer.WriteLong npcNum
+    Buffer.WriteBytes NPCData
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1617,25 +1595,24 @@ ErrorHandler:
 End Sub
 
 Sub SendUpdateResourceToAll(ByVal ResourceNum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim ResourceSize As Long
     Dim ResourceData() As Byte
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
     ResourceSize = LenB(Resource(ResourceNum))
     ReDim ResourceData(ResourceSize - 1)
     CopyMemory ResourceData(0), ByVal VarPtr(Resource(ResourceNum)), ResourceSize
     
-    buffer.WriteLong SUpdateResource
-    buffer.WriteLong ResourceNum
-    buffer.WriteBytes ResourceData
+    Buffer.WriteLong SUpdateResource
+    Buffer.WriteLong ResourceNum
+    Buffer.WriteBytes ResourceData
 
-    SendDataToAll buffer.ToArray()
-    Set buffer = Nothing
+    SendDataToAll Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1646,25 +1623,24 @@ ErrorHandler:
 End Sub
 
 Sub SendUpdateResourceTo(ByVal Index As Long, ByVal ResourceNum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim ResourceSize As Long
     Dim ResourceData() As Byte
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
     ResourceSize = LenB(Resource(ResourceNum))
     ReDim ResourceData(ResourceSize - 1)
     CopyMemory ResourceData(0), ByVal VarPtr(Resource(ResourceNum)), ResourceSize
     
-    buffer.WriteLong SUpdateResource
-    buffer.WriteLong ResourceNum
-    buffer.WriteBytes ResourceData
+    Buffer.WriteLong SUpdateResource
+    Buffer.WriteLong ResourceNum
+    Buffer.WriteBytes ResourceData
     
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1697,25 +1673,24 @@ ErrorHandler:
 End Sub
 
 Sub SendUpdateShopToAll(ByVal shopNum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim ShopSize As Long
     Dim ShopData() As Byte
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
     ShopSize = LenB(Shop(shopNum))
     ReDim ShopData(ShopSize - 1)
     CopyMemory ShopData(0), ByVal VarPtr(Shop(shopNum)), ShopSize
     
-    buffer.WriteLong SUpdateShop
-    buffer.WriteLong shopNum
-    buffer.WriteBytes ShopData
+    Buffer.WriteLong SUpdateShop
+    Buffer.WriteLong shopNum
+    Buffer.WriteBytes ShopData
 
-    SendDataToAll buffer.ToArray()
-    Set buffer = Nothing
+    SendDataToAll Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1726,25 +1701,24 @@ ErrorHandler:
 End Sub
 
 Sub SendUpdateShopTo(ByVal Index As Long, ByVal shopNum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim ShopSize As Long
     Dim ShopData() As Byte
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
     ShopSize = LenB(Shop(shopNum))
     ReDim ShopData(ShopSize - 1)
     CopyMemory ShopData(0), ByVal VarPtr(Shop(shopNum)), ShopSize
     
-    buffer.WriteLong SUpdateShop
-    buffer.WriteLong shopNum
-    buffer.WriteBytes ShopData
+    Buffer.WriteLong SUpdateShop
+    Buffer.WriteLong shopNum
+    Buffer.WriteBytes ShopData
     
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1778,26 +1752,25 @@ ErrorHandler:
 End Sub
 
 Sub SendUpdateSpellToAll(ByVal spellnum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     Dim SpellSize As Long
     Dim SpellData() As Byte
     
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
     SpellSize = LenB(spell(spellnum))
     ReDim SpellData(SpellSize - 1)
     CopyMemory SpellData(0), ByVal VarPtr(spell(spellnum)), SpellSize
     
-    buffer.WriteLong SUpdateSpell
-    buffer.WriteLong spellnum
-    buffer.WriteBytes SpellData
+    Buffer.WriteLong SUpdateSpell
+    Buffer.WriteLong spellnum
+    Buffer.WriteBytes SpellData
     
-    SendDataToAll buffer.ToArray()
-    Set buffer = Nothing
+    SendDataToAll Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1808,25 +1781,24 @@ ErrorHandler:
 End Sub
 
 Sub SendUpdateSpellTo(ByVal Index As Long, ByVal spellnum As Long)
-    Dim packet As String
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim SpellSize As Long
     Dim SpellData() As Byte
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
     SpellSize = LenB(spell(spellnum))
     ReDim SpellData(SpellSize - 1)
     CopyMemory SpellData(0), ByVal VarPtr(spell(spellnum)), SpellSize
     
-    buffer.WriteLong SUpdateSpell
-    buffer.WriteLong spellnum
-    buffer.WriteBytes SpellData
+    Buffer.WriteLong SUpdateSpell
+    Buffer.WriteLong spellnum
+    Buffer.WriteBytes SpellData
     
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1837,20 +1809,19 @@ ErrorHandler:
 End Sub
 
 Sub SendPlayerSpells(ByVal Index As Long)
-    Dim packet As String
     Dim i As Long
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SSpells
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SSpells
 
     For i = 1 To MAX_PLAYER_SPELLS
-        buffer.WriteLong Player(Index).spell(i)
+        Buffer.WriteLong Player(Index).spell(i)
     Next
 
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1861,26 +1832,26 @@ ErrorHandler:
 End Sub
 
 Sub SendResourceCacheTo(ByVal Index As Long, ByVal Resource_num As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim i As Long
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SResourceCache
-    buffer.WriteLong ResourceCache(GetPlayerMap(Index)).Resource_Count
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SResourceCache
+    Buffer.WriteLong ResourceCache(GetPlayerMap(Index)).Resource_Count
 
     If ResourceCache(GetPlayerMap(Index)).Resource_Count > 0 Then
 
         For i = 0 To ResourceCache(GetPlayerMap(Index)).Resource_Count
-            buffer.WriteByte ResourceCache(GetPlayerMap(Index)).ResourceData(i).ResourceState
-            buffer.WriteLong ResourceCache(GetPlayerMap(Index)).ResourceData(i).x
-            buffer.WriteLong ResourceCache(GetPlayerMap(Index)).ResourceData(i).y
+            Buffer.WriteByte ResourceCache(GetPlayerMap(Index)).ResourceData(i).ResourceState
+            Buffer.WriteLong ResourceCache(GetPlayerMap(Index)).ResourceData(i).x
+            Buffer.WriteLong ResourceCache(GetPlayerMap(Index)).ResourceData(i).y
         Next
 
     End If
 
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1891,25 +1862,25 @@ ErrorHandler:
 End Sub
 
 Sub SendResourceCacheToMap(ByVal mapNum As Long, ByVal Resource_num As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim i As Long
    On Error GoTo ErrorHandler
-    Set buffer = New clsBuffer
-    buffer.WriteLong SResourceCache
-    buffer.WriteLong ResourceCache(mapNum).Resource_Count
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SResourceCache
+    Buffer.WriteLong ResourceCache(mapNum).Resource_Count
 
     If ResourceCache(mapNum).Resource_Count > 0 Then
 
         For i = 0 To ResourceCache(mapNum).Resource_Count
-            buffer.WriteByte ResourceCache(mapNum).ResourceData(i).ResourceState
-            buffer.WriteLong ResourceCache(mapNum).ResourceData(i).x
-            buffer.WriteLong ResourceCache(mapNum).ResourceData(i).y
+            Buffer.WriteByte ResourceCache(mapNum).ResourceData(i).ResourceState
+            Buffer.WriteLong ResourceCache(mapNum).ResourceData(i).x
+            Buffer.WriteLong ResourceCache(mapNum).ResourceData(i).y
         Next
 
     End If
 
-    SendDataToMap mapNum, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataToMap mapNum, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1920,25 +1891,25 @@ ErrorHandler:
 End Sub
 
 Sub SendActionMsg(ByVal mapNum As Long, ByVal message As String, ByVal Color As Long, ByVal MsgType As Long, ByVal x As Long, ByVal y As Long, Optional PlayerOnlyNum As Long = 0)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SActionMsg
-    buffer.WriteString message
-    buffer.WriteLong Color
-    buffer.WriteLong MsgType
-    buffer.WriteLong x
-    buffer.WriteLong y
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SActionMsg
+    Buffer.WriteString message
+    Buffer.WriteLong Color
+    Buffer.WriteLong MsgType
+    Buffer.WriteLong x
+    Buffer.WriteLong y
     
     If PlayerOnlyNum > 0 Then
-        SendDataTo PlayerOnlyNum, buffer.ToArray()
+        SendDataTo PlayerOnlyNum, Buffer.ToArray()
     Else
-        SendDataToMap mapNum, buffer.ToArray()
+        SendDataToMap mapNum, Buffer.ToArray()
     End If
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1949,18 +1920,18 @@ ErrorHandler:
 End Sub
 
 Sub SendBlood(ByVal mapNum As Long, ByVal x As Long, ByVal y As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SBlood
-    buffer.WriteLong x
-    buffer.WriteLong y
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SBlood
+    Buffer.WriteLong x
+    Buffer.WriteLong y
     
-    SendDataToMap mapNum, buffer.ToArray()
+    SendDataToMap mapNum, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1971,21 +1942,21 @@ ErrorHandler:
 End Sub
 
 Sub SendAnimation(ByVal mapNum As Long, ByVal Anim As Long, ByVal x As Long, ByVal y As Long, Optional ByVal LockType As Byte = 0, Optional ByVal LockIndex As Long = 0)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SAnimation
-    buffer.WriteLong Anim
-    buffer.WriteLong x
-    buffer.WriteLong y
-    buffer.WriteByte LockType
-    buffer.WriteLong LockIndex
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SAnimation
+    Buffer.WriteLong Anim
+    Buffer.WriteLong x
+    Buffer.WriteLong y
+    Buffer.WriteByte LockType
+    Buffer.WriteLong LockIndex
     
-    SendDataToMap mapNum, buffer.ToArray()
+    SendDataToMap mapNum, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -1996,17 +1967,17 @@ ErrorHandler:
 End Sub
 
 Sub SendCooldown(ByVal Index As Long, ByVal Slot As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SCooldown
-    buffer.WriteLong Slot
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SCooldown
+    Buffer.WriteLong Slot
     
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2017,16 +1988,16 @@ ErrorHandler:
 End Sub
 
 Sub SendClearSpellBuffer(ByVal Index As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SClearSpellBuffer
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SClearSpellBuffer
     
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2037,22 +2008,22 @@ ErrorHandler:
 End Sub
 
 Sub SayMsg_Map(ByVal mapNum As Long, ByVal Index As Long, ByVal message As String, ByVal saycolour As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SSayMsg
-    buffer.WriteString GetPlayerName(Index)
-    buffer.WriteLong GetPlayerAccess(Index)
-    buffer.WriteLong GetPlayerPK(Index)
-    buffer.WriteString message
-    buffer.WriteString "[Map] "
-    buffer.WriteLong saycolour
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SSayMsg
+    Buffer.WriteString GetPlayerName(Index)
+    Buffer.WriteLong GetPlayerAccess(Index)
+    Buffer.WriteLong GetPlayerPK(Index)
+    Buffer.WriteString message
+    Buffer.WriteString "[Map] "
+    Buffer.WriteLong saycolour
     
-    SendDataToMap mapNum, buffer.ToArray()
+    SendDataToMap mapNum, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2063,22 +2034,22 @@ ErrorHandler:
 End Sub
 
 Sub SayMsg_Global(ByVal Index As Long, ByVal message As String, ByVal saycolour As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SSayMsg
-    buffer.WriteString GetPlayerName(Index)
-    buffer.WriteLong GetPlayerAccess(Index)
-    buffer.WriteLong GetPlayerPK(Index)
-    buffer.WriteString message
-    buffer.WriteString "[Global] "
-    buffer.WriteLong saycolour
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SSayMsg
+    Buffer.WriteString GetPlayerName(Index)
+    Buffer.WriteLong GetPlayerAccess(Index)
+    Buffer.WriteLong GetPlayerPK(Index)
+    Buffer.WriteString message
+    Buffer.WriteString "[Global] "
+    Buffer.WriteLong saycolour
     
-    SendDataToAll buffer.ToArray()
+    SendDataToAll Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2089,16 +2060,16 @@ ErrorHandler:
 End Sub
 
 Sub ResetShopAction(ByVal Index As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SResetShopAction
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SResetShopAction
     
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2109,17 +2080,17 @@ ErrorHandler:
 End Sub
 
 Sub SendStunned(ByVal Index As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SStunned
-    buffer.WriteLong TempPlayer(Index).StunDuration
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SStunned
+    Buffer.WriteLong TempPlayer(Index).StunDuration
     
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2130,22 +2101,22 @@ ErrorHandler:
 End Sub
 
 Sub SendBank(ByVal Index As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim i As Long
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SBank
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SBank
     
     For i = 1 To MAX_BANK
-        buffer.WriteLong Bank(Index).Item(i).Num
-        buffer.WriteLong Bank(Index).Item(i).Value
+        Buffer.WriteLong Bank(Index).Item(i).Num
+        Buffer.WriteLong Bank(Index).Item(i).Value
     Next
     
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2156,16 +2127,16 @@ ErrorHandler:
 End Sub
 
 Sub SendOpenShop(ByVal Index As Long, ByVal shopNum As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SOpenShop
-    buffer.WriteLong shopNum
-    SendDataTo Index, buffer.ToArray()
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SOpenShop
+    Buffer.WriteLong shopNum
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2176,25 +2147,25 @@ ErrorHandler:
 End Sub
 
 Sub SendPlayerMove(ByVal Index As Long, ByVal movement As Long, Optional ByVal sendToSelf As Boolean = False)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPlayerMove
-    buffer.WriteLong Index
-    buffer.WriteLong GetPlayerX(Index)
-    buffer.WriteLong GetPlayerY(Index)
-    buffer.WriteLong GetPlayerDir(Index)
-    buffer.WriteLong movement
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SPlayerMove
+    Buffer.WriteLong Index
+    Buffer.WriteLong GetPlayerX(Index)
+    Buffer.WriteLong GetPlayerY(Index)
+    Buffer.WriteLong GetPlayerDir(Index)
+    Buffer.WriteLong movement
     
     If Not sendToSelf Then
-        SendDataToMapBut Index, GetPlayerMap(Index), buffer.ToArray()
+        SendDataToMapBut Index, GetPlayerMap(Index), Buffer.ToArray()
     Else
-        SendDataToMap GetPlayerMap(Index), buffer.ToArray()
+        SendDataToMap GetPlayerMap(Index), Buffer.ToArray()
     End If
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2205,17 +2176,17 @@ ErrorHandler:
 End Sub
 
 Sub SendTrade(ByVal Index As Long, ByVal tradeTarget As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong STrade
-    buffer.WriteLong tradeTarget
-    buffer.WriteString Trim$(GetPlayerName(tradeTarget))
-    SendDataTo Index, buffer.ToArray()
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong STrade
+    Buffer.WriteLong tradeTarget
+    Buffer.WriteString Trim$(GetPlayerName(tradeTarget))
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2226,15 +2197,15 @@ ErrorHandler:
 End Sub
 
 Sub SendCloseTrade(ByVal Index As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SCloseTrade
-    SendDataTo Index, buffer.ToArray()
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SCloseTrade
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2245,7 +2216,7 @@ ErrorHandler:
 End Sub
 
 Sub SendTradeUpdate(ByVal Index As Long, ByVal dataType As Byte)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 Dim i As Long
 Dim tradeTarget As Long
 Dim totalWorth As Long
@@ -2254,14 +2225,14 @@ Dim totalWorth As Long
 
     tradeTarget = TempPlayer(Index).InTrade
     
-    Set buffer = New clsBuffer
-    buffer.WriteLong STradeUpdate
-    buffer.WriteByte dataType
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong STradeUpdate
+    Buffer.WriteByte dataType
     
     If dataType = 0 Then ' own inventory
         For i = 1 To MAX_INV
-            buffer.WriteLong TempPlayer(Index).TradeOffer(i).Num
-            buffer.WriteLong TempPlayer(Index).TradeOffer(i).Value
+            Buffer.WriteLong TempPlayer(Index).TradeOffer(i).Num
+            Buffer.WriteLong TempPlayer(Index).TradeOffer(i).Value
             ' add total worth
             If TempPlayer(Index).TradeOffer(i).Num > 0 Then
                 ' currency?
@@ -2274,8 +2245,8 @@ Dim totalWorth As Long
         Next
     ElseIf dataType = 1 Then ' other inventory
         For i = 1 To MAX_INV
-            buffer.WriteLong GetPlayerInvItemNum(tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).Num)
-            buffer.WriteLong TempPlayer(tradeTarget).TradeOffer(i).Value
+            Buffer.WriteLong GetPlayerInvItemNum(tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).Num)
+            Buffer.WriteLong TempPlayer(tradeTarget).TradeOffer(i).Value
             ' add total worth
             If GetPlayerInvItemNum(tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).Num) > 0 Then
                 ' currency?
@@ -2289,11 +2260,11 @@ Dim totalWorth As Long
     End If
     
     ' send total worth of trade
-    buffer.WriteLong totalWorth
+    Buffer.WriteLong totalWorth
     
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2304,16 +2275,16 @@ ErrorHandler:
 End Sub
 
 Sub SendTradeStatus(ByVal Index As Long, ByVal Status As Byte)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong STradeStatus
-    buffer.WriteByte Status
-    SendDataTo Index, buffer.ToArray()
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong STradeStatus
+    Buffer.WriteByte Status
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2324,16 +2295,16 @@ ErrorHandler:
 End Sub
 
 Sub SendTarget(ByVal Index As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong STarget
-    buffer.WriteLong TempPlayer(Index).target
-    buffer.WriteLong TempPlayer(Index).targetType
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong STarget
+    Buffer.WriteLong TempPlayer(Index).target
+    Buffer.WriteLong TempPlayer(Index).targetType
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2345,18 +2316,18 @@ End Sub
 
 Sub SendHotbar(ByVal Index As Long)
 Dim i As Long
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SHotbar
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SHotbar
     For i = 1 To MAX_HOTBAR
-        buffer.WriteLong Player(Index).Hotbar(i).Slot
-        buffer.WriteByte Player(Index).Hotbar(i).sType
+        Buffer.WriteLong Player(Index).Hotbar(i).Slot
+        Buffer.WriteByte Player(Index).Hotbar(i).sType
     Next
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2367,16 +2338,16 @@ ErrorHandler:
 End Sub
 
 Sub SendLoginOk(ByVal Index As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SLoginOk
-    buffer.WriteLong Index
-    buffer.WriteLong Player_HighIndex
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SLoginOk
+    Buffer.WriteLong Index
+    Buffer.WriteLong Player_HighIndex
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2387,14 +2358,14 @@ ErrorHandler:
 End Sub
 
 Sub SendInGame(ByVal Index As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SInGame
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SInGame
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2405,15 +2376,15 @@ ErrorHandler:
 End Sub
 
 Sub SendHighIndex()
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SHighIndex
-    buffer.WriteLong Player_HighIndex
-    SendDataToAll buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SHighIndex
+    Buffer.WriteLong Player_HighIndex
+    SendDataToAll Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2424,18 +2395,18 @@ ErrorHandler:
 End Sub
 
 Sub SendPlayerSound(ByVal Index As Long, ByVal x As Long, ByVal y As Long, ByVal entityType As Long, ByVal entityNum As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SSound
-    buffer.WriteLong x
-    buffer.WriteLong y
-    buffer.WriteLong entityType
-    buffer.WriteLong entityNum
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SSound
+    Buffer.WriteLong x
+    Buffer.WriteLong y
+    Buffer.WriteLong entityType
+    Buffer.WriteLong entityNum
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2446,17 +2417,17 @@ ErrorHandler:
 End Sub
 
 Sub SendMapSound(ByVal Index As Long, ByVal x As Long, ByVal y As Long, ByVal entityType As Long, ByVal entityNum As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
-    Set buffer = New clsBuffer
-    buffer.WriteLong SSound
-    buffer.WriteLong x
-    buffer.WriteLong y
-    buffer.WriteLong entityType
-    buffer.WriteLong entityNum
-    SendDataToMap GetPlayerMap(Index), buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SSound
+    Buffer.WriteLong x
+    Buffer.WriteLong y
+    Buffer.WriteLong entityType
+    Buffer.WriteLong entityNum
+    SendDataToMap GetPlayerMap(Index), Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2467,15 +2438,15 @@ ErrorHandler:
 End Sub
 
 Sub SendTradeRequest(ByVal Index As Long, ByVal TradeRequest As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong STradeRequest
-    buffer.WriteString Trim$(Player(TradeRequest).Name)
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong STradeRequest
+    Buffer.WriteString Trim$(Player(TradeRequest).Name)
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2486,15 +2457,15 @@ ErrorHandler:
 End Sub
 
 Sub SendPartyInvite(ByVal Index As Long, ByVal TARGETPLAYER As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPartyInvite
-    buffer.WriteString Trim$(Player(TARGETPLAYER).Name)
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SPartyInvite
+    Buffer.WriteString Trim$(Player(TARGETPLAYER).Name)
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2505,20 +2476,20 @@ ErrorHandler:
 End Sub
 
 Sub SendPartyUpdate(ByVal partyNum As Long)
-Dim buffer As clsBuffer, i As Long
+Dim Buffer As clsBuffer, i As Long
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPartyUpdate
-    buffer.WriteByte 1
-    buffer.WriteLong Party(partyNum).Leader
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SPartyUpdate
+    Buffer.WriteByte 1
+    Buffer.WriteLong Party(partyNum).Leader
     For i = 1 To MAX_PARTY_MEMBERS
-        buffer.WriteLong Party(partyNum).Member(i)
+        Buffer.WriteLong Party(partyNum).Member(i)
     Next
-    buffer.WriteLong Party(partyNum).MemberCount
-    SendDataToParty partyNum, buffer.ToArray()
-    Set buffer = Nothing
+    Buffer.WriteLong Party(partyNum).MemberCount
+    SendDataToParty partyNum, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2529,30 +2500,30 @@ ErrorHandler:
 End Sub
 
 Sub SendPartyUpdateTo(ByVal Index As Long)
-Dim buffer As clsBuffer, i As Long, partyNum As Long
+Dim Buffer As clsBuffer, i As Long, partyNum As Long
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPartyUpdate
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SPartyUpdate
     
     ' check if we're in a party
     partyNum = TempPlayer(Index).inParty
     If partyNum > 0 Then
         ' send party data
-        buffer.WriteByte 1
-        buffer.WriteLong Party(partyNum).Leader
+        Buffer.WriteByte 1
+        Buffer.WriteLong Party(partyNum).Leader
         For i = 1 To MAX_PARTY_MEMBERS
-            buffer.WriteLong Party(partyNum).Member(i)
+            Buffer.WriteLong Party(partyNum).Member(i)
         Next
-        buffer.WriteLong Party(partyNum).MemberCount
+        Buffer.WriteLong Party(partyNum).MemberCount
     Else
         ' send clear command
-        buffer.WriteByte 0
+        Buffer.WriteByte 0
     End If
     
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2563,19 +2534,19 @@ ErrorHandler:
 End Sub
 
 Sub SendPartyVitals(ByVal partyNum As Long, ByVal Index As Long)
-Dim buffer As clsBuffer, i As Long
+Dim Buffer As clsBuffer, i As Long
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPartyVitals
-    buffer.WriteLong Index
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SPartyVitals
+    Buffer.WriteLong Index
     For i = 1 To Vitals.Vital_Count - 1
-        buffer.WriteLong GetPlayerMaxVital(Index, i)
-        buffer.WriteLong Player(Index).Vital(i)
+        Buffer.WriteLong GetPlayerMaxVital(Index, i)
+        Buffer.WriteLong Player(Index).Vital(i)
     Next
-    SendDataToParty partyNum, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataToParty partyNum, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2586,24 +2557,24 @@ ErrorHandler:
 End Sub
 
 Sub SendSpawnItemToMap(ByVal mapNum As Long, ByVal Index As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
-    Set buffer = New clsBuffer
-    buffer.WriteLong SSpawnItem
-    buffer.WriteLong Index
-    buffer.WriteString MapItem(mapNum, Index).playerName
-    buffer.WriteLong MapItem(mapNum, Index).Num
-    buffer.WriteLong MapItem(mapNum, Index).Value
-    buffer.WriteLong MapItem(mapNum, Index).x
-    buffer.WriteLong MapItem(mapNum, Index).y
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SSpawnItem
+    Buffer.WriteLong Index
+    Buffer.WriteString MapItem(mapNum, Index).playerName
+    Buffer.WriteLong MapItem(mapNum, Index).Num
+    Buffer.WriteLong MapItem(mapNum, Index).Value
+    Buffer.WriteLong MapItem(mapNum, Index).x
+    Buffer.WriteLong MapItem(mapNum, Index).y
     If MapItem(mapNum, Index).Bound Then
-        buffer.WriteLong 1
+        Buffer.WriteLong 1
     Else
-        buffer.WriteLong 0
+        Buffer.WriteLong 0
     End If
-    SendDataToMap mapNum, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataToMap mapNum, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2614,14 +2585,14 @@ ErrorHandler:
 End Sub
 
 Sub SendStartTutorial(ByVal Index As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SStartTutorial
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SStartTutorial
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2632,15 +2603,15 @@ ErrorHandler:
 End Sub
 
 Sub SendNpcDeath(ByVal mapNum As Long, ByVal mapNpcNum As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SNpcDead
-    buffer.WriteLong mapNpcNum
-    SendDataToMap mapNum, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SNpcDead
+    Buffer.WriteLong mapNpcNum
+    SendDataToMap mapNum, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2651,18 +2622,18 @@ ErrorHandler:
 End Sub
 
 Sub SendChatBubble(ByVal mapNum As Long, ByVal target As Long, ByVal targetType As Long, ByVal message As String, ByVal Colour As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SChatBubble
-    buffer.WriteLong target
-    buffer.WriteLong targetType
-    buffer.WriteString message
-    buffer.WriteLong Colour
-    SendDataToMap mapNum, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SChatBubble
+    Buffer.WriteLong target
+    Buffer.WriteLong targetType
+    Buffer.WriteString message
+    Buffer.WriteLong Colour
+    SendDataToMap mapNum, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2673,15 +2644,15 @@ ErrorHandler:
 End Sub
 
 Sub SendAttack(ByVal Index As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SAttack
-    buffer.WriteLong Index
-    SendDataToMap GetPlayerMap(Index), buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SAttack
+    Buffer.WriteLong Index
+    SendDataToMap GetPlayerMap(Index), Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2697,59 +2668,59 @@ Public Sub Events_SendEventData(ByVal pIndex As Long, ByVal EIndex As Long)
     If pIndex <= 0 Or pIndex > MAX_PLAYERS Then Exit Sub
     If EIndex <= 0 Or EIndex > MAX_EVENTS Then Exit Sub
     
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim i As Long, D As Long
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SEventData
-    buffer.WriteLong EIndex
-    buffer.WriteString Events(EIndex).Name
-    buffer.WriteByte Events(EIndex).chkSwitch
-    buffer.WriteByte Events(EIndex).chkVariable
-    buffer.WriteByte Events(EIndex).chkHasItem
-    buffer.WriteLong Events(EIndex).SwitchIndex
-    buffer.WriteByte Events(EIndex).SwitchCompare
-    buffer.WriteLong Events(EIndex).VariableIndex
-    buffer.WriteByte Events(EIndex).VariableCompare
-    buffer.WriteLong Events(EIndex).VariableCondition
-    buffer.WriteLong Events(EIndex).HasItemIndex
+    Buffer.WriteLong SEventData
+    Buffer.WriteLong EIndex
+    Buffer.WriteString Events(EIndex).Name
+    Buffer.WriteByte Events(EIndex).chkSwitch
+    Buffer.WriteByte Events(EIndex).chkVariable
+    Buffer.WriteByte Events(EIndex).chkHasItem
+    Buffer.WriteLong Events(EIndex).SwitchIndex
+    Buffer.WriteByte Events(EIndex).SwitchCompare
+    Buffer.WriteLong Events(EIndex).VariableIndex
+    Buffer.WriteByte Events(EIndex).VariableCompare
+    Buffer.WriteLong Events(EIndex).VariableCondition
+    Buffer.WriteLong Events(EIndex).HasItemIndex
     If Events(EIndex).HasSubEvents Then
-        buffer.WriteLong UBound(Events(EIndex).SubEvents)
+        Buffer.WriteLong UBound(Events(EIndex).SubEvents)
         For i = 1 To UBound(Events(EIndex).SubEvents)
             With Events(EIndex).SubEvents(i)
-                buffer.WriteLong .Type
+                Buffer.WriteLong .Type
                 If .HasText Then
-                    buffer.WriteLong UBound(.text)
+                    Buffer.WriteLong UBound(.text)
                     For D = 1 To UBound(.text)
-                        buffer.WriteString .text(D)
+                        Buffer.WriteString .text(D)
                     Next D
                 Else
-                    buffer.WriteLong 0
+                    Buffer.WriteLong 0
                 End If
                 If .HasData Then
-                    buffer.WriteLong UBound(.data)
-                    For D = 1 To UBound(.data)
-                        buffer.WriteLong .data(D)
+                    Buffer.WriteLong UBound(.Data)
+                    For D = 1 To UBound(.Data)
+                        Buffer.WriteLong .Data(D)
                     Next D
                 Else
-                    buffer.WriteLong 0
+                    Buffer.WriteLong 0
                 End If
             End With
         Next i
     Else
-        buffer.WriteLong 0
+        Buffer.WriteLong 0
     End If
     
-    buffer.WriteByte Events(EIndex).Trigger
-    buffer.WriteByte Events(EIndex).WalkThrought
-    buffer.WriteByte Events(EIndex).Animated
+    Buffer.WriteByte Events(EIndex).Trigger
+    Buffer.WriteByte Events(EIndex).WalkThrought
+    Buffer.WriteByte Events(EIndex).Animated
     For i = 0 To 2
-        buffer.WriteLong Events(EIndex).Graphic(i)
+        Buffer.WriteLong Events(EIndex).Graphic(i)
     Next
     
-    SendDataTo pIndex, buffer.ToArray
+    SendDataTo pIndex, Buffer.ToArray
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2767,35 +2738,35 @@ Public Sub Events_SendEventUpdate(ByVal pIndex As Long, ByVal EIndex As Long, By
     If Not (Events(EIndex).HasSubEvents) Then Exit Sub
     If SIndex <= 0 Or SIndex > UBound(Events(EIndex).SubEvents) Then Exit Sub
     
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     Dim D As Long
     
-    Set buffer = New clsBuffer
-    buffer.WriteLong SEventUpdate
-    buffer.WriteLong SIndex
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SEventUpdate
+    Buffer.WriteLong SIndex
     With Events(EIndex).SubEvents(SIndex)
-        buffer.WriteLong .Type
+        Buffer.WriteLong .Type
         If .HasText Then
-            buffer.WriteLong UBound(.text)
+            Buffer.WriteLong UBound(.text)
             For D = 1 To UBound(.text)
-                buffer.WriteString .text(D)
+                Buffer.WriteString .text(D)
             Next D
         Else
-            buffer.WriteLong 0
+            Buffer.WriteLong 0
         End If
         If .HasData Then
-            buffer.WriteLong UBound(.data)
-            For D = 1 To UBound(.data)
-                buffer.WriteLong .data(D)
+            Buffer.WriteLong UBound(.Data)
+            For D = 1 To UBound(.Data)
+                Buffer.WriteLong .Data(D)
             Next D
         Else
-            buffer.WriteLong 0
+            Buffer.WriteLong 0
         End If
     End With
     
-    SendDataTo pIndex, buffer.ToArray
+    SendDataTo pIndex, Buffer.ToArray
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2809,18 +2780,18 @@ Public Sub Events_SendEventQuit(ByVal pIndex As Long)
    On Error GoTo ErrorHandler
 
     If pIndex <= 0 Or pIndex > MAX_PLAYERS Then Exit Sub
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
-    Set buffer = New clsBuffer
-    buffer.WriteLong SEventUpdate
-    buffer.WriteLong 1          'Current Event
-    buffer.WriteLong Evt_Quit   'Quit Event Type
-    buffer.WriteLong 0          'Text Count
-    buffer.WriteLong 0          'Data Count
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SEventUpdate
+    Buffer.WriteLong 1          'Current Event
+    Buffer.WriteLong Evt_Quit   'Quit Event Type
+    Buffer.WriteLong 0          'Text Count
+    Buffer.WriteLong 0          'Data Count
     
-    SendDataTo pIndex, buffer.ToArray
+    SendDataTo pIndex, Buffer.ToArray
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2831,17 +2802,17 @@ ErrorHandler:
 End Sub
 
 Sub SendEventOpen(ByVal Index As Long, ByVal Value As Byte, ByVal EventNum As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SEventOpen
-    buffer.WriteByte Value
-    buffer.WriteLong EventNum
-    SendDataTo Index, buffer.ToArray()
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SEventOpen
+    Buffer.WriteByte Value
+    Buffer.WriteLong EventNum
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2852,27 +2823,27 @@ ErrorHandler:
 End Sub
 
 Sub SendSwitchesAndVariables(Index As Long, Optional everyone As Boolean = False)
-Dim buffer As clsBuffer, i As Long
+Dim Buffer As clsBuffer, i As Long
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SSwitchesAndVariables
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SSwitchesAndVariables
     
     For i = 1 To MAX_SWITCHES
-        buffer.WriteString Switches(i)
+        Buffer.WriteString Switches(i)
     Next
     For i = 1 To MAX_VARIABLES
-        buffer.WriteString Variables(i)
+        Buffer.WriteString Variables(i)
     Next
 
     If everyone Then
-        SendDataToAll buffer.ToArray
+        SendDataToAll Buffer.ToArray
     Else
-        SendDataTo Index, buffer.ToArray
+        SendDataTo Index, Buffer.ToArray
     End If
 
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2883,20 +2854,20 @@ ErrorHandler:
 End Sub
 
 Sub SendClientTime()
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SClientTime
-    buffer.WriteByte GameTime.Minute
-    buffer.WriteByte GameTime.Hour
-    buffer.WriteByte GameTime.Day
-    buffer.WriteByte GameTime.Month
-    buffer.WriteLong GameTime.Year
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SClientTime
+    Buffer.WriteByte GameTime.Minute
+    Buffer.WriteByte GameTime.Hour
+    Buffer.WriteByte GameTime.Day
+    Buffer.WriteByte GameTime.Month
+    Buffer.WriteLong GameTime.Year
     
-    SendDataToAll buffer.ToArray()
-    Set buffer = Nothing
+    SendDataToAll Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2907,20 +2878,20 @@ ErrorHandler:
     
 End Sub
 Sub SendClientTimeTo(ByVal Index As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SClientTime
-    buffer.WriteByte GameTime.Minute
-    buffer.WriteByte GameTime.Hour
-    buffer.WriteByte GameTime.Day
-    buffer.WriteByte GameTime.Month
-    buffer.WriteLong GameTime.Year
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SClientTime
+    Buffer.WriteByte GameTime.Minute
+    Buffer.WriteByte GameTime.Hour
+    Buffer.WriteByte GameTime.Day
+    Buffer.WriteByte GameTime.Month
+    Buffer.WriteLong GameTime.Year
     
-    SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    SendDataTo Index, Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2932,17 +2903,17 @@ ErrorHandler:
 End Sub
 
 Sub SendAfk(ByVal Index As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SAfk
-    buffer.WriteLong Index
-    buffer.WriteByte TempPlayer(Index).AFK
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SAfk
+    Buffer.WriteLong Index
+    Buffer.WriteByte TempPlayer(Index).AFK
     
-    SendDataToAll buffer.ToArray()
-    Set buffer = Nothing
+    SendDataToAll Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2954,17 +2925,17 @@ ErrorHandler:
 End Sub
 
 Sub SendBossMsg(ByVal message As String, ByVal Color As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SBossMsg
-    buffer.WriteString message
-    buffer.WriteLong Color
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SBossMsg
+    Buffer.WriteString message
+    Buffer.WriteLong Color
         
-    SendDataToAll buffer.ToArray()
-    Set buffer = Nothing
+    SendDataToAll Buffer.ToArray()
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -2975,22 +2946,22 @@ ErrorHandler:
 End Sub
 
 Sub SendProjectile(ByVal mapNum As Long, ByVal attacker As Long, ByVal AttackerType As Long, ByVal victim As Long, ByVal targetType As Long, ByVal Graphic As Long, ByVal Rotate As Long, ByVal RotateSpeed As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    Call buffer.WriteLong(SCreateProjectile)
-    Call buffer.WriteLong(attacker)
-    Call buffer.WriteLong(AttackerType)
-    Call buffer.WriteLong(victim)
-    Call buffer.WriteLong(targetType)
-    Call buffer.WriteLong(Graphic)
-    Call buffer.WriteLong(Rotate)
-    Call buffer.WriteLong(RotateSpeed)
-    Call SendDataToMap(mapNum, buffer.ToArray())
+    Set Buffer = New clsBuffer
+    Call Buffer.WriteLong(SCreateProjectile)
+    Call Buffer.WriteLong(attacker)
+    Call Buffer.WriteLong(AttackerType)
+    Call Buffer.WriteLong(victim)
+    Call Buffer.WriteLong(targetType)
+    Call Buffer.WriteLong(Graphic)
+    Call Buffer.WriteLong(Rotate)
+    Call Buffer.WriteLong(RotateSpeed)
+    Call SendDataToMap(mapNum, Buffer.ToArray())
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -3000,17 +2971,17 @@ ErrorHandler:
     Exit Sub
 End Sub
 Sub SendEventGraphic(ByVal Index As Long, ByVal Value As Byte, ByVal EventNum As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SEventGraphic
-    buffer.WriteByte Value
-    buffer.WriteLong EventNum
-    SendDataTo Index, buffer.ToArray()
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SEventGraphic
+    Buffer.WriteByte Value
+    Buffer.WriteLong EventNum
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -3020,16 +2991,16 @@ ErrorHandler:
     Exit Sub
 End Sub
 Sub SendThreshold(ByVal Index As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SThreshold
-    buffer.WriteByte Player(Index).Threshold
-    SendDataTo Index, buffer.ToArray()
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SThreshold
+    Buffer.WriteByte Player(Index).Threshold
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -3041,21 +3012,21 @@ End Sub
 
 Sub SendSwearFilter(ByVal Index As Long)
     Dim i As Long
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
    On Error GoTo ErrorHandler
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SSwearFilter
-    buffer.WriteLong MaxSwearWords
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong SSwearFilter
+    Buffer.WriteLong MaxSwearWords
     For i = 1 To MaxSwearWords
-        buffer.WriteString SwearFilter(i).BadWord
-        buffer.WriteString SwearFilter(i).NewWord
+        Buffer.WriteString SwearFilter(i).BadWord
+        Buffer.WriteString SwearFilter(i).NewWord
     Next
     
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 
    ' Error handler
    Exit Sub
@@ -3072,76 +3043,76 @@ Dim i As Long
 End Sub
 
 Sub SendPlayerOpenChest(ByVal Index As Long, ByVal ChestNum As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
     
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SPlayerOpenChest
-    buffer.WriteLong ChestNum
+    Buffer.WriteLong SPlayerOpenChest
+    Buffer.WriteLong ChestNum
     
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 End Sub
 Sub SendUpdateChestTo(ByVal Index As Long, ByVal ChestNum As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
 
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SUpdateChest
-    buffer.WriteLong ChestNum
-    buffer.WriteLong Chest(ChestNum).Type
-    buffer.WriteLong Chest(ChestNum).Data1
-    buffer.WriteLong Chest(ChestNum).Data2
-buffer.WriteLong Chest(ChestNum).map
-buffer.WriteByte Chest(ChestNum).x
-buffer.WriteByte Chest(ChestNum).y
+    Buffer.WriteLong SUpdateChest
+    Buffer.WriteLong ChestNum
+    Buffer.WriteLong Chest(ChestNum).Type
+    Buffer.WriteLong Chest(ChestNum).Data1
+    Buffer.WriteLong Chest(ChestNum).Data2
+Buffer.WriteLong Chest(ChestNum).Map
+Buffer.WriteByte Chest(ChestNum).x
+Buffer.WriteByte Chest(ChestNum).y
     
-    SendDataTo Index, buffer.ToArray()
+    SendDataTo Index, Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 End Sub
 
 
 Sub SendUpdateChestToAll(ByVal ChestNum As Long)
-    Dim buffer As clsBuffer
+    Dim Buffer As clsBuffer
 
 
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong SUpdateChest
-    buffer.WriteLong ChestNum
-    buffer.WriteLong Chest(ChestNum).Type
-    buffer.WriteLong Chest(ChestNum).Data1
-    buffer.WriteLong Chest(ChestNum).Data2
-buffer.WriteLong Chest(ChestNum).map
-buffer.WriteByte Chest(ChestNum).x
-buffer.WriteByte Chest(ChestNum).y
+    Buffer.WriteLong SUpdateChest
+    Buffer.WriteLong ChestNum
+    Buffer.WriteLong Chest(ChestNum).Type
+    Buffer.WriteLong Chest(ChestNum).Data1
+    Buffer.WriteLong Chest(ChestNum).Data2
+Buffer.WriteLong Chest(ChestNum).Map
+Buffer.WriteByte Chest(ChestNum).x
+Buffer.WriteByte Chest(ChestNum).y
     
-    SendDataToAll buffer.ToArray()
+    SendDataToAll Buffer.ToArray()
     
-    Set buffer = Nothing
+    Set Buffer = Nothing
 End Sub
  Sub SendChest(ByVal Index As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
     ' If debug mode, handle error then exit out
    ' If Options.Debug = 1 Then On Error GoTo ErrorHandler
     
-    Set buffer = New clsBuffer
+    Set Buffer = New clsBuffer
     
-    buffer.WriteLong CSendChest
-    buffer.WriteLong Index
-    buffer.WriteLong Chest(Index).Type
-    buffer.WriteLong Chest(Index).Data1
-    buffer.WriteLong Chest(Index).Data2
-    buffer.WriteLong Chest(Index).map
-    buffer.WriteByte Chest(Index).x
-    buffer.WriteByte Chest(Index).y
+    Buffer.WriteLong CSendChest
+    Buffer.WriteLong Index
+    Buffer.WriteLong Chest(Index).Type
+    Buffer.WriteLong Chest(Index).Data1
+    Buffer.WriteLong Chest(Index).Data2
+    Buffer.WriteLong Chest(Index).Map
+    Buffer.WriteByte Chest(Index).x
+    Buffer.WriteByte Chest(Index).y
     
    '  SendDataTo Index, buffer.ToArray()
-    Set buffer = Nothing
+    Set Buffer = Nothing
     
     ' Error handler
     Exit Sub
