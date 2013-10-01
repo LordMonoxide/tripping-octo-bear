@@ -378,7 +378,7 @@ Dim LoopI As Integer
 End Function
 
 Sub DrawActionMsg(ByVal Index As Integer)
-Dim x As Long, y As Long, i As Long, time As Long
+Dim x As Long, y As Long, i As Long
 Dim LenMsg As Long
 
     If ActionMsg(Index).Message = vbNullString Then Exit Sub
@@ -386,7 +386,6 @@ Dim LenMsg As Long
     ' how long we want each message to appear
     Select Case ActionMsg(Index).Type
         Case ACTIONMSG_STATIC
-            time = 1500
             
             LenMsg = EngineGetTextWidth(Font_GeorgiaShadow, Trim$(ActionMsg(Index).Message))
 

@@ -902,10 +902,7 @@ Dim dRect As RECT
 End Sub
 
 Public Sub GDIRenderItem(ByRef picBox As PictureBox, ByVal Sprite As Long)
-Dim height As Long, width As Long, sRECT As RECT
-
-    height = gTexture(Tex_Item(Sprite)).height
-    width = gTexture(Tex_Item(Sprite)).width
+Dim sRECT As RECT
     
     sRECT.Top = 0
     sRECT.bottom = 32
@@ -1987,7 +1984,7 @@ Dim height As Long
     End If
 End Sub
 Public Sub DrawAnimation(ByVal Index As Long, ByVal Layer As Long)
-Dim Sprite As Integer, sRECT As GeomRec, width As Long, height As Long, FrameCount As Long
+Dim Sprite As Integer, sRECT As GeomRec, width As Long, height As Long
 Dim x As Long, y As Long, lockindex As Long
     
     If AnimInstance(Index).Animation = 0 Then
@@ -2001,8 +1998,6 @@ Dim x As Long, y As Long, lockindex As Long
     
     ' pre-load texture for calculations
     'SetTexture Tex_Anim(Sprite)
-    
-    FrameCount = Animation(AnimInstance(Index).Animation).Frames(Layer)
     
     ' total width divided by frame count
     width = 192
@@ -4594,7 +4589,7 @@ e:
     
 End Sub
 Public Sub DrawQuestsLog()
-Dim i As Long, width As Long, repeatable As Long
+Dim i As Long, width As Long
 Dim height As Long
 
     width = 600
@@ -4604,8 +4599,8 @@ Dim height As Long
     'Directx8.RenderTextureRectangle 7, GUIWindow(GUI_QUESTS).X, GUIWindow(GUI_QUESTS).Y, Width, Height
 
     Dim QuestNum As Long
-    Dim QuestSay As String, name As String, Desc As String, descLine() As String
-    Dim reqlvl As Long, reqquest As Long, descwidth As Long, Task As String
+    Dim name As String, Desc As String, descLine() As String
+    Dim reqlvl As Long, reqquest As Long, Task As String
     
 '    RenderText Font_GeorgiaShadow, WordWrap(DescLine(I), 340), GUIWindow(GUI_QUESTS).X + 200, GUIWindow(GUI_QUESTS).Y + 75 + (12 * I), White
     
@@ -4617,10 +4612,7 @@ Dim height As Long
         QuestSay = Quest(QuestNum).QuestLog
         name = Trim$(Quest(QuestNum).name)
         reqquest = Quest(QuestNum).RequiredQuest
-        repeatable = Quest(QuestNum).Repeat
         
-        
-        descwidth = EngineGetTextWidth(Font_GeorgiaShadow, Desc)
         descLine = Split(Desc, "/r")
             If Trim$(frmMain.lstQuestLog.Text) = vbNullString Then Exit Sub
             

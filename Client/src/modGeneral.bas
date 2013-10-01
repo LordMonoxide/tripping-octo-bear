@@ -13,21 +13,7 @@ Public Declare Function timeBeginPeriod Lib "winmm.dll" (ByVal uPeriod As Long) 
 Public Declare Sub ZeroMemory Lib "kernel32.dll" Alias "RtlZeroMemory" (Destination As Any, ByVal Length As Long)
 
 Public Sub Main()
-    'Loading Messages.ini Custom Messages
-    Dim FileName As String
-    FileName = App.path & "\data files\messages.ini"
-    Dim strLoadingInterface As String
-    Dim strLoadingOptions As String
-    Dim strDirectX As String
-    Dim strTCPIP As String
-    Dim strLoadingButtons As String
     Dim i As Long
-    
-    strLoadingInterface = GetVar(FileName, "MESSAGES", "Loading_Interfaces")
-    strLoadingOptions = GetVar(FileName, "MESSAGES", "Loading_Options")
-    strDirectX = GetVar(FileName, "MESSAGES", "Initializing_DirectX")
-    strTCPIP = GetVar(FileName, "MESSAGES", "Init_TCPIP")
-    strLoadingButtons = GetVar(FileName, "MESSAGES", "Loading_Buttons")
     
     'Set the high-resolution timer
     timeBeginPeriod 1
@@ -811,20 +797,6 @@ Dim i As Long
 End Sub
 
 Public Sub MenuState(ByVal state As Long)
- 
-    
-    'Variables for loading messages.ini
-    Dim FileName As String
-    Dim strOfflineMessage As String
-    Dim strConnectedAddChar As String
-    Dim strConnectedAddAcc As String
-    Dim strConnectedLogin As String
-    FileName = App.path & "\data files\messages.ini"
-    strOfflineMessage = GetVar(FileName, "Messages", "Server_Offline")
-    strConnectedAddChar = GetVar(FileName, "Messages", "Connected_AddChar")
-    strConnectedAddAcc = GetVar(FileName, "Messages", "Connected_NewAccount")
-    strConnectedLogin = GetVar(FileName, "Messages", "Connected_Login")
-    
     Select Case state
         Case MENU_STATE_ADDCHAR
             isLoading = True
@@ -845,7 +817,7 @@ Public Sub MenuState(ByVal state As Long)
 
     If Not IsConnected Then
         isLoading = False
-        Call MsgBox(strOfflineMessage, vbOKOnly, Options.Game_Name)
+        Call MsgBox("The Server Appears to be Offline! Visit http://www.prospekt2D.com for more info.", vbOKOnly, Options.Game_Name)
     End If
 End Sub
 
