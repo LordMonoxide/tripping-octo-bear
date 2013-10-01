@@ -994,7 +994,6 @@ Private Sub cmdReqClassRemove_Click()
     If Index = 0 Then Exit Sub
     
     Quest(EditorIndex).RequiredClass(Index) = 0
-    UpdateQuestClass
 End Sub
 
 '/Alatar v1.2

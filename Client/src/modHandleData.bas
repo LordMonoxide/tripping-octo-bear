@@ -2593,7 +2593,7 @@ errorhandler:
 End Sub
 Private Sub HandleSwitchesAndVariables(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
 Dim buffer As clsBuffer
-Dim str As String, I As Long
+Dim I As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -2744,7 +2744,6 @@ End Sub
 
 Private Sub HandleThreshold(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
 Dim n As Long
-Dim eventNum As Long
 Dim buffer As clsBuffer
 
     ' If debug mode, handle error then exit out
@@ -2845,7 +2844,7 @@ End Sub
 
 Private Sub HandleQuestMessage(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
-    Dim I As Long, QuestNum As Long, QuestNumForStart As Long
+    Dim QuestNum As Long, QuestNumForStart As Long
     Dim Message As String
     
     Set buffer = New clsBuffer

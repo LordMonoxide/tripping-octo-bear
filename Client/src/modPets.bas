@@ -1,5 +1,5 @@
 Attribute VB_Name = "modPets"
-Private Declare Sub ZeroMemory Lib "Kernel32.dll" Alias "RtlZeroMemory" (Destination As Any, ByVal Length As Long)
+Private Declare Sub ZeroMemory Lib "kernel32.dll" Alias "RtlZeroMemory" (Destination As Any, ByVal Length As Long)
 
 Public Const MAX_PETS As Long = 255
 Public Pet(1 To MAX_PETS) As PetRec
@@ -14,15 +14,13 @@ Public PetSpellBuffer As Long
 Public PetSpellBufferTimer As Long
 Public PetSpellCD(1 To 4) As Long
 
-Public DragPetSpell As Boolean
-
 'Pet Constants
 Public Const PET_ATTACK_BEHAVIOUR_ATTACKONSIGHT As Byte = 1 'The pet will attack all npcs around
 Public Const PET_ATTACK_BEHAVIOUR_GUARD As Byte = 2 'If attacked, the pet will fight back
 Public Const PET_ATTACK_BEHAVIOUR_DONOTHING As Byte = 3 'The pet will not attack even if attacked
 
 Public Type PetRec
-    Name As String * NAME_LENGTH
+    name As String * NAME_LENGTH
     Desc As String * 255
     Sprite As Long
     
@@ -40,7 +38,7 @@ Public Type PetRec
 End Type
 
 Public Type PlayerPetRec
-    Name As String * NAME_LENGTH
+    name As String * NAME_LENGTH
     Sprite As Long
     Health As Long
     Mana As Long
@@ -73,23 +71,23 @@ End Type
 
 'ClientTCP
 Public Sub SendPetBehaviour(Index As Long)
-    Dim Buffer As clsBuffer
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong csetbehaviour
-    Buffer.WriteLong Index
-    SendData Buffer.ToArray
-    Set Buffer = Nothing
+    Dim buffer As clsBuffer
+    Set buffer = New clsBuffer
+    buffer.WriteLong csetbehaviour
+    buffer.WriteLong Index
+    SendData buffer.ToArray
+    Set buffer = Nothing
 End Sub
 Public Sub SendRequestEditPet()
-Dim Buffer As clsBuffer
+Dim buffer As clsBuffer
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CRequestEditPet
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CRequestEditPet
+    SendData buffer.ToArray()
+    Set buffer = Nothing
     
     ' Error handler
     Exit Sub
@@ -99,15 +97,15 @@ errorhandler:
     Exit Sub
 End Sub
 Sub SendRequestPets()
-Dim Buffer As clsBuffer
+Dim buffer As clsBuffer
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CRequestPets
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CRequestPets
+    SendData buffer.ToArray()
+    Set buffer = Nothing
     
     ' Error handler
     Exit Sub
@@ -117,22 +115,22 @@ errorhandler:
     Exit Sub
 End Sub
 Public Sub SendSavePet(ByVal petNum As Long)
-Dim Buffer As clsBuffer
+Dim buffer As clsBuffer
 Dim PetSize As Long
 Dim PetData() As Byte
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    Set Buffer = New clsBuffer
+    Set buffer = New clsBuffer
     PetSize = LenB(Pet(petNum))
     ReDim PetData(PetSize - 1)
     CopyMemory PetData(0), ByVal VarPtr(Pet(petNum)), PetSize
-    Buffer.WriteLong CSavePet
-    Buffer.WriteLong petNum
-    Buffer.WriteBytes PetData
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    buffer.WriteLong CSavePet
+    buffer.WriteLong petNum
+    buffer.WriteBytes PetData
+    SendData buffer.ToArray()
+    Set buffer = Nothing
     
     ' Error handler
     Exit Sub
@@ -158,7 +156,7 @@ Dim I As Long
     EditorIndex = frmEditor_Pet.lstIndex.ListIndex + 1
     
     With frmEditor_Pet
-        .txtName.Text = Trim$(Pet(EditorIndex).Name)
+        .txtName.Text = Trim$(Pet(EditorIndex).name)
         .txtDesc.Text = Trim$(Pet(EditorIndex).Desc)
         If Pet(EditorIndex).Sprite < 0 Or Pet(EditorIndex).Sprite > .scrlSprite.Max Then Pet(EditorIndex).Sprite = 0
         .scrlSprite.Value = Pet(EditorIndex).Sprite
@@ -256,7 +254,7 @@ Sub ClearPet(ByVal Index As Long)
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     Call ZeroMemory(ByVal VarPtr(Pet(Index)), LenB(Pet(Index)))
-    Pet(Index).Name = vbNullString
+    Pet(Index).name = vbNullString
     
     ' Error handler
     Exit Sub
@@ -350,17 +348,17 @@ End Sub
 
 'frmMain
 Public Sub PetMove(ByVal x As Long, ByVal y As Long)
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CPetMove
-    Buffer.WriteLong x
-    Buffer.WriteLong y
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CPetMove
+    buffer.WriteLong x
+    buffer.WriteLong y
+    SendData buffer.ToArray()
+    Set buffer = Nothing
     
     ' Error handler
     Exit Sub
@@ -382,7 +380,7 @@ Dim I As Long
 
         ' Add the names
         For I = 1 To MAX_PETS
-            .lstIndex.AddItem I & ": " & Trim$(Pet(I).Name)
+            .lstIndex.AddItem I & ": " & Trim$(Pet(I).name)
         Next
 
         .Show
@@ -399,24 +397,24 @@ errorhandler:
 End Sub
 Public Sub HandleUpdatePet(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
 Dim n As Long
-Dim Buffer As clsBuffer
+Dim buffer As clsBuffer
 Dim PetSize As Long
 Dim PetData() As Byte
     
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes data()
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
     
-    n = Buffer.ReadLong
+    n = buffer.ReadLong
     
     PetSize = LenB(Pet(n))
     ReDim PetData(PetSize - 1)
-    PetData = Buffer.ReadBytes(PetSize)
+    PetData = buffer.ReadBytes(PetSize)
     CopyMemory ByVal VarPtr(Pet(n)), ByVal VarPtr(PetData(0)), PetSize
     
-    Set Buffer = Nothing
+    Set buffer = Nothing
     
     ' Error handler
     Exit Sub
@@ -432,18 +430,18 @@ Dim x As Long
 Dim y As Long
 Dim dir As Long
 Dim Movement As Long
-Dim Buffer As clsBuffer
+Dim buffer As clsBuffer
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes data()
-    I = Buffer.ReadLong
-    x = Buffer.ReadLong
-    y = Buffer.ReadLong
-    dir = Buffer.ReadLong
-    Movement = Buffer.ReadLong
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
+    I = buffer.ReadLong
+    x = buffer.ReadLong
+    y = buffer.ReadLong
+    dir = buffer.ReadLong
+    Movement = buffer.ReadLong
 
     With Player(I).Pet
         .x = x
@@ -477,15 +475,15 @@ End Sub
 Public Sub HandlePetDir(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
 Dim I As Long
 Dim dir As Long
-Dim Buffer As clsBuffer
+Dim buffer As clsBuffer
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes data()
-    I = Buffer.ReadLong
-    dir = Buffer.ReadLong
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
+    I = buffer.ReadLong
+    dir = buffer.ReadLong
 
     Player(I).Pet.dir = dir
     ' Error handler
@@ -497,22 +495,21 @@ errorhandler:
 End Sub
 Public Sub HandlePetVital(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
 Dim I As Long
-Dim dir As Long
-Dim Buffer As clsBuffer
+Dim buffer As clsBuffer
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes data()
-    I = Buffer.ReadLong
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
+    I = buffer.ReadLong
     
-    If Buffer.ReadLong = 1 Then
-        Player(I).Pet.MaxHp = Buffer.ReadLong
-        Player(I).Pet.Health = Buffer.ReadLong
+    If buffer.ReadLong = 1 Then
+        Player(I).Pet.MaxHp = buffer.ReadLong
+        Player(I).Pet.Health = buffer.ReadLong
     Else
-        Player(I).Pet.MaxMP = Buffer.ReadLong
-        Player(I).Pet.Mana = Buffer.ReadLong
+        Player(I).Pet.MaxMP = buffer.ReadLong
+        Player(I).Pet.Mana = buffer.ReadLong
     End If
     
     If I = MyIndex Then
@@ -534,7 +531,7 @@ Dim Buffer As clsBuffer
         End With
     End If
 
-    Set Buffer = Nothing
+    Set buffer = Nothing
     ' Error handler
     Exit Sub
 errorhandler:

@@ -506,7 +506,6 @@ Dim name As String
 Dim I As Long
 Dim n As Long
 ' Chat Room Commands
-Dim chatname As String
 Dim Command() As String
 Dim buffer As clsBuffer
 
@@ -1229,8 +1228,6 @@ Dim I As Long
     ChatButtonDown = False
 End Sub
 Public Sub Quests_MouseUp()
-Dim I As Long, x As Long, y As Long, buffer As clsBuffer, layerNum As Long
-
     ' find out which button we're clicking
     ' For I = 41 To 41
 '        X = GUIWindow(GUI_QUESTS).X + Buttons(I).X
@@ -1446,7 +1443,7 @@ End Sub
 
 ' scroll bar
 Public Sub ChatScroll_MouseDown()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim I As Long, x As Long, y As Long
     
     ' find out which button we're clicking
     For I = 34 To 35
@@ -1528,7 +1525,7 @@ End Sub
 
 ' Party
 Public Sub Party_MouseUp()
-Dim I As Long, x As Long, y As Long, buffer As clsBuffer
+Dim I As Long, x As Long, y As Long
 
     ' find out which button we're clicking
     For I = 24 To 25
@@ -1577,7 +1574,7 @@ End Sub
 
 'Options
 Public Sub Options_MouseUp()
-Dim I As Long, x As Long, y As Long, buffer As clsBuffer, layerNum As Long
+Dim I As Long, x As Long, y As Long, layerNum As Long
 
     ' find out which button we're clicking
     For I = 26 To 33
@@ -1723,7 +1720,7 @@ End Sub
 
 ' Menu
 Public Sub Menu_MouseUp()
-Dim I As Long, x As Long, y As Long, buffer As clsBuffer
+Dim I As Long, x As Long, y As Long
 
     ' find out which button we're clicking
     For I = 1 To 6
@@ -1778,7 +1775,7 @@ End Sub
 
 ' Main Menu
 Public Sub MainMenu_MouseUp()
-Dim I As Long, x As Long, y As Long, buffer As clsBuffer, width As Long, height As Long
+Dim I As Long, x As Long, y As Long, width As Long
 
     If faderAlpha > 0 Then Exit Sub
 
@@ -1863,7 +1860,7 @@ Dim I As Long, x As Long, y As Long, buffer As clsBuffer, width As Long, height 
 End Sub
 
 Public Sub MainMenu_MouseDown(ByVal Button As Long)
-Dim I As Long, x As Long, y As Long, width As Long, height As Long
+Dim I As Long, x As Long, y As Long, width As Long
 
     If faderAlpha > 0 Then Exit Sub
 
@@ -1938,7 +1935,7 @@ Dim invNum As Long
 End Sub
 
 Public Sub Inventory_DoubleClick()
-    Dim invNum As Long, Value As Long, multiplier As Double, I As Long
+    Dim invNum As Long, I As Long
 
     DragInvSlotNum = 0
     invNum = IsInvItem(GlobalX, GlobalY)
@@ -2151,14 +2148,6 @@ Dim bankNum As Long
         Exit Sub
     End If
 End Sub
-Public Sub Trade_DoubleClick()
-Dim tradeNum As Long
-    tradeNum = IsTradeItem(GlobalX, GlobalY, True)
-    If tradeNum <> 0 Then
-        UntradeItem tradeNum
-        Exit Sub
-    End If
-End Sub
 Public Sub Trade_MouseDown()
 Dim I As Long, x As Long, y As Long
 
@@ -2173,7 +2162,7 @@ Dim I As Long, x As Long, y As Long
     Next
 End Sub
 Public Sub Trade_MouseUp()
-Dim I As Long, x As Long, y As Long, buffer As clsBuffer
+Dim I As Long, x As Long, y As Long
 
     ' find out which button we're clicking
     For I = 36 To 37
@@ -2200,7 +2189,7 @@ Dim I As Long, x As Long, y As Long, buffer As clsBuffer
 End Sub
 
 Public Sub Currency_MouseDown()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim x As Long, y As Long, width As Long
     width = EngineGetTextWidth(Font_GeorgiaShadow, "[Accept]")
     x = GUIWindow(GUI_CURRENCY).x + 155
     y = GUIWindow(GUI_CURRENCY).y + 96
@@ -2216,7 +2205,7 @@ Dim I As Long, x As Long, y As Long, width As Long
     End If
 End Sub
 Public Sub Currency_MouseUp()
-Dim I As Long, x As Long, y As Long, width As Long, buffer As clsBuffer
+Dim x As Long, y As Long, width As Long
     width = EngineGetTextWidth(Font_GeorgiaShadow, "[Accept]")
     x = GUIWindow(GUI_CURRENCY).x + 155
     y = GUIWindow(GUI_CURRENCY).y + 96
@@ -2269,7 +2258,7 @@ Dim I As Long, x As Long, y As Long, width As Long, buffer As clsBuffer
     resetClickedButtons
 End Sub
 Public Sub Dialogue_MouseDown()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim x As Long, y As Long, width As Long
     
     If Dialogue_ButtonVisible(1) = True Then
         width = EngineGetTextWidth(Font_GeorgiaShadow, "[Accept]")
@@ -2298,7 +2287,7 @@ Dim I As Long, x As Long, y As Long, width As Long
 End Sub
 
 Public Sub Dialogue_MouseUp()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim x As Long, y As Long, width As Long
     If Dialogue_ButtonVisible(1) = True Then
         width = EngineGetTextWidth(Font_GeorgiaShadow, "[Accept]")
         x = GUIWindow(GUI_CHAT).x + 10 + (155 - (width / 2))
@@ -2349,7 +2338,7 @@ Public Sub Dialogue_Button_MouseDown(Index As Integer)
 End Sub
 
 Public Sub RightMenu_MouseDown()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim x As Long, y As Long, width As Long
     width = EngineGetTextWidth(Font_GeorgiaShadow, "[Trade]")
     x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
     y = GUIWindow(GUI_RIGHTMENU).y + 24
@@ -2381,7 +2370,7 @@ Dim I As Long, x As Long, y As Long, width As Long
 End Sub
 
 Public Sub RightMenu_MouseUp()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim x As Long, y As Long, width As Long
     width = EngineGetTextWidth(Font_GeorgiaShadow, "[Trade]")
     x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
     y = GUIWindow(GUI_RIGHTMENU).y + 24
@@ -2452,7 +2441,7 @@ Dim I As Long, x As Long, y As Long, width As Long
     RightMenuButtonState(4) = 0
 End Sub
 Public Sub Pets_MouseUp()
-Dim I As Long, x As Long, y As Long, z As Long, e As Long, G As Long
+Dim I As Long, x As Long, y As Long
     If Player(MyIndex).Pet.Alive = False Then Exit Sub
     Dim buffer As clsBuffer
     ' find out which button we're clicking
@@ -2546,7 +2535,7 @@ Public Sub QuestClose_MouseDown()
     QuestSay = "-"
 End Sub
 Public Sub QuestDialogue_MouseDown()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim x As Long, y As Long, width As Long
     
     If QuestAcceptVisible = True Then
         width = EngineGetTextWidth(Font_Georgia, "[Accept]")
@@ -2575,7 +2564,7 @@ Public Sub QuestExtra_MouseDown()
     RunQuestDialogueExtraLabel
 End Sub
 Public Sub QuestDialogue_MouseUp()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim x As Long, y As Long, width As Long
     If QuestAcceptVisible = True Then
         width = EngineGetTextWidth(Font_Georgia, "[Accept]")
         x = (GUIWindow(GUI_QUESTDIALOGUE).x + (GUIWindow(GUI_QUESTDIALOGUE).width / 2)) - (width / 2)

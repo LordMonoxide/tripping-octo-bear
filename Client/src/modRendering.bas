@@ -1425,7 +1425,7 @@ Dim partyIndex As Long
     End If
 End Sub
 Public Sub DrawChatBubble(ByVal Index As Long)
-Dim theArray() As String, x As Long, y As Long, I As Long, MaxWidth As Long, X2 As Long, Y2 As Long, Colour As Long
+Dim theArray() As String, x As Long, y As Long, I As Long, MaxWidth As Long, X2 As Long, Y2 As Long
     
     With chatBubble(Index)
         If .TargetType = TARGET_TYPE_PLAYER Then
@@ -1702,7 +1702,6 @@ End Sub
 
 Public Sub DrawNpc(ByVal MapNpcNum As Long)
     Dim Anim As Byte
-    Dim I As Long
     Dim x As Long
     Dim y As Long
     Dim Sprite As Long, spritetop As Long
@@ -2091,7 +2090,7 @@ Dim height As Long
     End If
 End Sub
 Public Sub DrawAnimation(ByVal Index As Long, ByVal Layer As Long)
-Dim Sprite As Integer, sRECT As GeomRec, I As Long, width As Long, height As Long, looptime As Long, FrameCount As Long
+Dim Sprite As Integer, sRECT As GeomRec, width As Long, height As Long, FrameCount As Long
 Dim x As Long, y As Long, lockindex As Long
     
     If AnimInstance(Index).Animation = 0 Then
@@ -2284,7 +2283,7 @@ Dim CostItem2 As Long, CostValue2 As Long
 End Sub
 
 Public Sub DrawItemDesc(ByVal itemnum As Long, ByVal x As Long, ByVal y As Long, Optional ByVal soulBound As Boolean = False)
-Dim Colour As Long, descString As String, theName As String, levelTxt As String, sInfo() As String, I As Long, width As Long, height As Long
+Dim Colour As Long, theName As String, levelTxt As String, sInfo() As String, I As Long, width As Long, height As Long
     
     ' get out
     If itemnum = 0 Then Exit Sub
@@ -2761,7 +2760,7 @@ Dim itemnum As Long, ItemPic As Long
 End Sub
 
 Public Sub DrawCharacter()
-Dim x As Long, y As Long, I As Long, dX As Long, dY As Long, tmpString As String, buttonnum As Long
+Dim x As Long, y As Long, dX As Long, dY As Long, buttonnum As Long
 Dim width As Long, height As Long
     
     ' render the window
@@ -3177,7 +3176,6 @@ Dim width As Long, height As Long
 End Sub
 
 Public Sub DrawChatHolder()
-Dim I As Long, x As Long, y As Long
 Dim width As Long, height As Long
     ' render chatbox
     width = GUIWindow(GUI_CHAT).width
@@ -3223,7 +3221,7 @@ Dim height As Long
 End Sub
 
 Public Sub DrawEventChat()
-Dim I As Long, x As Long, y As Long, Sprite As Long, width As Long
+Dim I As Long, x As Long, y As Long, width As Long
 Dim height As Long
 
     ' draw background
@@ -3634,7 +3632,7 @@ Dim width As Long, height As Long
 End Sub
 
 Public Sub DrawGUIBars()
-Dim tmpWidth As Long, barWidth As Long, x As Long, y As Long, dX As Long, dY As Long, sString As String
+Dim barWidth As Long, x As Long, y As Long, dX As Long, dY As Long, sString As String
 Dim width As Long, height As Long, dateString As String
 
     ' backwindow + empty bars
@@ -3886,7 +3884,7 @@ Public Sub DrawFader()
 End Sub
 
 Public Sub DrawCurrency()
-Dim x As Long, y As Long, buttonnum As Long
+Dim x As Long, y As Long
 Dim width As Long, height As Long
 
     x = GUIWindow(GUI_CURRENCY).x
@@ -3927,7 +3925,7 @@ Dim width As Long, height As Long
     End If
 End Sub
 Public Sub DrawDialogue()
-Dim I As Long, x As Long, y As Long, Sprite As Long, width As Long
+Dim x As Long, y As Long, width As Long
 Dim height As Long
 
     ' draw background
@@ -4098,7 +4096,6 @@ errorhandler:
 End Sub
 
 Sub DrawNight()
-Dim x As Long, y As Long
     If map.DayNight = 2 Then Exit Sub
     If DayTime = False Or map.DayNight = 1 Then
         Directx8.RenderTexture Tex_Night, ConvertMapX(GetPlayerX(MyIndex) * 32) + TempPlayer(MyIndex).XOffset + 16 - gTexture(Tex_Night).RWidth / 2, ConvertMapY(GetPlayerY(MyIndex) * 32) + TempPlayer(MyIndex).YOffset + 32 - gTexture(Tex_Night).RHeight / 2, 0, 0, gTexture(Tex_Night).RWidth, gTexture(Tex_Night).RHeight, gTexture(Tex_Night).RWidth, gTexture(Tex_Night).RHeight
@@ -4385,7 +4382,6 @@ End Sub
 
 Public Sub DrawPet(ByVal Index As Long)
     Dim Anim As Byte
-    Dim I As Long
     Dim x As Long
     Dim y As Long
     Dim Sprite As Long, spritetop As Long
@@ -4474,8 +4470,6 @@ End Sub
 
 Public Sub DrawPetMenu()
 Dim I As Long, x As Long, y As Long, dX As Long, dY As Long
-Dim Colour As Long
-Dim Top As Long, Left As Long
 Dim width As Long, height As Long
 Dim tmpString As String
 
@@ -4841,9 +4835,6 @@ Task = Trim$(Quest(QuestNum).Task(ActualTask).TaskLog)
     
 End Sub
 Public Sub DrawChest(ByVal x As Long, ByVal y As Long, ByVal Opened As Boolean)
-Dim rec As RECT
-Dim I As Long
-
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     

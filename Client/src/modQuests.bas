@@ -148,7 +148,6 @@ Dim I As Long
         UpdateQuestTakeItems
         UpdateQuestRewardItems
         UpdateQuestRequirementItems
-        UpdateQuestClass
         
         '/Alatar v1.2
         
@@ -226,13 +225,6 @@ Public Sub UpdateQuestRequirementItems()
         End With
     Next
 End Sub
-
-Public Sub UpdateQuestClass()
-    Dim I As Long
-    
-    
-End Sub
-'/Alatar v1.2
 
 Public Sub QuestEditorOk()
 Dim I As Long
@@ -468,7 +460,6 @@ End Sub
 
 Public Sub RefreshQuestLog()
     Dim I As Long
-     Dim QuestNum As Long
 
    frmMain.lstQuestLog.Clear
     For I = 1 To MAX_QUESTS

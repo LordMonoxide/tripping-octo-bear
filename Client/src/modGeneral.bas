@@ -1212,23 +1212,6 @@ Dim I As Long
     InGame = False
 End Sub
 
-' Converting pixels to twips and vice versa
-Public Function TwipsToPixels(ByVal Twips As Long, ByVal XorY As Byte) As Long
-    If XorY = 0 Then
-        TwipsToPixels = Twips / Screen.TwipsPerPixelX
-    ElseIf XorY = 1 Then
-        TwipsToPixels = Twips / Screen.TwipsPerPixelY
-    End If
-End Function
-
-Public Function PixelsToTwips(ByVal Pixels As Long, ByVal XorY As Byte) As Long
-    If XorY = 0 Then
-        PixelsToTwips = Pixels * Screen.TwipsPerPixelX
-    ElseIf XorY = 1 Then
-        PixelsToTwips = Pixels * Screen.TwipsPerPixelY
-    End If
-End Function
-
 Public Sub InitTimeGetTime()
 '*****************************************************************
 'Gets the offset time for the timer so we can start at 0 instead of
