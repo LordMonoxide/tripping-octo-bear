@@ -425,7 +425,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Sub chkStatType_Click()
-    If chkStatType.value = 1 Then
+    If chkStatType.Value = 1 Then
         Pet(EditorIndex).StatType = 2
     Else
         Pet(EditorIndex).StatType = 1
@@ -435,145 +435,60 @@ End Sub
 Private Sub cmdDelete_Click()
 Dim tmpIndex As Long
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ClearPet EditorIndex
     
     tmpIndex = lstIndex.ListIndex
     lstIndex.RemoveItem EditorIndex - 1
-    lstIndex.AddItem EditorIndex & ": " & Pet(EditorIndex).Name, EditorIndex - 1
+    lstIndex.AddItem EditorIndex & ": " & Pet(EditorIndex).name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
     
     PetEditorInit
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdDelete_Click", "frmEditor_PET", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_Load()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    scrlSprite.max = Count_Char
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_Load", "frmEditor_Pet", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    scrlSprite.Max = Count_Char
 End Sub
 
 Private Sub cmdSave_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call PetEditorOk
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSave_Click", "frmEditor_Pet", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdCancel_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call PetEditorCancel
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdCancel_Click", "frmEditor_Pet", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub lstIndex_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     PetEditorInit
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "lstIndex_Click", "frmEditor_Pet", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlSpell_Change(Index As Integer)
 Dim prefix As String
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    
+
     prefix = "Spell " & Index & ": "
     
-    If scrlSpell(Index).value = 0 Then
+    If scrlSpell(Index).Value = 0 Then
         lblSpell(Index).Caption = prefix & "None"
     Else
-        lblSpell(Index).Caption = prefix & Trim$(spell(scrlSpell(Index).value).Name)
+        lblSpell(Index).Caption = prefix & Trim$(spell(scrlSpell(Index).Value).name)
     End If
     
-    
-    
-    Pet(EditorIndex).spell(Index) = scrlSpell(Index).value
-    
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlSpell_Change", "frmEditor_Pet", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    Pet(EditorIndex).spell(Index) = scrlSpell(Index).Value
 End Sub
 
 Private Sub scrlSprite_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
+    lblSprite.Caption = "Sprite: " & scrlSprite.Value
     
-    lblSprite.Caption = "Sprite: " & scrlSprite.value
-    
-    Pet(EditorIndex).Sprite = scrlSprite.value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlSprite_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    Pet(EditorIndex).Sprite = scrlSprite.Value
 End Sub
 
 Private Sub scrlRange_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    lblRange.Caption = "Range: " & scrlRange.value
-    Pet(EditorIndex).Range = scrlRange.value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlRange_Change", "frmEditor_Pet", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    lblRange.Caption = "Range: " & scrlRange.Value
+    Pet(EditorIndex).Range = scrlRange.Value
 End Sub
 
 Private Sub scrlStat_Change(Index As Integer)
 Dim prefix As String
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
+
     Select Case Index
         Case 0
             prefix = "HP: "
@@ -592,57 +507,29 @@ Dim prefix As String
         Case 7
             prefix = "Level: "
     End Select
-    lblStat(Index).Caption = prefix & scrlStat(Index).value
+    lblStat(Index).Caption = prefix & scrlStat(Index).Value
     
     If Index = 0 Then
-        Pet(EditorIndex).Health = scrlStat(Index).value
+        Pet(EditorIndex).Health = scrlStat(Index).Value
     ElseIf Index = 6 Then
-        Pet(EditorIndex).Mana = scrlStat(Index).value
+        Pet(EditorIndex).Mana = scrlStat(Index).Value
     ElseIf Index = 7 Then
-        Pet(EditorIndex).Level = scrlStat(Index).value
+        Pet(EditorIndex).Level = scrlStat(Index).Value
     Else
-        Pet(EditorIndex).stat(Index) = scrlStat(Index).value
+        Pet(EditorIndex).stat(Index) = scrlStat(Index).Value
     End If
-    
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlStat_Change", "frmEditor_Pet", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Private Sub txtDesc_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Pet(EditorIndex).Desc = txtDesc.Text
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtDesc_Change", "frmEditor_Pet", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtName_Validate(Cancel As Boolean)
 Dim tmpIndex As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If EditorIndex = 0 Then Exit Sub
     tmpIndex = lstIndex.ListIndex
-    Pet(EditorIndex).Name = Trim$(txtName.Text)
+    Pet(EditorIndex).name = Trim$(txtName.Text)
     lstIndex.RemoveItem EditorIndex - 1
-    lstIndex.AddItem EditorIndex & ": " & Pet(EditorIndex).Name, EditorIndex - 1
+    lstIndex.AddItem EditorIndex & ": " & Pet(EditorIndex).name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtName_Validate", "frmEditor_Pet", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub

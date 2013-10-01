@@ -2159,9 +2159,6 @@ End Sub
 Private Sub cmdDelete_Click()
 Dim tmpIndex As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If EditorIndex <= 0 Or EditorIndex > MAX_EVENTS Then Exit Sub
     ListIndex = 0
     ClearEvent EditorIndex
@@ -2172,13 +2169,6 @@ Dim tmpIndex As Long
     lstIndex.ListIndex = tmpIndex
     Event_Changed(EditorIndex) = True
     EventEditorInit
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdDelete_Click", "frmEditor_Events", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdEditOk_Click()
@@ -2206,14 +2196,14 @@ Private Sub cmdModifyMenuOption_Click()
 End Sub
 
 Private Sub cmdRemoveMenuOption_Click()
-    Dim Index As Long, I As Long
+    Dim Index As Long, i As Long
     
     Index = lstMenuOptions.ListIndex + 1
     If Index > 0 And Index < lstMenuOptions.ListCount And lstMenuOptions.ListCount > 0 Then
-        For I = Index + 1 To lstMenuOptions.ListCount
-            Events(EditorIndex).SubEvents(ListIndex).data(I - 1) = Events(EditorIndex).SubEvents(ListIndex).data(I)
-            Events(EditorIndex).SubEvents(ListIndex).Text(I) = Events(EditorIndex).SubEvents(ListIndex).Text(I + 1)
-        Next I
+        For i = Index + 1 To lstMenuOptions.ListCount
+            Events(EditorIndex).SubEvents(ListIndex).data(i - 1) = Events(EditorIndex).SubEvents(ListIndex).data(i)
+            Events(EditorIndex).SubEvents(ListIndex).Text(i) = Events(EditorIndex).SubEvents(ListIndex).Text(i + 1)
+        Next i
         ReDim Preserve Events(EditorIndex).SubEvents(ListIndex).data(1 To UBound(Events(EditorIndex).SubEvents(ListIndex).data) - 1)
         ReDim Preserve Events(EditorIndex).SubEvents(ListIndex).Text(1 To UBound(Events(EditorIndex).SubEvents(ListIndex).Text) - 1)
         Call PopulateSubEventConfig
@@ -2221,25 +2211,25 @@ Private Sub cmdRemoveMenuOption_Click()
 End Sub
 
 Private Sub cmdRename_Cancel_Click()
-    Dim I As Long
+    Dim i As Long
     fraRenaming.visible = False
     RenameType = 0
     RenameIndex = 0
     lstSwitches.Clear
-    For I = 1 To MAX_SWITCHES
-        lstSwitches.AddItem CStr(I) & ". " & Trim$(Switches(I))
+    For i = 1 To MAX_SWITCHES
+        lstSwitches.AddItem CStr(i) & ". " & Trim$(Switches(i))
     Next
     lstSwitches.ListIndex = 0
     
     lstVariables.Clear
-    For I = 1 To MAX_VARIABLES
-        lstVariables.AddItem CStr(I) & ". " & Trim$(Variables(I))
+    For i = 1 To MAX_VARIABLES
+        lstVariables.AddItem CStr(i) & ". " & Trim$(Variables(i))
     Next
     lstVariables.ListIndex = 0
 End Sub
 
 Private Sub cmdRename_Ok_Click()
-    Dim I As Long
+    Dim i As Long
     Select Case RenameType
         Case 1
             'Variable
@@ -2260,14 +2250,14 @@ Private Sub cmdRename_Ok_Click()
     End Select
     
     lstSwitches.Clear
-    For I = 1 To MAX_SWITCHES
-        lstSwitches.AddItem CStr(I) & ". " & Trim$(Switches(I))
+    For i = 1 To MAX_SWITCHES
+        lstSwitches.AddItem CStr(i) & ". " & Trim$(Switches(i))
     Next
     lstSwitches.ListIndex = 0
     
     lstVariables.Clear
-    For I = 1 To MAX_VARIABLES
-        lstVariables.AddItem CStr(I) & ". " & Trim$(Variables(I))
+    For i = 1 To MAX_VARIABLES
+        lstVariables.AddItem CStr(i) & ". " & Trim$(Variables(i))
     Next
     lstVariables.ListIndex = 0
 End Sub
@@ -2293,33 +2283,13 @@ Private Sub cmdRenameVariable_Click()
 End Sub
 
 Private Sub cmdSave_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call EventEditorOk
     ListIndex = 0
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSave_Click", "frmEditor_Events", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdCancel_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call EventEditorCancel
     ListIndex = 0
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdCancel_Click", "frmEditor_Events", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 
@@ -2347,11 +2317,11 @@ Private Sub cmdSubEventEdit_Click()
 End Sub
 
 Private Sub cmdSubEventRemove_Click()
-    Dim I As Long
+    Dim i As Long
     If ListIndex > 0 And ListIndex <= lstSubEvents.ListCount Then
-        For I = ListIndex + 1 To lstSubEvents.ListCount
-            Events(EditorIndex).SubEvents(I - 1) = Events(EditorIndex).SubEvents(I)
-        Next I
+        For i = ListIndex + 1 To lstSubEvents.ListCount
+            Events(EditorIndex).SubEvents(i - 1) = Events(EditorIndex).SubEvents(i)
+        Next i
         If lstSubEvents.ListCount = 1 Then
             Events(EditorIndex).HasSubEvents = False
             Erase Events(EditorIndex).SubEvents
@@ -2375,23 +2345,23 @@ Private Sub cmdSubEventUp_Click()
 End Sub
 
 Private Sub cmdSwitchesVariables_Click()
-Dim I As Long
+Dim i As Long
     fraLabeling.visible = True
     lstSwitches.Clear
-    For I = 1 To MAX_SWITCHES
-        lstSwitches.AddItem CStr(I) & ". " & Trim$(Switches(I))
+    For i = 1 To MAX_SWITCHES
+        lstSwitches.AddItem CStr(i) & ". " & Trim$(Switches(i))
     Next
     lstSwitches.ListIndex = 0
     
     lstVariables.Clear
-    For I = 1 To MAX_VARIABLES
-        lstVariables.AddItem CStr(I) & ". " & Trim$(Variables(I))
+    For i = 1 To MAX_VARIABLES
+        lstVariables.AddItem CStr(i) & ". " & Trim$(Variables(i))
     Next
     lstVariables.ListIndex = 0
 End Sub
 
 Private Sub Form_Load()
-    Dim I As Long
+    Dim i As Long
     'Move windows to right places
     frmEditor_Events.width = 9600
     frmEditor_Events.height = 8835
@@ -2413,50 +2383,50 @@ Private Sub Form_Load()
     cmbLevelReqOperator.Clear
     cmbPlayerVarCompare.Clear
     cmbVarReqOperator.Clear
-    For I = 0 To ComparisonOperator_Count - 1
-        cmbLevelReqOperator.AddItem GetComparisonOperatorName(I)
-        cmbPlayerVarCompare.AddItem GetComparisonOperatorName(I)
-        cmbVarReqOperator.AddItem GetComparisonOperatorName(I)
+    For i = 0 To ComparisonOperator_Count - 1
+        cmbLevelReqOperator.AddItem GetComparisonOperatorName(i)
+        cmbPlayerVarCompare.AddItem GetComparisonOperatorName(i)
+        cmbVarReqOperator.AddItem GetComparisonOperatorName(i)
     Next
     
     cmbHasItem.Clear
     cmbBranchItem.Clear
-    For I = 1 To MAX_ITEMS
-        cmbHasItem.AddItem Trim$(Item(I).name)
-        cmbBranchItem.AddItem Trim$(Item(I).name)
+    For i = 1 To MAX_ITEMS
+        cmbHasItem.AddItem Trim$(Item(i).name)
+        cmbBranchItem.AddItem Trim$(Item(i).name)
     Next
     
     cmbSwitch.Clear
     cmbPlayerSwitch.Clear
     cmbBranchSwitch.Clear
-    For I = 1 To MAX_SWITCHES
-        cmbSwitch.AddItem I & ". " & Switches(I)
-        cmbPlayerSwitch.AddItem I & ". " & Switches(I)
-        cmbBranchSwitch.AddItem I & ". " & Switches(I)
+    For i = 1 To MAX_SWITCHES
+        cmbSwitch.AddItem i & ". " & Switches(i)
+        cmbPlayerSwitch.AddItem i & ". " & Switches(i)
+        cmbBranchSwitch.AddItem i & ". " & Switches(i)
     Next
     
     cmbVariable.Clear
     cmbPlayerVar.Clear
     cmbBranchVar.Clear
-    For I = 1 To MAX_VARIABLES
-        cmbVariable.AddItem I & ". " & Variables(I)
-        cmbPlayerVar.AddItem I & ". " & Variables(I)
-        cmbBranchVar.AddItem I & ". " & Variables(I)
+    For i = 1 To MAX_VARIABLES
+        cmbVariable.AddItem i & ". " & Variables(i)
+        cmbPlayerVar.AddItem i & ". " & Variables(i)
+        cmbBranchVar.AddItem i & ". " & Variables(i)
     Next
     
     cmbBranchSkill.Clear
     cmbChangeSkills.Clear
-    For I = 1 To MAX_SPELLS
-        cmbBranchSkill.AddItem Trim$(spell(I).name)
-        cmbChangeSkills.AddItem Trim$(spell(I).name)
+    For i = 1 To MAX_SPELLS
+        cmbBranchSkill.AddItem Trim$(spell(i).name)
+        cmbChangeSkills.AddItem Trim$(spell(i).name)
     Next
     
     cmbChatBubbleTarget.Clear
-    For I = 1 To MAX_MAP_NPCS
-        If map.NPC(I) <= 0 Then
-            cmbChatBubbleTarget.AddItem CStr(I) & ". "
+    For i = 1 To MAX_MAP_NPCS
+        If map.NPC(i) <= 0 Then
+            cmbChatBubbleTarget.AddItem CStr(i) & ". "
         Else
-            cmbChatBubbleTarget.AddItem CStr(I) & ". " & Trim$(NPC(map.NPC(I)).name)
+            cmbChatBubbleTarget.AddItem CStr(i) & ". " & Trim$(NPC(map.NPC(i)).name)
         End If
     Next
 End Sub
@@ -2783,33 +2753,23 @@ End Sub
 Private Sub txtName_Validate(Cancel As Boolean)
 Dim tmpIndex As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If EditorIndex = 0 Or EditorIndex > MAX_EVENTS Then Exit Sub
     tmpIndex = lstIndex.ListIndex
     Events(EditorIndex).name = Trim$(txtName.Text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Events(EditorIndex).name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtName_Validate", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub PopulateSubEventList()
-    Dim tempIndex As Long, I As Long
+    Dim tempIndex As Long, i As Long
     tempIndex = lstSubEvents.ListIndex
     
     lstSubEvents.Clear
     If Events(EditorIndex).HasSubEvents Then
-        For I = 1 To UBound(Events(EditorIndex).SubEvents)
-            lstSubEvents.AddItem I & ": " & GetEventTypeName(EditorIndex, I)
-        Next I
+        For i = 1 To UBound(Events(EditorIndex).SubEvents)
+            lstSubEvents.AddItem i & ": " & GetEventTypeName(EditorIndex, i)
+        Next i
     End If
     cmdSubEventRemove.Enabled = Events(EditorIndex).HasSubEvents
     
@@ -2818,7 +2778,7 @@ Public Sub PopulateSubEventList()
 End Sub
 
 Public Sub PopulateSubEventConfig()
-    Dim I As Long
+    Dim i As Long
     If Not (fraEditCommand.visible) Then Exit Sub
     If ListIndex = 0 Then Exit Sub
     HideMenus
@@ -2833,9 +2793,9 @@ Public Sub PopulateSubEventConfig()
             Case Evt_Menu
                 txtMenuQuery.Text = Trim$(.Text(1))
                 lstMenuOptions.Clear
-                For I = 2 To UBound(.Text)
-                    lstMenuOptions.AddItem Trim$(.Text(I)) & ": " & .data(I - 1)
-                Next I
+                For i = 2 To UBound(.Text)
+                    lstMenuOptions.AddItem Trim$(.Text(i)) & ": " & .data(i - 1)
+                Next i
                 scrlMenuOptDest.Max = UBound(Events(EditorIndex).SubEvents)
                 fraMenu.visible = True
             Case Evt_OpenShop
@@ -3007,13 +2967,13 @@ Private Sub txtVariableData_Change(Index As Integer)
 End Sub
 
 Private Sub txtSearch_Change()
-Dim find As String, I As Long
+Dim find As String, i As Long
     find = txtSearch.Text
 
-    For I = 0 To lstIndex.ListCount - 1
-        If StrComp(find, Replace(lstIndex.List(I), I + 1 & ": ", ""), vbTextCompare) = 0 Then
+    For i = 0 To lstIndex.ListCount - 1
+        If StrComp(find, Replace(lstIndex.List(i), i + 1 & ": ", ""), vbTextCompare) = 0 Then
             lstIndex.SetFocus
-            lstIndex.ListIndex = I
+            lstIndex.ListIndex = i
             Exit For
         End If
     Next

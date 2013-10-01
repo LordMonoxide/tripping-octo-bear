@@ -1295,59 +1295,24 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Sub cmbBind_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     Item(EditorIndex).BindType = cmbBind.ListIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmbBind_Click", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmbSound_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If cmbSound.ListIndex >= 0 Then
         Item(EditorIndex).Sound = cmbSound.List(cmbSound.ListIndex)
     Else
         Item(EditorIndex).Sound = "None."
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSound_Click", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmbTool_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     Item(EditorIndex).Data3 = cmbTool.ListIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmbTool_Click", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdDelete_Click()
 Dim tmpIndex As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     
     ClearItem EditorIndex
@@ -1358,67 +1323,25 @@ Dim tmpIndex As Long
     lstIndex.ListIndex = tmpIndex
     
     ItemEditorInit
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdDelete_Click", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_Load()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlPic.Max = Count_Item
     scrlAnim.Max = MAX_ANIMATIONS
     scrlAura.Max = Count_Aura
     scrlProjectilePic.Max = Count_Projectile
     scrlProjectileAmmo.Max = MAX_ITEMS
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_Load", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdSave_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call ItemEditorOk
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSave_Click", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdCancel_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call ItemEditorCancel
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdCancel_Click", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmbType_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
-
     If (cmbType.ListIndex >= ITEM_TYPE_WEAPON) And (cmbType.ListIndex <= ITEM_TYPE_SHIELD) Then
         fraEquipment.visible = True
         'scrlDamage_Change
@@ -1480,113 +1403,40 @@ Private Sub cmbType_Click()
         fraContainer.visible = False
     End If
     
-
     Item(EditorIndex).Type = cmbType.ListIndex
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmbType_Click", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub chkStackable_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     Item(EditorIndex).Stackable = chkStackable.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "chkStackable_Click", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub lstIndex_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ItemEditorInit
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "lstIndex_Click", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAccessReq_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     lblAccessReq.Caption = "Access Req: " & scrlAccessReq.Value
     Item(EditorIndex).AccessReq = scrlAccessReq.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAccessReq_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAddHp_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblAddHP.Caption = "Add HP: " & scrlAddHp.Value
     Item(EditorIndex).AddHP = scrlAddHp.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAddHP_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAddMp_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblAddMP.Caption = "Add MP: " & scrlAddMP.Value
     Item(EditorIndex).AddMP = scrlAddMP.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAddMP_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAddExp_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblAddExp.Caption = "Add Exp: " & scrlAddExp.Value
     Item(EditorIndex).AddEXP = scrlAddExp.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAddExp_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAnim_Change()
 Dim sString As String
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
+
     If scrlAnim.Value = 0 Then
         sString = "None"
     Else
@@ -1594,130 +1444,52 @@ Dim sString As String
     End If
     lblAnim.Caption = "Anim: " & sString
     Item(EditorIndex).Animation = scrlAnim.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAnim_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAura_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     lblAura.Caption = "Aura: " & scrlAura.Value
     Item(EditorIndex).Aura = scrlAura.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAura_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
-
 Private Sub scrlDamage_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     lblDamage.Caption = "Damage: " & scrlDamage.Value
     Item(EditorIndex).Data2 = scrlDamage.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlDamage_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlLevelReq_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     lblLevelReq.Caption = "Level req: " & scrlLevelReq
     Item(EditorIndex).LevelReq = scrlLevelReq.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlLevelReq_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlPic_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     lblPic.Caption = "Pic: " & scrlPic.Value
     Item(EditorIndex).Pic = scrlPic.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlPic_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlRarity_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     lblRarity.Caption = "Rarity: " & scrlRarity.Value
     Item(EditorIndex).Rarity = scrlRarity.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlRarity_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlSkillExp_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblSkillExp.Caption = "Add Exp: " & scrlSkillExp.Value
     
     If scrlSkillType.Value > 0 Then
         Item(EditorIndex).Add_SkillExp(scrlSkillType.Value) = scrlSkillExp.Value
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAddExp_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlSkillReq_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblSkillReq.Caption = "Lvl req: " & scrlSkillReq.Value
     
     If scrlSkillType.Value > 0 Then
         Item(EditorIndex).Skill_Req(scrlSkillType.Value) = scrlSkillReq.Value
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlSkillReq_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlSkillType_Change()
@@ -1751,27 +1523,14 @@ Private Sub scrlSkillType_Change()
 End Sub
 
 Private Sub scrlSpeed_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     lblSpeed.Caption = "Speed: " & scrlSpeed.Value / 1000 & " sec"
     Item(EditorIndex).Speed = scrlSpeed.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlSpeed_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlStatBonus_Change(Index As Integer)
 Dim Text As String
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Select Case Index
         Case 1
             Text = "+ Str: "
@@ -1787,20 +1546,10 @@ Dim Text As String
             
     lblStatBonus(Index).Caption = Text & scrlStatBonus(Index).Value
     Item(EditorIndex).Add_Stat(Index) = scrlStatBonus(Index).Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlStatBonus_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlStatReq_Change(Index As Integer)
     Dim Text As String
-    
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Select Case Index
         Case 1
@@ -1817,21 +1566,9 @@ Private Sub scrlStatReq_Change(Index As Integer)
     
     lblStatReq(Index).Caption = Text & scrlStatReq(Index).Value
     Item(EditorIndex).Stat_Req(Index) = scrlStatReq(Index).Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlStatReq_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlSpell_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
-    
     If Len(Trim$(spell(scrlSpell.Value).name)) > 0 Then
         lblSpellName.Caption = "Name: " & Trim$(spell(scrlSpell.Value).name)
     Else
@@ -1841,13 +1578,6 @@ Private Sub scrlSpell_Change()
     lblSpell.Caption = "Spell: " & scrlSpell.Value
     
     Item(EditorIndex).Data1 = scrlSpell.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlSpell_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlUnique_Change()
@@ -1856,180 +1586,82 @@ Private Sub scrlUnique_Change()
 End Sub
 
 Private Sub txtDesc_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
-
     Item(EditorIndex).Desc = txtDesc.Text
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtDesc_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtName_Validate(Cancel As Boolean)
 Dim tmpIndex As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     tmpIndex = lstIndex.ListIndex
     Item(EditorIndex).name = Trim$(txtName.Text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Item(EditorIndex).name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtName_Validate", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtPrice_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     Item(EditorIndex).Price = Val(txtPrice.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtPrice_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtSearch_Change()
-Dim find As String, I As Long
+Dim find As String, i As Long
+
     find = txtSearch.Text
 
-    For I = 0 To lstIndex.ListCount - 1
-        If StrComp(find, Replace(lstIndex.List(I), I + 1 & ": ", ""), vbTextCompare) = 0 Then
+    For i = 0 To lstIndex.ListCount - 1
+        If StrComp(find, Replace(lstIndex.List(i), i + 1 & ": ", ""), vbTextCompare) = 0 Then
             lstIndex.SetFocus
-            lstIndex.ListIndex = I
+            lstIndex.ListIndex = i
             Exit For
         End If
     Next
 End Sub
 
 Private Sub scrlProjectilePic_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     lblProjectilePic.Caption = "Pic: " & scrlProjectilePic.Value
     Item(EditorIndex).Projectile = scrlProjectilePic.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlProjectilePic_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 Private Sub scrlProjectileRange_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     lblProjectileRange.Caption = "Range: " & scrlProjectileRange.Value
     Item(EditorIndex).Range = scrlProjectileRange.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlProjectileRange_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlProjectileRotation_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     lblProjectileRotation.Caption = "Rotation: " & scrlProjectileRotation.Value / 2
     Item(EditorIndex).Rotation = scrlProjectileRotation.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlProjectileRotation_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlProjectileAmmo_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     lblProjectileAmmo.Caption = "Ammo: " & scrlProjectileAmmo.Value
     Item(EditorIndex).Ammo = scrlProjectileAmmo.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlProjectileAmmo_Change", "frmEditor_Item", Err.Ammober, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub chkTwoHanded_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
     Item(EditorIndex).isTwoHanded = chkTwoHanded.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "chkTwoHanded_Click", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtPDef_Change()
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     If Val(txtPDef.Text) > MAX_LONG Then txtPDef.Text = MAX_LONG
     Item(EditorIndex).PDef = Val(txtPDef.Text)
 End Sub
+
 Private Sub txtMDef_Change()
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     If Val(txtMDef.Text) > MAX_LONG Then txtMDef.Text = MAX_LONG
     Item(EditorIndex).MDef = Val(txtMDef.Text)
 End Sub
+
 Private Sub txtRDef_Change()
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Then Exit Sub
     If Val(txtMDef.Text) > MAX_LONG Then txtMDef.Text = MAX_LONG
     Item(EditorIndex).RDef = Val(txtRDef.Text)
 End Sub
 
 Private Sub scrlPet_Change()
-   ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If scrlPet.Value = 0 Then
         lblPet.Caption = "Pet: None"
     Else
         lblPet.Caption = "Pet: " & Trim$(Pet(scrlPet.Value).name)
     End If
     Item(EditorIndex).Data1 = scrlPet.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlPetChange", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlPetPercent_Change()
@@ -2045,47 +1677,23 @@ End Sub
 Private Sub optIncDec_Click(Index As Integer)
 Item(EditorIndex).Data2 = Index
 End Sub
+
 Private Sub TxtContainerChance_Change(Index As Integer)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Or TxtContainerChance(Index) > 100 Or TxtContainerChance(Index) < 1 Then Exit Sub
-    
-    
+    If TxtContainerChance(Index).Text > 100 Or TxtContainerChance(Index).Text < 1 Then Exit Sub
     
     If IsNumeric(Index) Then
         Item(EditorIndex).ContainerChance(Index) = TxtContainerChance(Index)
     Else
         MsgBox ("Trying to enter a string is a dickmove, 1-100 (percentages) only!")
     End If
-    
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtDesc_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub TxtContainerItem_Change(Index As Integer)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    If EditorIndex = 0 Or EditorIndex > MAX_ITEMS Or TxtContainerItem(Index) > MAX_ITEMS Or TxtContainerItem(Index) < 0 Then Exit Sub
-    
-    
+    If TxtContainerItem(Index).Text > MAX_ITEMS Or TxtContainerItem(Index).Text < 0 Then Exit Sub
     
     If IsNumeric(Index) Then
         Item(EditorIndex).Container(Index) = TxtContainerItem(Index)
     Else
         MsgBox ("Trying to enter a string is a dickmove, item numbers only!")
     End If
-    
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtDesc_Change", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
-

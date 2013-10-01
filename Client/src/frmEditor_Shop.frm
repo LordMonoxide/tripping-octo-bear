@@ -276,45 +276,21 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Sub cmdSave_Click()
-    
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If LenB(Trim$(txtName)) = 0 Then
         Call MsgBox("Name required.")
     Else
         Call ShopEditorOk
     End If
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSave_Click", "frmEditor_Shop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdCancel_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call ShopEditorCancel
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdCancel_Click", "frmEditor_Shop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdUpdate_Click()
 Dim Index As Long
 Dim tmpPos As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     tmpPos = lstTradeItem.ListIndex
     Index = lstTradeItem.ListIndex + 1
     If Index = 0 Then Exit Sub
@@ -327,20 +303,11 @@ Dim tmpPos As Long
         .CostValue2 = Val(txtCostValue2.Text)
     End With
     UpdateShopTrade tmpPos
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdUpdate_Click", "frmEditor_Shop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdDeleteTrade_Click()
 Dim Index As Long
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
+
     Index = lstTradeItem.ListIndex + 1
     If Index = 0 Then Exit Sub
     With Shop(EditorIndex).TradeItem(Index)
@@ -350,48 +317,18 @@ Dim Index As Long
         .CostValue = 0
     End With
     Call UpdateShopTrade
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdDeleteTrade_Click", "frmEditor_Shop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub lstIndex_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ShopEditorInit
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "lstIndex_Click", "frmEditor_Shop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlBuy_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblBuy.Caption = "Buy Rate: " & scrlBuy.Value & "%"
     Shop(EditorIndex).BuyRate = scrlBuy.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlBuy_Change", "frmEditor_Shop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlShoptype_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Select Case scrlShoptype.Value
         Case 0
             lblShopType.Caption = "Shop Type: Shop"
@@ -402,45 +339,27 @@ Private Sub scrlShoptype_Change()
     End Select
     
     Shop(EditorIndex).ShopType = scrlShoptype.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlBuy_Change", "frmEditor_Shop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtName_Validate(Cancel As Boolean)
 Dim tmpIndex As Long
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    If EditorIndex = 0 Then Exit Sub
     tmpIndex = lstIndex.ListIndex
     Shop(EditorIndex).name = Trim$(txtName.Text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Shop(EditorIndex).name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtName_Validate", "frmEditor_Shop", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtSearch_Change()
-Dim find As String, I As Long
+Dim find As String, i As Long
     find = txtSearch.Text
 
-    For I = 0 To lstIndex.ListCount - 1
-        If StrComp(find, Replace(lstIndex.List(I), I + 1 & ": ", ""), vbTextCompare) = 0 Then
+    For i = 0 To lstIndex.ListCount - 1
+        If StrComp(find, Replace(lstIndex.List(i), i + 1 & ": ", ""), vbTextCompare) = 0 Then
             lstIndex.SetFocus
-            lstIndex.ListIndex = I
+            lstIndex.ListIndex = i
             Exit For
         End If
     Next
 End Sub
-

@@ -1,13 +1,8 @@
 Attribute VB_Name = "modGameEditors"
 Option Explicit
-' ////////////////
-' // Map Editor //
-' ////////////////
+
 Public Sub MapEditorInit()
-Dim I As Long
-    
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
+Dim i As Long
 
     ' set the width
     frmEditor_Map.width = 7425
@@ -30,8 +25,8 @@ Dim I As Long
     
     ' set shops for the shop attribute
     frmEditor_Map.cmbShop.AddItem "None"
-    For I = 1 To MAX_SHOPS
-        frmEditor_Map.cmbShop.AddItem I & ": " & Shop(I).name
+    For i = 1 To MAX_SHOPS
+        frmEditor_Map.cmbShop.AddItem i & ": " & Shop(i).name
     Next
     
     ' we're not in a shop
@@ -39,24 +34,14 @@ Dim I As Long
     
         'set chest array
     frmEditor_Map.cmbChestindex.Clear
-    For I = 1 To MAX_CHESTS
-        frmEditor_Map.cmbChestindex.AddItem "Chest: " & I
+    For i = 1 To MAX_CHESTS
+        frmEditor_Map.cmbChestindex.AddItem "Chest: " & i
     Next
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorInit", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapEditorProperties()
 Dim x As Long
-Dim I As Long
-    
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
+Dim i As Long
     
     ' populate the cache if we need to
     If Not hasPopulated Then
@@ -65,8 +50,8 @@ Dim I As Long
     ' add the array to the combo
     frmEditor_MapProperties.lstMusic.Clear
     frmEditor_MapProperties.lstMusic.AddItem "None."
-    For I = 1 To UBound(musicCache)
-        frmEditor_MapProperties.lstMusic.AddItem musicCache(I)
+    For i = 1 To UBound(musicCache)
+        frmEditor_MapProperties.lstMusic.AddItem musicCache(i)
     Next
     ' finished populating
     
@@ -77,9 +62,9 @@ Dim I As Long
         ' find the music we have set
         If .lstMusic.ListCount >= 0 Then
             .lstMusic.ListIndex = 0
-            For I = 0 To .lstMusic.ListCount
-                If .lstMusic.List(I) = Trim$(map.Music) Then
-                    .lstMusic.ListIndex = I
+            For i = 0 To .lstMusic.ListCount
+                If .lstMusic.List(i) = Trim$(map.Music) Then
+                    .lstMusic.ListIndex = i
                 End If
             Next
         End If
@@ -135,21 +120,11 @@ Dim I As Long
         .txtMaxX.Text = map.MaxX
         .txtMaxY.Text = map.MaxY
     End With
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorProperties", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapEditorSetTile(ByVal x As Long, ByVal y As Long, ByVal CurLayer As Long, Optional ByVal multitile As Boolean = False, Optional ByVal theAutotile As Byte = 0)
 Dim X2 As Long, Y2 As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If theAutotile > 0 Then
         With map.Tile(x, y)
             ' set layer
@@ -194,26 +169,16 @@ Dim X2 As Long, Y2 As Long
             Y2 = Y2 + 1
         Next
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorSetTile", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapEditorMouseDown(ByVal Button As Integer, ByVal x As Long, ByVal y As Long, Optional ByVal movedMouse As Boolean = True)
-Dim I As Long
+Dim i As Long
 Dim CurLayer As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     ' find which layer we're on
-    For I = 1 To MapLayer.Layer_Count - 1
-        If frmEditor_Map.optLayer(I).Value Then
-            CurLayer = I
+    For i = 1 To MapLayer.Layer_Count - 1
+        If frmEditor_Map.optLayer(i).Value Then
+            CurLayer = i
             Exit For
         End If
     Next
@@ -374,11 +339,11 @@ Dim CurLayer As Long
             x = x - ((x \ 32) * 32)
             y = y - ((y \ 32) * 32)
             ' see if it hits an arrow
-            For I = 1 To 4
-                If x >= DirArrowX(I) And x <= DirArrowX(I) + 8 Then
-                    If y >= DirArrowY(I) And y <= DirArrowY(I) + 8 Then
+            For i = 1 To 4
+                If x >= DirArrowX(i) And x <= DirArrowX(i) + 8 Then
+                    If y >= DirArrowY(i) And y <= DirArrowY(i) + 8 Then
                         ' flip the value.
-                        setDirBlock map.Tile(CurX, CurY).DirBlock, CByte(I), Not isDirBlocked(map.Tile(CurX, CurY).DirBlock, CByte(I))
+                        setDirBlock map.Tile(CurX, CurY).DirBlock, CByte(i), Not isDirBlocked(map.Tile(CurX, CurY).DirBlock, CByte(i))
                         Exit Sub
                     End If
                 End If
@@ -412,19 +377,9 @@ Dim CurLayer As Long
     End If
 
     CacheResources
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorMouseDown", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapEditorChooseTile(Button As Integer, x As Single, y As Single)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If Button = vbLeftButton Then
         EditorTileWidth = 1
         EditorTileHeight = 1
@@ -438,19 +393,9 @@ Public Sub MapEditorChooseTile(Button As Integer, x As Single, y As Single)
         shpSelectedWidth = PIC_X
         shpSelectedHeight = PIC_Y
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorChooseTile", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapEditorDrag(Button As Integer, x As Single, y As Single)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If Button = vbLeftButton Then
         ' convert the pixel number to tile number
         x = (x \ PIC_X) + 1
@@ -474,19 +419,9 @@ Public Sub MapEditorDrag(Button As Integer, x As Single, y As Single)
         shpSelectedWidth = EditorTileWidth * PIC_X
         shpSelectedHeight = EditorTileHeight * PIC_Y
     End If
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorDrag", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapEditorTileScroll()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     ' horizontal scrolling
     If frmEditor_Map.picBackSelect.width < frmEditor_Map.picBack.width Then
         frmEditor_Map.scrlPictureX.Enabled = False
@@ -502,65 +437,35 @@ Public Sub MapEditorTileScroll()
         frmEditor_Map.scrlPictureY.Enabled = True
         frmEditor_Map.picBackSelect.Top = (frmEditor_Map.scrlPictureY.Value * PIC_Y) * -1
     End If
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorTileScroll", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapEditorSend()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     Call SendMap
     InMapEditor = False
     Unload frmEditor_Map
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorSend", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapEditorCancel()
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong CNeedMap
-    buffer.WriteLong 1
-    SendData buffer.ToArray()
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong CNeedMap
+    Buffer.WriteLong 1
+    SendData Buffer.ToArray()
     InMapEditor = False
     Unload frmEditor_Map
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorCancel", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapEditorClearLayer()
-Dim I As Long
+Dim i As Long
 Dim x As Long
 Dim y As Long
 Dim CurLayer As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     ' find which layer we're on
-    For I = 1 To MapLayer.Layer_Count - 1
-        If frmEditor_Map.optLayer(I).Value Then
-            CurLayer = I
+    For i = 1 To MapLayer.Layer_Count - 1
+        If frmEditor_Map.optLayer(i).Value Then
+            CurLayer = i
             Exit For
         End If
     Next
@@ -581,28 +486,18 @@ Dim CurLayer As Long
         ' re-cache autos
         initAutotiles
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorClearLayer", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapEditorFillLayer()
-Dim I As Long
+Dim i As Long
 Dim x As Long
 Dim y As Long
 Dim CurLayer As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     ' find which layer we're on
-    For I = 1 To MapLayer.Layer_Count - 1
-        If frmEditor_Map.optLayer(I).Value Then
-            CurLayer = I
+    For i = 1 To MapLayer.Layer_Count - 1
+        If frmEditor_Map.optLayer(i).Value Then
+            CurLayer = i
             Exit For
         End If
     Next
@@ -622,21 +517,11 @@ Dim CurLayer As Long
         ' now cache the positions
         initAutotiles
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorFillLayer", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapEditorClearAttribs()
 Dim x As Long
 Dim y As Long
-
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If MsgBox("Are you sure you wish to clear the attributes on this map?", vbYesNo, Options.Game_Name) = vbYes Then
         For x = 0 To map.MaxX
@@ -645,19 +530,9 @@ Dim y As Long
             Next
         Next
     End If
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorClearAttribs", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub MapEditorLeaveMap()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If InMapEditor Then
         If MsgBox("Save changes to current map?", vbYesNo) = vbYes Then
             Call MapEditorSend
@@ -665,25 +540,15 @@ Public Sub MapEditorLeaveMap()
             Call MapEditorCancel
         End If
     End If
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MapEditorLeaveMap", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' /////////////////
 ' // Item Editor //
 ' /////////////////
 Public Sub ItemEditorInit()
-Dim I As Long
+Dim i As Long
 Dim SoundSet As Boolean
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If frmEditor_Item.visible = False Then Exit Sub
     EditorIndex = frmEditor_Item.lstIndex.ListIndex + 1
     
@@ -694,8 +559,8 @@ Dim SoundSet As Boolean
     ' add the array to the combo
     frmEditor_Item.cmbSound.Clear
     frmEditor_Item.cmbSound.AddItem "None."
-    For I = 1 To UBound(soundCache)
-        frmEditor_Item.cmbSound.AddItem soundCache(I)
+    For i = 1 To UBound(soundCache)
+        frmEditor_Item.cmbSound.AddItem soundCache(i)
     Next
     ' finished populating
 
@@ -721,9 +586,9 @@ Dim SoundSet As Boolean
         
         ' find the sound we have set
         If frmEditor_Item.cmbSound.ListCount >= 0 Then
-            For I = 0 To frmEditor_Item.cmbSound.ListCount
-                If frmEditor_Item.cmbSound.List(I) = Trim$(.Sound) Then
-                    frmEditor_Item.cmbSound.ListIndex = I
+            For i = 0 To frmEditor_Item.cmbSound.ListCount
+                If frmEditor_Item.cmbSound.List(i) = Trim$(.Sound) Then
+                    frmEditor_Item.cmbSound.ListIndex = i
                     SoundSet = True
                 End If
             Next
@@ -760,8 +625,8 @@ Dim SoundSet As Boolean
             frmEditor_Item.scrlSpeed.Value = .Speed
             
             ' loop for stats
-            For I = 1 To Stats.Stat_Count - 1
-                frmEditor_Item.scrlStatBonus(I).Value = .Add_Stat(I)
+            For i = 1 To Stats.Stat_Count - 1
+                frmEditor_Item.scrlStatBonus(i).Value = .Add_Stat(i)
             Next
         Else
             frmEditor_Item.fraEquipment.visible = False
@@ -833,8 +698,8 @@ Dim SoundSet As Boolean
         frmEditor_Item.scrlLevelReq.Value = .LevelReq
         
         ' loop for stats
-        For I = 1 To Stats.Stat_Count - 1
-            frmEditor_Item.scrlStatReq(I).Value = .Stat_Req(I)
+        For i = 1 To Stats.Stat_Count - 1
+            frmEditor_Item.scrlStatReq(i).Value = .Stat_Req(i)
         Next
         
         ' Info
@@ -846,79 +711,39 @@ Dim SoundSet As Boolean
     End With
 
     Item_Changed(EditorIndex) = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ItemEditorInit", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ItemEditorOk()
-Dim I As Long
+Dim i As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
-    For I = 1 To MAX_ITEMS
-        If Item_Changed(I) Then
-            Call SendSaveItem(I)
+    For i = 1 To MAX_ITEMS
+        If Item_Changed(i) Then
+            Call SendSaveItem(i)
         End If
     Next
     
     Unload frmEditor_Item
     ClearChanged_Item
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ItemEditorOk", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ItemEditorCancel()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     Unload frmEditor_Item
     ClearChanged_Item
     ClearItems
     SendRequestItems
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ItemEditorCancel", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ClearChanged_Item()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     ZeroMemory Item_Changed(1), MAX_ITEMS * 2 ' 2 = boolean length
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ClearChanged_Item", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' /////////////////
 ' // Animation Editor //
 ' /////////////////
 Public Sub AnimationEditorInit()
-Dim I As Long
+Dim i As Long
 Dim SoundSet As Boolean
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If frmEditor_Animation.visible = False Then Exit Sub
     EditorIndex = frmEditor_Animation.lstIndex.ListIndex + 1
     
@@ -929,8 +754,8 @@ Dim SoundSet As Boolean
     ' add the array to the combo
     frmEditor_Animation.cmbSound.Clear
     frmEditor_Animation.cmbSound.AddItem "None."
-    For I = 1 To UBound(soundCache)
-        frmEditor_Animation.cmbSound.AddItem soundCache(I)
+    For i = 1 To UBound(soundCache)
+        frmEditor_Animation.cmbSound.AddItem soundCache(i)
     Next
     ' finished populating
 
@@ -939,24 +764,24 @@ Dim SoundSet As Boolean
         
         ' find the sound we have set
         If frmEditor_Animation.cmbSound.ListCount >= 0 Then
-            For I = 0 To frmEditor_Animation.cmbSound.ListCount
-                If frmEditor_Animation.cmbSound.List(I) = Trim$(.Sound) Then
-                    frmEditor_Animation.cmbSound.ListIndex = I
+            For i = 0 To frmEditor_Animation.cmbSound.ListCount
+                If frmEditor_Animation.cmbSound.List(i) = Trim$(.Sound) Then
+                    frmEditor_Animation.cmbSound.ListIndex = i
                     SoundSet = True
                 End If
             Next
             If Not SoundSet Or frmEditor_Animation.cmbSound.ListIndex = -1 Then frmEditor_Animation.cmbSound.ListIndex = 0
         End If
         
-        For I = 0 To 1
-            frmEditor_Animation.scrlSprite(I).Value = .Sprite(I)
-            frmEditor_Animation.scrlFrameCount(I).Value = .Frames(I)
-            frmEditor_Animation.scrlLoopCount(I).Value = .LoopCount(I)
+        For i = 0 To 1
+            frmEditor_Animation.scrlSprite(i).Value = .Sprite(i)
+            frmEditor_Animation.scrlFrameCount(i).Value = .Frames(i)
+            frmEditor_Animation.scrlLoopCount(i).Value = .LoopCount(i)
             
-            If .looptime(I) > 0 Then
-                frmEditor_Animation.scrlLoopTime(I).Value = .looptime(I)
+            If .looptime(i) > 0 Then
+                frmEditor_Animation.scrlLoopTime(i).Value = .looptime(i)
             Else
-                frmEditor_Animation.scrlLoopTime(I).Value = 45
+                frmEditor_Animation.scrlLoopTime(i).Value = 45
             End If
             
         Next
@@ -965,79 +790,39 @@ Dim SoundSet As Boolean
     End With
 
     Animation_Changed(EditorIndex) = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "AnimationEditorInit", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub AnimationEditorOk()
-Dim I As Long
+Dim i As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
-    For I = 1 To MAX_ANIMATIONS
-        If Animation_Changed(I) Then
-            Call SendSaveAnimation(I)
+    For i = 1 To MAX_ANIMATIONS
+        If Animation_Changed(i) Then
+            Call SendSaveAnimation(i)
         End If
     Next
     
     Unload frmEditor_Animation
     ClearChanged_Animation
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "AnimationEditorOk", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub AnimationEditorCancel()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     Unload frmEditor_Animation
     ClearChanged_Animation
     ClearAnimations
     SendRequestAnimations
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "AnimationEditorCancel", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ClearChanged_Animation()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     ZeroMemory Animation_Changed(1), MAX_ANIMATIONS * 2 ' 2 = boolean length
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ClearChanged_Animation", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ////////////////
 ' // Npc Editor //
 ' ////////////////
 Public Sub NpcEditorInit()
-Dim I As Long
+Dim i As Long
 Dim SoundSet As Boolean
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If frmEditor_NPC.visible = False Then Exit Sub
     EditorIndex = frmEditor_NPC.lstIndex.ListIndex + 1
     
@@ -1048,8 +833,8 @@ Dim SoundSet As Boolean
     ' add the array to the combo
     frmEditor_NPC.cmbSound.Clear
     frmEditor_NPC.cmbSound.AddItem "None."
-    For I = 1 To UBound(soundCache)
-        frmEditor_NPC.cmbSound.AddItem soundCache(I)
+    For i = 1 To UBound(soundCache)
+        frmEditor_NPC.cmbSound.AddItem soundCache(i)
     Next
     ' finished populating
     
@@ -1084,17 +869,17 @@ Dim SoundSet As Boolean
         
         ' find the sound we have set
         If .cmbSound.ListCount >= 0 Then
-            For I = 0 To .cmbSound.ListCount
-                If .cmbSound.List(I) = Trim$(NPC(EditorIndex).Sound) Then
-                    .cmbSound.ListIndex = I
+            For i = 0 To .cmbSound.ListCount
+                If .cmbSound.List(i) = Trim$(NPC(EditorIndex).Sound) Then
+                    .cmbSound.ListIndex = i
                     SoundSet = True
                 End If
             Next
             If Not SoundSet Or .cmbSound.ListIndex = -1 Then .cmbSound.ListIndex = 0
         End If
         
-        For I = 1 To Stats.Stat_Count - 1
-            .scrlStat(I).Value = NPC(EditorIndex).stat(I)
+        For i = 1 To Stats.Stat_Count - 1
+            .scrlStat(i).Value = NPC(EditorIndex).stat(i)
         Next
         
         ' show 1 data
@@ -1103,78 +888,38 @@ Dim SoundSet As Boolean
     End With
     
     NPC_Changed(EditorIndex) = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "NpcEditorInit", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub NpcEditorOk()
-Dim I As Long
+Dim i As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
-    For I = 1 To MAX_NPCS
-        If NPC_Changed(I) Then
-            Call SendSaveNpc(I)
+    For i = 1 To MAX_NPCS
+        If NPC_Changed(i) Then
+            Call SendSaveNpc(i)
         End If
     Next
     
     Unload frmEditor_NPC
     ClearChanged_NPC
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "NpcEditorOk", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub NpcEditorCancel()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     Unload frmEditor_NPC
     ClearChanged_NPC
     ClearNpcs
     SendRequestNPCS
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "NpcEditorCancel", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ClearChanged_NPC()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     ZeroMemory NPC_Changed(1), MAX_NPCS * 2 ' 2 = boolean length
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ClearChanged_NPC", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ////////////////
 ' // Resource Editor //
 ' ////////////////
 Public Sub ResourceEditorInit()
-Dim I As Long
+Dim i As Long
 Dim SoundSet As Boolean
-
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If frmEditor_Resource.visible = False Then Exit Sub
     EditorIndex = frmEditor_Resource.lstIndex.ListIndex + 1
@@ -1186,8 +931,8 @@ Dim SoundSet As Boolean
     ' add the array to the combo
     frmEditor_Resource.cmbSound.Clear
     frmEditor_Resource.cmbSound.AddItem "None."
-    For I = 1 To UBound(soundCache)
-        frmEditor_Resource.cmbSound.AddItem soundCache(I)
+    For i = 1 To UBound(soundCache)
+        frmEditor_Resource.cmbSound.AddItem soundCache(i)
     Next
     ' finished populating
     
@@ -1212,9 +957,9 @@ Dim SoundSet As Boolean
         
         ' find the sound we have set
         If .cmbSound.ListCount >= 0 Then
-            For I = 0 To .cmbSound.ListCount
-                If .cmbSound.List(I) = Trim$(Resource(EditorIndex).Sound) Then
-                    .cmbSound.ListIndex = I
+            For i = 0 To .cmbSound.ListCount
+                If .cmbSound.List(i) = Trim$(Resource(EditorIndex).Sound) Then
+                    .cmbSound.ListIndex = i
                     SoundSet = True
                 End If
             Next
@@ -1223,78 +968,38 @@ Dim SoundSet As Boolean
     End With
     
     Resource_Changed(EditorIndex) = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ResourceEditorInit", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ResourceEditorOk()
-Dim I As Long
+Dim i As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
-    For I = 1 To MAX_RESOURCES
-        If Resource_Changed(I) Then
-            Call SendSaveResource(I)
+    For i = 1 To MAX_RESOURCES
+        If Resource_Changed(i) Then
+            Call SendSaveResource(i)
         End If
     Next
     
     Unload frmEditor_Resource
     ClearChanged_Resource
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ResourceEditorOk", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ResourceEditorCancel()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     Unload frmEditor_Resource
     ClearChanged_Resource
     ClearResources
     SendRequestResources
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ResourceEditorCancel", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ClearChanged_Resource()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     ZeroMemory Resource_Changed(1), MAX_RESOURCES * 2 ' 2 = boolean length
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ClearChanged_Resource", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' /////////////////
 ' // Shop Editor //
 ' /////////////////
 Public Sub ShopEditorInit()
-Dim I As Long
+Dim i As Long
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If frmEditor_Shop.visible = False Then Exit Sub
     EditorIndex = frmEditor_Shop.lstIndex.ListIndex + 1
     frmEditor_Shop.scrlShoptype.Value = Shop(EditorIndex).ShopType
@@ -1312,10 +1017,10 @@ Dim I As Long
     frmEditor_Shop.cmbCostItem2.Clear
     frmEditor_Shop.cmbCostItem2.AddItem "None"
 
-    For I = 1 To MAX_ITEMS
-        frmEditor_Shop.cmbItem.AddItem I & ": " & Trim$(Item(I).name)
-        frmEditor_Shop.cmbCostItem.AddItem I & ": " & Trim$(Item(I).name)
-        frmEditor_Shop.cmbCostItem2.AddItem I & ": " & Trim$(Item(I).name)
+    For i = 1 To MAX_ITEMS
+        frmEditor_Shop.cmbItem.AddItem i & ": " & Trim$(Item(i).name)
+        frmEditor_Shop.cmbCostItem.AddItem i & ": " & Trim$(Item(i).name)
+        frmEditor_Shop.cmbCostItem2.AddItem i & ": " & Trim$(Item(i).name)
     Next
 
     frmEditor_Shop.cmbItem.ListIndex = 0
@@ -1325,114 +1030,64 @@ Dim I As Long
     UpdateShopTrade
     
     Shop_Changed(EditorIndex) = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ShopEditorInit", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub UpdateShopTrade(Optional ByVal tmpPos As Long = 0)
-Dim I As Long
-
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
+Dim i As Long
 
     frmEditor_Shop.lstTradeItem.Clear
 
-    For I = 1 To MAX_TRADES
-        With Shop(EditorIndex).TradeItem(I)
+    For i = 1 To MAX_TRADES
+        With Shop(EditorIndex).TradeItem(i)
             ' if none, show as none
             If .Item = 0 And .CostItem = 0 And .CostItem2 = 0 Then
                 frmEditor_Shop.lstTradeItem.AddItem "Empty Trade Slot"
             Else
                 If .CostItem And .CostItem2 > 0 Then
-                    frmEditor_Shop.lstTradeItem.AddItem I & ": " & .ItemValue & "x " & Trim$(Item(.Item).name) & " for " & .CostValue & "x " & Trim$(Item(.CostItem).name) & " and " & .CostValue2 & "x " & Trim$(Item(.CostItem2).name)
+                    frmEditor_Shop.lstTradeItem.AddItem i & ": " & .ItemValue & "x " & Trim$(Item(.Item).name) & " for " & .CostValue & "x " & Trim$(Item(.CostItem).name) & " and " & .CostValue2 & "x " & Trim$(Item(.CostItem2).name)
                 ElseIf .CostItem > 0 Then
-                    frmEditor_Shop.lstTradeItem.AddItem I & ": " & .ItemValue & "x " & Trim$(Item(.Item).name) & " for " & .CostValue & "x " & Trim$(Item(.CostItem).name)
+                    frmEditor_Shop.lstTradeItem.AddItem i & ": " & .ItemValue & "x " & Trim$(Item(.Item).name) & " for " & .CostValue & "x " & Trim$(Item(.CostItem).name)
                 ElseIf .CostItem2 > 0 Then
-                    frmEditor_Shop.lstTradeItem.AddItem I & ": " & .ItemValue & "x " & Trim$(Item(.Item).name) & " for " & .CostValue2 & "x " & Trim$(Item(.CostItem2).name)
+                    frmEditor_Shop.lstTradeItem.AddItem i & ": " & .ItemValue & "x " & Trim$(Item(.Item).name) & " for " & .CostValue2 & "x " & Trim$(Item(.CostItem2).name)
                 End If
             End If
         End With
     Next
 
     frmEditor_Shop.lstTradeItem.ListIndex = tmpPos
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "UpdateShopTrade", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ShopEditorOk()
-Dim I As Long
+Dim i As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
-    For I = 1 To MAX_SHOPS
-        If Shop_Changed(I) Then
-            Call SendSaveShop(I)
+    For i = 1 To MAX_SHOPS
+        If Shop_Changed(i) Then
+            Call SendSaveShop(i)
         End If
     Next
     
     Unload frmEditor_Shop
     ClearChanged_Shop
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ShopEditorOk", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ShopEditorCancel()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     Unload frmEditor_Shop
     ClearChanged_Shop
     ClearShops
     SendRequestShops
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ShopEditorCancel", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ClearChanged_Shop()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     ZeroMemory Shop_Changed(1), MAX_SHOPS * 2 ' 2 = boolean length
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ClearChanged_Shop", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' //////////////////
 ' // Spell Editor //
 ' //////////////////
 Public Sub SpellEditorInit()
-Dim I As Long
+Dim i As Long
 Dim SoundSet As Boolean
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If frmEditor_Spell.visible = False Then Exit Sub
     EditorIndex = frmEditor_Spell.lstIndex.ListIndex + 1
     
@@ -1443,8 +1098,8 @@ Dim SoundSet As Boolean
     ' add the array to the combo
     frmEditor_Spell.cmbSound.Clear
     frmEditor_Spell.cmbSound.AddItem "None."
-    For I = 1 To UBound(soundCache)
-        frmEditor_Spell.cmbSound.AddItem soundCache(I)
+    For i = 1 To UBound(soundCache)
+        frmEditor_Spell.cmbSound.AddItem soundCache(i)
     Next
     ' finished populating
     
@@ -1490,9 +1145,9 @@ Dim SoundSet As Boolean
         .cmbBuffType.ListIndex = spell(EditorIndex).BuffType
         ' find the sound we have set
         If .cmbSound.ListCount >= 0 Then
-            For I = 0 To .cmbSound.ListCount
-                If .cmbSound.List(I) = Trim$(spell(EditorIndex).Sound) Then
-                    .cmbSound.ListIndex = I
+            For i = 0 To .cmbSound.ListCount
+                If .cmbSound.List(i) = Trim$(spell(EditorIndex).Sound) Then
+                    .cmbSound.ListIndex = i
                     SoundSet = True
                 End If
             Next
@@ -1501,73 +1156,36 @@ Dim SoundSet As Boolean
     End With
     
     Spell_Changed(EditorIndex) = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "SpellEditorInit", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub SpellEditorOk()
-Dim I As Long
+Dim i As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
-    For I = 1 To MAX_SPELLS
-        If Spell_Changed(I) Then
-            Call SendSaveSpell(I)
+    For i = 1 To MAX_SPELLS
+        If Spell_Changed(i) Then
+            Call SendSaveSpell(i)
         End If
     Next
     
     Unload frmEditor_Spell
     ClearChanged_Spell
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "SpellEditorOk", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub SpellEditorCancel()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     Unload frmEditor_Spell
     ClearChanged_Spell
     ClearSpells
     SendRequestSpells
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "SpellEditorCancel", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ClearChanged_Spell()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     ZeroMemory Spell_Changed(1), MAX_SPELLS * 2 ' 2 = boolean length
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ClearChanged_Spell", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Public Sub Events_ClearChanged()
-    Dim I As Long
-    For I = 1 To MAX_EVENTS
-        Event_Changed(I) = False
-    Next I
+    Dim i As Long
+    For i = 1 To MAX_EVENTS
+        Event_Changed(i) = False
+    Next i
 End Sub
 
 Public Sub EventEditorInit()
@@ -1594,12 +1212,12 @@ Public Sub EventEditorInit()
 End Sub
 
 Public Sub EventEditorOk()
-Dim I As Long
-    For I = 1 To MAX_EVENTS
-        If Event_Changed(I) Then
-            Call Events_SendSaveEvent(I)
+Dim i As Long
+    For i = 1 To MAX_EVENTS
+        If Event_Changed(i) Then
+            Call Events_SendSaveEvent(i)
         End If
-    Next I
+    Next i
     
     Unload frmEditor_Events
     Events_ClearChanged
@@ -1624,9 +1242,6 @@ Public Function GetSubEventCount(ByVal Index As Long)
 End Function
 
 Public Sub ClearAttributeDialogue()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     frmEditor_Map.fraNpcSpawn.visible = False
     frmEditor_Map.fraResource.visible = False
     frmEditor_Map.fraMapItem.visible = False
@@ -1635,11 +1250,4 @@ Public Sub ClearAttributeDialogue()
     frmEditor_Map.fraEvent.visible = False
     frmEditor_Map.fraLight.visible = False
     frmEditor_Map.fraHeal.visible = False
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ClearAttributeDialogue", "modGameEditors", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub

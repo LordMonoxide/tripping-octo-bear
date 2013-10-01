@@ -519,32 +519,12 @@ Private Sub chkDoNotAutoSpawn_Click()
 End Sub
 
 Private Sub cmdPlay_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     FMOD.Music_Stop
     FMOD.Music_Play lstMusic.List(lstMusic.ListIndex)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdPlay_Click", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdStop_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     FMOD.Music_Stop
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdStop_Click", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdOk_Click()
@@ -552,9 +532,6 @@ Private Sub cmdOk_Click()
     Dim y As Long, Y2 As Long
     Dim tempArr() As TileRec
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If Not IsNumeric(txtMaxX.Text) Then txtMaxX.Text = map.MaxX
     If Val(txtMaxX.Text) < MAX_MAPX Then txtMaxX.Text = MAX_MAPX
     If Val(txtMaxX.Text) > MAX_BYTE Then txtMaxX.Text = MAX_BYTE
@@ -583,9 +560,9 @@ Private Sub cmdOk_Click()
         .FogSpeed = ScrlFogSpeed.Value
         .FogOpacity = scrlFogOpacity.Value
         
-        .Red = ScrlR.Value
-        .Green = ScrlG.Value
-        .Blue = ScrlB.Value
+        .Red = scrlR.Value
+        .Green = scrlG.Value
+        .Blue = scrlB.Value
         .Alpha = scrlA.Value
         
         .Panorama = cmbPanorama.ListIndex
@@ -615,27 +592,10 @@ Private Sub cmdOk_Click()
     ' cache the shit
     initAutotiles
     Unload frmEditor_MapProperties
-        
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdOk_Click", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdCancel_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Unload frmEditor_MapProperties
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdCancel_Click", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_Load()
@@ -647,9 +607,6 @@ Private Sub lstNpcs_Click()
 Dim tmpString() As String
 Dim npcNum As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     ' exit out if needed
     If Not cmbNpc.ListCount > 0 Then Exit Sub
     If Not lstNpcs.ListCount > 0 Then Exit Sub
@@ -659,13 +616,6 @@ Dim npcNum As Long
     npcNum = CLng(Left$(tmpString(0), Len(tmpString(0)) - 1))
     cmbNpc.ListIndex = map.NPC(npcNum)
     chkDoNotAutoSpawn.Value = map.NpcSpawnType(npcNum)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "lstNpcs_Click", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmbNpc_Click()
@@ -673,9 +623,6 @@ Dim tmpString() As String
 Dim npcNum As Long
 Dim x As Long, tmpIndex As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ' exit out if needed
     If Not cmbNpc.ListCount > 0 Then Exit Sub
     If Not lstNpcs.ListCount > 0 Then Exit Sub
@@ -706,13 +653,6 @@ Dim x As Long, tmpIndex As Long
         End If
     Next
     lstNpcs.ListIndex = tmpIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmbNpc_Click", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlBoss_Change()
@@ -728,104 +668,33 @@ Private Sub scrlBoss_Change()
 End Sub
 
 Private Sub scrlA_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblA.Caption = "A: " & scrlA.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ScrlA_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlB_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    lblB.Caption = "B: " & ScrlB.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ScrlB_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    lblB.Caption = "B: " & scrlB.Value
 End Sub
 
 Private Sub ScrlFog_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If ScrlFog.Value = 0 Then
         lblFog.Caption = "None."
     Else
         lblFog.Caption = "Fog: " & ScrlFog.Value
     End If
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ScrlFog_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlFogOpacity_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblFogOpacity.Caption = "Fog Opacity: " & scrlFogOpacity.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ScrlFogOpacity_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub ScrlFogSpeed_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblFogSpeed.Caption = "Fog Speed: " & ScrlFogSpeed.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ScrlFogSpeed_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlG_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    lblG.Caption = "G: " & ScrlG.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ScrlG_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    lblG.Caption = "G: " & scrlG.Value
 End Sub
 
 Private Sub scrlR_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    lblR.Caption = "R: " & ScrlR.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "ScrlR_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    lblR.Caption = "R: " & scrlR.Value
 End Sub
-

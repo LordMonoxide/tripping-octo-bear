@@ -128,7 +128,7 @@ Public Const Path_Event As String = "\data files\graphics\events\"
 Public Const Path_Guildicon As String = "\data files\graphics\guildicons\"
 
 Public Sub CacheTextures()
-Dim I As Long
+Dim i As Long
 
     ' Animation Textures
     Count_Anim = 1
@@ -195,8 +195,8 @@ Dim I As Long
 
     ' Buttons
     ReDim Tex_Buttons(1 To MAX_BUTTONS)
-    For I = 1 To MAX_BUTTONS
-        Tex_Buttons(I) = Directx8.SetTexturePath(App.path & Path_Buttons & I & ".png")
+    For i = 1 To MAX_BUTTONS
+        Tex_Buttons(i) = Directx8.SetTexturePath(App.path & Path_Buttons & i & ".png")
     Next
     
     ' Fog Textures
@@ -364,10 +364,7 @@ End Sub
 '****************************************************
 
 Public Sub Render_Graphics()
-Dim x As Long, y As Long, I As Long
-    
-    ' If debug mode, handle error then exit out
-    On Error GoTo errorhandler
+Dim x As Long, y As Long, i As Long
     
     'Check for device lost.
     If D3DDevice8.TestCooperativeLevel = D3DERR_DEVICELOST Or D3DDevice8.TestCooperativeLevel = D3DERR_DEVICENOTRESET Then Directx8.DeviceLost: Exit Sub
@@ -400,24 +397,24 @@ Dim x As Long, y As Long, I As Long
     End If
     
     ' render the decals
-    For I = 1 To MAX_BYTE
-        Call DrawBlood(I)
+    For i = 1 To MAX_BYTE
+        Call DrawBlood(i)
     Next
     
     ' render the items
     If Count_Item > 0 Then
-        For I = 1 To MAX_MAP_ITEMS
-            If MapItem(I).Num > 0 Then
-                Call DrawItem(I)
+        For i = 1 To MAX_MAP_ITEMS
+            If MapItem(i).Num > 0 Then
+                Call DrawItem(i)
             End If
         Next
     End If
     
     ' draw animations
     If Count_Anim > 0 Then
-        For I = 1 To MAX_BYTE
-            If AnimInstance(I).Used(0) Then
-                DrawAnimation I, 0
+        For i = 1 To MAX_BYTE
+            If AnimInstance(i).Used(0) Then
+                DrawAnimation i, 0
             End If
         Next
     End If
@@ -435,23 +432,23 @@ Dim x As Long, y As Long, I As Long
                         End If
                     End If
                 Next
-            For I = 1 To MAX_PLAYERS
-                If IsPlaying(I) And GetPlayerMap(I) = GetPlayerMap(MyIndex) Then
-                    If GetPlayerY(I) = y Then
-                        Call DrawPlayer(I)
+            For i = 1 To MAX_PLAYERS
+                If IsPlaying(i) And GetPlayerMap(i) = GetPlayerMap(MyIndex) Then
+                    If GetPlayerY(i) = y Then
+                        Call DrawPlayer(i)
                     End If
-                    If Player(I).Pet.Alive = True Then
-                        If Player(I).Pet.y = y Then
-                            DrawPet (I)
+                    If Player(i).Pet.Alive = True Then
+                        If Player(i).Pet.y = y Then
+                            DrawPet (i)
                         End If
                     End If
                 End If
             Next
             
             ' Npcs
-            For I = 1 To MAX_MAP_NPCS
-                If MapNpc(I).y = y Then
-                    Call DrawNpc(I)
+            For i = 1 To MAX_MAP_NPCS
+                If MapNpc(i).y = y Then
+                    Call DrawNpc(i)
                 End If
             Next
         End If
@@ -460,9 +457,9 @@ Dim x As Long, y As Long, I As Long
         If Count_Resource > 0 Then
             If Resources_Init Then
                 If Resource_Index > 0 Then
-                    For I = 1 To Resource_Index
-                        If MapResource(I).y = y Then
-                            Call DrawResource(I)
+                    For i = 1 To Resource_Index
+                        If MapResource(i).y = y Then
+                            Call DrawResource(i)
                         End If
                     Next
                 End If
@@ -494,9 +491,9 @@ Dim x As Long, y As Long, I As Long
     
     ' render animations
     If Count_Anim > 0 Then
-        For I = 1 To MAX_BYTE
-            If AnimInstance(I).Used(1) Then
-                DrawAnimation I, 1
+        For i = 1 To MAX_BYTE
+            If AnimInstance(i).Used(1) Then
+                DrawAnimation i, 1
             End If
         Next
     End If
@@ -524,25 +521,25 @@ Dim x As Long, y As Long, I As Long
     End If
     
     ' draw player names
-    For I = 1 To MAX_PLAYERS
-        If IsPlaying(I) And GetPlayerMap(I) = GetPlayerMap(MyIndex) Then
-            Call DrawPlayerName(I)
-            If Player(I).Pet.Alive = True Then
-                Call DrawPetName(I)
+    For i = 1 To MAX_PLAYERS
+        If IsPlaying(i) And GetPlayerMap(i) = GetPlayerMap(MyIndex) Then
+            Call DrawPlayerName(i)
+            If Player(i).Pet.Alive = True Then
+                Call DrawPetName(i)
             End If
         End If
     Next
     
     ' draw npc names
-    For I = 1 To MAX_MAP_NPCS
-        If MapNpc(I).Num > 0 Then
-            Call DrawNpcName(I)
+    For i = 1 To MAX_MAP_NPCS
+        If MapNpc(i).Num > 0 Then
+            Call DrawNpcName(i)
         End If
     Next
     
     ' draw action msg
-    For I = 1 To MAX_BYTE
-        DrawActionMsg I
+    For i = 1 To MAX_BYTE
+        DrawActionMsg i
     Next
     
     DrawFog
@@ -571,9 +568,9 @@ Dim x As Long, y As Long, I As Long
     End If
     
     ' draw the messages
-    For I = 1 To MAX_BYTE
-        If chatBubble(I).active Then
-            DrawChatBubble I
+    For i = 1 To MAX_BYTE
+        If chatBubble(i).active Then
+            DrawChatBubble i
         End If
     Next
     
@@ -607,24 +604,9 @@ Dim x As Long, y As Long, I As Long
         ' GDI Rendering
         DrawGDI
     End If
-
-    ' Error handler
-    Exit Sub
-    
-errorhandler:
-    If D3DDevice8.TestCooperativeLevel = D3DERR_DEVICELOST Or D3DDevice8.TestCooperativeLevel = D3DERR_DEVICENOTRESET Then
-        Directx8.DeviceLost
-        Exit Sub
-    Else
-        MsgBox "Unrecoverable DX8 error."
-        DestroyGame
-    End If
 End Sub
 
 Public Sub Render_Menu()
-    ' If debug mode, handle error then exit out
-    On Error GoTo errorhandler
-    
     'Check for device lost.
     If D3DDevice8.TestCooperativeLevel = D3DERR_DEVICELOST Or D3DDevice8.TestCooperativeLevel = D3DERR_DEVICENOTRESET Then Directx8.DeviceLost: Exit Sub
     
@@ -681,23 +663,11 @@ Public Sub Render_Menu()
     Else
         Call D3DDevice8.Present(ByVal 0, ByVal 0, 0, ByVal 0)
     End If
-
-    ' Error handler
-    Exit Sub
-    
-errorhandler:
-    If D3DDevice8.TestCooperativeLevel = D3DERR_DEVICELOST Or D3DDevice8.TestCooperativeLevel = D3DERR_DEVICENOTRESET Then
-        Directx8.DeviceLost
-        Exit Sub
-    Else
-        MsgBox "Unrecoverable DX8 error."
-        DestroyGame
-    End If
 End Sub
 
 ' GDI rendering
 Public Sub GDIRenderAnimation()
-Dim I As Long, Animationnum As Long, ShouldRender As Boolean, width As Long, height As Long, looptime As Long, FrameCount As Long
+Dim i As Long, Animationnum As Long, ShouldRender As Boolean, width As Long, height As Long, looptime As Long, FrameCount As Long
 Dim sX As Long, sY As Long, sRECT As RECT
 
     sRECT.Top = 0
@@ -705,37 +675,37 @@ Dim sX As Long, sY As Long, sRECT As RECT
     sRECT.Left = 0
     sRECT.Right = 192
 
-    For I = 0 To 1
-        Animationnum = frmEditor_Animation.scrlSprite(I).Value
+    For i = 0 To 1
+        Animationnum = frmEditor_Animation.scrlSprite(i).Value
         
         If Animationnum <= 0 Or Animationnum > Count_Anim Then
             ' don't render lol
         Else
-            looptime = frmEditor_Animation.scrlLoopTime(I)
-            FrameCount = frmEditor_Animation.scrlFrameCount(I)
+            looptime = frmEditor_Animation.scrlLoopTime(i)
+            FrameCount = frmEditor_Animation.scrlFrameCount(i)
             
             ShouldRender = False
             
             ' check if we need to render new frame
-            If AnimEditorTimer(I) + looptime <= timeGetTime Then
+            If AnimEditorTimer(i) + looptime <= timeGetTime Then
                 ' check if out of range
-                If AnimEditorFrame(I) >= FrameCount Then
-                    AnimEditorFrame(I) = 1
+                If AnimEditorFrame(i) >= FrameCount Then
+                    AnimEditorFrame(i) = 1
                 Else
-                    AnimEditorFrame(I) = AnimEditorFrame(I) + 1
+                    AnimEditorFrame(i) = AnimEditorFrame(i) + 1
                 End If
-                AnimEditorTimer(I) = timeGetTime
+                AnimEditorTimer(i) = timeGetTime
                 ShouldRender = True
             End If
         
             If ShouldRender Then
-                If frmEditor_Animation.scrlFrameCount(I).Value > 0 Then
+                If frmEditor_Animation.scrlFrameCount(i).Value > 0 Then
                     ' total width divided by frame count
                     width = 192
                     height = 192
 
-                    sY = (height * ((AnimEditorFrame(I) - 1) \ AnimColumns))
-                    sX = (width * (((AnimEditorFrame(I) - 1) Mod AnimColumns)))
+                    sY = (height * ((AnimEditorFrame(i) - 1) \ AnimColumns))
+                    sX = (width * (((AnimEditorFrame(i) - 1) Mod AnimColumns)))
 
                     ' Start Rendering
                     Call D3DDevice8.Clear(0, ByVal 0, D3DCLEAR_TARGET, 0, 1#, 0)
@@ -746,7 +716,7 @@ Dim sX As Long, sY As Long, sRECT As RECT
                     
                     ' Finish Rendering
                     Call D3DDevice8.EndScene
-                    Call D3DDevice8.Present(sRECT, ByVal 0, frmEditor_Animation.picSprite(I).hWnd, ByVal 0)
+                    Call D3DDevice8.Present(sRECT, ByVal 0, frmEditor_Animation.picSprite(i).hWnd, ByVal 0)
                 End If
             End If
         End If
@@ -756,9 +726,6 @@ End Sub
 Public Sub GDIRenderAura(ByRef picBox As PictureBox, ByVal Sprite As Long)
 Dim height As Long, width As Long, sRECT As RECT
 
-    ' exit out if doesn't exist
-    If Sprite <= 0 Or Sprite > Count_Aura Then Exit Sub
-    
     height = 32
     width = 32
     
@@ -780,9 +747,6 @@ End Sub
 Public Sub GDIRenderChar(ByRef picBox As PictureBox, ByVal Sprite As Long)
 Dim height As Long, width As Long, sRECT As RECT
 
-    ' exit out if doesn't exist
-    If Sprite <= 0 Or Sprite > Count_Char Then Exit Sub
-    
     height = 32
     width = 32
     
@@ -807,9 +771,6 @@ Dim height As Long, width As Long, Tileset As Byte, sRECT As RECT
 
     ' find tileset number
     Tileset = frmEditor_Map.scrlTileSet.Value
-    
-    ' exit out if doesn't exist
-    If Tileset <= 0 Or Tileset > Count_Tileset Then Exit Sub
     
     height = gTexture(Tex_Tileset(Tileset)).height
     width = gTexture(Tex_Tileset(Tileset)).width
@@ -868,9 +829,6 @@ Dim Sprite As Long
 Dim sRECT As RECT, destRect As D3DRECT, srcRect As D3DRECT
 Dim dRect As RECT
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     ' normal sprite
     Sprite = frmEditor_Resource.scrlNormalPic.Value
 
@@ -941,21 +899,11 @@ Dim dRect As RECT
         D3DDevice8.EndScene
         D3DDevice8.Present srcRect, destRect, frmEditor_Resource.picExhaustedPic.hWnd, ByVal (0)
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "EditorResource_DrawSprite", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub GDIRenderItem(ByRef picBox As PictureBox, ByVal Sprite As Long)
 Dim height As Long, width As Long, sRECT As RECT
 
-    ' exit out if doesn't exist
-    If Sprite <= 0 Or Sprite > Count_Item Then Exit Sub
-    
     height = gTexture(Tex_Item(Sprite)).height
     width = gTexture(Tex_Item(Sprite)).width
     
@@ -1002,9 +950,6 @@ End Sub
 Public Sub GDIRenderSpell(ByRef picBox As PictureBox, ByVal Sprite As Long)
 Dim height As Long, width As Long, sRECT As RECT
 
-    ' exit out if doesn't exist
-    If Sprite <= 0 Or Sprite > Count_Spellicon Then Exit Sub
-    
     height = gTexture(Tex_Spellicon(Sprite)).height
     width = gTexture(Tex_Spellicon(Sprite)).width
     
@@ -1035,9 +980,6 @@ Dim itemnum As Long
 Dim sRECT As RECT, destRect As D3DRECT
 Dim dRect As RECT
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     itemnum = frmEditor_Item.scrlProjectilePic.Value
 
     If itemnum < 1 Or itemnum > Count_Projectile Then
@@ -1066,13 +1008,6 @@ Dim dRect As RECT
                     
     D3DDevice8.EndScene
     D3DDevice8.Present destRect, destRect, frmEditor_Item.picProjectile.hWnd, ByVal (0)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "GDIRenderProjectile", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub GDIRenderEvent()
@@ -1080,9 +1015,6 @@ Dim eventNum As Long
 Dim sRECT As RECT, destRect As D3DRECT
 Dim dRect As RECT
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     eventNum = frmEditor_Events.scrlGraphic.Value
 
     If eventNum < 1 Or eventNum > Count_Event Then
@@ -1111,13 +1043,6 @@ Dim dRect As RECT
                     
     D3DDevice8.EndScene
     D3DDevice8.Present destRect, destRect, frmEditor_Events.picGraphic.hWnd, ByVal (0)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "GDIRenderEvent", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub GDIRenderGuild()
@@ -1125,16 +1050,12 @@ Dim guildNum As Long
 Dim sRECT As RECT, destRect As D3DRECT
 Dim dRect As RECT
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     guildNum = frmGuildAdmin.scrlGuildLogo.Value
 
     If guildNum < 1 Or guildNum > Count_Guildicon Then
         frmGuildAdmin.picGraphic.Cls
         Exit Sub
     End If
-
 
     ' rect for source
     sRECT.Top = 0
@@ -1156,42 +1077,25 @@ Dim dRect As RECT
                     
     D3DDevice8.EndScene
     D3DDevice8.Present destRect, destRect, frmGuildAdmin.picGraphic.hWnd, ByVal (0)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "GDIRenderGuild", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' Directional blocking
 Public Sub DrawDirection(ByVal x As Long, ByVal y As Long)
-Dim I As Long, Top As Long, Left As Long
-    
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
+Dim i As Long, Top As Long, Left As Long
     
     ' render dir blobs
-    For I = 1 To 4
-        Left = (I - 1) * 8
+    For i = 1 To 4
+        Left = (i - 1) * 8
         ' find out whether render blocked or not
-        If Not isDirBlocked(map.Tile(x, y).DirBlock, CByte(I)) Then
+        If Not isDirBlocked(map.Tile(x, y).DirBlock, CByte(i)) Then
             Top = 8
         Else
             Top = 16
         End If
         'render!
         'EngineRenderRectangle Tex_Direction, ConvertMapX(x * PIC_X) + DirArrowX(i), ConvertMapY(y * PIC_Y) + DirArrowY(i), left, top, 8, 8, 8, 8, 8, 8
-        Directx8.RenderTexture Tex_Direction, ConvertMapX(x * PIC_X) + DirArrowX(I), ConvertMapY(y * PIC_Y) + DirArrowY(I), Left, Top, 8, 8, 8, 8
+        Directx8.RenderTexture Tex_Direction, ConvertMapX(x * PIC_X) + DirArrowX(i), ConvertMapY(y * PIC_Y) + DirArrowY(i), Left, Top, 8, 8, 8, 8
     Next
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "BltDirection", "modDirectX8", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Public Sub DrawGrid(ByVal x As Long, ByVal y As Long)
 Dim Top As Long, Left As Long
@@ -1206,7 +1110,6 @@ Public Sub DrawFog()
 Dim fogNum As Long, Colour As Long, x As Long, y As Long, renderState As Long
     
     fogNum = CurrentFog
-    If fogNum <= 0 Or fogNum > Count_Fog Then Exit Sub
     Colour = D3DColorRGBA(255, 255, 255, 255 - CurrentFogOpacity)
     renderState = 0
     ' render state
@@ -1254,65 +1157,65 @@ End Sub
 
 ' Rendering Procedures
 Public Sub DrawMapTile(ByVal x As Long, ByVal y As Long)
-Dim I As Long
+Dim i As Long
     
     With map.Tile(x, y)
         ' draw the map
-        For I = MapLayer.Ground To MapLayer.Mask2
+        For i = MapLayer.Ground To MapLayer.Mask2
             ' skip tile if tileset isn't set
-            If Autotile(x, y).Layer(I).renderState = RENDER_STATE_NORMAL Then
+            If Autotile(x, y).Layer(i).renderState = RENDER_STATE_NORMAL Then
                 ' Draw normally
                 'EngineRenderRectangle Tex_Tileset(.Layer(i).Tileset), ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), .Layer(i).x * 32, .Layer(i).y * 32, 32, 32, 32, 32, 32, 32
-                Directx8.RenderTexture Tex_Tileset(.Layer(I).Tileset), ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), .Layer(I).x * 32, .Layer(I).y * 32, 32, 32, 32, 32
-            ElseIf Autotile(x, y).Layer(I).renderState = RENDER_STATE_AUTOTILE Then
+                Directx8.RenderTexture Tex_Tileset(.Layer(i).Tileset), ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), .Layer(i).x * 32, .Layer(i).y * 32, 32, 32, 32, 32
+            ElseIf Autotile(x, y).Layer(i).renderState = RENDER_STATE_AUTOTILE Then
                 ' Draw autotiles
-                DrawAutoTile I, ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), 1, x, y
-                DrawAutoTile I, ConvertMapX((x * PIC_X) + 16), ConvertMapY(y * PIC_Y), 2, x, y
-                DrawAutoTile I, ConvertMapX(x * PIC_X), ConvertMapY((y * PIC_Y) + 16), 3, x, y
-                DrawAutoTile I, ConvertMapX((x * PIC_X) + 16), ConvertMapY((y * PIC_Y) + 16), 4, x, y
+                DrawAutoTile i, ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), 1, x, y
+                DrawAutoTile i, ConvertMapX((x * PIC_X) + 16), ConvertMapY(y * PIC_Y), 2, x, y
+                DrawAutoTile i, ConvertMapX(x * PIC_X), ConvertMapY((y * PIC_Y) + 16), 3, x, y
+                DrawAutoTile i, ConvertMapX((x * PIC_X) + 16), ConvertMapY((y * PIC_Y) + 16), 4, x, y
             End If
         Next
     End With
 End Sub
 
 Public Sub DrawMapFringeTile(ByVal x As Long, ByVal y As Long)
-Dim I As Long
+Dim i As Long
     
     With map.Tile(x, y)
         ' draw the map
-        For I = MapLayer.Fringe To MapLayer.Fringe2
+        For i = MapLayer.Fringe To MapLayer.Fringe2
             ' skip tile if tileset isn't set
-            If Autotile(x, y).Layer(I).renderState = RENDER_STATE_NORMAL Then
+            If Autotile(x, y).Layer(i).renderState = RENDER_STATE_NORMAL Then
                 ' Draw normally
-                Directx8.RenderTexture Tex_Tileset(.Layer(I).Tileset), ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), .Layer(I).x * 32, .Layer(I).y * 32, 32, 32, 32, 32
-            ElseIf Autotile(x, y).Layer(I).renderState = RENDER_STATE_AUTOTILE Then
+                Directx8.RenderTexture Tex_Tileset(.Layer(i).Tileset), ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), .Layer(i).x * 32, .Layer(i).y * 32, 32, 32, 32, 32
+            ElseIf Autotile(x, y).Layer(i).renderState = RENDER_STATE_AUTOTILE Then
                 ' Draw autotiles
-                DrawAutoTile I, ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), 1, x, y
-                DrawAutoTile I, ConvertMapX((x * PIC_X) + 16), ConvertMapY(y * PIC_Y), 2, x, y
-                DrawAutoTile I, ConvertMapX(x * PIC_X), ConvertMapY((y * PIC_Y) + 16), 3, x, y
-                DrawAutoTile I, ConvertMapX((x * PIC_X) + 16), ConvertMapY((y * PIC_Y) + 16), 4, x, y
+                DrawAutoTile i, ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), 1, x, y
+                DrawAutoTile i, ConvertMapX((x * PIC_X) + 16), ConvertMapY(y * PIC_Y), 2, x, y
+                DrawAutoTile i, ConvertMapX(x * PIC_X), ConvertMapY((y * PIC_Y) + 16), 3, x, y
+                DrawAutoTile i, ConvertMapX((x * PIC_X) + 16), ConvertMapY((y * PIC_Y) + 16), 4, x, y
             End If
         Next
     End With
 End Sub
 
 Public Sub DrawRoof(ByVal x As Long, ByVal y As Long)
-Dim I As Long
+Dim i As Long
     
     With map.Tile(x, y)
         ' draw the map
-        I = MapLayer.Roof
+        i = MapLayer.Roof
             If Not Player(MyIndex).Threshold = YES Then
                 ' skip tile if tileset isn't set
-                If Autotile(x, y).Layer(I).renderState = RENDER_STATE_NORMAL Then
+                If Autotile(x, y).Layer(i).renderState = RENDER_STATE_NORMAL Then
                     ' Draw normally
-                    Directx8.RenderTexture Tex_Tileset(.Layer(I).Tileset), ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), .Layer(I).x * 32, .Layer(I).y * 32, 32, 32, 32, 32
-                ElseIf Autotile(x, y).Layer(I).renderState = RENDER_STATE_AUTOTILE Then
+                    Directx8.RenderTexture Tex_Tileset(.Layer(i).Tileset), ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), .Layer(i).x * 32, .Layer(i).y * 32, 32, 32, 32, 32
+                ElseIf Autotile(x, y).Layer(i).renderState = RENDER_STATE_AUTOTILE Then
                     ' Draw autotiles
-                    DrawAutoTile I, ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), 1, x, y
-                    DrawAutoTile I, ConvertMapX((x * PIC_X) + 16), ConvertMapY(y * PIC_Y), 2, x, y
-                    DrawAutoTile I, ConvertMapX(x * PIC_X), ConvertMapY((y * PIC_Y) + 16), 3, x, y
-                    DrawAutoTile I, ConvertMapX((x * PIC_X) + 16), ConvertMapY((y * PIC_Y) + 16), 4, x, y
+                    DrawAutoTile i, ConvertMapX(x * PIC_X), ConvertMapY(y * PIC_Y), 1, x, y
+                    DrawAutoTile i, ConvertMapX((x * PIC_X) + 16), ConvertMapY(y * PIC_Y), 2, x, y
+                    DrawAutoTile i, ConvertMapX(x * PIC_X), ConvertMapY((y * PIC_Y) + 16), 3, x, y
+                    DrawAutoTile i, ConvertMapX((x * PIC_X) + 16), ConvertMapY((y * PIC_Y) + 16), 4, x, y
                 End If
             End If
     End With
@@ -1320,7 +1223,7 @@ End Sub
 
 Public Sub DrawBars()
 Dim Left As Long, Top As Long, width As Long, height As Long
-Dim tmpX As Long, tmpY As Long, barWidth As Long, I As Long, npcNum As Long
+Dim tmpX As Long, tmpY As Long, barWidth As Long, i As Long, npcNum As Long
 Dim partyIndex As Long
 
     ' dynamic bar calculations
@@ -1328,18 +1231,18 @@ Dim partyIndex As Long
     height = gTexture(Tex_Bars).height / 4
     
     ' render npc health bars
-    For I = 1 To MAX_MAP_NPCS
-        npcNum = MapNpc(I).Num
+    For i = 1 To MAX_MAP_NPCS
+        npcNum = MapNpc(i).Num
         ' exists?
         If npcNum > 0 Then
             ' alive?
-            If MapNpc(I).Vital(Vitals.HP) > 0 And MapNpc(I).Vital(Vitals.HP) < NPC(npcNum).HP Then
+            If MapNpc(i).Vital(Vitals.HP) > 0 And MapNpc(i).Vital(Vitals.HP) < NPC(npcNum).HP Then
                 ' lock to npc
-                tmpX = MapNpc(I).x * PIC_X + MapNpc(I).XOffset + 16 - (width / 2)
-                tmpY = MapNpc(I).y * PIC_Y + MapNpc(I).YOffset + 35
+                tmpX = MapNpc(i).x * PIC_X + MapNpc(i).XOffset + 16 - (width / 2)
+                tmpY = MapNpc(i).y * PIC_Y + MapNpc(i).YOffset + 35
                 
                 ' calculate the width to fill
-                If width > 0 Then BarWidth_NpcHP_Max(I) = ((MapNpc(I).Vital(Vitals.HP) / width) / (NPC(npcNum).HP / width)) * width
+                If width > 0 Then BarWidth_NpcHP_Max(i) = ((MapNpc(i).Vital(Vitals.HP) / width) / (NPC(npcNum).HP / width)) * width
                 
                 ' draw bar background
                 Top = height * 1 ' HP bar background
@@ -1349,7 +1252,7 @@ Dim partyIndex As Long
                 ' draw the bar proper
                 Top = 0 ' HP bar
                 Left = 0
-                Directx8.RenderTexture Tex_Bars, ConvertMapX(tmpX), ConvertMapY(tmpY), Left, Top, BarWidth_NpcHP(I), height, BarWidth_NpcHP(I), height
+                Directx8.RenderTexture Tex_Bars, ConvertMapX(tmpX), ConvertMapY(tmpY), Left, Top, BarWidth_NpcHP(i), height, BarWidth_NpcHP(i), height
             End If
         End If
     Next
@@ -1398,8 +1301,8 @@ Dim partyIndex As Long
     
     ' draw party health bars
     If Party.Leader > 0 Then
-        For I = 1 To MAX_PARTY_MEMBERS
-            partyIndex = Party.Member(I)
+        For i = 1 To MAX_PARTY_MEMBERS
+            partyIndex = Party.Member(i)
             If (partyIndex > 0) And (partyIndex <> MyIndex) And (GetPlayerMap(partyIndex) = GetPlayerMap(MyIndex)) Then
                 ' player exists
                 If GetPlayerVital(partyIndex, Vitals.HP) > 0 And GetPlayerVital(partyIndex, Vitals.HP) < GetPlayerMaxVital(partyIndex, Vitals.HP) Then
@@ -1425,7 +1328,7 @@ Dim partyIndex As Long
     End If
 End Sub
 Public Sub DrawChatBubble(ByVal Index As Long)
-Dim theArray() As String, x As Long, y As Long, I As Long, MaxWidth As Long, X2 As Long, Y2 As Long
+Dim theArray() As String, x As Long, y As Long, i As Long, MaxWidth As Long, X2 As Long, Y2 As Long
     
     With chatBubble(Index)
         If .TargetType = TARGET_TYPE_PLAYER Then
@@ -1445,8 +1348,8 @@ Dim theArray() As String, x As Long, y As Long, I As Long, MaxWidth As Long, X2 
         WordWrap_Array .msg, ChatBubbleWidth, theArray
                 
         ' find max width
-        For I = 1 To UBound(theArray)
-            If EngineGetTextWidth(Font_Georgia, theArray(I)) > MaxWidth Then MaxWidth = EngineGetTextWidth(Font_Georgia, theArray(I))
+        For i = 1 To UBound(theArray)
+            If EngineGetTextWidth(Font_Georgia, theArray(i)) > MaxWidth Then MaxWidth = EngineGetTextWidth(Font_Georgia, theArray(i))
         Next
                 
         ' calculate the new position
@@ -1477,8 +1380,8 @@ Dim theArray() As String, x As Long, y As Long, I As Long, MaxWidth As Long, X2 
         Directx8.RenderTexture Tex_Chatbubble, x - 5, y, 58, 19, 11, 11, 11, 11
                 
         ' render each line centralised
-        For I = 1 To UBound(theArray)
-            RenderText Font_Georgia, theArray(I), x - (EngineGetTextWidth(Font_Georgia, theArray(I)) / 2), Y2, DarkBrown
+        For i = 1 To UBound(theArray)
+            RenderText Font_Georgia, theArray(i), x - (EngineGetTextWidth(Font_Georgia, theArray(i)) / 2), Y2, DarkBrown
             Y2 = Y2 + 12
         Next
         ' check if it's timed out - close it if so
@@ -1708,13 +1611,9 @@ Public Sub DrawNpc(ByVal MapNpcNum As Long)
     Dim rec As GeomRec
     Dim attackspeed As Long
     
-    If MapNpc(MapNpcNum).Num = 0 Then Exit Sub ' no npc set
-    
     ' pre-load texture for calculations
     Sprite = NPC(MapNpc(MapNpcNum).Num).Sprite
     'SetTexture Tex_Char(Sprite)
-
-    If Sprite < 1 Or Sprite > Count_Char Then Exit Sub
 
     attackspeed = 1000
 
@@ -1835,7 +1734,7 @@ Dim width As Long, height As Long
 End Sub
 
 Public Sub DrawTargetHover()
-Dim I As Long, x As Long, y As Long, width As Long, height As Long
+Dim i As Long, x As Long, y As Long, width As Long, height As Long
 
     width = gTexture(Tex_Target).RWidth / 2
     height = gTexture(Tex_Target).RHeight
@@ -1843,10 +1742,10 @@ Dim I As Long, x As Long, y As Long, width As Long, height As Long
     If width <= 0 Then width = 1
     If height <= 0 Then height = 1
     
-    For I = 1 To MAX_PLAYERS
-        If IsPlaying(I) And GetPlayerMap(MyIndex) = GetPlayerMap(I) Then
-            x = (Player(I).x * 32) + TempPlayer(I).XOffset + 32
-            y = (Player(I).y * 32) + TempPlayer(I).YOffset + 32
+    For i = 1 To MAX_PLAYERS
+        If IsPlaying(i) And GetPlayerMap(MyIndex) = GetPlayerMap(i) Then
+            x = (Player(i).x * 32) + TempPlayer(i).XOffset + 32
+            y = (Player(i).y * 32) + TempPlayer(i).YOffset + 32
             If x >= GlobalX_Map And x <= GlobalX_Map + 32 Then
                 If y >= GlobalY_Map And y <= GlobalY_Map + 32 Then
                     x = ConvertMapX(x)
@@ -1854,9 +1753,9 @@ Dim I As Long, x As Long, y As Long, width As Long, height As Long
                     Directx8.RenderTexture Tex_Target, x - 16 - (width / 2), y - 16 - (height / 2), width, 0, width, height, width, height
                 End If
             End If
-            If Player(I).Pet.Alive Then
-                x = (Player(I).Pet.x * 32) + Player(I).Pet.XOffset + 32
-                y = (Player(I).Pet.y * 32) + Player(I).Pet.YOffset + 32
+            If Player(i).Pet.Alive Then
+                x = (Player(i).Pet.x * 32) + Player(i).Pet.XOffset + 32
+                y = (Player(i).Pet.y * 32) + Player(i).Pet.YOffset + 32
                 If x >= GlobalX_Map And x <= GlobalX_Map + 32 Then
                     If y >= GlobalY_Map And y <= GlobalY_Map + 32 Then
                         x = ConvertMapX(x)
@@ -1868,10 +1767,10 @@ Dim I As Long, x As Long, y As Long, width As Long, height As Long
         End If
     Next
     
-    For I = 1 To MAX_MAP_NPCS
-        If MapNpc(I).Num > 0 Then
-            x = (MapNpc(I).x * 32) + MapNpc(I).XOffset + 32
-            y = (MapNpc(I).y * 32) + MapNpc(I).YOffset + 32
+    For i = 1 To MAX_MAP_NPCS
+        If MapNpc(i).Num > 0 Then
+            x = (MapNpc(i).x * 32) + MapNpc(i).XOffset + 32
+            y = (MapNpc(i).y * 32) + MapNpc(i).YOffset + 32
             If x >= GlobalX_Map And x <= GlobalX_Map + 32 Then
                 If y >= GlobalY_Map And y <= GlobalY_Map + 32 Then
                     x = ConvertMapX(x)
@@ -1936,11 +1835,9 @@ Dim width As Long, height As Long
 End Sub
 
 Public Sub DrawItem(ByVal itemnum As Long)
-Dim PicNum As Integer, dontRender As Boolean, I As Long, tmpIndex As Long
+Dim PicNum As Integer, dontRender As Boolean, i As Long, tmpIndex As Long
     
     PicNum = Item(MapItem(itemnum).Num).Pic
-
-    If PicNum < 1 Or PicNum > Count_Item Then Exit Sub
 
      ' if it's not us then don't render
     If MapItem(itemnum).playerName <> vbNullString Then
@@ -1949,8 +1846,8 @@ Dim PicNum As Integer, dontRender As Boolean, I As Long, tmpIndex As Long
         End If
         ' make sure it's not a party drop
         If Party.Leader > 0 Then
-            For I = 1 To MAX_PARTY_MEMBERS
-                tmpIndex = Party.Member(I)
+            For i = 1 To MAX_PARTY_MEMBERS
+                tmpIndex = Party.Member(i)
                 If tmpIndex > 0 Then
                     If Trim$(GetPlayerName(tmpIndex)) = Trim$(MapItem(itemnum).playerName) Then
                         If MapItem(itemnum).bound = 0 Then
@@ -2283,7 +2180,7 @@ Dim CostItem2 As Long, CostValue2 As Long
 End Sub
 
 Public Sub DrawItemDesc(ByVal itemnum As Long, ByVal x As Long, ByVal y As Long, Optional ByVal soulBound As Boolean = False)
-Dim Colour As Long, theName As String, levelTxt As String, sInfo() As String, I As Long, width As Long, height As Long
+Dim Colour As Long, theName As String, levelTxt As String, sInfo() As String, i As Long, width As Long, height As Long
     
     ' get out
     If itemnum = 0 Then Exit Sub
@@ -2352,25 +2249,25 @@ Dim Colour As Long, theName As String, levelTxt As String, sInfo() As String, I 
     ' first we cache all information strings then loop through and render them
 
     ' item type
-    I = 1
-    ReDim Preserve sInfo(1 To I) As String
+    i = 1
+    ReDim Preserve sInfo(1 To i) As String
     Select Case Item(itemnum).Type
         Case ITEM_TYPE_NONE
-            sInfo(I) = "No type"
+            sInfo(i) = "No type"
         Case ITEM_TYPE_WEAPON
-            sInfo(I) = "Weapon"
+            sInfo(i) = "Weapon"
         Case ITEM_TYPE_ARMOR
-            sInfo(I) = "Armour"
+            sInfo(i) = "Armour"
         Case ITEM_TYPE_Aura
-            sInfo(I) = "Aura"
+            sInfo(i) = "Aura"
         Case ITEM_TYPE_SHIELD
-            sInfo(I) = "Shield"
+            sInfo(i) = "Shield"
         Case ITEM_TYPE_CONSUME
-            sInfo(I) = "Consume"
+            sInfo(i) = "Consume"
         Case ITEM_TYPE_CURRENCY
-            sInfo(I) = "Currency"
+            sInfo(i) = "Currency"
         Case ITEM_TYPE_SPELL
-            sInfo(I) = "Spell"
+            sInfo(i) = "Spell"
     End Select
     
     ' more info
@@ -2378,122 +2275,122 @@ Dim Colour As Long, theName As String, levelTxt As String, sInfo() As String, I 
         Case ITEM_TYPE_NONE, ITEM_TYPE_CURRENCY
             ' binding
             If Item(itemnum).BindType = 1 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "Bind on Pickup"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "Bind on Pickup"
             ElseIf Item(itemnum).BindType = 2 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "Bind on Equip"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "Bind on Equip"
             End If
             ' price
-            I = I + 1
-            ReDim Preserve sInfo(1 To I) As String
-            sInfo(I) = "Value: " & Item(itemnum).Price & "g"
+            i = i + 1
+            ReDim Preserve sInfo(1 To i) As String
+            sInfo(i) = "Value: " & Item(itemnum).Price & "g"
         Case ITEM_TYPE_WEAPON, ITEM_TYPE_ARMOR, ITEM_TYPE_Aura, ITEM_TYPE_SHIELD
             ' damage/defence
             If Item(itemnum).Type = ITEM_TYPE_WEAPON Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "Damage: " & Item(itemnum).Data2
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "Damage: " & Item(itemnum).Data2
                 ' speed
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "Speed: " & (Item(itemnum).Speed / 1000) & "s"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "Speed: " & (Item(itemnum).Speed / 1000) & "s"
             Else
                 If Item(itemnum).PDef > 0 Then
-                    I = I + 1
-                    ReDim Preserve sInfo(1 To I) As String
-                    sInfo(I) = "PDef: " & Item(itemnum).PDef
+                    i = i + 1
+                    ReDim Preserve sInfo(1 To i) As String
+                    sInfo(i) = "PDef: " & Item(itemnum).PDef
                 End If
                 If Item(itemnum).MDef > 0 Then
-                    I = I + 1
-                    ReDim Preserve sInfo(1 To I) As String
-                    sInfo(I) = "MDef: " & Item(itemnum).MDef
+                    i = i + 1
+                    ReDim Preserve sInfo(1 To i) As String
+                    sInfo(i) = "MDef: " & Item(itemnum).MDef
                 End If
                 If Item(itemnum).RDef > 0 Then
-                    I = I + 1
-                    ReDim Preserve sInfo(1 To I) As String
-                    sInfo(I) = "RDef: " & Item(itemnum).RDef
+                    i = i + 1
+                    ReDim Preserve sInfo(1 To i) As String
+                    sInfo(i) = "RDef: " & Item(itemnum).RDef
                 End If
             End If
             ' binding
             If Item(itemnum).BindType = 1 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "Bind on Pickup"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "Bind on Pickup"
             ElseIf Item(itemnum).BindType = 2 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "Bind on Equip"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "Bind on Equip"
             End If
             ' price
-            I = I + 1
-            ReDim Preserve sInfo(1 To I) As String
-            sInfo(I) = "Value: " & Item(itemnum).Price & "g"
+            i = i + 1
+            ReDim Preserve sInfo(1 To i) As String
+            sInfo(i) = "Value: " & Item(itemnum).Price & "g"
             ' stat bonuses
             If Item(itemnum).Add_Stat(Stats.Strength) > 0 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "+" & Item(itemnum).Add_Stat(Stats.Strength) & " Str"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "+" & Item(itemnum).Add_Stat(Stats.Strength) & " Str"
             End If
             If Item(itemnum).Add_Stat(Stats.Endurance) > 0 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "+" & Item(itemnum).Add_Stat(Stats.Endurance) & " End"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "+" & Item(itemnum).Add_Stat(Stats.Endurance) & " End"
             End If
             If Item(itemnum).Add_Stat(Stats.Intelligence) > 0 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "+" & Item(itemnum).Add_Stat(Stats.Intelligence) & " Int"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "+" & Item(itemnum).Add_Stat(Stats.Intelligence) & " Int"
             End If
             If Item(itemnum).Add_Stat(Stats.Agility) > 0 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "+" & Item(itemnum).Add_Stat(Stats.Agility) & " Agi"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "+" & Item(itemnum).Add_Stat(Stats.Agility) & " Agi"
             End If
             If Item(itemnum).Add_Stat(Stats.Willpower) > 0 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "+" & Item(itemnum).Add_Stat(Stats.Willpower) & " Will"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "+" & Item(itemnum).Add_Stat(Stats.Willpower) & " Will"
             End If
         Case ITEM_TYPE_CONSUME
             If Item(itemnum).AddHP > 0 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "+" & Item(itemnum).AddHP & " HP"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "+" & Item(itemnum).AddHP & " HP"
             End If
             If Item(itemnum).AddMP > 0 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "+" & Item(itemnum).AddMP & " SP"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "+" & Item(itemnum).AddMP & " SP"
             End If
             If Item(itemnum).AddEXP > 0 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "+" & Item(itemnum).AddEXP & " EXP"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "+" & Item(itemnum).AddEXP & " EXP"
             End If
             ' price
-            I = I + 1
-            ReDim Preserve sInfo(1 To I) As String
-            sInfo(I) = "Value: " & Item(itemnum).Price & "g"
+            i = i + 1
+            ReDim Preserve sInfo(1 To i) As String
+            sInfo(i) = "Value: " & Item(itemnum).Price & "g"
         Case ITEM_TYPE_SPELL
             ' price
-            I = I + 1
-            ReDim Preserve sInfo(1 To I) As String
-            sInfo(I) = "Value: " & Item(itemnum).Price & "g"
+            i = i + 1
+            ReDim Preserve sInfo(1 To i) As String
+            sInfo(i) = "Value: " & Item(itemnum).Price & "g"
     End Select
     
     ' go through and render all this shit
     y = y + 12
-    For I = 1 To UBound(sInfo)
+    For i = 1 To UBound(sInfo)
         y = y + 12
-        RenderText Font_GeorgiaShadow, sInfo(I), x + 141 - (EngineGetTextWidth(Font_GeorgiaShadow, sInfo(I)) \ 2), y, White
+        RenderText Font_GeorgiaShadow, sInfo(i), x + 141 - (EngineGetTextWidth(Font_GeorgiaShadow, sInfo(i)) \ 2), y, White
     Next
 End Sub
 
 Public Sub DrawInventory()
-Dim I As Long, x As Long, y As Long, itemnum As Long, ItemPic As Long
+Dim i As Long, x As Long, y As Long, itemnum As Long, ItemPic As Long
 Dim Amount As String
 Dim Colour As Long
 Dim Top As Long, Left As Long
@@ -2509,35 +2406,35 @@ Dim width As Long, height As Long
     Directx8.RenderTexture Tex_Buttons(1), x - 5, y - 27, 0, 0, Buttons(1).width, Buttons(1).height, Buttons(1).width, Buttons(1).height
     RenderText Font_GeorgiaShadow, "Inventory", x + 33, y - 17, White
     
-    For I = 1 To MAX_INV
-        itemnum = GetPlayerInvItemNum(MyIndex, I)
+    For i = 1 To MAX_INV
+        itemnum = GetPlayerInvItemNum(MyIndex, i)
         If itemnum > 0 And itemnum <= MAX_ITEMS Then
             ItemPic = Item(itemnum).Pic
             
             ' exit out if we're offering item in a trade.
             If InTrade > 0 Then
                 For x = 1 To MAX_INV
-                    If TradeYourOffer(x).Num = I Then
+                    If TradeYourOffer(x).Num = i Then
                         GoTo NextLoop
                     End If
                 Next
             End If
             
             ' exit out if dragging
-            If DragInvSlotNum = I Then GoTo NextLoop
+            If DragInvSlotNum = i Then GoTo NextLoop
 
             If ItemPic > 0 And ItemPic <= Count_Item Then
-                Top = GUIWindow(GUI_INVENTORY).y + InvTop + ((InvOffsetY + 32) * ((I - 1) \ InvColumns))
-                Left = GUIWindow(GUI_INVENTORY).x + InvLeft + ((InvOffsetX + 32) * (((I - 1) Mod InvColumns)))
+                Top = GUIWindow(GUI_INVENTORY).y + InvTop + ((InvOffsetY + 32) * ((i - 1) \ InvColumns))
+                Left = GUIWindow(GUI_INVENTORY).x + InvLeft + ((InvOffsetX + 32) * (((i - 1) Mod InvColumns)))
 
                 'EngineRenderRectangle Tex_Item(itempic), left, top, 0, 0, 32, 32, 32, 32, 32, 32
                 Directx8.RenderTexture Tex_Item(ItemPic), Left, Top, 0, 0, 32, 32, 32, 32
 
                 ' If item is a stack - draw the amount you have
-                If GetPlayerInvItemValue(MyIndex, I) > 1 Then
+                If GetPlayerInvItemValue(MyIndex, i) > 1 Then
                     y = Top + 21
                     x = Left - 4
-                    Amount = CStr(GetPlayerInvItemValue(MyIndex, I))
+                    Amount = CStr(GetPlayerInvItemValue(MyIndex, i))
                     
                     ' Draw currency but with k, m, b etc. using a convertion function
                     If CLng(Amount) < 1000000 Then
@@ -2591,7 +2488,7 @@ Dim spellSlot As Long
 End Sub
 
 Public Sub DrawSpellDesc(ByVal spellnum As Long, ByVal x As Long, ByVal y As Long, Optional ByVal spellSlot As Long = 0)
-Dim Colour As Long, theName As String, sInfo() As String, I As Long
+Dim Colour As Long, theName As String, sInfo() As String, i As Long
 Dim width As Long, height As Long
     
     ' don't show desc when dragging
@@ -2629,74 +2526,74 @@ Dim width As Long, height As Long
     ' first we cache all information strings then loop through and render them
 
     ' item type
-    I = 1
-    ReDim Preserve sInfo(1 To I) As String
+    i = 1
+    ReDim Preserve sInfo(1 To i) As String
     Select Case spell(spellnum).Type
         Case SPELL_TYPE_VITALCHANGE
-            sInfo(I) = "Change vitals"
+            sInfo(i) = "Change vitals"
         Case SPELL_TYPE_WARP
-            sInfo(I) = "Warp"
+            sInfo(i) = "Warp"
     End Select
     
     ' more info
     Select Case spell(spellnum).Type
         Case SPELL_TYPE_VITALCHANGE
             ' damage
-            I = I + 1
-            ReDim Preserve sInfo(1 To I) As String
-            sInfo(I) = "HP Vital: " & spell(spellnum).Vital(Vitals.HP)
+            i = i + 1
+            ReDim Preserve sInfo(1 To i) As String
+            sInfo(i) = "HP Vital: " & spell(spellnum).Vital(Vitals.HP)
             
-            I = I + 1
-            ReDim Preserve sInfo(1 To I) As String
-            sInfo(I) = "MP Vital: " & spell(spellnum).Vital(Vitals.MP)
+            i = i + 1
+            ReDim Preserve sInfo(1 To i) As String
+            sInfo(i) = "MP Vital: " & spell(spellnum).Vital(Vitals.MP)
             
             ' mp cost
-            I = I + 1
-            ReDim Preserve sInfo(1 To I) As String
-            sInfo(I) = "Cost: " & spell(spellnum).MPCost & " SP"
+            i = i + 1
+            ReDim Preserve sInfo(1 To i) As String
+            sInfo(i) = "Cost: " & spell(spellnum).MPCost & " SP"
             
             ' cast time
-            I = I + 1
-            ReDim Preserve sInfo(1 To I) As String
-            sInfo(I) = "Cast Time: " & spell(spellnum).CastTime & "s"
+            i = i + 1
+            ReDim Preserve sInfo(1 To i) As String
+            sInfo(i) = "Cast Time: " & spell(spellnum).CastTime & "s"
             
             ' cd time
-            I = I + 1
-            ReDim Preserve sInfo(1 To I) As String
-            sInfo(I) = "Cooldown: " & spell(spellnum).CDTime & "s"
+            i = i + 1
+            ReDim Preserve sInfo(1 To i) As String
+            sInfo(i) = "Cooldown: " & spell(spellnum).CDTime & "s"
             
             ' aoe
             If spell(spellnum).AoE > 0 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "AoE: " & spell(spellnum).AoE
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "AoE: " & spell(spellnum).AoE
             End If
             
             ' stun
             If spell(spellnum).StunDuration > 0 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "Stun: " & spell(spellnum).StunDuration & "s"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "Stun: " & spell(spellnum).StunDuration & "s"
             End If
             
             ' dot
             If spell(spellnum).Duration > 0 And spell(spellnum).Interval > 0 Then
-                I = I + 1
-                ReDim Preserve sInfo(1 To I) As String
-                sInfo(I) = "DoT: " & (spell(spellnum).Duration / spell(spellnum).Interval) & " tick"
+                i = i + 1
+                ReDim Preserve sInfo(1 To i) As String
+                sInfo(i) = "DoT: " & (spell(spellnum).Duration / spell(spellnum).Interval) & " tick"
             End If
     End Select
     
     ' go through and render all this shit
     y = y + 12
-    For I = 1 To UBound(sInfo)
+    For i = 1 To UBound(sInfo)
         y = y + 12
-        RenderText Font_GeorgiaShadow, sInfo(I), x + 141 - (EngineGetTextWidth(Font_GeorgiaShadow, sInfo(I)) \ 2), y, White
+        RenderText Font_GeorgiaShadow, sInfo(i), x + 141 - (EngineGetTextWidth(Font_GeorgiaShadow, sInfo(i)) \ 2), y, White
     Next
 End Sub
 
 Public Sub DrawSkills()
-Dim I As Long, x As Long, y As Long, spellnum As Long, spellpic As Long
+Dim i As Long, x As Long, y As Long, spellnum As Long, spellpic As Long
 Dim Top As Long, Left As Long
 Dim width As Long, height As Long
 
@@ -2711,18 +2608,18 @@ Dim width As Long, height As Long
     RenderText Font_GeorgiaShadow, "Skills", x + 33, y - 17, White
     
     ' render skills
-    For I = 1 To MAX_PLAYER_SPELLS
-        spellnum = PlayerSpells(I)
+    For i = 1 To MAX_PLAYER_SPELLS
+        spellnum = PlayerSpells(i)
         ' make sure not dragging it
-        If DragSpell = I Then GoTo NextLoop
+        If DragSpell = i Then GoTo NextLoop
         ' actually render
         If spellnum > 0 And spellnum <= MAX_SPELLS Then
             spellpic = spell(spellnum).Icon
 
             If spellpic > 0 And spellpic <= Count_Spellicon Then
-                Top = GUIWindow(GUI_SPELLS).y + SpellTop + ((SpellOffsetY + 32) * ((I - 1) \ SpellColumns))
-                Left = GUIWindow(GUI_SPELLS).x + SpellLeft + ((SpellOffsetX + 32) * (((I - 1) Mod SpellColumns)))
-                If SpellCD(I) > 0 Then
+                Top = GUIWindow(GUI_SPELLS).y + SpellTop + ((SpellOffsetY + 32) * ((i - 1) \ SpellColumns))
+                Left = GUIWindow(GUI_SPELLS).x + SpellLeft + ((SpellOffsetX + 32) * (((i - 1) Mod SpellColumns)))
+                If SpellCD(i) > 0 Then
                     'EngineRenderRectangle Tex_Spellicon(spellpic), left, top, 0, 0, 32, 32, 32, 32, 32, 32, , , , , , , 254, 190, 190, 190
                     Directx8.RenderTexture Tex_Spellicon(spellpic), Left, Top, 0, 0, 32, 32, 32, 32, D3DColorARGB(255, 100, 100, 100)
                 Else
@@ -2736,22 +2633,22 @@ NextLoop:
 End Sub
 
 Public Sub DrawEquipment()
-Dim x As Long, y As Long, I As Long
+Dim x As Long, y As Long, i As Long
 Dim itemnum As Long, ItemPic As Long
 
-    For I = 1 To Equipment.Equipment_Count - 1
-        itemnum = GetPlayerEquipment(MyIndex, I)
+    For i = 1 To Equipment.Equipment_Count - 1
+        itemnum = GetPlayerEquipment(MyIndex, i)
 
         ' get the item sprite
         If itemnum > 0 Then
             ItemPic = Tex_Item(Item(itemnum).Pic)
         Else
             ' no item equiped - use blank image
-            ItemPic = Tex_GUI(8 + I)
+            ItemPic = Tex_GUI(8 + i)
         End If
         
         y = GUIWindow(GUI_CHARACTER).y + EqTop
-        x = GUIWindow(GUI_CHARACTER).x + EqLeft + ((EqOffsetX + 32) * (((I - 1) Mod EqColumns)))
+        x = GUIWindow(GUI_CHARACTER).x + EqLeft + ((EqOffsetX + 32) * (((i - 1) Mod EqColumns)))
 
         'EngineRenderRectangle itempic, x, y, 0, 0, 32, 32, 32, 32, 32, 32
         Directx8.RenderTextureRectangle 6, x, y, 32, 32
@@ -2856,7 +2753,7 @@ Dim width As Long, height As Long
 End Sub
 
 Public Sub DrawOptions()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
 Dim width As Long, height As Long
 
     ' render the window
@@ -2883,50 +2780,50 @@ Dim width As Long, height As Long
     End Select
     RenderText Font_GeorgiaShadow, Options.Volume, GUIWindow(GUI_OPTIONS).x + 120, GUIWindow(GUI_OPTIONS).y + 134, Yellow
     ' draw buttons
-    For I = 26 To 33
+    For i = 26 To 33
         ' set co-ordinate
-        x = GUIWindow(GUI_OPTIONS).x + Buttons(I).x
-        y = GUIWindow(GUI_OPTIONS).y + Buttons(I).y
-        width = Buttons(I).width
-        height = Buttons(I).height
-        Select Case I
+        x = GUIWindow(GUI_OPTIONS).x + Buttons(i).x
+        y = GUIWindow(GUI_OPTIONS).y + Buttons(i).y
+        width = Buttons(i).width
+        height = Buttons(i).height
+        Select Case i
             Case 26: RenderText Font_GeorgiaShadow, "Music:", x - 60, y, White
             Case 28: RenderText Font_GeorgiaShadow, "Sound:", x - 60, y, White
             Case 30: RenderText Font_GeorgiaShadow, "Debug:", x - 60, y, White
             Case 32: RenderText Font_GeorgiaShadow, "Autotile:", x - 60, y, White
         End Select
         ' check for state
-        If Buttons(I).state = 2 Then
+        If Buttons(i).state = 2 Then
             ' we're clicked boyo
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
         Else
             ' we're normal
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height
             ' reset sound if needed
-            If lastButtonSound = I Then lastButtonSound = 0
+            If lastButtonSound = i Then lastButtonSound = 0
         End If
     Next
-    For I = 38 To 41
+    For i = 38 To 41
     ' set co-ordinate
-        x = GUIWindow(GUI_OPTIONS).x + Buttons(I).x
-        y = GUIWindow(GUI_OPTIONS).y + Buttons(I).y
-        width = Buttons(I).width
-        height = Buttons(I).height
+        x = GUIWindow(GUI_OPTIONS).x + Buttons(i).x
+        y = GUIWindow(GUI_OPTIONS).y + Buttons(i).y
+        width = Buttons(i).width
+        height = Buttons(i).height
         ' check for state
-        If Buttons(I).state = 2 Then
+        If Buttons(i).state = 2 Then
             ' we're clicked boyo
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
         Else
             ' we're normal
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height
             ' reset sound if needed
-            If lastButtonSound = I Then lastButtonSound = 0
+            If lastButtonSound = i Then lastButtonSound = 0
         End If
     Next
 End Sub
 
 Public Sub DrawParty()
-Dim I As Long, x As Long, y As Long, width As Long, playerNum As Long, theName As String
+Dim i As Long, x As Long, y As Long, width As Long, playerNum As Long, theName As String
 Dim height As Long
     
      ' render the window
@@ -2968,19 +2865,19 @@ Dim height As Long
         Directx8.RenderTexture Tex_GUI(17), x, y, 0, 0, width, 9, width, 9
         
         ' draw members
-        For I = 1 To MAX_PARTY_MEMBERS
-            If Party.Member(I) > 0 Then
-                If Party.Member(I) <> Party.Leader Then
+        For i = 1 To MAX_PARTY_MEMBERS
+            If Party.Member(i) > 0 Then
+                If Party.Member(i) <> Party.Leader Then
                     ' cache the index
-                    playerNum = Party.Member(I)
+                    playerNum = Party.Member(i)
                     ' name
                     theName = Trim$(GetPlayerName(playerNum))
                     ' draw name
-                    y = GUIWindow(GUI_PARTY).y + 12 + ((I - 1) * 49)
+                    y = GUIWindow(GUI_PARTY).y + 12 + ((i - 1) * 49)
                     x = GUIWindow(GUI_PARTY).x + 7 + 90 - (EngineGetTextWidth(Font_GeorgiaShadow, theName) / 2)
                     RenderText Font_GeorgiaShadow, theName, x, y, White
                     ' draw hp
-                    y = GUIWindow(GUI_PARTY).y + 29 + ((I - 1) * 49)
+                    y = GUIWindow(GUI_PARTY).y + 29 + ((i - 1) * 49)
                     x = GUIWindow(GUI_PARTY).x + 6
                     ' make sure we actually have the data before rendering
                     If GetPlayerVital(playerNum, Vitals.HP) > 0 And GetPlayerMaxVital(playerNum, Vitals.HP) > 0 Then
@@ -2989,7 +2886,7 @@ Dim height As Long
                     'EngineRenderRectangle Tex_GUI(16), x, y, 0, 0, width, 9, width, 9, width, 9
                     Directx8.RenderTexture Tex_GUI(16), x, y, 0, 0, width, 9, width, 9
                     ' draw mp
-                    y = GUIWindow(GUI_PARTY).y + 38 + ((I - 1) * 49)
+                    y = GUIWindow(GUI_PARTY).y + 38 + ((i - 1) * 49)
                     ' make sure we actually have the data before rendering
                     If GetPlayerVital(playerNum, Vitals.MP) > 0 And GetPlayerMaxVital(playerNum, Vitals.MP) > 0 Then
                         width = ((GetPlayerVital(playerNum, Vitals.MP) / Party_SPRWidth) / (GetPlayerMaxVital(playerNum, Vitals.MP) / Party_SPRWidth)) * Party_SPRWidth
@@ -3002,62 +2899,62 @@ Dim height As Long
     End If
     
     ' draw buttons
-    For I = 24 To 25
+    For i = 24 To 25
         ' set co-ordinate
-        x = GUIWindow(GUI_PARTY).x + Buttons(I).x
-        y = GUIWindow(GUI_PARTY).y + Buttons(I).y
-        width = Buttons(I).width
-        height = Buttons(I).height
+        x = GUIWindow(GUI_PARTY).x + Buttons(i).x
+        y = GUIWindow(GUI_PARTY).y + Buttons(i).y
+        width = Buttons(i).width
+        height = Buttons(i).height
         ' check for state
-        If Buttons(I).state = 2 Then
+        If Buttons(i).state = 2 Then
             ' we're clicked boyo
             'EngineRenderRectangle Tex_Buttons_c(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
         Else
             ' we're normal
             'EngineRenderRectangle Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height
             ' reset sound if needed
-            If lastButtonSound = I Then lastButtonSound = 0
+            If lastButtonSound = i Then lastButtonSound = 0
         End If
     Next
 End Sub
 
 Public Sub DrawHotbar()
-Dim I As Long, x As Long, y As Long, t As Long, sS As String
+Dim i As Long, x As Long, y As Long, t As Long, sS As String
 Dim width As Long, height As Long
     
     'Directx8.RenderTextureRectangle 2, GUIWindow(GUI_HOTBAR).X - 8, GUIWindow(GUI_HOTBAR).Y - 5, GUIWindow(GUI_HOTBAR).Width + 20, 25
-    For I = 1 To MAX_HOTBAR
+    For i = 1 To MAX_HOTBAR
         ' draw the box
-        x = GUIWindow(GUI_HOTBAR).x + ((I - 1) * (5 + 36))
+        x = GUIWindow(GUI_HOTBAR).x + ((i - 1) * (5 + 36))
         y = GUIWindow(GUI_HOTBAR).y
         width = 36
         height = 36
         'EngineRenderRectangle Tex_GUI(2), x, y, 0, 0, width, height, width, height, width, heigh
         Directx8.RenderTextureRectangle 6, x, y, width, height
         ' draw the icon
-        Select Case Hotbar(I).sType
+        Select Case Hotbar(i).sType
             Case 1 ' inventory
-                If Len(Item(Hotbar(I).Slot).name) > 0 Then
-                    If Item(Hotbar(I).Slot).Pic > 0 Then
+                If Len(Item(Hotbar(i).Slot).name) > 0 Then
+                    If Item(Hotbar(i).Slot).Pic > 0 Then
                         'EngineRenderRectangle Tex_Item(Item(Hotbar(i).Slot).Pic), x + 2, y + 2, 0, 0, 32, 32, 32, 32, 32, 32
-                        Directx8.RenderTexture Tex_Item(Item(Hotbar(I).Slot).Pic), x + 2, y + 2, 0, 0, 32, 32, 32, 32
+                        Directx8.RenderTexture Tex_Item(Item(Hotbar(i).Slot).Pic), x + 2, y + 2, 0, 0, 32, 32, 32, 32
                     End If
                 End If
             Case 2 ' spell
-                If Len(spell(Hotbar(I).Slot).name) > 0 Then
-                    If spell(Hotbar(I).Slot).Icon > 0 Then
+                If Len(spell(Hotbar(i).Slot).name) > 0 Then
+                    If spell(Hotbar(i).Slot).Icon > 0 Then
                         ' render normal icon
                         'EngineRenderRectangle Tex_Spellicon(Spell(Hotbar(i).Slot).Icon), x + 2, y + 2, 0, 0, 32, 32, 32, 32, 32, 32
-                        Directx8.RenderTexture Tex_Spellicon(spell(Hotbar(I).Slot).Icon), x + 2, y + 2, 0, 0, 32, 32, 32, 32
+                        Directx8.RenderTexture Tex_Spellicon(spell(Hotbar(i).Slot).Icon), x + 2, y + 2, 0, 0, 32, 32, 32, 32
                         ' we got the spell?
                         For t = 1 To MAX_PLAYER_SPELLS
                             If PlayerSpells(t) > 0 Then
-                                If PlayerSpells(t) = Hotbar(I).Slot Then
+                                If PlayerSpells(t) = Hotbar(i).Slot Then
                                     If SpellCD(t) > 0 Then
                                         'EngineRenderRectangle Tex_Spellicon(Spell(Hotbar(i).Slot).Icon), x + 2, y + 2, 0, 0, 32, 32, 32, 32, 32, 32, , , , , , , 254, 190, 190, 190
-                                        Directx8.RenderTexture Tex_Spellicon(spell(Hotbar(I).Slot).Icon), x + 2, y + 2, 0, 0, 32, 32, 32, 32, D3DColorARGB(255, 100, 100, 100)
+                                        Directx8.RenderTexture Tex_Spellicon(spell(Hotbar(i).Slot).Icon), x + 2, y + 2, 0, 0, 32, 32, 32, 32, D3DColorARGB(255, 100, 100, 100)
                                     End If
                                 End If
                             End If
@@ -3066,10 +2963,10 @@ Dim width As Long, height As Long
                 End If
         End Select
         ' draw the numbers
-        sS = str(I)
-        If I = 10 Then sS = "0"
-        If I = 11 Then sS = " -"
-        If I = 12 Then sS = " ="
+        sS = str(i)
+        If i = 10 Then sS = "0"
+        If i = 11 Then sS = " -"
+        If i = 12 Then sS = " ="
         RenderText Font_GeorgiaShadow, sS, x + 4, y + 20, White
     Next
 End Sub
@@ -3143,7 +3040,7 @@ Public Sub DrawGUI()
     End If
 End Sub
 Public Sub DrawChat()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
 Dim width As Long, height As Long
     ' render chatbox
     width = GUIWindow(GUI_CHAT).width
@@ -3154,23 +3051,23 @@ Dim width As Long, height As Long
     ' render the message input
     RenderText Font_GeorgiaShadow, RenderChatText & chatShowLine, GUIWindow(GUI_CHAT).x + 41, GUIWindow(GUI_CHAT).y + 123, White
     ' draw buttons
-    For I = 34 To 35
+    For i = 34 To 35
         ' set co-ordinate
-        x = GUIWindow(GUI_CHAT).x + Buttons(I).x
-        y = GUIWindow(GUI_CHAT).y + Buttons(I).y
-        width = Buttons(I).width
-        height = Buttons(I).height
+        x = GUIWindow(GUI_CHAT).x + Buttons(i).x
+        y = GUIWindow(GUI_CHAT).y + Buttons(i).y
+        width = Buttons(i).width
+        height = Buttons(i).height
         ' check for state
-        If Buttons(I).state = 2 Then
+        If Buttons(i).state = 2 Then
             ' we're clicked boyo
             'EngineRenderRectangle Tex_Buttons_c(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
         Else
             ' we're normal
             'EngineRenderRectangle Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height
             ' reset sound if needed
-            If lastButtonSound = I Then lastButtonSound = 0
+            If lastButtonSound = i Then lastButtonSound = 0
         End If
     Next
 End Sub
@@ -3186,7 +3083,7 @@ Dim width As Long, height As Long
 End Sub
 
 Public Sub DrawTutorial()
-Dim x As Long, y As Long, I As Long, width As Long
+Dim x As Long, y As Long, i As Long, width As Long
 Dim height As Long
 
     x = GUIWindow(GUI_TUTORIAL).x
@@ -3202,26 +3099,26 @@ Dim height As Long
     RenderText Font_GeorgiaShadow, WordWrap(chatText, 260), x + 10, y + 10, White
     
     ' Draw replies
-    For I = 1 To 4
-        If Len(Trim$(tutOpt(I))) > 0 Then
-            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(tutOpt(I)) & "]")
+    For i = 1 To 4
+        If Len(Trim$(tutOpt(i))) > 0 Then
+            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(tutOpt(i)) & "]")
             x = GUIWindow(GUI_CHAT).x + (GUIWindow(GUI_CHAT).width / 2) - (width / 2)
-            y = GUIWindow(GUI_CHAT).y + 115 - ((I - 1) * 15)
-            If tutOptState(I) = 2 Then
+            y = GUIWindow(GUI_CHAT).y + 115 - ((i - 1) * 15)
+            If tutOptState(i) = 2 Then
                 ' clicked
-                RenderText Font_GeorgiaShadow, "[" & Trim$(tutOpt(I)) & "]", x, y, Grey
+                RenderText Font_GeorgiaShadow, "[" & Trim$(tutOpt(i)) & "]", x, y, Grey
             Else
                 ' normal
-                RenderText Font_GeorgiaShadow, "[" & Trim$(tutOpt(I)) & "]", x, y, BrightBlue
+                RenderText Font_GeorgiaShadow, "[" & Trim$(tutOpt(i)) & "]", x, y, BrightBlue
                 ' reset sound if needed
-                If lastNpcChatsound = I Then lastNpcChatsound = 0
+                If lastNpcChatsound = i Then lastNpcChatsound = 0
             End If
         End If
     Next
 End Sub
 
 Public Sub DrawEventChat()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim i As Long, x As Long, y As Long, width As Long
 Dim height As Long
 
     ' draw background
@@ -3237,19 +3134,19 @@ Dim height As Long
         Case Evt_Menu
             ' Draw replies
             RenderText Font_GeorgiaShadow, WordWrap(Trim$(CurrentEvent.Text(1)), GUIWindow(GUI_EVENTCHAT).width - 10), x + 10, y + 10, White
-            For I = 1 To UBound(CurrentEvent.Text) - 1
-                If Len(Trim$(CurrentEvent.Text(I + 1))) > 0 Then
-                    width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(I + 1)) & "]")
+            For i = 1 To UBound(CurrentEvent.Text) - 1
+                If Len(Trim$(CurrentEvent.Text(i + 1))) > 0 Then
+                    width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(i + 1)) & "]")
                     x = GUIWindow(GUI_CHAT).x + ((GUIWindow(GUI_EVENTCHAT).width / 2) - width / 2)
-                    y = GUIWindow(GUI_CHAT).y + 115 - ((I - 1) * 15)
-                    If chatOptState(I) = 2 Then
+                    y = GUIWindow(GUI_CHAT).y + 115 - ((i - 1) * 15)
+                    If chatOptState(i) = 2 Then
                         ' clicked
-                        RenderText Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(I + 1)) & "]", x, y, Grey
+                        RenderText Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(i + 1)) & "]", x, y, Grey
                     Else
                         ' normal
-                        RenderText Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(I + 1)) & "]", x, y, BrightBlue
+                        RenderText Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(i + 1)) & "]", x, y, BrightBlue
                         ' reset sound if needed
-                        If lastNpcChatsound = I Then lastNpcChatsound = 0
+                        If lastNpcChatsound = i Then lastNpcChatsound = 0
                     End If
                 End If
             Next
@@ -3265,13 +3162,13 @@ Dim height As Long
                 ' normal
                 RenderText Font_GeorgiaShadow, "[Continue]", x, y, BrightBlue
                 ' reset sound if needed
-                If lastNpcChatsound = I Then lastNpcChatsound = 0
+                If lastNpcChatsound = i Then lastNpcChatsound = 0
             End If
     End Select
 End Sub
 
 Public Sub DrawShop()
-Dim I As Long, x As Long, y As Long, itemnum As Long, ItemPic As Long, Left As Long, Top As Long, Amount As Long, Colour As Long
+Dim i As Long, x As Long, y As Long, itemnum As Long, ItemPic As Long, Left As Long, Top As Long, Amount As Long, Colour As Long
 Dim width As Long, height As Long
 
     ' render the window
@@ -3281,23 +3178,23 @@ Dim width As Long, height As Long
     Directx8.RenderTextureRectangle 6, GUIWindow(GUI_SHOP).x, GUIWindow(GUI_SHOP).y, width, height
     
     ' render the shop items
-    For I = 1 To MAX_TRADES
-        itemnum = Shop(InShop).TradeItem(I).Item
+    For i = 1 To MAX_TRADES
+        itemnum = Shop(InShop).TradeItem(i).Item
         If itemnum > 0 And itemnum <= MAX_ITEMS Then
             ItemPic = Item(itemnum).Pic
             If ItemPic > 0 And ItemPic <= Count_Item Then
                 
-                Top = GUIWindow(GUI_SHOP).y + ShopTop + ((ShopOffsetY + 32) * ((I - 1) \ ShopColumns))
-                Left = GUIWindow(GUI_SHOP).x + ShopLeft + ((ShopOffsetX + 32) * (((I - 1) Mod ShopColumns)))
+                Top = GUIWindow(GUI_SHOP).y + ShopTop + ((ShopOffsetY + 32) * ((i - 1) \ ShopColumns))
+                Left = GUIWindow(GUI_SHOP).x + ShopLeft + ((ShopOffsetX + 32) * (((i - 1) Mod ShopColumns)))
                 
                 'EngineRenderRectangle Tex_Item(itempic), left, top, 0, 0, 32, 32, 32, 32, 32, 32
                 Directx8.RenderTexture Tex_Item(ItemPic), Left, Top, 0, 0, 32, 32, 32, 32
                 
                 ' If item is a stack - draw the amount you have
-                If Shop(InShop).TradeItem(I).ItemValue > 1 Then
+                If Shop(InShop).TradeItem(i).ItemValue > 1 Then
                     y = Top + 22
                     x = Left - 4
-                    Amount = CStr(Shop(InShop).TradeItem(I).ItemValue)
+                    Amount = CStr(Shop(InShop).TradeItem(i).ItemValue)
                     
                     ' Draw currency but with k, m, b etc. using a convertion function
                     If CLng(Amount) < 1000000 Then
@@ -3315,29 +3212,29 @@ Dim width As Long, height As Long
     Next
     
     ' draw buttons
-    For I = 23 To 23
+    For i = 23 To 23
         ' set co-ordinate
-        x = GUIWindow(GUI_SHOP).x + Buttons(I).x
-        y = GUIWindow(GUI_SHOP).y + Buttons(I).y
-        width = Buttons(I).width
-        height = Buttons(I).height
+        x = GUIWindow(GUI_SHOP).x + Buttons(i).x
+        y = GUIWindow(GUI_SHOP).y + Buttons(i).y
+        width = Buttons(i).width
+        height = Buttons(i).height
         ' check for state
-        If Buttons(I).state = 2 Then
+        If Buttons(i).state = 2 Then
             ' we're clicked boyo
             'EngineRenderRectangle Tex_Buttons_c(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
         Else
             ' we're normal
             'EngineRenderRectangle Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height
             ' reset sound if needed
-            If lastButtonSound = I Then lastButtonSound = 0
+            If lastButtonSound = i Then lastButtonSound = 0
         End If
     Next
 End Sub
 
 Public Sub DrawMenu()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
 Dim width As Long, height As Long
 
     ' draw background
@@ -3348,33 +3245,33 @@ Dim width As Long, height As Long
  '   Directx8.RenderTextureRectangle 2, GUIWindow(GUI_MENU).X - 3, GUIWindow(GUI_MENU).Y + 18, GUIWindow(GUI_MENU).Width + 6, 25
     
     ' draw buttons
-    For I = 1 To 6
+    For i = 1 To 6
         ' set co-ordinate
-        x = GUIWindow(GUI_MENU).x + Buttons(I).x
-        y = GUIWindow(GUI_MENU).y + Buttons(I).y
-        width = Buttons(I).width
-        height = Buttons(I).height
+        x = GUIWindow(GUI_MENU).x + Buttons(i).x
+        y = GUIWindow(GUI_MENU).y + Buttons(i).y
+        width = Buttons(i).width
+        height = Buttons(i).height
         ' check for state
-        If Buttons(I).state = 2 Then
+        If Buttons(i).state = 2 Then
             ' we're clicked boyo
             'EngineRenderRectangle Tex_Buttons_c(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
         Else
             ' we're normal
             'EngineRenderRectangle Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height
             ' reset sound if needed
-            If lastButtonSound = I Then lastButtonSound = 0
+            If lastButtonSound = i Then lastButtonSound = 0
         End If
     Next
 End Sub
 
 Public Sub DrawMainMenu()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
 Dim width As Long, height As Long
     
-    For I = 1 To 5
-        DrawMenuNpc I, 28
+    For i = 1 To 5
+        DrawMenuNpc i, 28
     Next
     
     ' draw logo
@@ -3406,34 +3303,34 @@ Dim width As Long, height As Long
         
         ' draw buttons
         If Not faderAlpha > 0 Then
-            For I = 1 To Count_Socialicon
-                If Not Trim(SocialIcon(I)) = vbNullString Then
-                    If SocialIconStatus(I) = 2 Then
-                        Directx8.RenderTexture Tex_Socialicon(I), 5 + ((I - 1) * 53), 5, 0, 0, 48, 48, 48, 48, D3DColorARGB(150, 255, 255, 255)
+            For i = 1 To Count_Socialicon
+                If Not Trim(SocialIcon(i)) = vbNullString Then
+                    If SocialIconStatus(i) = 2 Then
+                        Directx8.RenderTexture Tex_Socialicon(i), 5 + ((i - 1) * 53), 5, 0, 0, 48, 48, 48, 48, D3DColorARGB(150, 255, 255, 255)
                     Else
-                        Directx8.RenderTexture Tex_Socialicon(I), 5 + ((I - 1) * 53), 5, 0, 0, 48, 48, 48, 48
+                        Directx8.RenderTexture Tex_Socialicon(i), 5 + ((i - 1) * 53), 5, 0, 0, 48, 48, 48, 48
                     End If
                 Else
-                    Directx8.RenderTexture Tex_Socialicon(I), 5 + ((I - 1) * 53), 5, 0, 0, 48, 48, 48, 48, D3DColorARGB(150, 255, 255, 255)
+                    Directx8.RenderTexture Tex_Socialicon(i), 5 + ((i - 1) * 53), 5, 0, 0, 48, 48, 48, 48, D3DColorARGB(150, 255, 255, 255)
                 End If
             Next
-            For I = 7 To 10
+            For i = 7 To 10
                 ' set co-ordinate
-                x = GUIWindow(GUI_MAINMENU).x + Buttons(I).x
-                y = GUIWindow(GUI_MAINMENU).y + Buttons(I).y
-                width = Buttons(I).width
-                height = Buttons(I).height
+                x = GUIWindow(GUI_MAINMENU).x + Buttons(i).x
+                y = GUIWindow(GUI_MAINMENU).y + Buttons(i).y
+                width = Buttons(i).width
+                height = Buttons(i).height
                 ' check for state
-                If Buttons(I).state = 2 Then
+                If Buttons(i).state = 2 Then
                     ' we're clicked boyo
                     'EngineRenderRectangle Tex_Buttons_c(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-                    Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
+                    Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
                 Else
                     ' we're normal
                     'EngineRenderRectangle Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-                    Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height
+                    Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height
                     ' reset sound if needed
-                    If lastButtonSound = I Then lastButtonSound = 0
+                    If lastButtonSound = i Then lastButtonSound = 0
                 End If
             Next
         End If
@@ -3454,7 +3351,7 @@ End Sub
 Public Sub DrawNewChar()
 Dim x As Long, y As Long, buttonnum As Long
 Dim width As Long, height As Long
-On Error GoTo errorhandler
+
     x = GUIWindow(GUI_MAINMENU).x
     y = GUIWindow(GUI_MAINMENU).y
     
@@ -3508,10 +3405,6 @@ On Error GoTo errorhandler
             If lastButtonSound = buttonnum Then lastButtonSound = 0
         End If
     End If
-    Exit Sub
-errorhandler:
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub DrawLogin()
@@ -3775,27 +3668,27 @@ Public Sub DrawGDI()
 End Sub
 
 Public Sub DrawTrade()
-Dim I As Long, x As Long, y As Long, itemnum As Long, ItemPic As Long, Left As Long, Top As Long, Amount As Long, Colour As Long, width As Long
+Dim i As Long, x As Long, y As Long, itemnum As Long, ItemPic As Long, Left As Long, Top As Long, Amount As Long, Colour As Long, width As Long
 Dim height As Long
 
     width = GUIWindow(GUI_TRADE).width
     height = GUIWindow(GUI_TRADE).height
     Directx8.RenderTexture Tex_GUI(13), GUIWindow(GUI_TRADE).x, GUIWindow(GUI_TRADE).y, 0, 0, width, height, width, height
-        For I = 1 To MAX_INV
+        For i = 1 To MAX_INV
             ' render your offer
-            itemnum = GetPlayerInvItemNum(MyIndex, TradeYourOffer(I).Num)
+            itemnum = GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).Num)
             If itemnum > 0 And itemnum <= MAX_ITEMS Then
                 ItemPic = Item(itemnum).Pic
                 If ItemPic > 0 And ItemPic <= Count_Item Then
-                    Top = GUIWindow(GUI_TRADE).y + 31 + InvTop + ((InvOffsetY + 32) * ((I - 1) \ InvColumns))
-                    Left = GUIWindow(GUI_TRADE).x + 29 + InvLeft + ((InvOffsetX + 32) * (((I - 1) Mod InvColumns)))
+                    Top = GUIWindow(GUI_TRADE).y + 31 + InvTop + ((InvOffsetY + 32) * ((i - 1) \ InvColumns))
+                    Left = GUIWindow(GUI_TRADE).x + 29 + InvLeft + ((InvOffsetX + 32) * (((i - 1) Mod InvColumns)))
                     Directx8.RenderTexture Tex_Item(ItemPic), Left, Top, 0, 0, 32, 32, 32, 32
                     ' If item is a stack - draw the amount you have
-                    If TradeYourOffer(I).Value > 1 Then
+                    If TradeYourOffer(i).Value > 1 Then
                         y = Top + 21
                         x = Left - 4
                             
-                        Amount = CStr(TradeYourOffer(I).Value)
+                        Amount = CStr(TradeYourOffer(i).Value)
                             
                         ' Draw currency but with k, m, b etc. using a convertion function
                         If CLng(Amount) < 1000000 Then
@@ -3811,20 +3704,20 @@ Dim height As Long
             End If
             
             ' draw their offer
-            itemnum = TradeTheirOffer(I).Num
+            itemnum = TradeTheirOffer(i).Num
             If itemnum > 0 And itemnum <= MAX_ITEMS Then
                 ItemPic = Item(itemnum).Pic
                 If ItemPic > 0 And ItemPic <= Count_Item Then
                 
-                    Top = GUIWindow(GUI_TRADE).y + 31 + InvTop - 2 + ((InvOffsetY + 32) * ((I - 1) \ InvColumns))
-                    Left = GUIWindow(GUI_TRADE).x + 257 + InvLeft + ((InvOffsetX + 32) * (((I - 1) Mod InvColumns)))
+                    Top = GUIWindow(GUI_TRADE).y + 31 + InvTop - 2 + ((InvOffsetY + 32) * ((i - 1) \ InvColumns))
+                    Left = GUIWindow(GUI_TRADE).x + 257 + InvLeft + ((InvOffsetX + 32) * (((i - 1) Mod InvColumns)))
                     Directx8.RenderTexture Tex_Item(ItemPic), Left, Top, 0, 0, 32, 32, 32, 32
                     ' If item is a stack - draw the amount you have
-                    If TradeTheirOffer(I).Value > 1 Then
+                    If TradeTheirOffer(i).Value > 1 Then
                         y = Top + 21
                         x = Left - 4
                                 
-                        Amount = CStr(TradeTheirOffer(I).Value)
+                        Amount = CStr(TradeTheirOffer(i).Value)
                                 
                         ' Draw currency but with k, m, b etc. using a convertion function
                         If CLng(Amount) < 1000000 Then
@@ -3840,23 +3733,23 @@ Dim height As Long
             End If
         Next
         ' draw buttons
-    For I = 36 To 37
+    For i = 36 To 37
         ' set co-ordinate
-        x = Buttons(I).x
-        y = Buttons(I).y
-        width = Buttons(I).width
-        height = Buttons(I).height
+        x = Buttons(i).x
+        y = Buttons(i).y
+        width = Buttons(i).width
+        height = Buttons(i).height
         ' check for state
-        If Buttons(I).state = 2 Then
+        If Buttons(i).state = 2 Then
             ' we're clicked boyo
             'EngineRenderRectangle Tex_Buttons_c(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
         Else
             ' we're normal
             'EngineRenderRectangle Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-            Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height
+            Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height
             ' reset sound if needed
-            If lastButtonSound = I Then lastButtonSound = 0
+            If lastButtonSound = i Then lastButtonSound = 0
         End If
     Next
     RenderText Font_GeorgiaShadow, "Your worth: " & YourWorth, GUIWindow(GUI_TRADE).x + 21, GUIWindow(GUI_TRADE).y + 299, White
@@ -3986,7 +3879,7 @@ Dim height As Long
 End Sub
 
 Public Sub DrawBank()
-Dim I As Long, x As Long, y As Long, itemnum As Long, ItemPic As Long, Left As Long, Top As Long, Amount As Long, Colour As Long, width As Long
+Dim i As Long, x As Long, y As Long, itemnum As Long, ItemPic As Long, Left As Long, Top As Long, Amount As Long, Colour As Long, width As Long
 Dim height As Long
 
     width = GUIWindow(GUI_BANK).width
@@ -3994,20 +3887,20 @@ Dim height As Long
     
     Directx8.RenderTextureRectangle 6, GUIWindow(GUI_BANK).x + BankLeft, GUIWindow(GUI_BANK).y + BankTop, width - (BankLeft * 2), height - (BankTop * 2)
     
-    For I = 1 To MAX_BANK
-        itemnum = GetBankItemNum(I)
+    For i = 1 To MAX_BANK
+        itemnum = GetBankItemNum(i)
         If itemnum > 0 And itemnum <= MAX_ITEMS Then
             ItemPic = Item(itemnum).Pic
             If ItemPic > 0 And ItemPic <= Count_Item Then
-                Top = GUIWindow(GUI_BANK).y + BankTop + ((BankOffsetY + 32) * ((I - 1) \ BankColumns))
-                Left = GUIWindow(GUI_BANK).x + BankLeft + ((BankOffsetX + 32) * (((I - 1) Mod BankColumns)))
+                Top = GUIWindow(GUI_BANK).y + BankTop + ((BankOffsetY + 32) * ((i - 1) \ BankColumns))
+                Left = GUIWindow(GUI_BANK).x + BankLeft + ((BankOffsetX + 32) * (((i - 1) Mod BankColumns)))
                 Directx8.RenderTexture Tex_Item(ItemPic), Left, Top, 0, 0, 32, 32, 32, 32
                        
                 ' If the bank item is in a stack, draw the amount...
-                If GetBankItemValue(I) > 1 Then
+                If GetBankItemValue(i) > 1 Then
                     y = Top + 22
                     x = Left - 4
-                    Amount = CStr(GetBankItemValue(I))
+                    Amount = CStr(GetBankItemValue(i))
                             
                     ' Draw the currency
                     If CLng(Amount) < 1000000 Then
@@ -4067,9 +3960,7 @@ End Sub
 
 Public Sub DrawBlood(ByVal Index As Long)
 Dim rec As RECT
-    
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
+
     'load blood then
     BloodCount = gTexture(Tex_Blood).width / 32
     
@@ -4086,13 +3977,6 @@ Dim rec As RECT
         rec.Right = rec.Left + PIC_X
         Directx8.RenderTexture Tex_Blood, ConvertMapX(.x * PIC_X), ConvertMapY(.y * PIC_Y), rec.Left, rec.Top, rec.Right - rec.Left, rec.bottom - rec.Top, rec.Right - rec.Left, rec.bottom - rec.Top, D3DColorARGB(.Alpha, 255, 255, 255)
     End With
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "DrawBlood", "modRendering", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Sub DrawNight()
@@ -4177,12 +4061,12 @@ If myTargetType = TARGET_TYPE_NPC Then GUIWindow(GUI_RIGHTMENU).visible = False
 End Sub
 
 Public Sub DrawProjectile()
-Dim Angle As Long, x As Long, y As Long, I As Long
+Dim Angle As Long, x As Long, y As Long, i As Long
     If LastProjectile > 0 Then
         
         ' ****** Create Particle ******
-        For I = 1 To LastProjectile
-            With ProjectileList(I)
+        For i = 1 To LastProjectile
+            With ProjectileList(i)
                 If .Graphic Then
                 
                     ' ****** Update Position ******
@@ -4212,11 +4096,11 @@ Dim Angle As Long, x As Long, y As Long, I As Long
         Next
         
         ' ****** Erase Projectile ******    Seperate Loop For Erasing
-        For I = 1 To LastProjectile
-            If ProjectileList(I).Graphic Then
-                If Abs(ProjectileList(I).x - ProjectileList(I).tx) < 20 Then
-                    If Abs(ProjectileList(I).y - ProjectileList(I).ty) < 20 Then
-                        Call ClearProjectile(I)
+        For i = 1 To LastProjectile
+            If ProjectileList(i).Graphic Then
+                If Abs(ProjectileList(i).x - ProjectileList(i).tx) < 20 Then
+                    If Abs(ProjectileList(i).y - ProjectileList(i).ty) < 20 Then
+                        Call ClearProjectile(i)
                     End If
                 End If
             End If
@@ -4322,7 +4206,7 @@ Public Sub DrawMenuNpc(ByVal Index As Long, ByVal Sprite As Long)
 End Sub
 
 Public Sub DrawGuildMenu()
-Dim width As Long, height As Long, x As Long, y As Long, I As Long
+Dim width As Long, height As Long, x As Long, y As Long, i As Long
     ' render the window
     x = GUIWindow(GUI_GUILD).x
     y = GUIWindow(GUI_GUILD).y
@@ -4343,36 +4227,36 @@ Dim width As Long, height As Long, x As Long, y As Long, I As Long
         Directx8.RenderTexture Tex_Guildicon(GuildData.Guild_Logo), GUIWindow(GUI_GUILD).x + 25, GUIWindow(GUI_GUILD).y + 53, 0, 0, 16, 16, 16, 16, D3DColorRGBA(255, 255, 255, 200)
         
         If Not TempPlayer(MyIndex).GuildName = vbNullString Then
-            For I = 1 To MAX_GUILD_MEMBERS
-                If I > GuildScroll - (I - GuildScroll) - 2 And I < GuildScroll + 5 Then
-                    If Not GuildData.Guild_Members(I).User_Name = vbNullString Then
-                        If GuildData.Guild_Members(I).Online = True Then
-                            RenderText Font_GeorgiaShadow, "-  " & GuildData.Guild_Members(I).User_Name, GUIWindow(GUI_GUILD).x + 25, GUIWindow(GUI_GUILD).y + 99 + ((I - GuildScroll) * 14), BrightGreen
+            For i = 1 To MAX_GUILD_MEMBERS
+                If i > GuildScroll - (i - GuildScroll) - 2 And i < GuildScroll + 5 Then
+                    If Not GuildData.Guild_Members(i).User_Name = vbNullString Then
+                        If GuildData.Guild_Members(i).Online = True Then
+                            RenderText Font_GeorgiaShadow, "-  " & GuildData.Guild_Members(i).User_Name, GUIWindow(GUI_GUILD).x + 25, GUIWindow(GUI_GUILD).y + 99 + ((i - GuildScroll) * 14), BrightGreen
                         Else
-                            RenderText Font_GeorgiaShadow, "-  " & GuildData.Guild_Members(I).User_Name, GUIWindow(GUI_GUILD).x + 25, GUIWindow(GUI_GUILD).y + 99 + ((I - GuildScroll) * 14), BrightRed
+                            RenderText Font_GeorgiaShadow, "-  " & GuildData.Guild_Members(i).User_Name, GUIWindow(GUI_GUILD).x + 25, GUIWindow(GUI_GUILD).y + 99 + ((i - GuildScroll) * 14), BrightRed
                         End If
                     End If
                 End If
-            Next I
+            Next i
         End If
         ' draw buttons
-        For I = 42 To 43
+        For i = 42 To 43
             ' set co-ordinate
-            x = GUIWindow(GUI_GUILD).x + Buttons(I).x
-            y = GUIWindow(GUI_GUILD).y + Buttons(I).y
-            width = Buttons(I).width
-            height = Buttons(I).height
+            x = GUIWindow(GUI_GUILD).x + Buttons(i).x
+            y = GUIWindow(GUI_GUILD).y + Buttons(i).y
+            width = Buttons(i).width
+            height = Buttons(i).height
             ' check for state
-            If Buttons(I).state = 2 Then
+            If Buttons(i).state = 2 Then
                 ' we're clicked boyo
                 'EngineRenderRectangle Tex_Buttons_c(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-                Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
+                Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
             Else
                 ' we're normal
                 'EngineRenderRectangle Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-                Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height
+                Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height
                 ' reset sound if needed
-                If lastButtonSound = I Then lastButtonSound = 0
+                If lastButtonSound = i Then lastButtonSound = 0
             End If
         Next
     Else
@@ -4469,7 +4353,7 @@ Public Sub DrawPet(ByVal Index As Long)
 End Sub
 
 Public Sub DrawPetMenu()
-Dim I As Long, x As Long, y As Long, dX As Long, dY As Long
+Dim i As Long, x As Long, y As Long, dX As Long, dY As Long
 Dim width As Long, height As Long
 Dim tmpString As String
 
@@ -4518,40 +4402,40 @@ Dim tmpString As String
         
         RenderText Font_GeorgiaShadow, "Release Pet", x + 5, y + 235, White
         
-        For I = 1 To 4
+        For i = 1 To 4
             y = GUIWindow(GUI_PET).y + PTop
-            x = GUIWindow(GUI_PET).x + PLeft + ((POffsetX + 32) * (((I - 1) Mod PColumns)))
+            x = GUIWindow(GUI_PET).x + PLeft + ((POffsetX + 32) * (((i - 1) Mod PColumns)))
             Directx8.RenderTextureRectangle 6, x, y, 32, 32
-            If Player(MyIndex).Pet.spell(I) > 0 Then
-                Directx8.RenderTexture Tex_Spellicon(spell(Player(MyIndex).Pet.spell(I)).Icon), x, y, 0, 0, 32, 32, 32, 32
+            If Player(MyIndex).Pet.spell(i) > 0 Then
+                Directx8.RenderTexture Tex_Spellicon(spell(Player(MyIndex).Pet.spell(i)).Icon), x, y, 0, 0, 32, 32, 32, 32
             Else
                 Directx8.RenderTexture Tex_Spellicon(1), x, y, 0, 0, 32, 32, 32, 32, D3DColorARGB(255, 20, 20, 20)
             End If
         Next
         
             ' draw buttons
-        For I = 44 To 46
+        For i = 44 To 46
             ' set co-ordinate
-            x = GUIWindow(GUI_PET).x + Buttons(I).x
-            y = GUIWindow(GUI_PET).y + Buttons(I).y
-            width = Buttons(I).width
-            height = Buttons(I).height
-            If Player(MyIndex).Pet.AttackBehaviour = I - 43 Then
+            x = GUIWindow(GUI_PET).x + Buttons(i).x
+            y = GUIWindow(GUI_PET).y + Buttons(i).y
+            width = Buttons(i).width
+            height = Buttons(i).height
+            If Player(MyIndex).Pet.AttackBehaviour = i - 43 Then
                 Directx8.RenderTextureRectangle 3, x, y, width, height
             Else
                 Directx8.RenderTextureRectangle 2, x, y, width, height
             End If
             ' check for state
-            If Buttons(I).state = 2 Then
+            If Buttons(i).state = 2 Then
                 ' we're clicked boyo
                 'EngineRenderRectangle Tex_Buttons_c(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-                Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
+                Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, D3DColorARGB(200, 255, 255, 255)
             Else
                 ' we're normal
                 'EngineRenderRectangle Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height, width, height
-                Directx8.RenderTexture Tex_Buttons(Buttons(I).PicNum), x, y, 0, 0, width, height, width, height
+                Directx8.RenderTexture Tex_Buttons(Buttons(i).PicNum), x, y, 0, 0, width, height, width, height
                 ' reset sound if needed
-                If lastButtonSound = I Then lastButtonSound = 0
+                If lastButtonSound = i Then lastButtonSound = 0
             End If
         Next
         
@@ -4710,7 +4594,7 @@ e:
     
 End Sub
 Public Sub DrawQuestsLog()
-Dim I As Long, width As Long, repeatable As Long
+Dim i As Long, width As Long, repeatable As Long
 Dim height As Long
 
     width = 600
@@ -4748,8 +4632,8 @@ Dim height As Long
             End If
             RenderText Font_GeorgiaShadow, "Description: ", GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 62, BrightGreen
            
-            For I = 0 To UBound(descLine)
-                RenderText Font_GeorgiaShadow, WordWrap(descLine(I), 340), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 78 + (12 * I), White
+            For i = 0 To UBound(descLine)
+                RenderText Font_GeorgiaShadow, WordWrap(descLine(i), 340), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 78 + (12 * i), White
             Next
             
             If reqlvl > 0 Then
@@ -4776,14 +4660,14 @@ Dim height As Long
                 If Quest(QuestNum).RewardItem(1).Item = 0 Then
                     Else
                          Directx8.RenderTexture Tex_Item(Item(Quest(QuestNum).RewardItem(1).Item).Pic), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 225, 0, 0, 26, 26, 32, 32
-                        RenderText Font_GeorgiaShadow, Trim$(Item(Trim$(Quest(QuestNum).RewardItem(I).Item)).name) & " X  " & Trim$(Quest(QuestNum).RewardItem(I).Value), GUIWindow(GUI_QUESTS).x + 230, GUIWindow(GUI_QUESTS).y + 230, White
+                        RenderText Font_GeorgiaShadow, Trim$(Item(Trim$(Quest(QuestNum).RewardItem(i).Item)).name) & " X  " & Trim$(Quest(QuestNum).RewardItem(i).Value), GUIWindow(GUI_QUESTS).x + 230, GUIWindow(GUI_QUESTS).y + 230, White
                     End If
                     'other items
-                For I = 2 To 8
-                    If Quest(QuestNum).RewardItem(I).Item = 0 Then
+                For i = 2 To 8
+                    If Quest(QuestNum).RewardItem(i).Item = 0 Then
                     Else
-                         Directx8.RenderTexture Tex_Item(Item(Quest(QuestNum).RewardItem(I).Item).Pic), GUIWindow(GUI_QUESTS).x + 295, GUIWindow(GUI_QUESTS).y + 140 + (I * 25), 0, 0, 32, 32, 32, 32
-                        RenderText Font_GeorgiaShadow, Trim$(Item(Trim$(Quest(QuestNum).RewardItem(I).Item)).name) & " X  " & Trim$(Quest(QuestNum).RewardItem(I).Value), GUIWindow(GUI_QUESTS).x + 325, GUIWindow(GUI_QUESTS).y + 150 + (I * 25), White
+                         Directx8.RenderTexture Tex_Item(Item(Quest(QuestNum).RewardItem(i).Item).Pic), GUIWindow(GUI_QUESTS).x + 295, GUIWindow(GUI_QUESTS).y + 140 + (i * 25), 0, 0, 32, 32, 32, 32
+                        RenderText Font_GeorgiaShadow, Trim$(Item(Trim$(Quest(QuestNum).RewardItem(i).Item)).name) & " X  " & Trim$(Quest(QuestNum).RewardItem(i).Value), GUIWindow(GUI_QUESTS).x + 325, GUIWindow(GUI_QUESTS).y + 150 + (i * 25), White
                     End If
                 Next
         
@@ -4835,19 +4719,9 @@ Task = Trim$(Quest(QuestNum).Task(ActualTask).TaskLog)
     
 End Sub
 Public Sub DrawChest(ByVal x As Long, ByVal y As Long, ByVal Opened As Boolean)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If Opened = False Then
          Directx8.RenderTexture Tex_GUI(18), GUIWindow(GUI_QUESTS).x, GUIWindow(GUI_QUESTS).y, 0, 0, 0, 0, 0, 0
     Else
          Directx8.RenderTexture Tex_GUI(18), GUIWindow(GUI_QUESTS).x, GUIWindow(GUI_QUESTS).y, 0, 0, 0, 0, 0, 0
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "DrawChest", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub

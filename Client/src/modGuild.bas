@@ -52,15 +52,13 @@ Public Type GuildRec
     Guild_Logo As Long
 End Type
 Public Sub HandleAdminGuild(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
-    If Options.Debug = 1 Then On Error GoTo errorhandler
+    Set Buffer = New clsBuffer
     
-    Set buffer = New clsBuffer
+    Buffer.WriteBytes data()
     
-    buffer.WriteBytes data()
-    
-    If buffer.ReadByte = 1 Then
+    If Buffer.ReadByte = 1 Then
         If Player(MyIndex).Donator = YES Then
             frmGuildAdmin.scrlGuildLogo.Enabled = True
         Else
@@ -72,48 +70,40 @@ Dim buffer As clsBuffer
     End If
 
     
-    Set buffer = Nothing
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "HandleAdminGuild", "modGuild", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
+    Set Buffer = Nothing
 End Sub
 Public Sub HandleSendGuild(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
-Dim buffer As clsBuffer
-Dim I As Integer
+Dim Buffer As clsBuffer
+Dim i As Integer
 Dim B As Integer
 
-    If Options.Debug = 1 Then On Error GoTo errorhandler
+    Set Buffer = New clsBuffer
     
-    Set buffer = New clsBuffer
+    Buffer.WriteBytes data()
     
-    buffer.WriteBytes data()
-    
-    GuildData.Guild_Name = buffer.ReadString
-    GuildData.Guild_Tag = buffer.ReadString
-    GuildData.Guild_Color = buffer.ReadInteger
-    GuildData.Guild_MOTD = buffer.ReadString
-    GuildData.Guild_RecruitRank = buffer.ReadInteger
-    GuildData.Guild_Logo = buffer.ReadLong
+    GuildData.Guild_Name = Buffer.ReadString
+    GuildData.Guild_Tag = Buffer.ReadString
+    GuildData.Guild_Color = Buffer.ReadInteger
+    GuildData.Guild_MOTD = Buffer.ReadString
+    GuildData.Guild_RecruitRank = Buffer.ReadInteger
+    GuildData.Guild_Logo = Buffer.ReadLong
     
     'Get Members
-    For I = 1 To MAX_GUILD_MEMBERS
-        GuildData.Guild_Members(I).User_Name = buffer.ReadString
-        GuildData.Guild_Members(I).Rank = buffer.ReadInteger
-        GuildData.Guild_Members(I).Comment = buffer.ReadString
-        GuildData.Guild_Members(I).Online = buffer.ReadByte
-    Next I
+    For i = 1 To MAX_GUILD_MEMBERS
+        GuildData.Guild_Members(i).User_Name = Buffer.ReadString
+        GuildData.Guild_Members(i).Rank = Buffer.ReadInteger
+        GuildData.Guild_Members(i).Comment = Buffer.ReadString
+        GuildData.Guild_Members(i).Online = Buffer.ReadByte
+    Next i
     
     'Get Ranks
-    For I = 1 To MAX_GUILD_RANKS
-        GuildData.Guild_Ranks(I).name = buffer.ReadString
+    For i = 1 To MAX_GUILD_RANKS
+        GuildData.Guild_Ranks(i).name = Buffer.ReadString
         For B = 1 To MAX_GUILD_RANKS_PERMISSION
-            GuildData.Guild_Ranks(I).RankPermission(B) = buffer.ReadByte
-            GuildData.Guild_Ranks(I).RankPermissionName(B) = buffer.ReadString
+            GuildData.Guild_Ranks(i).RankPermission(B) = Buffer.ReadByte
+            GuildData.Guild_Ranks(i).RankPermissionName(B) = Buffer.ReadString
         Next B
-    Next I
+    Next i
     
     'Update Guildadmin data
     Call frmGuildAdmin.Load_Guild_Admin
@@ -124,128 +114,79 @@ Dim B As Integer
     TempPlayer(MyIndex).GuildColor = GuildData.Guild_Color
     
     
-    Set buffer = Nothing
-    
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "HandleSendGuild", "modGuild", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
+    Set Buffer = Nothing
 End Sub
 Public Sub GuildMsg(ByVal Text As String)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    Set buffer = New clsBuffer
-    buffer.WriteLong CSayGuild
-    buffer.WriteString Text
-    SendData buffer.ToArray()
-    Set buffer = Nothing
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "GuildMsg", "modGuild", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong CSayGuild
+    Buffer.WriteString Text
+    SendData Buffer.ToArray()
+    Set Buffer = Nothing
 End Sub
 
 Public Sub GuildCommand(ByVal Command As Integer, ByVal SendText As String, Optional ByVal SendText2 As String)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    Set buffer = New clsBuffer
-    buffer.WriteLong CGuildCommand
-    buffer.WriteInteger Command
-    buffer.WriteString SendText
-    buffer.WriteString SendText2
-    SendData buffer.ToArray()
-    Set buffer = Nothing
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "GuildMsg", "modGuild", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong CGuildCommand
+    Buffer.WriteInteger Command
+    Buffer.WriteString SendText
+    Buffer.WriteString SendText2
+    SendData Buffer.ToArray()
+    Set Buffer = Nothing
 End Sub
 
 Public Sub GuildSave(ByVal SaveType As Integer, ByVal Index As Integer)
-Dim buffer As clsBuffer
-Dim I As Integer
+Dim Buffer As clsBuffer
+Dim i As Integer
 'SaveType
 '1=options
 '2=users
 '3=ranks
- If Index = 0 Then Exit Sub
 
-
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
+    Set Buffer = New clsBuffer
+    Buffer.WriteLong CSaveGuild
     
-    Set buffer = New clsBuffer
-    buffer.WriteLong CSaveGuild
-    
-    buffer.WriteInteger SaveType
-    buffer.WriteInteger Index
+    Buffer.WriteInteger SaveType
+    Buffer.WriteInteger Index
     
     Select Case SaveType
     Case 1
         'options
-        buffer.WriteString GuildData.Guild_Name
-        buffer.WriteString GuildData.Guild_Tag
-        buffer.WriteInteger GuildData.Guild_Color
-        buffer.WriteInteger GuildData.Guild_RecruitRank
-        buffer.WriteString GuildData.Guild_MOTD
-        buffer.WriteLong GuildData.Guild_Logo
+        Buffer.WriteString GuildData.Guild_Name
+        Buffer.WriteString GuildData.Guild_Tag
+        Buffer.WriteInteger GuildData.Guild_Color
+        Buffer.WriteInteger GuildData.Guild_RecruitRank
+        Buffer.WriteString GuildData.Guild_MOTD
+        Buffer.WriteLong GuildData.Guild_Logo
     Case 2
         'users
-        buffer.WriteInteger GuildData.Guild_Members(Index).Rank
-        buffer.WriteString GuildData.Guild_Members(Index).Comment
+        Buffer.WriteInteger GuildData.Guild_Members(Index).Rank
+        Buffer.WriteString GuildData.Guild_Members(Index).Comment
     Case 3
         'ranks
-        buffer.WriteString GuildData.Guild_Ranks(Index).name
-        For I = 1 To MAX_GUILD_RANKS_PERMISSION
-            buffer.WriteByte GuildData.Guild_Ranks(Index).RankPermission(I)
-        Next I
+        Buffer.WriteString GuildData.Guild_Ranks(Index).name
+        For i = 1 To MAX_GUILD_RANKS_PERMISSION
+            Buffer.WriteByte GuildData.Guild_Ranks(Index).RankPermission(i)
+        Next i
     End Select
 
-    SendData buffer.ToArray()
-    Set buffer = Nothing
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "GuildMsg", "modGuild", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    SendData Buffer.ToArray()
+    Set Buffer = Nothing
 End Sub
 
 Public Sub HandleGuildInvite(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
-Dim buffer As clsBuffer
+Dim Buffer As clsBuffer
 Dim theName As String
 Dim GuildName As String
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    Set buffer = New clsBuffer
-    buffer.WriteBytes data()
+    Set Buffer = New clsBuffer
+    Buffer.WriteBytes data()
 
-    theName = buffer.ReadString
-    GuildName = buffer.ReadString
+    theName = Buffer.ReadString
+    GuildName = Buffer.ReadString
     
     Dialogue "Guild Invitation", theName & " has invited you to " & GuildName & ". Would you like to join?", DIALOGUE_TYPE_GUILD, True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "HandleGuildInvite", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub

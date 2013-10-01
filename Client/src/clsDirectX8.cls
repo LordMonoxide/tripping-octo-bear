@@ -67,13 +67,13 @@ Public Sub Init()
     Call UpdateChatArray
 End Sub
 Public Sub Destroy()
-Dim I As Long
+Dim i As Long
 
     If Not D3DDevice8 Is Nothing Then Set D3DDevice8 = Nothing
     If Not D3D8 Is Nothing Then Set D3D8 = Nothing
 
-    For I = 1 To mTextureNum
-        Set gTexture(I).Texture = Nothing
+    For i = 1 To mTextureNum
+        Set gTexture(i).Texture = Nothing
     Next
 
     If Not dX Is Nothing Then Set dX = Nothing
@@ -102,19 +102,19 @@ End Function
 
 Public Sub UnloadTextures()
 Dim Count As Long
-Dim I As Long
+Dim i As Long
 
     Count = UBound(gTexture)
     If Count <= 0 Then Exit Sub
     
-    For I = 0 To Count
-        With gTexture(I)
+    For i = 0 To Count
+        With gTexture(i)
             ' Unload it
             If .UnloadTimer > timeGetTime + 150000 Then
             
                 ' Remove it from the memory
                 Set .Texture = Nothing
-                Call ZeroMemory(ByVal VarPtr(gTexture(I)), LenB(gTexture(I)))
+                Call ZeroMemory(ByVal VarPtr(gTexture(i)), LenB(gTexture(i)))
                 
                 ' Set it to unloaded
                 .UnloadTimer = 0
@@ -133,7 +133,7 @@ Dim NewX As Single
 Dim NewY As Single
 Dim SinRad As Single
 Dim CosRad As Single
-Dim I As Long
+Dim i As Long
 
     ' set the texture
     Call SetTexture(Texture)
@@ -184,15 +184,15 @@ Dim I As Long
         CosRad = Cos(RadAngle)
 
         'Loops through the passed vertex buffer
-        For I = 0 To 3
+        For i = 0 To 3
 
             'Calculates the new X and Y co-ordinates of the vertices for the given angle around the center co-ordinates
-            NewX = CenterX + (Box(I).x - CenterX) * CosRad - (Box(I).y - CenterY) * SinRad
-            NewY = CenterY + (Box(I).y - CenterY) * CosRad + (Box(I).x - CenterX) * SinRad
+            NewX = CenterX + (Box(i).x - CenterX) * CosRad - (Box(i).y - CenterY) * SinRad
+            NewY = CenterY + (Box(i).y - CenterY) * CosRad + (Box(i).x - CenterX) * SinRad
 
             'Applies the new co-ordinates to the buffer
-            Box(I).x = NewX
-            Box(I).y = NewY
+            Box(i).x = NewX
+            Box(i).y = NewY
         Next
     End If
     
@@ -222,17 +222,7 @@ Public Sub RenderTextureRectangle(ByVal Sprite As Long, ByVal x As Long, ByVal y
 End Sub
 
 Public Sub RenderTextureByRects(Texture As Long, sRECT As RECT, dRect As RECT, Optional Colour As Long = -1)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     RenderTexture Texture, dRect.Left, dRect.Top, sRECT.Left, sRECT.Top, dRect.Right - dRect.Left, dRect.bottom - dRect.Top, sRECT.Right - sRECT.Left, sRECT.bottom - sRECT.Top, Colour
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "RenderTextureByRects", "modGraphics", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Function InitRenderStates()
@@ -288,7 +278,7 @@ ERRORMSG:
 End Function
 
 Private Sub LoadTexture(ByVal TextureNum As Long)
-Dim SourceBitmap As cGDIpImage, ConvertedBitmap As cGDIpImage, GDIGraphics As cGDIpRenderer, GDIToken As cGDIpToken, I As Long
+Dim SourceBitmap As cGDIpImage, ConvertedBitmap As cGDIpImage, GDIGraphics As cGDIpRenderer, GDIToken As cGDIpToken, i As Long
 Dim newWidth As Long, newHeight As Long, ImageData() As Byte
     
     If gTexture(TextureNum).loaded = False Then
@@ -305,14 +295,14 @@ Dim newWidth As Long, newHeight As Long, ImageData() As Byte
         If newWidth <> SourceBitmap.width Or newHeight <> SourceBitmap.height Then
             Set ConvertedBitmap = New cGDIpImage
             Set GDIGraphics = New cGDIpRenderer
-            I = GDIGraphics.CreateGraphicsFromImageClass(SourceBitmap)
-            Call ConvertedBitmap.LoadPicture_FromNothing(newHeight, newWidth, I, GDIToken) 'I HAVE NO IDEA why this is backwards but it works.
-            Call GDIGraphics.DestroyHGraphics(I)
-            I = GDIGraphics.CreateGraphicsFromImageClass(ConvertedBitmap)
+            i = GDIGraphics.CreateGraphicsFromImageClass(SourceBitmap)
+            Call ConvertedBitmap.LoadPicture_FromNothing(newHeight, newWidth, i, GDIToken) 'I HAVE NO IDEA why this is backwards but it works.
+            Call GDIGraphics.DestroyHGraphics(i)
+            i = GDIGraphics.CreateGraphicsFromImageClass(ConvertedBitmap)
             Call GDIGraphics.AttachTokenClass(GDIToken)
-            Call GDIGraphics.RenderImageClassToHGraphics(SourceBitmap, I)
+            Call GDIGraphics.RenderImageClassToHGraphics(SourceBitmap, i)
             Call ConvertedBitmap.SaveAsPNG(ImageData)
-            GDIGraphics.DestroyHGraphics (I)
+            GDIGraphics.DestroyHGraphics (i)
             gTexture(TextureNum).ImageData = ImageData
             Set ConvertedBitmap = Nothing
             Set GDIGraphics = Nothing
@@ -340,11 +330,11 @@ Dim newWidth As Long, newHeight As Long, ImageData() As Byte
     gTexture(TextureNum).UnloadTimer = timeGetTime
 End Sub
 Function GetNearestPOT(Value As Long) As Long
-Dim I As Long
-    Do While 2 ^ I < Value
-        I = I + 1
+Dim i As Long
+    Do While 2 ^ i < Value
+        i = i + 1
     Loop
-    GetNearestPOT = 2 ^ I
+    GetNearestPOT = 2 ^ i
 End Function
 
 Private Sub SetTexture(ByVal Texture As Long)

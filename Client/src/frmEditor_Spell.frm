@@ -588,27 +588,14 @@ Private Sub Form_Load()
 End Sub
 
 Private Sub chkAOE_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If chkAOE.Value = 0 Then
         spell(EditorIndex).IsAoE = False
     Else
         spell(EditorIndex).IsAoE = True
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "chkAOE_Click", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmbType_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     spell(EditorIndex).Type = cmbType.ListIndex
     
     Select Case cmbType.ListIndex
@@ -621,19 +608,10 @@ Private Sub cmbType_Click()
             fraWarp.visible = True
             
     End Select
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmbType_Click", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdDelete_Click()
 Dim tmpIndex As Long
-
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
 
     ClearSpell EditorIndex
     
@@ -643,195 +621,76 @@ Dim tmpIndex As Long
     lstIndex.ListIndex = tmpIndex
     
     SpellEditorInit
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdDelete_Click", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdSave_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     SpellEditorOk
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSave_Click", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub lstIndex_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     SpellEditorInit
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "lstIndex_Click", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdCancel_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     SpellEditorCancel
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdCancel_Click", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optHPVital_Click(Index As Integer)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     spell(EditorIndex).VitalType(Vitals.HP) = Index
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optHPVital_Click", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optMPVital_Click(Index As Integer)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     spell(EditorIndex).VitalType(Vitals.MP) = Index
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optHPVital_Click", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAccess_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If scrlAccess.Value > 0 Then
         lblAccess.Caption = "Access Required: " & scrlAccess.Value
     Else
         lblAccess.Caption = "Access Required: None"
     End If
     spell(EditorIndex).AccessReq = scrlAccess.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAccess_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAnim_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If scrlAnim.Value > 0 Then
         lblAnim.Caption = "Animation: " & Trim$(Animation(scrlAnim.Value).name)
     Else
         lblAnim.Caption = "Animation: None"
     End If
     spell(EditorIndex).SpellAnim = scrlAnim.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAnim_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAnimCast_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If scrlAnimCast.Value > 0 Then
         lblAnimCast.Caption = "Cast Anim: " & Trim$(Animation(scrlAnimCast.Value).name)
     Else
         lblAnimCast.Caption = "Cast Anim: None"
     End If
     spell(EditorIndex).CastAnim = scrlAnimCast.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAnimCast_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAOE_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If scrlAOE.Value > 0 Then
         lblAOE.Caption = "AoE: " & scrlAOE.Value & " tiles."
     Else
         lblAOE.Caption = "AoE: Self-cast"
     End If
     spell(EditorIndex).AoE = scrlAOE.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAOE_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlCast_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     lblCast.Caption = "Casting Time: " & scrlCast.Value & "s"
     spell(EditorIndex).CastTime = scrlCast.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlCast_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlCool_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     lblCool.Caption = "Cooldown Time: " & scrlCool.Value & "s"
     spell(EditorIndex).CDTime = scrlCool.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlCool_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlDir_Change()
 Dim sDir As String
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
 
     Select Case scrlDir.Value
         Case DIR_UP
@@ -845,231 +704,91 @@ Dim sDir As String
     End Select
     lblDir.Caption = "Dir: " & sDir
     spell(EditorIndex).dir = scrlDir.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlDir_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlDuration_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     lblDuration.Caption = "Duration: " & scrlDuration.Value & "s"
     spell(EditorIndex).Duration = scrlDuration.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlDuration_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlIcon_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If scrlIcon.Value > 0 Then
         lblIcon.Caption = "Icon: " & scrlIcon.Value
     Else
         lblIcon.Caption = "Icon: None"
     End If
     spell(EditorIndex).Icon = scrlIcon.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlIcon_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlInterval_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     lblInterval.Caption = "Interval: " & scrlInterval.Value & "s"
     spell(EditorIndex).Interval = scrlInterval.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlInterval_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlLevel_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If scrlLevel.Value > 0 Then
         lblLevel.Caption = "Level Required: " & scrlLevel.Value
     Else
         lblLevel.Caption = "Level Required: None"
     End If
     spell(EditorIndex).LevelReq = scrlLevel.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlLevel_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlMap_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     lblMap.Caption = "Map: " & scrlMap.Value
     spell(EditorIndex).map = scrlMap.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlMap_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlMP_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If scrlMP.Value > 0 Then
         lblMP.Caption = "MP Cost: " & scrlMP.Value
     Else
         lblMP.Caption = "MP Cost: None"
     End If
     spell(EditorIndex).MPCost = scrlMP.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlMP_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlRange_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If scrlRange.Value > 0 Then
         lblRange.Caption = "Range: " & scrlRange.Value & " tiles."
     Else
         lblRange.Caption = "Range: Self-cast"
     End If
     spell(EditorIndex).Range = scrlRange.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlRange_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlStun_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If scrlStun.Value > 0 Then
         lblStun.Caption = "Stun Duration: " & scrlStun.Value & "s"
     Else
         lblStun.Caption = "Stun Duration: None"
     End If
     spell(EditorIndex).StunDuration = scrlStun.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlStun_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlX_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     lblX.Caption = "X: " & scrlX.Value
     spell(EditorIndex).x = scrlX.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlX_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlY_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     lblY.Caption = "Y: " & scrlY.Value
     spell(EditorIndex).y = scrlY.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlY_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtDesc_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     spell(EditorIndex).Desc = txtDesc.Text
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtDesc_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtHPVital_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     spell(EditorIndex).Vital(Vitals.HP) = Val(txtHPVital.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtHPVital_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Private Sub txtMPVital_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     spell(EditorIndex).Vital(Vitals.MP) = Val(txtMPVital.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtMPVital_Change", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtName_Validate(Cancel As Boolean)
 Dim tmpIndex As Long
-
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If EditorIndex = 0 Then Exit Sub
     tmpIndex = lstIndex.ListIndex
@@ -1077,43 +796,26 @@ Dim tmpIndex As Long
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & spell(EditorIndex).name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtName_Validate", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmbSound_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If cmbSound.ListIndex >= 0 Then
         spell(EditorIndex).Sound = cmbSound.List(cmbSound.ListIndex)
     Else
         spell(EditorIndex).Sound = "None."
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSound_Click", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtSearch_Change()
-Dim find As String, I As Long
+Dim find As String, i As Long
+
     find = txtSearch.Text
 
-    For I = 0 To lstIndex.ListCount - 1
-        If StrComp(find, Replace(lstIndex.List(I), I + 1 & ": ", ""), vbTextCompare) = 0 Then
+    For i = 0 To lstIndex.ListCount - 1
+        If StrComp(find, Replace(lstIndex.List(i), i + 1 & ": ", ""), vbTextCompare) = 0 Then
             lstIndex.SetFocus
-            lstIndex.ListIndex = I
+            lstIndex.ListIndex = i
             Exit For
         End If
     Next
 End Sub
-

@@ -412,24 +412,11 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Sub cmbType_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Resource(EditorIndex).ResourceType = cmbType.ListIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmbType_Click", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdDelete_Click()
 Dim tmpIndex As Long
-
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
 
     ClearResource EditorIndex
     
@@ -439,152 +426,53 @@ Dim tmpIndex As Long
     lstIndex.ListIndex = tmpIndex
     
     ResourceEditorInit
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdDelete_Click", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdSave_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call ResourceEditorOk
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSave_Click", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_Load()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlReward.Max = MAX_ITEMS
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_Load", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdCancel_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call ResourceEditorCancel
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdCancel_Click", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub lstIndex_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ResourceEditorInit
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "lstIndex_Click", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAnimation_Change()
 Dim sString As String
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
+
     If scrlAnimation.Value = 0 Then sString = "None" Else sString = Trim$(Animation(scrlAnimation.Value).name)
     lblAnim.Caption = "Animation: " & sString
     Resource(EditorIndex).Animation = scrlAnimation.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAnimation_Change", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlExhaustedPic_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblExhaustedPic.Caption = "Exhausted Image: " & scrlExhaustedPic.Value
     Resource(EditorIndex).ExhaustedImage = scrlExhaustedPic.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlExhaustedPic_Change", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlChance_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblChance.Caption = "Drop chance: " & scrlChance.Value & "%"
     Resource(EditorIndex).Chance = scrlChance.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlNormalPic_Change", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlNormalPic_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblNormalPic.Caption = "Normal Image: " & scrlNormalPic.Value
     Resource(EditorIndex).ResourceImage = scrlNormalPic.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlNormalPic_Change", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlRespawn_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblRespawn.Caption = "Respawn Time (Seconds): " & scrlRespawn.Value
     Resource(EditorIndex).RespawnTime = scrlRespawn.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlRespawn_Change", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlReward_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If scrlReward.Value > 0 Then
         lblReward.Caption = "Item Reward: " & Trim$(Item(scrlReward.Value).name)
     Else
@@ -592,31 +480,14 @@ Private Sub scrlReward_Change()
     End If
     
     Resource(EditorIndex).ItemReward = scrlReward.Value
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlReward_Change", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlSkillReq_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblSkillReq.Caption = "Lvl req: " & scrlSkillReq.Value
     
     If scrlSkillType.Value > 0 Then
         Resource(EditorIndex).Skill_Req(scrlSkillType.Value) = scrlSkillReq.Value
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlSkillReq_Change", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlSkillType_Change()
@@ -650,9 +521,6 @@ End Sub
 Private Sub scrlTool_Change()
     Dim name As String
     
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     Select Case scrlTool.Value
         Case 0
             name = "None"
@@ -669,76 +537,26 @@ Private Sub scrlTool_Change()
     lblTool.Caption = "Tool Required: " & name
     
     Resource(EditorIndex).ToolRequired = scrlTool.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlTool_Change", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtExp_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Resource(EditorIndex).EXP = Val(txtExp.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtExp_Change", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtHealth_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Resource(EditorIndex).Health = Val(txtHealth.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtHealth_Change", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtMessage_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Resource(EditorIndex).SuccessMessage = Trim$(txtMessage.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtMessage_Change", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtMessage2_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Resource(EditorIndex).EmptyMessage = Trim$(txtMessage2.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtMessage2_Change", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtName_Validate(Cancel As Boolean)
 Dim tmpIndex As Long
-
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If EditorIndex = 0 Then Exit Sub
     tmpIndex = lstIndex.ListIndex
@@ -746,43 +564,26 @@ Dim tmpIndex As Long
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & Resource(EditorIndex).name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtName_Validate", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmbSound_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If cmbSound.ListIndex >= 0 Then
         Resource(EditorIndex).Sound = cmbSound.List(cmbSound.ListIndex)
     Else
         Resource(EditorIndex).Sound = "None."
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSound_Click", "frmEditor_Resource", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtSearch_Change()
-Dim find As String, I As Long
+Dim find As String, i As Long
+
     find = txtSearch.Text
 
-    For I = 0 To lstIndex.ListCount - 1
-        If StrComp(find, Replace(lstIndex.List(I), I + 1 & ": ", ""), vbTextCompare) = 0 Then
+    For i = 0 To lstIndex.ListCount - 1
+        If StrComp(find, Replace(lstIndex.List(i), i + 1 & ": ", ""), vbTextCompare) = 0 Then
             lstIndex.SetFocus
-            lstIndex.ListIndex = I
+            lstIndex.ListIndex = i
             Exit For
         End If
     Next
 End Sub
-

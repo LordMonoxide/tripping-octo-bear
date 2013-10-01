@@ -21,15 +21,13 @@ Public Sub Main()
     Dim strDirectX As String
     Dim strTCPIP As String
     Dim strLoadingButtons As String
-    Dim I As Long
+    Dim i As Long
     
     strLoadingInterface = GetVar(FileName, "MESSAGES", "Loading_Interfaces")
     strLoadingOptions = GetVar(FileName, "MESSAGES", "Loading_Options")
     strDirectX = GetVar(FileName, "MESSAGES", "Initializing_DirectX")
     strTCPIP = GetVar(FileName, "MESSAGES", "Init_TCPIP")
     strLoadingButtons = GetVar(FileName, "MESSAGES", "Loading_Buttons")
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     'Set the high-resolution timer
     timeBeginPeriod 1
@@ -40,11 +38,9 @@ Public Sub Main()
     
     ' load gui
     GME = 1
-    Call SetStatus(strLoadingInterface)
     InitialiseGUI
     
     ' load options
-    Call SetStatus(strLoadingOptions)
     LoadOptions
     
     ' Check if the directory is there, if its not make it
@@ -72,7 +68,6 @@ Public Sub Main()
     ChkDir App.path & "\data files\", "sound"
     
     ' load dx8
-    Call SetStatus(strDirectX)
     Directx8.Init
     LoadSocialicons
     
@@ -87,7 +82,6 @@ Public Sub Main()
     
     ' randomize rnd's seed
     Randomize
-    Call SetStatus(strTCPIP)
     Call TcpInit
     Call InitMessages
 
@@ -96,9 +90,6 @@ Public Sub Main()
     
     ' Reset values
     Ping = -1
-    
-    ' cache the buttons then reset & render them
-    Call SetStatus(strLoadingButtons)
     
     ' set values for directional blocking arrows
     DirArrowX(1) = 12 ' up
@@ -124,19 +115,12 @@ Public Sub Main()
     Else
         SStatus = "Offline"
     End If
-    For I = 1 To 5
-        MenuNPC(I).x = Rand(0, ScreenWidth)
-        MenuNPC(I).y = Rand(0, ScreenHeight)
-        MenuNPC(I).dir = Rand(0, 1)
+    For i = 1 To 5
+        MenuNPC(i).x = Rand(0, ScreenWidth)
+        MenuNPC(i).y = Rand(0, ScreenHeight)
+        MenuNPC(i).dir = Rand(0, 1)
     Next
     MenuLoop
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Main", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub InitialiseGUI()
@@ -144,7 +128,7 @@ Public Sub InitialiseGUI()
 'Loading Interface.ini data
 Dim FileName As String
 FileName = App.path & "\data files\interface.ini"
-Dim I As Long
+Dim i As Long
 
     ' re-set chat scroll
     ChatScroll = 8
@@ -521,8 +505,8 @@ Dim I As Long
     End With
     
     ' main - AddStats
-    For I = 16 To 20
-        With Buttons(I)
+    For i = 16 To 20
+        With Buttons(i)
             .state = 0 'normal
             .width = 12
             .height = 11
@@ -531,16 +515,16 @@ Dim I As Long
         End With
     Next
     ' set the individual spaces
-    For I = 16 To 18 ' first 3
-        With Buttons(I)
+    For i = 16 To 18 ' first 3
+        With Buttons(i)
             .x = 80
-            .y = 22 + ((I - 16) * 15)
+            .y = 22 + ((i - 16) * 15)
         End With
     Next
-    For I = 19 To 20
-        With Buttons(I)
+    For i = 19 To 20
+        With Buttons(i)
             .x = 165
-            .y = 22 + ((I - 19) * 15)
+            .y = 22 + ((i - 19) * 15)
         End With
     Next
     
@@ -841,25 +825,19 @@ Public Sub MenuState(ByVal state As Long)
     strConnectedAddAcc = GetVar(FileName, "Messages", "Connected_NewAccount")
     strConnectedLogin = GetVar(FileName, "Messages", "Connected_Login")
     
-   ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     Select Case state
         Case MENU_STATE_ADDCHAR
             isLoading = True
             If ConnectToServer() Then
-                Call SetStatus(strConnectedAddChar)
                 Call SendAddChar(sChar, newCharSex, newCharClothes, newCharGear, newCharHair, newCharHeadgear)
             End If
         Case MENU_STATE_NEWACCOUNT
             If ConnectToServer() Then
-                Call SetStatus(strConnectedAddAcc)
                 Call SendNewAccount(sUser, sPass)
             End If
         Case MENU_STATE_LOGIN
             isLoading = True
             If ConnectToServer() Then
-                Call SetStatus(strConnectedLogin)
                 Call SendLogin(sUser, sPass)
                 Exit Sub
             End If
@@ -869,17 +847,10 @@ Public Sub MenuState(ByVal state As Long)
         isLoading = False
         Call MsgBox(strOfflineMessage, vbOKOnly, Options.Game_Name)
     End If
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "MenuState", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub logoutGame()
-Dim I As Long
+Dim i As Long
 
     isLogging = True
     InGame = False
@@ -887,8 +858,8 @@ Dim I As Long
     Call DestroyTCP
     
     ' destroy the animations loaded
-    For I = 1 To MAX_BYTE
-        ClearAnimInstance (I)
+    For i = 1 To MAX_BYTE
+        ClearAnimInstance (i)
     Next
     
     ' destroy temp values
@@ -910,8 +881,8 @@ Dim I As Long
     Unload frmEditor_Spell
     
     ' destroy the chat
-    For I = 1 To ChatTextBufferSize
-        ChatTextBuffer(I).Text = vbNullString
+    For i = 1 To ChatTextBufferSize
+        ChatTextBuffer(i).Text = vbNullString
     Next
     
     GUIWindow(GUI_MAINMENU).visible = True
@@ -930,9 +901,6 @@ End Sub
 Sub GameInit()
 Dim MusicFile As String
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ' hide gui
     InBank = False
     InShop = False
@@ -954,19 +922,9 @@ Dim MusicFile As String
     Else
         FMOD.Music_Stop
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "GameInit", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub DestroyGame()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ' break out of GameLoop
     HideGame
     HideMenu
@@ -980,52 +938,18 @@ Public Sub DestroyGame()
     
     Call UnloadAllForms
     End
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "destroyGame", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub UnloadAllForms()
 Dim frm As Form
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     For Each frm In VB.Forms
         Unload frm
     Next
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "UnloadAllForms", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-End Sub
-
-Public Sub SetStatus(ByVal Caption As String)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    DoEvents
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "SetStatus", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' Used for adding text to packet debugger
 Public Sub TextAdd(ByVal Txt As TextBox, msg As String, NewLine As Boolean)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If NewLine Then
         Txt.Text = Txt.Text + msg + vbCrLf
     Else
@@ -1033,57 +957,27 @@ Public Sub TextAdd(ByVal Txt As TextBox, msg As String, NewLine As Boolean)
     End If
 
     Txt.SelStart = Len(Txt.Text) - 1
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "TextAdd", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Function Rand(ByVal Low As Long, ByVal High As Long) As Long
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Rand = Int((High - Low + 1) * Rnd) + Low
-    
-    ' Error handler
-    Exit Function
-errorhandler:
-    HandleError "Rand", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Function isLoginLegal(ByVal Username As String, ByVal Password As String) As Boolean
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If LenB(Trim$(Username)) >= 3 Then
         If LenB(Trim$(Password)) >= 3 Then
             isLoginLegal = True
         End If
     End If
-
-    ' Error handler
-    Exit Function
-errorhandler:
-    HandleError "isLoginLegal", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Function isStringLegal(ByVal sInput As String) As Boolean
-Dim I As Long
+Dim i As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ' Prevent high ascii chars
-    For I = 1 To Len(sInput)
+    For i = 1 To Len(sInput)
 
-        If Asc(Mid$(sInput, I, 1)) < vbKeySpace Or Asc(Mid$(sInput, I, 1)) > vbKeyF15 Then
+        If Asc(Mid$(sInput, i, 1)) < vbKeySpace Or Asc(Mid$(sInput, i, 1)) > vbKeyF15 Then
             Call MsgBox("You cannot use high ASCII characters in your name, please re-enter.", vbOKOnly, Options.Game_Name)
             Exit Function
         End If
@@ -1091,74 +985,47 @@ Dim I As Long
     Next
 
     isStringLegal = True
-    
-    ' Error handler
-    Exit Function
-errorhandler:
-    HandleError "isStringLegal", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
 End Function
 
 Public Sub resetClickedButtons()
-Dim I As Long
+Dim i As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ' loop through entire array
-    For I = 1 To MAX_BUTTONS
-        Select Case I
+    For i = 1 To MAX_BUTTONS
+        Select Case i
             ' option buttons
             Case 26, 27, 28, 29, 30, 31, 32, 33
                 ' Nothing in here
             ' Everything else - reset
             Case Else
                 ' reset state and render
-                Buttons(I).state = 0 'normal
+                Buttons(i).state = 0 'normal
         End Select
     Next
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "resetClickedButtons", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub PopulateLists()
-Dim strLoad As String, I As Long
+Dim strLoad As String, i As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ' Cache music list
     strLoad = dir(App.path & MUSIC_PATH & "*.*")
-    I = 1
+    i = 1
     Do While strLoad > vbNullString
-        ReDim Preserve musicCache(1 To I) As String
-        musicCache(I) = strLoad
+        ReDim Preserve musicCache(1 To i) As String
+        musicCache(i) = strLoad
         strLoad = dir
-        I = I + 1
+        i = i + 1
     Loop
     
     ' Cache sound list
     strLoad = dir(App.path & SOUND_PATH & "*.*")
-    I = 1
+    i = 1
     Do While strLoad > vbNullString
-        ReDim Preserve soundCache(1 To I) As String
-        soundCache(I) = strLoad
+        ReDim Preserve soundCache(1 To i) As String
+        soundCache(i) = strLoad
         strLoad = dir
-        I = I + 1
+        i = i + 1
     Loop
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "PopulateLists", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Public Sub ShowMenu()
@@ -1189,24 +1056,24 @@ Public Sub HideMenu()
 End Sub
 
 Public Sub ShowGame()
-Dim I As Long
+Dim i As Long
 
-    For I = 5 To 10
-        GUIWindow(I).visible = False
+    For i = 5 To 10
+        GUIWindow(i).visible = False
     Next
 
-    For I = 1 To 4
-        GUIWindow(I).visible = True
+    For i = 1 To 4
+        GUIWindow(i).visible = True
     Next
     
     InGame = True
 End Sub
 
 Public Sub HideGame()
-Dim I As Long
+Dim i As Long
     
-    For I = 1 To 10
-        GUIWindow(I).visible = False
+    For i = 1 To 10
+        GUIWindow(i).visible = False
     Next
     
     InGame = False

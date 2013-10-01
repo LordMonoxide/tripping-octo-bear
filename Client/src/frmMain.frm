@@ -521,11 +521,7 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Sub cmdAKick_Click()
-        ' If debug mode, handle error then exit out
-        If Options.Debug = 1 Then On Error GoTo errorhandler
-
         If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then
-
                 Exit Sub
         End If
 
@@ -534,124 +530,45 @@ Private Sub cmdAKick_Click()
         End If
 
         SendKick Trim$(txtAName.Text)
-
-        ' Error handler
-        Exit Sub
-errorhandler:
-        HandleError "cmdAKick_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-        Err.Clear
-        Exit Sub
 End Sub
 
 ' Winsock event
 Private Sub Socket_DataArrival(ByVal bytesTotal As Long)
-
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If IsConnected Then
         Call IncomingData(bytesTotal)
     End If
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Socket_DataArrival", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_DblClick()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     HandleDoubleClick
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_DblClick", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_Load()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
     If App.LogMode = 0 Then Exit Sub
     If App.PrevInstance Then
         MsgBox "Running multiple instances of game is not allowed. Game will now exit"
         Unload Me
     End If
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_Load", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     HandleMouseUp Button
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_MouseUp", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     DestroyGame
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_Unload", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     HandleMouseDown Button
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_MouseDown", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ' call the procedure
     HandleMouseMove CLng(x), CLng(y), Button
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_MouseMove", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_KeyPress(KeyAscii As Integer)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If InGame Then
         Call HandleKeyPresses(KeyAscii)
         If faderState >= 4 And faderAlpha = 0 Then
@@ -671,258 +588,91 @@ Private Sub Form_KeyPress(KeyAscii As Integer)
             KeyAscii = 0
         End If
     End If
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_KeyPress", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_KeyUp(keyCode As Integer, Shift As Integer)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     HandleKeyUp keyCode
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_KeyUp", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 ' ****************
 ' ** Admin Menu **
 ' ****************
 Private Sub mnuEditMap_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
     SendRequestEditMap
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuEditMap_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuEditItem_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
     SendRequestEditItem
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuEditItem_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuEditResource_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
     SendRequestEditResource
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuEditResource_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuEditSpell_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
     SendRequestEditSpell
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuEditSpell_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuEditNPC_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
     SendRequestEditNpc
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuEditNPC_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuEditAnimation_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
     SendRequestEditAnimation
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuEditAnimation_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuEditShop_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
     SendRequestEditShop
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuEditShop_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuEditEvent_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
     Call RequestSwitchesAndVariables
     Call Events_SendRequestEventsData
     Call Events_SendRequestEditEvents
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuEditConv_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuEditPet_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
     SendRequestEditPet
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuEditPet_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuLoc_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
     BLoc = Not BLoc
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuLoc_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuMapReport_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
     SendMapReport
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuMapReport_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuDelBans_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_CREATOR Then Exit Sub
     SendBanDestroy
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuDelBans_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuMapRespawn_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
     SendMapRespawn
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuMapRespawn_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuLevelUp_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then Exit Sub
     SendRequestLevelUp
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuLevelUp_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuScreenshotMap_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ' render the map temp
     'ScreenshotMap
     AddText "Doesn't work in DX8 I'm afraid. :(", Pink
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "mnuScreenshotMap_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub mnuOther_Click()
@@ -933,9 +683,6 @@ Private Sub mnuGUI_Click()
     hideGUI = Not hideGUI
 End Sub
 Private Sub cmdAWarp2Me_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then
         
         Exit Sub
@@ -950,19 +697,9 @@ Private Sub cmdAWarp2Me_Click()
     End If
 
     WarpToMe Trim$(txtAName.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdAWarp2Me_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdAWarpMe2_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then
         
         Exit Sub
@@ -977,20 +714,10 @@ Private Sub cmdAWarpMe2_Click()
     End If
 
     WarpMeTo Trim$(txtAName.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdAWarpMe2_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdAWarp_Click()
 Dim n As Long
-
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then
         
@@ -1013,19 +740,9 @@ Dim n As Long
     Else
         Call AddText("Invalid map number.", Red)
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdAWarp_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdABan_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then
         
         Exit Sub
@@ -1036,18 +753,8 @@ Private Sub cmdABan_Click()
     End If
 
     SendBan Trim$(txtAName.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdABan_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Private Sub cmdAAccess_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_CREATOR Then
         
         Exit Sub
@@ -1062,49 +769,22 @@ Private Sub cmdAAccess_Click()
     End If
 
     SendSetAccess Trim$(txtAName.Text), CLng(Trim$(txtAAccess.Text))
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdAAccess_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdASpawn_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If GetPlayerAccess(MyIndex) < ADMIN_CREATOR Then
         
         Exit Sub
     End If
     
     SendSpawnItem scrlAItem.Value, Val(txtAAmount.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdASpawn_Click", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAItem_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     lblAItem.Caption = "Item: " & Trim$(Item(scrlAItem.Value).name)
     If Item(scrlAItem.Value).Type = ITEM_TYPE_CURRENCY Or Item(scrlAItem.Value).Stackable = YES Then
         txtAAmount.Enabled = True
         Exit Sub
     End If
     txtAAmount.Enabled = False
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAItem_Change", "frmMain", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub

@@ -1057,167 +1057,67 @@ Private Sub cmdEvent_Click()
 End Sub
 
 Private Sub cmdHeal_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     MapEditorHealType = cmbHeal.ListIndex + 1
     MapEditorHealAmount = scrlHeal.Value
     picAttributes.visible = False
     fraHeal.visible = False
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdHeal_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdMapItem_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ItemEditorNum = scrlMapItem.Value
     ItemEditorValue = scrlMapItemValue.Value
     picAttributes.visible = False
     fraMapItem.visible = False
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdMapItem_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdMapWarp_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     EditorWarpMap = scrlMapWarp.Value
     EditorWarpX = scrlMapWarpX.Value
     EditorWarpY = scrlMapWarpY.Value
     picAttributes.visible = False
     fraMapWarp.visible = False
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdMapWarp_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdNpcSpawn_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     SpawnNpcNum = lstNpc.ListIndex + 1
     SpawnNpcDir = scrlNpcDir.Value
     picAttributes.visible = False
     fraNpcSpawn.visible = False
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdNpcSpawn_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdResourceOk_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ResourceEditorNum = scrlResource.Value
     picAttributes.visible = False
     fraResource.visible = False
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdResourceOk_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdShop_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     EditorShop = cmbShop.ListIndex
     picAttributes.visible = False
     fraShop.visible = False
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdShop_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdSlide_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     MapEditorSlideDir = cmbSlide.ListIndex
     picAttributes.visible = False
     fraSlide.visible = False
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSlide_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdTrap_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     MapEditorHealAmount = scrlTrap.Value
     picAttributes.visible = False
     fraTrap.visible = False
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdTrap_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdLight_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     picAttributes.visible = False
     fraLight.visible = False
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdLight_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_Load()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ' move the entire attributes box on screen
     picAttributes.Left = 8
     picAttributes.Top = 8
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_Load", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optArena_Click()
@@ -1234,77 +1134,34 @@ Private Sub optArena_Click()
 End Sub
 
 Private Sub optHeal_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ClearAttributeDialogue
     picAttributes.visible = True
     fraHeal.visible = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optHeal_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optLayers_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-
     If optLayers.Value Then
         fraLayers.visible = True
         fraAttribs.visible = False
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optLayers_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optAttribs_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If optAttribs.Value Then
         fraLayers.visible = False
         fraAttribs.visible = True
     End If
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optAttribs_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optLight_Click()
-' If debug mode, handle error then exit out
-        If Options.Debug = 1 Then On Error GoTo errorhandler
-
         ClearAttributeDialogue
         picAttributes.visible = True
         fraLight.visible = True
-
-        ' Error handler
-        Exit Sub
-errorhandler:
-        HandleError "optLight_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-        Err.Clear
-        Exit Sub
 End Sub
 
 Private Sub optNpcSpawn_Click()
 Dim n As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lstNpc.Clear
     
     For n = 1 To MAX_MAP_NPCS
@@ -1321,155 +1178,55 @@ Dim n As Long
     ClearAttributeDialogue
     picAttributes.visible = True
     fraNpcSpawn.visible = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optNpcSpawn_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optResource_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ClearAttributeDialogue
     picAttributes.visible = True
     fraResource.visible = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optResource_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optShop_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ClearAttributeDialogue
     picAttributes.visible = True
     fraShop.visible = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optShop_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optSlide_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ClearAttributeDialogue
     picAttributes.visible = True
     fraSlide.visible = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optSlide_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optTrap_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ClearAttributeDialogue
     picAttributes.visible = True
     fraTrap.visible = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optTrap_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub picBackSelect_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call MapEditorChooseTile(Button, x, y)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "picBackSelect_MouseDown", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
  
 Private Sub picBackSelect_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call MapEditorDrag(Button, x, y)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "picBackSelect_MouseMove", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdSend_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call MapEditorSend
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSend_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdCancel_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call MapEditorCancel
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdCancel_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdProperties_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Load frmEditor_MapProperties
     MapEditorProperties
     frmEditor_MapProperties.Show vbModal
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdProperties_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optWarp_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ClearAttributeDialogue
     picAttributes.visible = True
     fraMapWarp.visible = True
@@ -1480,19 +1237,9 @@ Private Sub optWarp_Click()
     scrlMapWarpY.Max = MAX_BYTE
     scrlMapWarpX.Value = 0
     scrlMapWarpY.Value = 0
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optWarp_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optItem_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ClearAttributeDialogue
     picAttributes.visible = True
     fraMapItem.visible = True
@@ -1500,115 +1247,38 @@ Private Sub optItem_Click()
     scrlMapItem.Max = MAX_ITEMS
     scrlMapItem.Value = 1
     lblMapItem.Caption = Trim$(Item(scrlMapItem.Value).name) & " x" & scrlMapItemValue.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optItem_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdFill_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     MapEditorFillLayer
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdFill_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdClear_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call MapEditorClearLayer
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdClear_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdClear2_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call MapEditorClearAttribs
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdClear2_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlA_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblA.Caption = "Alpha: " & scrlA.Value
     MapEditorLightA = scrlA.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlA_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlR_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblR.Caption = "Red: " & scrlR.Value
     MapEditorLightR = scrlR.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlR_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlG_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblG.Caption = "Green: " & scrlG.Value
     MapEditorLightG = scrlG.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlG_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlB_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblB.Caption = "Blue: " & scrlB.Value
     MapEditorLightB = scrlB.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlB_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAutotile_Change()
@@ -1629,37 +1299,14 @@ Private Sub scrlAutotile_Change()
 End Sub
 
 Private Sub scrlHeal_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblHeal.Caption = "Amount: " & scrlHeal.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlHeal_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlTrap_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblTrap.Caption = "Amount: " & scrlTrap.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlTrap_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlMapItem_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-        
     If Item(scrlMapItem.Value).Type = ITEM_TYPE_CURRENCY Or Item(scrlMapItem.Value).Stackable = YES Then
         scrlMapItemValue.Enabled = True
     Else
@@ -1668,145 +1315,45 @@ Private Sub scrlMapItem_Change()
     End If
         
     lblMapItem.Caption = Trim$(Item(scrlMapItem.Value).name) & " x" & scrlMapItemValue.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlMapItem_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlMapItem_Scroll()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlMapItem_Change
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlMapItem_Scroll", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlMapItemValue_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblMapItem.Caption = Trim$(Item(scrlMapItem.Value).name) & " x" & scrlMapItemValue.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlMapItemValue_change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlMapItemValue_Scroll()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlMapItemValue_Change
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlMapItemValue_Scroll", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlMapWarp_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblMapWarp.Caption = "Map: " & scrlMapWarp.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlMapWarp_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlMapWarp_Scroll()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlMapWarp_Change
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlMapWarp_Scroll", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlMapWarpX_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblMapWarpX.Caption = "X: " & scrlMapWarpX.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlMapWarpX_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlMapWarpX_Scroll()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlMapWarpX_Change
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlMapWarpX_Scroll", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlMapWarpY_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblMapWarpY.Caption = "Y: " & scrlMapWarpY.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlMapWarpY_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlMapWarpY_Scroll()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlMapWarpY_Change
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlMapWarpY_Scroll", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlNpcDir_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Select Case scrlNpcDir.Value
         Case DIR_DOWN
             lblNpcDir = "Direction: Down"
@@ -1817,117 +1364,37 @@ Private Sub scrlNpcDir_Change()
         Case DIR_RIGHT
             lblNpcDir = "Direction: Right"
     End Select
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlNpcDir_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlNpcDir_Scroll()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlNpcDir_Change
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlNpcDir_Scroll", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlResource_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblResource.Caption = "Resource: " & Resource(scrlResource.Value).name
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlResource_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlResource_Scroll()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlResource_Change
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlResource_Scroll", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlPictureX_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call MapEditorTileScroll
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlPictureX_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlPictureY_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call MapEditorTileScroll
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlPictureY_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlPictureX_Scroll()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlPictureY_Change
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlPictureX_Scroll", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlPictureY_Scroll()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlPictureY_Change
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlPictureY_Scroll", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlTileSet_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     fraTileSet.Caption = "Tileset: " & scrlTileSet.Value
     
     frmEditor_Map.scrlPictureX.Value = 0
@@ -1942,43 +1409,16 @@ Private Sub scrlTileSet_Change()
     frmEditor_Map.scrlPictureX.Max = (frmEditor_Map.picBackSelect.width \ PIC_X) - (frmEditor_Map.picBack.width \ PIC_X)
     
     MapEditorTileScroll
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlTileSet_Change", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlTileSet_Scroll()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlTileSet_Change
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlTileSet_Scroll", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optEvent_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     ClearAttributeDialogue
     picAttributes.visible = True
     fraEvent.visible = True
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "optEvent_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Private Sub scrlEvent_Change()
     If Trim$(Events(scrlEvent.Value).name) = vbNullString Then
@@ -1989,19 +1429,8 @@ Private Sub scrlEvent_Change()
 End Sub
 
 Private Sub optThreshold_Click()
-' If debug mode, handle error then exit out
-        If Options.Debug = 1 Then On Error GoTo errorhandler
-
         ClearAttributeDialogue
         picAttributes.visible = False
-
-
-        ' Error handler
-        Exit Sub
-errorhandler:
-        HandleError "optThreshold_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-        Err.Clear
-        Exit Sub
 End Sub
 Private Sub cmbChestIndex_Click()
 Dim n As Long 'prevent rte9
@@ -2020,17 +1449,12 @@ Private Sub cmdChestOK_Click()
 Dim n As Long
 n = cmbChestindex.ListIndex + 1
 If n < 1 Or n > MAX_CHESTS Then Exit Sub
-    If Options.Debug = 1 Then On Error GoTo errorhandler
     Chest(n).Type = EditorChestType
     Chest(n).Data1 = Val(txtchestdata1.Text)
     Chest(n).Data2 = Val(txtchestdata2.Text)
     FraChest.visible = False
     picAttributes.visible = False
 SendChest (n)
-errorhandler:
-    HandleError "cmdChestOK_Click", "frmEditor_Map", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub optChest_Click()

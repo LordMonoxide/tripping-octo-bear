@@ -768,24 +768,11 @@ Private DropIndex As Long
 Private SpellIndex As Long
 
 Private Sub cmbBehaviour_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     NPC(EditorIndex).Behaviour = cmbBehaviour.ListIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmbBehaviour_Click", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdDelete_Click()
 Dim tmpIndex As Long
-    
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     ClearNPC EditorIndex
     
@@ -795,93 +782,39 @@ Dim tmpIndex As Long
     lstIndex.ListIndex = tmpIndex
     
     NpcEditorInit
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdDelete_Click", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub Form_Load()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     scrlSprite.Max = Count_Char
     scrlAnimation.Max = MAX_ANIMATIONS
     scrlEvent.Max = MAX_EVENTS
     scrlProjectilePic.Max = Count_Projectile
     scrlQuest.Max = MAX_QUESTS
-
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "Form_Load", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmdSave_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-        If txtExp > txtEXP_max Then
-    txtEXP_max.Text = txtExp
-    txtExp.Text = 0
+    If txtEXP > txtEXP_max Then
+        txtEXP_max.Text = txtEXP
+        txtEXP.Text = 0
     End If
-    Call NpcEditorOk
     
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSave_Click", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    Call NpcEditorOk
 End Sub
 
 Private Sub cmdCancel_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     Call NpcEditorCancel
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdCancel_Click", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub lstIndex_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     NpcEditorInit
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "lstIndex_Click", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlAnimation_Change()
 Dim sString As String
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
+
     If scrlAnimation.Value = 0 Then sString = "None" Else sString = Trim$(Animation(scrlAnimation.Value).name)
     lblAnimation.Caption = "Anim: " & sString
     NPC(EditorIndex).Animation = scrlAnimation.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlAnimation_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlDrop_Change()
@@ -927,39 +860,16 @@ Private Sub scrlSpellNum_Change()
 End Sub
 
 Private Sub scrlSprite_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblSprite.Caption = "Sprite: " & scrlSprite.Value
     NPC(EditorIndex).Sprite = scrlSprite.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlSprite_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlRange_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblRange.Caption = "Range: " & scrlRange.Value
     NPC(EditorIndex).Range = scrlRange.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlRange_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlNum_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblNum.Caption = "Num: " & scrlNum.Value
 
     If scrlNum.Value > 0 Then
@@ -967,20 +877,11 @@ Private Sub scrlNum_Change()
     End If
     
     NPC(EditorIndex).DropItem(DropIndex) = scrlNum.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlNum_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlStat_Change(Index As Integer)
 Dim prefix As String
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
+
     Select Case Index
         Case 1
             prefix = "Str: "
@@ -993,44 +894,18 @@ Dim prefix As String
         Case 5
             prefix = "Will: "
     End Select
+    
     lblStat(Index).Caption = prefix & scrlStat(Index).Value
     NPC(EditorIndex).stat(Index) = scrlStat(Index).Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlStat_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlValue_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     lblValue.Caption = "Value: " & scrlValue.Value
     NPC(EditorIndex).DropItemValue(DropIndex) = scrlValue.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlValue_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtAttackSay_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     NPC(EditorIndex).AttackSay = txtAttackSay.Text
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtAttackSay_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtChance_Validate(Cancel As Boolean)
@@ -1047,9 +922,9 @@ Private Sub txtChance_Validate(Cancel As Boolean)
     If Right$(txtChance.Text, 1) = "%" Then
         txtChance.Text = Left(txtChance.Text, Len(txtChance.Text) - 1) / 100
     ElseIf InStr(1, txtChance.Text, "/") > 0 Then
-        Dim I() As String
-        I = Split(txtChance.Text, "/")
-        txtChance.Text = Int(I(0) / I(1) * 1000) / 1000
+        Dim i() As String
+        i = Split(txtChance.Text, "/")
+        txtChance.Text = Int(i(0) / i(1) * 1000) / 1000
     End If
     
     If txtChance.Text > 1 Or txtChance.Text < 0 Then
@@ -1066,192 +941,77 @@ chanceErr:
 End Sub
 
 Private Sub txtDamage_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If Not Len(txtDamage.Text) > 0 Then Exit Sub
     If IsNumeric(txtDamage.Text) Then NPC(EditorIndex).Damage = Val(txtDamage.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtDamage_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtExp_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If Not Len(txtExp.Text) > 0 Then Exit Sub
-    If IsNumeric(txtExp.Text) Then NPC(EditorIndex).EXP = Val(txtExp.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtEXP_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
+    If Not Len(txtEXP.Text) > 0 Then Exit Sub
+    If IsNumeric(txtEXP.Text) Then NPC(EditorIndex).EXP = Val(txtEXP.Text)
 End Sub
 
 Private Sub txtHP_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If Not Len(txtHP.Text) > 0 Then Exit Sub
     If IsNumeric(txtHP.Text) Then NPC(EditorIndex).HP = Val(txtHP.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtHP_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtLevel_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If Not Len(txtLevel.Text) > 0 Then Exit Sub
     If IsNumeric(txtLevel.Text) Then NPC(EditorIndex).Level = Val(txtLevel.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtlevel_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtName_Validate(Cancel As Boolean)
 Dim tmpIndex As Long
 
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Then Exit Sub
     tmpIndex = lstIndex.ListIndex
     NPC(EditorIndex).name = Trim$(txtName.Text)
     lstIndex.RemoveItem EditorIndex - 1
     lstIndex.AddItem EditorIndex & ": " & NPC(EditorIndex).name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtName_Validate", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtSpawnSecs_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If Not Len(txtSpawnSecs.Text) > 0 Then Exit Sub
     NPC(EditorIndex).SpawnSecs = Val(txtSpawnSecs.Text)
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "txtSpawnSecs_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmbSound_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     If cmbSound.ListIndex >= 0 Then
         NPC(EditorIndex).Sound = cmbSound.List(cmbSound.ListIndex)
     Else
         NPC(EditorIndex).Sound = "None."
     End If
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmdSound_Click", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub txtSearch_Change()
-Dim find As String, I As Long
+Dim find As String, i As Long
     find = txtSearch.Text
 
-    For I = 0 To lstIndex.ListCount - 1
-        If StrComp(find, Replace(lstIndex.List(I), I + 1 & ": ", ""), vbTextCompare) = 0 Then
+    For i = 0 To lstIndex.ListCount - 1
+        If StrComp(find, Replace(lstIndex.List(i), i + 1 & ": ", ""), vbTextCompare) = 0 Then
             lstIndex.SetFocus
-            lstIndex.ListIndex = I
+            lstIndex.ListIndex = i
             Exit For
         End If
     Next
 End Sub
 
 Private Sub scrlProjectilePic_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_NPCS Then Exit Sub
     lblProjectilePic.Caption = "Pic: " & scrlProjectilePic.Value
     NPC(EditorIndex).Projectile = scrlProjectilePic.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlProjectilePic_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
-
 End Sub
 Private Sub scrlProjectileRange_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_NPCS Then Exit Sub
     lblProjectileRange.Caption = "Range: " & scrlProjectileRange.Value
     NPC(EditorIndex).ProjectileRange = scrlProjectileRange.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlProjectileRange_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub scrlProjectileRotation_Change()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If EditorIndex = 0 Or EditorIndex > MAX_NPCS Then Exit Sub
     lblProjectileRotation.Caption = "Rotation: " & scrlProjectileRotation.Value / 2
     NPC(EditorIndex).Rotation = scrlProjectileRotation.Value
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "scrlProjectileRotation_Change", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 
 Private Sub cmbMoral_Click()
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
     NPC(EditorIndex).Moral = cmbMoral.ListIndex
-    
-    ' Error handler
-    Exit Sub
-errorhandler:
-    HandleError "cmbMoral_Click", "frmEditor_NPC", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Sub
 End Sub
 Private Sub chkDay_Click()
     NPC(EditorIndex).SpawnAtDay = chkDay.Value
@@ -1266,18 +1026,18 @@ Private Sub scrlA_Change()
 End Sub
 
 Private Sub scrlR_Change()
-    lblR.Caption = "Red: " & 255 - scrlR.Value
-    NPC(EditorIndex).R = scrlR.Value
+    lblR.Caption = "Red: " & 255 - ScrlR.Value
+    NPC(EditorIndex).R = ScrlR.Value
 End Sub
 
 Private Sub scrlG_Change()
-    lblG.Caption = "Green: " & 255 - scrlG.Value
-    NPC(EditorIndex).G = scrlG.Value
+    lblG.Caption = "Green: " & 255 - ScrlG.Value
+    NPC(EditorIndex).G = ScrlG.Value
 End Sub
 
 Private Sub scrlB_Change()
-    lblB.Caption = "Blue: " & 255 - scrlB.Value
-    NPC(EditorIndex).B = scrlB.Value
+    lblB.Caption = "Blue: " & 255 - ScrlB.Value
+    NPC(EditorIndex).B = ScrlB.Value
 End Sub
 Private Sub txtEXP_max_Change()
 
