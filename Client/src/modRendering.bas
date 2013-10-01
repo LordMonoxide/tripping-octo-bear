@@ -448,7 +448,9 @@ Dim x As Long, y As Long, i As Long
             ' Npcs
             For i = 1 To MAX_MAP_NPCS
                 If MapNpc(i).y = y Then
-                    Call DrawNpc(i)
+                    If MapNpc(i).Num <> 0 Then
+                        Call DrawNpc(i)
+                    End If
                 End If
             Next
         End If
