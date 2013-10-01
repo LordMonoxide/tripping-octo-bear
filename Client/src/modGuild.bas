@@ -1,4 +1,6 @@
 Attribute VB_Name = "modGuild"
+Option Explicit
+
 Public Const MAX_GUILD_MEMBERS As Long = 50
 Public Const MAX_GUILD_RANKS As Long = 6
 Public Const MAX_GUILD_RANKS_PERMISSION As Long = 6

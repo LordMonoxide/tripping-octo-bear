@@ -1,4 +1,6 @@
 Attribute VB_Name = "modPets"
+Option Explicit
+
 Private Declare Sub ZeroMemory Lib "kernel32.dll" Alias "RtlZeroMemory" (Destination As Any, ByVal Length As Long)
 
 Public Const MAX_PETS As Long = 255
@@ -162,11 +164,9 @@ Dim i As Long
     Next
     
     Unload frmEditor_Pet
-    Editor = 0
     ClearChanged_Pet
 End Sub
 Public Sub PetEditorCancel()
-    Editor = 0
     Unload frmEditor_Pet
     ClearChanged_Pet
     ClearPets
@@ -260,7 +260,6 @@ Public Sub HandlePetEditor()
 Dim i As Long
 
     With frmEditor_Pet
-        Editor = EDITOR_PET
         .lstIndex.Clear
 
         ' Add the names
