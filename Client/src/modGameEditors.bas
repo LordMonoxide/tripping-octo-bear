@@ -871,7 +871,6 @@ Dim I As Long
     Next
     
     Unload frmEditor_Item
-    Editor = 0
     ClearChanged_Item
     
     ' Error handler
@@ -886,7 +885,6 @@ Public Sub ItemEditorCancel()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    Editor = 0
     Unload frmEditor_Item
     ClearChanged_Item
     ClearItems
@@ -992,7 +990,6 @@ Dim I As Long
     Next
     
     Unload frmEditor_Animation
-    Editor = 0
     ClearChanged_Animation
     
     ' Error handler
@@ -1007,7 +1004,6 @@ Public Sub AnimationEditorCancel()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    Editor = 0
     Unload frmEditor_Animation
     ClearChanged_Animation
     ClearAnimations
@@ -1132,7 +1128,6 @@ Dim I As Long
     Next
     
     Unload frmEditor_NPC
-    Editor = 0
     ClearChanged_NPC
     
     ' Error handler
@@ -1147,7 +1142,6 @@ Public Sub NpcEditorCancel()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    Editor = 0
     Unload frmEditor_NPC
     ClearChanged_NPC
     ClearNpcs
@@ -1254,7 +1248,6 @@ Dim I As Long
     Next
     
     Unload frmEditor_Resource
-    Editor = 0
     ClearChanged_Resource
     
     ' Error handler
@@ -1269,7 +1262,6 @@ Public Sub ResourceEditorCancel()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    Editor = 0
     Unload frmEditor_Resource
     ClearChanged_Resource
     ClearResources
@@ -1393,7 +1385,6 @@ Dim I As Long
     Next
     
     Unload frmEditor_Shop
-    Editor = 0
     ClearChanged_Shop
     
     ' Error handler
@@ -1408,7 +1399,6 @@ Public Sub ShopEditorCancel()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    Editor = 0
     Unload frmEditor_Shop
     ClearChanged_Shop
     ClearShops
@@ -1536,7 +1526,6 @@ Dim I As Long
     Next
     
     Unload frmEditor_Spell
-    Editor = 0
     ClearChanged_Spell
     
     ' Error handler
@@ -1551,7 +1540,6 @@ Public Sub SpellEditorCancel()
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    Editor = 0
     Unload frmEditor_Spell
     ClearChanged_Spell
     ClearSpells
@@ -1619,11 +1607,9 @@ Dim I As Long
     
     Unload frmEditor_Events
     Events_ClearChanged
-    Editor = 0
 End Sub
 
 Public Sub EventEditorCancel()
-    Editor = 0
     Unload frmEditor_Events
     Events_ClearChanged
     ClearEvents

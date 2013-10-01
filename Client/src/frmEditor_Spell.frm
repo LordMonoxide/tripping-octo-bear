@@ -639,7 +639,7 @@ Dim tmpIndex As Long
     
     tmpIndex = lstIndex.ListIndex
     lstIndex.RemoveItem EditorIndex - 1
-    lstIndex.AddItem EditorIndex & ": " & spell(EditorIndex).Name, EditorIndex - 1
+    lstIndex.AddItem EditorIndex & ": " & spell(EditorIndex).name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
     
     SpellEditorInit
@@ -664,14 +664,6 @@ errorhandler:
     HandleError "cmdSave_Click", "frmEditor_Spell", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
-End Sub
-
-Private Sub Label7_Click()
-
-End Sub
-
-Private Sub lblHP_Click()
-
 End Sub
 
 Private Sub lstIndex_Click()
@@ -754,7 +746,7 @@ Private Sub scrlAnim_Change()
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If scrlAnim.Value > 0 Then
-        lblAnim.Caption = "Animation: " & Trim$(Animation(scrlAnim.Value).Name)
+        lblAnim.Caption = "Animation: " & Trim$(Animation(scrlAnim.Value).name)
     Else
         lblAnim.Caption = "Animation: None"
     End If
@@ -773,7 +765,7 @@ Private Sub scrlAnimCast_Change()
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If scrlAnimCast.Value > 0 Then
-        lblAnimCast.Caption = "Cast Anim: " & Trim$(Animation(scrlAnimCast.Value).Name)
+        lblAnimCast.Caption = "Cast Anim: " & Trim$(Animation(scrlAnimCast.Value).name)
     Else
         lblAnimCast.Caption = "Cast Anim: None"
     End If
@@ -935,7 +927,7 @@ Private Sub scrlMap_Change()
     If Options.Debug = 1 Then On Error GoTo errorhandler
 
     lblMap.Caption = "Map: " & scrlMap.Value
-    spell(EditorIndex).Map = scrlMap.Value
+    spell(EditorIndex).map = scrlMap.Value
     
     ' Error handler
     Exit Sub
@@ -1081,9 +1073,9 @@ Dim tmpIndex As Long
 
     If EditorIndex = 0 Then Exit Sub
     tmpIndex = lstIndex.ListIndex
-    spell(EditorIndex).Name = Trim$(txtName.Text)
+    spell(EditorIndex).name = Trim$(txtName.Text)
     lstIndex.RemoveItem EditorIndex - 1
-    lstIndex.AddItem EditorIndex & ": " & spell(EditorIndex).Name, EditorIndex - 1
+    lstIndex.AddItem EditorIndex & ": " & spell(EditorIndex).name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
     
     ' Error handler
@@ -1113,12 +1105,11 @@ errorhandler:
 End Sub
 
 Private Sub txtSearch_Change()
-Dim find As String, I As Long, found As Boolean
+Dim find As String, I As Long
     find = txtSearch.Text
 
     For I = 0 To lstIndex.ListCount - 1
         If StrComp(find, Replace(lstIndex.List(I), I + 1 & ": ", ""), vbTextCompare) = 0 Then
-            found = True
             lstIndex.SetFocus
             lstIndex.ListIndex = I
             Exit For

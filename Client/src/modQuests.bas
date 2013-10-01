@@ -94,7 +94,7 @@ End Type
 ' ////////////
 
 Public Sub QuestEditorInit()
-Dim i As Long
+Dim I As Long
     
     If frmEditor_Quest.visible = False Then Exit Sub
     EditorIndex = frmEditor_Quest.lstIndex.ListIndex + 1
@@ -108,9 +108,9 @@ Dim i As Long
             .chkRepeat.Value = 0
         End If
         .txtQuestLog = Trim$(Quest(EditorIndex).QuestLog)
-        For i = 1 To 3
+        For I = 1 To 3
             '.scrlReq(i).Value = Quest(EditorIndex).Requirement(i)
-            .txtSpeech(i).Text = Trim$(Quest(EditorIndex).Speech(i))
+            .txtSpeech(I).Text = Trim$(Quest(EditorIndex).Speech(I))
         Next
         'For i = 1 To MAX_QUESTS_ITEMS
         '    .scrlGiveItem.Value = Quest(EditorIndex).GiveItem(i).Item
@@ -137,8 +137,8 @@ Dim i As Long
         
         .scrlReqLevel.Value = Quest(EditorIndex).RequiredLevel
         .scrlReqQuest.Value = Quest(EditorIndex).RequiredQuest
-        For i = 1 To 5
-            .scrlReqClass.Value = Quest(EditorIndex).RequiredClass(i)
+        For I = 1 To 5
+            .scrlReqClass.Value = Quest(EditorIndex).RequiredClass(I)
         Next
         
         .scrlExp.Value = Quest(EditorIndex).RewardExp
@@ -164,12 +164,12 @@ End Sub
 
 'Alatar v1.2
 Public Sub UpdateQuestGiveItems()
-    Dim i As Long
+    Dim I As Long
     
     frmEditor_Quest.lstGiveItem.Clear
     
-    For i = 1 To MAX_QUESTS_ITEMS
-        With Quest(EditorIndex).GiveItem(i)
+    For I = 1 To MAX_QUESTS_ITEMS
+        With Quest(EditorIndex).GiveItem(I)
             If .Item = 0 Then
                 frmEditor_Quest.lstGiveItem.AddItem "-"
             Else
@@ -180,12 +180,12 @@ Public Sub UpdateQuestGiveItems()
 End Sub
 
 Public Sub UpdateQuestTakeItems()
-    Dim i As Long
+    Dim I As Long
     
     frmEditor_Quest.lstTakeItem.Clear
     
-    For i = 1 To MAX_QUESTS_ITEMS
-        With Quest(EditorIndex).TakeItem(i)
+    For I = 1 To MAX_QUESTS_ITEMS
+        With Quest(EditorIndex).TakeItem(I)
             If .Item = 0 Then
                 frmEditor_Quest.lstTakeItem.AddItem "-"
             Else
@@ -196,12 +196,12 @@ Public Sub UpdateQuestTakeItems()
 End Sub
 
 Public Sub UpdateQuestRewardItems()
-    Dim i As Long
+    Dim I As Long
     
     frmEditor_Quest.lstItemRew.Clear
     
-    For i = 1 To MAX_QUESTS_ITEMS
-        With Quest(EditorIndex).RewardItem(i)
+    For I = 1 To MAX_QUESTS_ITEMS
+        With Quest(EditorIndex).RewardItem(I)
             If .Item = 0 Then
                 frmEditor_Quest.lstItemRew.AddItem "-"
             Else
@@ -212,12 +212,12 @@ Public Sub UpdateQuestRewardItems()
 End Sub
 
 Public Sub UpdateQuestRequirementItems()
-    Dim i As Long
+    Dim I As Long
     
     frmEditor_Quest.lstReqItem.Clear
     
-    For i = 1 To MAX_QUESTS_ITEMS
-        With Quest(EditorIndex).RequiredItem(i)
+    For I = 1 To MAX_QUESTS_ITEMS
+        With Quest(EditorIndex).RequiredItem(I)
             If .Item = 0 Then
                 frmEditor_Quest.lstReqItem.AddItem "-"
             Else
@@ -228,29 +228,27 @@ Public Sub UpdateQuestRequirementItems()
 End Sub
 
 Public Sub UpdateQuestClass()
-    Dim i As Long
+    Dim I As Long
     
     
 End Sub
 '/Alatar v1.2
 
 Public Sub QuestEditorOk()
-Dim i As Long
+Dim I As Long
 
-    For i = 1 To MAX_QUESTS
-        If Quest_Changed(i) Then
-            Call SendSaveQuest(i)
+    For I = 1 To MAX_QUESTS
+        If Quest_Changed(I) Then
+            Call SendSaveQuest(I)
         End If
     Next
     
     Unload frmEditor_Quest
-    Editor = 0
     ClearChanged_Quest
     
 End Sub
 
 Public Sub QuestEditorCancel()
-    Editor = 0
     Unload frmEditor_Quest
     ClearChanged_Quest
     ClearQuests
@@ -271,10 +269,10 @@ Sub ClearQuest(ByVal Index As Long)
 End Sub
 
 Sub ClearQuests()
-Dim i As Long
+Dim I As Long
 
-    For i = 1 To MAX_QUESTS
-        Call ClearQuest(i)
+    For I = 1 To MAX_QUESTS
+        Call ClearQuest(I)
     Next
 End Sub
 
@@ -364,12 +362,12 @@ Public Function QuestCompleted(ByVal QuestNum As Long) As Boolean
 End Function
 
 Public Function GetQuestNum(ByVal QuestName As String) As Long
-    Dim i As Long
+    Dim I As Long
     GetQuestNum = 0
     
-    For i = 1 To MAX_QUESTS
-        If Trim$(Quest(i).name) = Trim$(QuestName) Then
-            GetQuestNum = i
+    For I = 1 To MAX_QUESTS
+        If Trim$(Quest(I).name) = Trim$(QuestName) Then
+            GetQuestNum = I
             Exit For
         End If
     Next
@@ -469,13 +467,13 @@ Public Sub LoadTask(ByVal QuestNum As Long, ByVal TaskNum As Long)
 End Sub
 
 Public Sub RefreshQuestLog()
-    Dim i As Long
+    Dim I As Long
      Dim QuestNum As Long
 
    frmMain.lstQuestLog.Clear
-    For i = 1 To MAX_QUESTS
-        If QuestInProgress(i) Or QuestCompleted(i) Then
-            frmMain.lstQuestLog.AddItem Trim$(Quest(i).name)
+    For I = 1 To MAX_QUESTS
+        If QuestInProgress(I) Or QuestCompleted(I) Then
+            frmMain.lstQuestLog.AddItem Trim$(Quest(I).name)
         End If
 
     Next
@@ -486,7 +484,7 @@ End Sub
 ' ////////////////////////
 
 Public Sub LoadQuestlogBox(ByVal ButtonPressed As Integer)
-    Dim QuestNum As Long, i As Long
+    Dim QuestNum As Long, I As Long
     Dim QuestSay As String
     
    

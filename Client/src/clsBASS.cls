@@ -110,16 +110,16 @@ Private Enum FSOUND_INITMODES
     FSOUND_INIT_PSP_SILENCEONUNDERRUN = &H8000  'PSP only - If streams skip / stutter when device is powered on, either increase stream buffersize, or use this flag instead to play silence while the UMD is recovering.
 End Enum
 
-Private Declare Function FSOUND_Stream_Close Lib "fmod.dll" Alias "_FSOUND_Stream_Close@4" (ByVal stream As Long) As Byte
-Private Declare Function FSOUND_Stream_Stop Lib "fmod.dll" Alias "_FSOUND_Stream_Stop@4" (ByVal stream As Long) As Byte
-Private Declare Function FSOUND_Stream_Play Lib "fmod.dll" Alias "_FSOUND_Stream_Play@8" (ByVal channel As Long, ByVal stream As Long) As Long
-Private Declare Function FSOUND_Stream_Open Lib "fmod.dll" Alias "_FSOUND_Stream_Open@16" (ByVal filename As String, ByVal mode As FSOUND_MODES, ByVal offset As Long, ByVal Length As Long) As Long
+Private Declare Function FSOUND_Stream_Close Lib "fmod.dll" Alias "_FSOUND_Stream_Close@4" (ByVal Stream As Long) As Byte
+Private Declare Function FSOUND_Stream_Stop Lib "fmod.dll" Alias "_FSOUND_Stream_Stop@4" (ByVal Stream As Long) As Byte
+Private Declare Function FSOUND_Stream_Play Lib "fmod.dll" Alias "_FSOUND_Stream_Play@8" (ByVal channel As Long, ByVal Stream As Long) As Long
+Private Declare Function FSOUND_Stream_Open Lib "fmod.dll" Alias "_FSOUND_Stream_Open@16" (ByVal FileName As String, ByVal Mode As FSOUND_MODES, ByVal offset As Long, ByVal Length As Long) As Long
 Private Declare Function FMUSIC_SetMasterVolume Lib "fmod.dll" Alias "_FMUSIC_SetMasterVolume@8" (ByVal module As Long, ByVal Volume As Long) As Byte
-Private Declare Function FSOUND_Init Lib "fmod.dll" Alias "_FSOUND_Init@12" (ByVal mixrate As Long, ByVal maxchannels As Long, ByVal flags As FSOUND_INITMODES) As Byte
+Private Declare Function FSOUND_Init Lib "fmod.dll" Alias "_FSOUND_Init@12" (ByVal mixrate As Long, ByVal maxchannels As Long, ByVal Flags As FSOUND_INITMODES) As Byte
 Private Declare Function FSOUND_Close Lib "fmod.dll" Alias "_FSOUND_Close@0" () As Long
 Private Declare Function FSOUND_GetError Lib "fmod.dll" Alias "_FSOUND_GetError@0" () As FMOD_ERRORS
 Private Declare Function FSOUND_SetVolume Lib "fmod.dll" Alias "_FSOUND_SetVolume@8" (ByVal channel As Long, ByVal Vol As Long) As Byte
-Private Declare Function FMUSIC_LoadSong Lib "fmod.dll" Alias "_FMUSIC_LoadSong@4" (ByVal Name As String) As Long
+Private Declare Function FMUSIC_LoadSong Lib "fmod.dll" Alias "_FMUSIC_LoadSong@4" (ByVal name As String) As Long
 Private Declare Function FMUSIC_FreeSong Lib "fmod.dll" Alias "_FMUSIC_FreeSong@4" (ByVal module As Long) As Byte
 Private Declare Function FMUSIC_PlaySong Lib "fmod.dll" Alias "_FMUSIC_PlaySong@4" (ByVal module As Long) As Byte
 Private Declare Function FMUSIC_StopSong Lib "fmod.dll" Alias "_FMUSIC_StopSong@4" (ByVal module As Long) As Byte
@@ -159,13 +159,13 @@ End Function
 Public Function Init() As Boolean
 Dim result As Boolean
 
-    On Error GoTo ErrorHandler
+    On Error GoTo errorhandler
     
     If App.LogMode = 0 Then Exit Function
     
     ' init music engine
     result = FSOUND_Init(44100, 32, FSOUND_INIT_USEDEFAULTMIDISYNTH)
-    If Not result Then GoTo ErrorHandler
+    If Not result Then GoTo errorhandler
     
     CurrentChannel = 1
     
@@ -173,7 +173,7 @@ Dim result As Boolean
     bInit_Audio = True
     Exit Function
     
-ErrorHandler:
+errorhandler:
     MsgBox "Error"
     bInit_Audio = False
 End Function
@@ -249,7 +249,7 @@ Public Sub Music_Stop()
     curSong = vbNullString
 End Sub
 
-Public Sub Sound_Play(ByVal Sound As String, Optional ByVal X As Long = -1, Optional ByVal Y As Long = -1)
+Public Sub Sound_Play(ByVal Sound As String, Optional ByVal x As Long = -1, Optional ByVal y As Long = -1)
     If Not bInit_Audio Then Exit Sub
     If Options.Sound = 0 Then Exit Sub
     Dim Volume As Long
@@ -266,7 +266,7 @@ Public Sub Sound_Play(ByVal Sound As String, Optional ByVal X As Long = -1, Opti
     ' open the stream
     SoundHandle = FSOUND_Stream_Open(App.path & SOUND_PATH & Sound, FSOUND_LOOP_OFF, 0, 0)
     ' set volume
-    Volume = CalculateSoundVolume(X, Y)
+    Volume = CalculateSoundVolume(x, y)
     FSOUND_SetVolume SoundHandle, Volume
     ' play it
     FSOUND_Stream_Play CurrentChannel, SoundHandle
@@ -276,20 +276,20 @@ Public Sub Sound_Play(ByVal Sound As String, Optional ByVal X As Long = -1, Opti
 End Sub
 
 Function CalculateSoundVolume(SoundX As Long, SoundY As Long) As Byte
-Dim x1 As Long, x2 As Long, y1 As Long, y2 As Long, distance As Double, Volume As Long
+Dim X1 As Long, X2 As Long, Y1 As Long, Y2 As Long, distance As Double
     If InGame = False Then CalculateSoundVolume = Options.Volume: Exit Function
     If Not bInit_Audio Then Exit Function
     If Options.Sound = 0 Then Exit Function
     
     If SoundX > -1 Or SoundY > -1 Then
-        x1 = (Player(MyIndex).X * 32) + TempPlayer(MyIndex).xOffset
-        y1 = (Player(MyIndex).Y * 32) + TempPlayer(MyIndex).yOffset
-        x2 = (SoundX * 32) + 16
-        y2 = (SoundY * 32) + 16
-        If ((x1 - x2) ^ 2) + ((y1 - y2) ^ 2) < 0 Then
-            distance = Sqr(((x1 - x2) ^ 2) + ((y1 - y2) ^ 2) * -1)
+        X1 = (Player(MyIndex).x * 32) + TempPlayer(MyIndex).XOffset
+        Y1 = (Player(MyIndex).y * 32) + TempPlayer(MyIndex).YOffset
+        X2 = (SoundX * 32) + 16
+        Y2 = (SoundY * 32) + 16
+        If ((X1 - X2) ^ 2) + ((Y1 - Y2) ^ 2) < 0 Then
+            distance = Sqr(((X1 - X2) ^ 2) + ((Y1 - Y2) ^ 2) * -1)
         Else
-            distance = Sqr(((x1 - x2) ^ 2) + ((y1 - y2) ^ 2))
+            distance = Sqr(((X1 - X2) ^ 2) + ((Y1 - Y2) ^ 2))
         End If
         If distance >= 256 Then
             CalculateSoundVolume = 0

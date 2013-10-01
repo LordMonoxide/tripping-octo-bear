@@ -1309,7 +1309,6 @@ Dim I As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_Item
-        Editor = EDITOR_ITEM
         .lstIndex.Clear
 
         ' Add the names
@@ -1337,7 +1336,6 @@ Dim I As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_Animation
-        Editor = EDITOR_ANIMATION
         .lstIndex.Clear
 
         ' Add the names
@@ -1476,7 +1474,6 @@ Dim I As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_NPC
-        Editor = EDITOR_NPC
         .lstIndex.Clear
 
         ' Add the names
@@ -1533,7 +1530,6 @@ Dim I As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_Resource
-        Editor = EDITOR_RESOURCE
         .lstIndex.Clear
 
         ' Add the names
@@ -1607,7 +1603,6 @@ Dim I As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_Shop
-        Editor = EDITOR_SHOP
         .lstIndex.Clear
 
         ' Add the names
@@ -1664,7 +1659,6 @@ Dim I As Long
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_Spell
-        Editor = EDITOR_SPELL
         .lstIndex.Clear
 
         ' Add the names
@@ -2579,7 +2573,6 @@ Public Sub Events_HandleEventEditor(ByVal Index As Long, ByRef data() As Byte, B
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     With frmEditor_Events
-        Editor = EDITOR_EVENT
         .lstIndex.Clear
 
         ' Add the names
@@ -2804,7 +2797,6 @@ Private Sub HandleQuestEditor()
     Dim I As Long
     
     With frmEditor_Quest
-        Editor = EDITOR_TASKS
         .lstIndex.Clear
 
         ' Add the names

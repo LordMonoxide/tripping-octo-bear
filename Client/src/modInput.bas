@@ -1002,19 +1002,19 @@ errorhandler:
     Exit Sub
 End Sub
 
-Public Sub HandleMouseMove(ByVal X As Long, ByVal Y As Long, ByVal Button As Long)
+Public Sub HandleMouseMove(ByVal x As Long, ByVal y As Long, ByVal Button As Long)
 Dim I As Long
 
     ' Set the global cursor position
-    GlobalX = (ScreenWidth / frmMain.ScaleWidth) * X
-    GlobalY = (ScreenHeight / frmMain.ScaleHeight) * Y
+    GlobalX = (ScreenWidth / frmMain.ScaleWidth) * x
+    GlobalY = (ScreenHeight / frmMain.ScaleHeight) * y
     GlobalX_Map = GlobalX + (TileView.Left * PIC_X) + Camera.Left
     GlobalY_Map = GlobalY + (TileView.Top * PIC_Y) + Camera.Top
     
     ' GUI processing
     If Not InMapEditor And Not hideGUI Then
         For I = 1 To GUI_Count - 1
-            If (X >= GUIWindow(I).X And X <= GUIWindow(I).X + GUIWindow(I).Width) And (Y >= GUIWindow(I).Y And Y <= GUIWindow(I).Y + GUIWindow(I).Height) Then
+            If (x >= GUIWindow(I).x And x <= GUIWindow(I).x + GUIWindow(I).width) And (y >= GUIWindow(I).y And y <= GUIWindow(I).y + GUIWindow(I).height) Then
                 If GUIWindow(I).visible Then
                     Select Case I
                         Case GUI_CHAT, GUI_BARS, GUI_QUESTS
@@ -1033,12 +1033,12 @@ Dim I As Long
 
     If InMapEditor Then
         If Button = vbLeftButton Or Button = vbRightButton Then
-            Call MapEditorMouseDown(Button, X, Y)
+            Call MapEditorMouseDown(Button, x, y)
         End If
     End If
     If I = GUI_QUESTS Then
-                    frmMain.lstQuestLog.Left = (GUIWindow(GUI_QUESTS).X + (GUIWindow(GUI_QUESTS).Width / 2)) - (frmMain.lstQuestLog.Width / 2)
-                    frmMain.lstQuestLog.Top = GUIWindow(GUI_QUESTS).Y + 25
+                    frmMain.lstQuestLog.Left = (GUIWindow(GUI_QUESTS).x + (GUIWindow(GUI_QUESTS).width / 2)) - (frmMain.lstQuestLog.width / 2)
+                    frmMain.lstQuestLog.Top = GUIWindow(GUI_QUESTS).y + 25
                 End If
 End Sub
 
@@ -1049,7 +1049,7 @@ Dim I As Long
     ' GUI processing
     If Not InMapEditor And Not hideGUI Then
         For I = 1 To GUI_Count - 1
-            If (GlobalX >= GUIWindow(I).X And GlobalX <= GUIWindow(I).X + GUIWindow(I).Width) And (GlobalY >= GUIWindow(I).Y And GlobalY <= GUIWindow(I).Y + GUIWindow(I).Height) Then
+            If (GlobalX >= GUIWindow(I).x And GlobalX <= GUIWindow(I).x + GUIWindow(I).width) And (GlobalY >= GUIWindow(I).y And GlobalY <= GUIWindow(I).y + GUIWindow(I).height) Then
                 If GUIWindow(I).visible Then
                     Select Case I
                         Case GUI_BARS, GUI_CHAT
@@ -1104,9 +1104,6 @@ Dim I As Long
                             Exit Sub
                         Case GUI_QUESTDIALOGUE
                             QuestDialogue_MouseDown
-                        Case GUI_QUESTS
-                            Quests_MouseDown
-                            Exit Sub
                         Case Else
                             Exit Sub
                     End Select
@@ -1165,7 +1162,7 @@ Dim I As Long
     ' GUI processing
     If Not InMapEditor And Not hideGUI Then
         For I = 1 To GUI_Count - 1
-            If (GlobalX >= GUIWindow(I).X And GlobalX <= GUIWindow(I).X + GUIWindow(I).Width) And (GlobalY >= GUIWindow(I).Y And GlobalY <= GUIWindow(I).Y + GUIWindow(I).Height) Then
+            If (GlobalX >= GUIWindow(I).x And GlobalX <= GUIWindow(I).x + GUIWindow(I).width) And (GlobalY >= GUIWindow(I).y And GlobalY <= GUIWindow(I).y + GUIWindow(I).height) Then
                 If GUIWindow(I).visible Then
                     Select Case I
                         Case GUI_RIGHTMENU
@@ -1224,7 +1221,6 @@ Dim I As Long
 
     ' Stop dragging if we haven't catched it already
     DragInvSlotNum = 0
-    DragBankSlotNum = 0
     DragSpell = 0
     ' reset buttons
     resetClickedButtons
@@ -1233,7 +1229,7 @@ Dim I As Long
     ChatButtonDown = False
 End Sub
 Public Sub Quests_MouseUp()
-Dim I As Long, X As Long, Y As Long, buffer As clsBuffer, layerNum As Long
+Dim I As Long, x As Long, y As Long, buffer As clsBuffer, layerNum As Long
 
     ' find out which button we're clicking
     ' For I = 41 To 41
@@ -1259,7 +1255,7 @@ Dim I As Long
     ' GUI processing
     If Not InMapEditor And Not hideGUI Then
         For I = 1 To GUI_Count - 1
-            If (GlobalX >= GUIWindow(I).X And GlobalX <= GUIWindow(I).X + GUIWindow(I).Width) And (GlobalY >= GUIWindow(I).Y And GlobalY <= GUIWindow(I).Y + GUIWindow(I).Height) Then
+            If (GlobalX >= GUIWindow(I).x And GlobalX <= GUIWindow(I).x + GUIWindow(I).width) And (GlobalY >= GUIWindow(I).y And GlobalY <= GUIWindow(I).y + GUIWindow(I).height) Then
                 If GUIWindow(I).visible Then
                     Select Case I
                         Case GUI_INVENTORY
@@ -1343,14 +1339,14 @@ End Sub
 
 ' Tutorial
 Public Sub Tutorial_MouseDown()
-Dim I As Long, X As Long, Y As Long, Width As Long
+Dim I As Long, x As Long, y As Long, width As Long
     
     For I = 1 To 4
         If Len(Trim$(tutOpt(I))) > 0 Then
-            Width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(tutOpt(I)) & "]")
-            X = GUIWindow(GUI_CHAT).X + (GUIWindow(GUI_CHAT).Width / 2) - (Width / 2)
-            Y = GUIWindow(GUI_CHAT).Y + 115 - ((I - 1) * 15)
-            If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(tutOpt(I)) & "]")
+            x = GUIWindow(GUI_CHAT).x + (GUIWindow(GUI_CHAT).width / 2) - (width / 2)
+            y = GUIWindow(GUI_CHAT).y + 115 - ((I - 1) * 15)
+            If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
                 tutOptState(I) = 2 ' clicked
             End If
         End If
@@ -1358,14 +1354,14 @@ Dim I As Long, X As Long, Y As Long, Width As Long
 End Sub
 
 Public Sub Tutorial_MouseUp()
-Dim I As Long, X As Long, Y As Long, Width As Long
+Dim I As Long, x As Long, y As Long, width As Long
     
     For I = 1 To 4
         If Len(Trim$(tutOpt(I))) > 0 Then
-            Width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(tutOpt(I)) & "]")
-            X = GUIWindow(GUI_CHAT).X + (GUIWindow(GUI_CHAT).Width / 2) - (Width / 2)
-            Y = GUIWindow(GUI_CHAT).Y + 115 - ((I - 1) * 15)
-            If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(tutOpt(I)) & "]")
+            x = GUIWindow(GUI_CHAT).x + (GUIWindow(GUI_CHAT).width / 2) - (width / 2)
+            y = GUIWindow(GUI_CHAT).y + 115 - ((I - 1) * 15)
+            If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
                 ' are we clicked?
                 If tutOptState(I) = 2 Then
                     SetTutorialState tutorialState + 1
@@ -1383,41 +1379,41 @@ End Sub
 
 ' Npc Chat
 Public Sub Chat_MouseDown()
-Dim I As Long, X As Long, Y As Long, Width As Long
+Dim I As Long, x As Long, y As Long, width As Long
 
 Select Case CurrentEvent.Type
     Case Evt_Menu
     For I = 1 To UBound(CurrentEvent.Text) - 1
         If Len(Trim$(CurrentEvent.Text(I + 1))) > 0 Then
-            Width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(I + 1)) & "]")
-            X = GUIWindow(GUI_EVENTCHAT).X + ((GUIWindow(GUI_EVENTCHAT).Width / 2) - Width / 2)
-            Y = GUIWindow(GUI_EVENTCHAT).Y + 115 - ((I - 1) * 15)
-            If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(I + 1)) & "]")
+            x = GUIWindow(GUI_EVENTCHAT).x + ((GUIWindow(GUI_EVENTCHAT).width / 2) - width / 2)
+            y = GUIWindow(GUI_EVENTCHAT).y + 115 - ((I - 1) * 15)
+            If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
                 chatOptState(I) = 2 ' clicked
             End If
         End If
     Next
     Case Evt_Message
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Continue]")
-    X = GUIWindow(GUI_EVENTCHAT).X + ((GUIWindow(GUI_EVENTCHAT).Width / 2) - Width / 2)
-    Y = GUIWindow(GUI_EVENTCHAT).Y + 100
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Continue]")
+    x = GUIWindow(GUI_EVENTCHAT).x + ((GUIWindow(GUI_EVENTCHAT).width / 2) - width / 2)
+    y = GUIWindow(GUI_EVENTCHAT).y + 100
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         chatContinueState = 2 ' clicked
     End If
 End Select
 
 End Sub
 Public Sub Chat_MouseUp()
-Dim I As Long, X As Long, Y As Long, Width As Long
+Dim I As Long, x As Long, y As Long, width As Long
 
 Select Case CurrentEvent.Type
     Case Evt_Menu
         For I = 1 To UBound(CurrentEvent.Text) - 1
             If Len(Trim$(CurrentEvent.Text(I + 1))) > 0 Then
-                Width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(I + 1)) & "]")
-                X = GUIWindow(GUI_EVENTCHAT).X + ((GUIWindow(GUI_EVENTCHAT).Width / 2) - Width / 2)
-                Y = GUIWindow(GUI_EVENTCHAT).Y + 115 - ((I - 1) * 15)
-                If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+                width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(I + 1)) & "]")
+                x = GUIWindow(GUI_EVENTCHAT).x + ((GUIWindow(GUI_EVENTCHAT).width / 2) - width / 2)
+                y = GUIWindow(GUI_EVENTCHAT).y + 115 - ((I - 1) * 15)
+                If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
                     ' are we clicked?
                     If chatOptState(I) = 2 Then
                         Events_SendChooseEventOption CurrentEvent.data(I)
@@ -1432,10 +1428,10 @@ Select Case CurrentEvent.Type
             chatOptState(I) = 0 ' normal
         Next
     Case Evt_Message
-        Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Continue]")
-        X = GUIWindow(GUI_EVENTCHAT).X + ((GUIWindow(GUI_EVENTCHAT).Width / 2) - Width / 2)
-        Y = GUIWindow(GUI_EVENTCHAT).Y + 100
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_GeorgiaShadow, "[Continue]")
+        x = GUIWindow(GUI_EVENTCHAT).x + ((GUIWindow(GUI_EVENTCHAT).width / 2) - width / 2)
+        y = GUIWindow(GUI_EVENTCHAT).y + 100
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             ' are we clicked?
             If chatContinueState = 2 Then
                 Events_SendChooseEventOption CurrentEventIndex + 1
@@ -1450,14 +1446,14 @@ End Sub
 
 ' scroll bar
 Public Sub ChatScroll_MouseDown()
-Dim I As Long, X As Long, Y As Long, Width As Long
+Dim I As Long, x As Long, y As Long, width As Long
     
     ' find out which button we're clicking
     For I = 34 To 35
-        X = GUIWindow(GUI_CHAT).X + Buttons(I).X
-        Y = GUIWindow(GUI_CHAT).Y + Buttons(I).Y
+        x = GUIWindow(GUI_CHAT).x + Buttons(I).x
+        y = GUIWindow(GUI_CHAT).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             Buttons(I).state = 2 ' clicked
             ' scroll the actual chat
             Select Case I
@@ -1475,14 +1471,14 @@ End Sub
 
 ' Shop
 Public Sub Shop_MouseUp()
-Dim I As Long, X As Long, Y As Long, buffer As clsBuffer
+Dim I As Long, x As Long, y As Long, buffer As clsBuffer
 
     ' find out which button we're clicking
     For I = 23 To 23
-        X = GUIWindow(GUI_SHOP).X + Buttons(I).X
-        Y = GUIWindow(GUI_SHOP).Y + Buttons(I).Y
+        x = GUIWindow(GUI_SHOP).x + Buttons(I).x
+        y = GUIWindow(GUI_SHOP).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             If Buttons(I).state = 2 Then
                 ' do stuffs
                 Select Case I
@@ -1506,14 +1502,14 @@ Dim I As Long, X As Long, Y As Long, buffer As clsBuffer
 End Sub
 
 Public Sub Shop_MouseDown()
-Dim I As Long, X As Long, Y As Long
+Dim I As Long, x As Long, y As Long
 
     ' find out which button we're clicking
     For I = 23 To 23
-        X = GUIWindow(GUI_SHOP).X + Buttons(I).X
-        Y = GUIWindow(GUI_SHOP).Y + Buttons(I).Y
+        x = GUIWindow(GUI_SHOP).x + Buttons(I).x
+        y = GUIWindow(GUI_SHOP).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             Buttons(I).state = 2 ' clicked
         End If
     Next
@@ -1532,14 +1528,14 @@ End Sub
 
 ' Party
 Public Sub Party_MouseUp()
-Dim I As Long, X As Long, Y As Long, buffer As clsBuffer
+Dim I As Long, x As Long, y As Long, buffer As clsBuffer
 
     ' find out which button we're clicking
     For I = 24 To 25
-        X = GUIWindow(GUI_PARTY).X + Buttons(I).X
-        Y = GUIWindow(GUI_PARTY).Y + Buttons(I).Y
+        x = GUIWindow(GUI_PARTY).x + Buttons(I).x
+        y = GUIWindow(GUI_PARTY).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             If Buttons(I).state = 2 Then
                 ' do stuffs
                 Select Case I
@@ -1567,13 +1563,13 @@ Dim I As Long, X As Long, Y As Long, buffer As clsBuffer
 End Sub
 
 Public Sub Party_MouseDown()
-Dim I As Long, X As Long, Y As Long
+Dim I As Long, x As Long, y As Long
     ' find out which button we're clicking
     For I = 24 To 25
-        X = GUIWindow(GUI_PARTY).X + Buttons(I).X
-        Y = GUIWindow(GUI_PARTY).Y + Buttons(I).Y
+        x = GUIWindow(GUI_PARTY).x + Buttons(I).x
+        y = GUIWindow(GUI_PARTY).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             Buttons(I).state = 2 ' clicked
         End If
     Next
@@ -1581,14 +1577,14 @@ End Sub
 
 'Options
 Public Sub Options_MouseUp()
-Dim I As Long, X As Long, Y As Long, buffer As clsBuffer, layerNum As Long
+Dim I As Long, x As Long, y As Long, buffer As clsBuffer, layerNum As Long
 
     ' find out which button we're clicking
     For I = 26 To 33
-        X = GUIWindow(GUI_OPTIONS).X + Buttons(I).X
-        Y = GUIWindow(GUI_OPTIONS).Y + Buttons(I).Y
+        x = GUIWindow(GUI_OPTIONS).x + Buttons(I).x
+        y = GUIWindow(GUI_OPTIONS).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             If Buttons(I).state = 3 Then
                 ' do stuffs
                 Select Case I
@@ -1631,10 +1627,10 @@ Dim I As Long, X As Long, Y As Long, buffer As clsBuffer, layerNum As Long
                         Buttons(33).state = 0
                         If InGame Then
                             ' cache render state
-                            For X = 0 To map.MaxX
-                                For Y = 0 To map.MaxY
+                            For x = 0 To map.MaxX
+                                For y = 0 To map.MaxY
                                     For layerNum = 1 To MapLayer.Layer_Count - 1
-                                        cacheRenderState X, Y, layerNum
+                                        cacheRenderState x, y, layerNum
                                     Next
                                 Next
                             Next
@@ -1646,10 +1642,10 @@ Dim I As Long, X As Long, Y As Long, buffer As clsBuffer, layerNum As Long
                         Buttons(33).state = 2
                         If InGame Then
                             ' cache render state
-                            For X = 0 To map.MaxX
-                                For Y = 0 To map.MaxY
+                            For x = 0 To map.MaxX
+                                For y = 0 To map.MaxY
                                     For layerNum = 1 To MapLayer.Layer_Count - 1
-                                        cacheRenderState X, Y, layerNum
+                                        cacheRenderState x, y, layerNum
                                     Next
                                 Next
                             Next
@@ -1662,9 +1658,9 @@ Dim I As Long, X As Long, Y As Long, buffer As clsBuffer, layerNum As Long
     Next
     For I = 38 To 41
     ' set co-ordinate
-        X = GUIWindow(GUI_OPTIONS).X + Buttons(I).X
-        Y = GUIWindow(GUI_OPTIONS).Y + Buttons(I).Y
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        x = GUIWindow(GUI_OPTIONS).x + Buttons(I).x
+        y = GUIWindow(GUI_OPTIONS).y + Buttons(I).y
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             If Buttons(I).state = 2 Then
                 Select Case I
                     Case 38
@@ -1703,13 +1699,13 @@ Dim I As Long, X As Long, Y As Long, buffer As clsBuffer, layerNum As Long
 End Sub
 
 Public Sub Options_MouseDown()
-Dim I As Long, X As Long, Y As Long
+Dim I As Long, x As Long, y As Long
     ' find out which button we're clicking
     For I = 26 To 33
-        X = GUIWindow(GUI_OPTIONS).X + Buttons(I).X
-        Y = GUIWindow(GUI_OPTIONS).Y + Buttons(I).Y
+        x = GUIWindow(GUI_OPTIONS).x + Buttons(I).x
+        y = GUIWindow(GUI_OPTIONS).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             If Buttons(I).state = 0 Then
                 Buttons(I).state = 3 ' clicked
             End If
@@ -1717,9 +1713,9 @@ Dim I As Long, X As Long, Y As Long
     Next
     For I = 38 To 41
     ' set co-ordinate
-        X = GUIWindow(GUI_OPTIONS).X + Buttons(I).X
-        Y = GUIWindow(GUI_OPTIONS).Y + Buttons(I).Y
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        x = GUIWindow(GUI_OPTIONS).x + Buttons(I).x
+        y = GUIWindow(GUI_OPTIONS).y + Buttons(I).y
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             Buttons(I).state = 2 ' clicked
         End If
     Next
@@ -1727,14 +1723,14 @@ End Sub
 
 ' Menu
 Public Sub Menu_MouseUp()
-Dim I As Long, X As Long, Y As Long, buffer As clsBuffer
+Dim I As Long, x As Long, y As Long, buffer As clsBuffer
 
     ' find out which button we're clicking
     For I = 1 To 6
-        X = GUIWindow(GUI_MENU).X + Buttons(I).X
-        Y = GUIWindow(GUI_MENU).Y + Buttons(I).Y
+        x = GUIWindow(GUI_MENU).x + Buttons(I).x
+        y = GUIWindow(GUI_MENU).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             If Buttons(I).state = 2 Then
                 ' do stuffs
                 Select Case I
@@ -1768,13 +1764,13 @@ Dim I As Long, X As Long, Y As Long, buffer As clsBuffer
 End Sub
 
 Public Sub Menu_MouseDown(ByVal Button As Long)
-Dim I As Long, X As Long, Y As Long
+Dim I As Long, x As Long, y As Long
     ' find out which button we're clicking
     For I = 1 To 6
-        X = GUIWindow(GUI_MENU).X + Buttons(I).X
-        Y = GUIWindow(GUI_MENU).Y + Buttons(I).Y
+        x = GUIWindow(GUI_MENU).x + Buttons(I).x
+        y = GUIWindow(GUI_MENU).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             Buttons(I).state = 2 ' clicked
         End If
     Next
@@ -1782,16 +1778,16 @@ End Sub
 
 ' Main Menu
 Public Sub MainMenu_MouseUp()
-Dim I As Long, X As Long, Y As Long, buffer As clsBuffer, Width As Long, Height As Long
+Dim I As Long, x As Long, y As Long, buffer As clsBuffer, width As Long, height As Long
 
     If faderAlpha > 0 Then Exit Sub
 
     ' find out which button we're clicking
     For I = 7 To 15
-        X = GUIWindow(GUI_MAINMENU).X + Buttons(I).X
-        Y = GUIWindow(GUI_MAINMENU).Y + Buttons(I).Y
+        x = GUIWindow(GUI_MAINMENU).x + Buttons(I).x
+        y = GUIWindow(GUI_MAINMENU).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             If Buttons(I).state = 2 Then
                 ' do stuffs
                 Select Case I
@@ -1847,10 +1843,10 @@ Dim I As Long, X As Long, Y As Long, buffer As clsBuffer, Width As Long, Height 
     Next
     
     If curMenu = MENU_NEWCHAR Then
-        Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Click here to edit appearance]")
-        X = GUIWindow(GUI_MAINMENU).X + 165
-        Y = GUIWindow(GUI_MAINMENU).Y + 70
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_GeorgiaShadow, "[Click here to edit appearance]")
+        x = GUIWindow(GUI_MAINMENU).x + 165
+        y = GUIWindow(GUI_MAINMENU).y + 70
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             If CharEditState = 2 Then ' clicked
                 Load frmCharEdit
                 frmCharEdit.visible = True
@@ -1867,25 +1863,25 @@ Dim I As Long, X As Long, Y As Long, buffer As clsBuffer, Width As Long, Height 
 End Sub
 
 Public Sub MainMenu_MouseDown(ByVal Button As Long)
-Dim I As Long, X As Long, Y As Long, Width As Long, Height As Long
+Dim I As Long, x As Long, y As Long, width As Long, height As Long
 
     If faderAlpha > 0 Then Exit Sub
 
     ' find out which button we're clicking
     For I = 7 To 15
-        X = GUIWindow(GUI_MAINMENU).X + Buttons(I).X
-        Y = GUIWindow(GUI_MAINMENU).Y + Buttons(I).Y
+        x = GUIWindow(GUI_MAINMENU).x + Buttons(I).x
+        y = GUIWindow(GUI_MAINMENU).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             Buttons(I).state = 2 ' clicked
         End If
     Next
     
     If curMenu = MENU_NEWCHAR Then
-        Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Click here to edit appearance]")
-        X = GUIWindow(GUI_MAINMENU).X + 165
-        Y = GUIWindow(GUI_MAINMENU).Y + 70
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_GeorgiaShadow, "[Click here to edit appearance]")
+        x = GUIWindow(GUI_MAINMENU).x + 165
+        y = GUIWindow(GUI_MAINMENU).y + 70
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             CharEditState = 2 ' clicked
         End If
     End If
@@ -2066,26 +2062,26 @@ Dim eqNum As Long
 End Sub
 
 Public Sub Character_MouseDown()
-Dim I As Long, X As Long, Y As Long
+Dim I As Long, x As Long, y As Long
     ' find out which button we're clicking
     For I = 16 To 20
-        X = GUIWindow(GUI_CHARACTER).X + Buttons(I).X
-        Y = GUIWindow(GUI_CHARACTER).Y + Buttons(I).Y
+        x = GUIWindow(GUI_CHARACTER).x + Buttons(I).x
+        y = GUIWindow(GUI_CHARACTER).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             Buttons(I).state = 2 ' clicked
         End If
     Next
 End Sub
 
 Public Sub Character_MouseUp()
-Dim I As Long, X As Long, Y As Long
+Dim I As Long, x As Long, y As Long
     ' find out which button we're clicking
     For I = 16 To 20
-        X = GUIWindow(GUI_CHARACTER).X + Buttons(I).X
-        Y = GUIWindow(GUI_CHARACTER).Y + Buttons(I).Y
+        x = GUIWindow(GUI_CHARACTER).x + Buttons(I).x
+        y = GUIWindow(GUI_CHARACTER).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             ' send the level up
             If GetPlayerPOINTS(MyIndex) = 0 Then Exit Sub
             SendTrainStat (I - 15)
@@ -2164,27 +2160,27 @@ Dim tradeNum As Long
     End If
 End Sub
 Public Sub Trade_MouseDown()
-Dim I As Long, X As Long, Y As Long
+Dim I As Long, x As Long, y As Long
 
     ' find out which button we're clicking
     For I = 36 To 37
-        X = Buttons(I).X
-        Y = Buttons(I).Y
+        x = Buttons(I).x
+        y = Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             Buttons(I).state = 2 ' clicked
         End If
     Next
 End Sub
 Public Sub Trade_MouseUp()
-Dim I As Long, X As Long, Y As Long, buffer As clsBuffer
+Dim I As Long, x As Long, y As Long, buffer As clsBuffer
 
     ' find out which button we're clicking
     For I = 36 To 37
-        X = Buttons(I).X
-        Y = Buttons(I).Y
+        x = Buttons(I).x
+        y = Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             If Buttons(I).state = 2 Then
                 ' do stuffs
                 Select Case I
@@ -2204,27 +2200,27 @@ Dim I As Long, X As Long, Y As Long, buffer As clsBuffer
 End Sub
 
 Public Sub Currency_MouseDown()
-Dim I As Long, X As Long, Y As Long, Width As Long
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Accept]")
-    X = GUIWindow(GUI_CURRENCY).X + 155
-    Y = GUIWindow(GUI_CURRENCY).Y + 96
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+Dim I As Long, x As Long, y As Long, width As Long
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Accept]")
+    x = GUIWindow(GUI_CURRENCY).x + 155
+    y = GUIWindow(GUI_CURRENCY).y + 96
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         CurrencyAcceptState = 2 ' clicked
     End If
     
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Close]")
-    X = GUIWindow(GUI_CURRENCY).X + 218
-    Y = GUIWindow(GUI_CURRENCY).Y + 96
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Close]")
+    x = GUIWindow(GUI_CURRENCY).x + 218
+    y = GUIWindow(GUI_CURRENCY).y + 96
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         CurrencyCloseState = 2 ' clicked
     End If
 End Sub
 Public Sub Currency_MouseUp()
-Dim I As Long, X As Long, Y As Long, Width As Long, buffer As clsBuffer
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Accept]")
-    X = GUIWindow(GUI_CURRENCY).X + 155
-    Y = GUIWindow(GUI_CURRENCY).Y + 96
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+Dim I As Long, x As Long, y As Long, width As Long, buffer As clsBuffer
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Accept]")
+    x = GUIWindow(GUI_CURRENCY).x + 155
+    y = GUIWindow(GUI_CURRENCY).y + 96
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         If CurrencyAcceptState = 2 Then
             ' do stuffs
             If IsNumeric(sDialogue) Then
@@ -2250,11 +2246,11 @@ Dim I As Long, X As Long, Y As Long, Width As Long, buffer As clsBuffer
             FMOD.Sound_Play Sound_ButtonClick
         End If
     End If
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Close]")
-    X = GUIWindow(GUI_CURRENCY).X + 218
-    Y = GUIWindow(GUI_CURRENCY).Y + 96
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Close]")
+    x = GUIWindow(GUI_CURRENCY).x + 218
+    y = GUIWindow(GUI_CURRENCY).y + 96
     ' check if we're on the button
-    If (GlobalX >= X And GlobalX <= X + Buttons(12).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(12).Height) Then
+    If (GlobalX >= x And GlobalX <= x + Buttons(12).width) And (GlobalY >= y And GlobalY <= y + Buttons(12).height) Then
         If CurrencyCloseState = 2 Then
             ' play sound
             FMOD.Sound_Play Sound_ButtonClick
@@ -2273,41 +2269,41 @@ Dim I As Long, X As Long, Y As Long, Width As Long, buffer As clsBuffer
     resetClickedButtons
 End Sub
 Public Sub Dialogue_MouseDown()
-Dim I As Long, X As Long, Y As Long, Width As Long
+Dim I As Long, x As Long, y As Long, width As Long
     
     If Dialogue_ButtonVisible(1) = True Then
-        Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Accept]")
-        X = GUIWindow(GUI_DIALOGUE).X + 10 + (155 - (Width / 2))
-        Y = GUIWindow(GUI_DIALOGUE).Y + 90
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_GeorgiaShadow, "[Accept]")
+        x = GUIWindow(GUI_DIALOGUE).x + 10 + (155 - (width / 2))
+        y = GUIWindow(GUI_DIALOGUE).y + 90
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             Dialogue_ButtonState(1) = 2 ' clicked
         End If
     End If
     If Dialogue_ButtonVisible(2) = True Then
-        Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Okay]")
-        X = GUIWindow(GUI_DIALOGUE).X + 10 + (155 - (Width / 2))
-        Y = GUIWindow(GUI_DIALOGUE).Y + 105
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_GeorgiaShadow, "[Okay]")
+        x = GUIWindow(GUI_DIALOGUE).x + 10 + (155 - (width / 2))
+        y = GUIWindow(GUI_DIALOGUE).y + 105
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             Dialogue_ButtonState(2) = 2 ' clicked
         End If
     End If
     If Dialogue_ButtonVisible(3) = True Then
-        Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Close]")
-        X = GUIWindow(GUI_DIALOGUE).X + 10 + (155 - (Width / 2))
-        Y = GUIWindow(GUI_DIALOGUE).Y + 120
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_GeorgiaShadow, "[Close]")
+        x = GUIWindow(GUI_DIALOGUE).x + 10 + (155 - (width / 2))
+        y = GUIWindow(GUI_DIALOGUE).y + 120
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             Dialogue_ButtonState(3) = 2 ' clicked
         End If
     End If
 End Sub
 
 Public Sub Dialogue_MouseUp()
-Dim I As Long, X As Long, Y As Long, Width As Long
+Dim I As Long, x As Long, y As Long, width As Long
     If Dialogue_ButtonVisible(1) = True Then
-        Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Accept]")
-        X = GUIWindow(GUI_CHAT).X + 10 + (155 - (Width / 2))
-        Y = GUIWindow(GUI_CHAT).Y + 90
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_GeorgiaShadow, "[Accept]")
+        x = GUIWindow(GUI_CHAT).x + 10 + (155 - (width / 2))
+        y = GUIWindow(GUI_CHAT).y + 90
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             If Dialogue_ButtonState(1) = 2 Then
                 Dialogue_Button_MouseDown (2)
                 ' play sound
@@ -2317,10 +2313,10 @@ Dim I As Long, X As Long, Y As Long, Width As Long
         Dialogue_ButtonState(1) = 0
     End If
     If Dialogue_ButtonVisible(2) = True Then
-        Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Okay]")
-        X = GUIWindow(GUI_CHAT).X + 10 + (155 - (Width / 2))
-        Y = GUIWindow(GUI_CHAT).Y + 105
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_GeorgiaShadow, "[Okay]")
+        x = GUIWindow(GUI_CHAT).x + 10 + (155 - (width / 2))
+        y = GUIWindow(GUI_CHAT).y + 105
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             If Dialogue_ButtonState(2) = 2 Then
                 Dialogue_Button_MouseDown (1)
                 ' play sound
@@ -2330,10 +2326,10 @@ Dim I As Long, X As Long, Y As Long, Width As Long
         Dialogue_ButtonState(2) = 0
     End If
     If Dialogue_ButtonVisible(3) = True Then
-        Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Close]")
-        X = GUIWindow(GUI_CHAT).X + 10 + (155 - (Width / 2))
-        Y = GUIWindow(GUI_CHAT).Y + 120
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_GeorgiaShadow, "[Close]")
+        x = GUIWindow(GUI_CHAT).x + 10 + (155 - (width / 2))
+        y = GUIWindow(GUI_CHAT).y + 120
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             If Dialogue_ButtonState(3) = 2 Then
                 Dialogue_Button_MouseDown (3)
                 ' play sound
@@ -2353,43 +2349,43 @@ Public Sub Dialogue_Button_MouseDown(Index As Integer)
 End Sub
 
 Public Sub RightMenu_MouseDown()
-Dim I As Long, X As Long, Y As Long, Width As Long
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Trade]")
-    X = (GUIWindow(GUI_RIGHTMENU).X + (GUIWindow(GUI_RIGHTMENU).Width / 2)) - (Width / 2)
-    Y = GUIWindow(GUI_RIGHTMENU).Y + 24
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+Dim I As Long, x As Long, y As Long, width As Long
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Trade]")
+    x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
+    y = GUIWindow(GUI_RIGHTMENU).y + 24
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         RightMenuButtonState(1) = 2 ' clicked
     End If
     
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Party]")
-    X = (GUIWindow(GUI_RIGHTMENU).X + (GUIWindow(GUI_RIGHTMENU).Width / 2)) - (Width / 2)
-    Y = GUIWindow(GUI_RIGHTMENU).Y + 38
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Party]")
+    x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
+    y = GUIWindow(GUI_RIGHTMENU).y + 38
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         RightMenuButtonState(2) = 2 ' clicked
     End If
     
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Guild]")
-    X = (GUIWindow(GUI_RIGHTMENU).X + (GUIWindow(GUI_RIGHTMENU).Width / 2)) - (Width / 2)
-    Y = GUIWindow(GUI_RIGHTMENU).Y + 52
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Guild]")
+    x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
+    y = GUIWindow(GUI_RIGHTMENU).y + 52
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         RightMenuButtonState(3) = 2 ' clicked
     End If
 
     
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Close]")
-    X = (GUIWindow(GUI_RIGHTMENU).X + (GUIWindow(GUI_RIGHTMENU).Width / 2)) - (Width / 2)
-    Y = GUIWindow(GUI_RIGHTMENU).Y + (GUIWindow(GUI_RIGHTMENU).Height - 25)
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Close]")
+    x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
+    y = GUIWindow(GUI_RIGHTMENU).y + (GUIWindow(GUI_RIGHTMENU).height - 25)
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         RightMenuButtonState(4) = 2 ' clicked
     End If
 End Sub
 
 Public Sub RightMenu_MouseUp()
-Dim I As Long, X As Long, Y As Long, Width As Long
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Trade]")
-    X = (GUIWindow(GUI_RIGHTMENU).X + (GUIWindow(GUI_RIGHTMENU).Width / 2)) - (Width / 2)
-    Y = GUIWindow(GUI_RIGHTMENU).Y + 24
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+Dim I As Long, x As Long, y As Long, width As Long
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Trade]")
+    x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
+    y = GUIWindow(GUI_RIGHTMENU).y + 24
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         If RightMenuButtonState(1) = 2 Then
             If myTarget > 0 And myTargetType = TARGET_TYPE_PLAYER Then
                 If myTarget <> MyIndex Then
@@ -2405,10 +2401,10 @@ Dim I As Long, X As Long, Y As Long, Width As Long
     End If
     RightMenuButtonState(1) = 0
     
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Party]")
-    X = (GUIWindow(GUI_RIGHTMENU).X + (GUIWindow(GUI_RIGHTMENU).Width / 2)) - (Width / 2)
-    Y = GUIWindow(GUI_RIGHTMENU).Y + 38
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Party]")
+    x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
+    y = GUIWindow(GUI_RIGHTMENU).y + 38
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         If RightMenuButtonState(2) = 2 Then
             If myTarget > 0 And myTargetType = TARGET_TYPE_PLAYER Then
                 If myTarget <> MyIndex Then
@@ -2424,10 +2420,10 @@ Dim I As Long, X As Long, Y As Long, Width As Long
     End If
     RightMenuButtonState(2) = 0
     
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Guild]")
-    X = (GUIWindow(GUI_RIGHTMENU).X + (GUIWindow(GUI_RIGHTMENU).Width / 2)) - (Width / 2)
-    Y = GUIWindow(GUI_RIGHTMENU).Y + 52
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Guild]")
+    x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
+    y = GUIWindow(GUI_RIGHTMENU).y + 52
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         If RightMenuButtonState(3) = 2 Then
             If myTarget > 0 And myTargetType = TARGET_TYPE_PLAYER Then
                 If myTarget <> MyIndex Then
@@ -2443,10 +2439,10 @@ Dim I As Long, X As Long, Y As Long, Width As Long
     End If
     RightMenuButtonState(3) = 0
     
-    Width = EngineGetTextWidth(Font_GeorgiaShadow, "[Close]")
-    X = (GUIWindow(GUI_RIGHTMENU).X + (GUIWindow(GUI_RIGHTMENU).Width / 2)) - (Width / 2)
-    Y = GUIWindow(GUI_RIGHTMENU).Y + (GUIWindow(GUI_RIGHTMENU).Height - 25)
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Close]")
+    x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
+    y = GUIWindow(GUI_RIGHTMENU).y + (GUIWindow(GUI_RIGHTMENU).height - 25)
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         If RightMenuButtonState(4) = 2 Then
             ' play sound
             FMOD.Sound_Play Sound_ButtonClick
@@ -2455,58 +2451,17 @@ Dim I As Long, X As Long, Y As Long, Width As Long
     End If
     RightMenuButtonState(4) = 0
 End Sub
-
-'Guild
-Public Sub Guild_MouseUp()
-Dim I As Long, X As Long, Y As Long, buffer As clsBuffer
-
-    ' find out which button we're clicking
-    For I = 42 To 43
-        X = GUIWindow(GUI_GUILD).X + Buttons(I).X
-        Y = GUIWindow(GUI_GUILD).Y + Buttons(I).Y
-        ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
-            If Buttons(I).state = 2 Then
-                ' do stuffs
-                Select Case I
-                    Case 42 ' Scroll Up
-                        If GuildScroll > 1 Then GuildScroll = GuildScroll - 1
-                    Case 43 ' Scroll Down
-                        If GuildScroll < MAX_GUILD_MEMBERS - 4 And Not GuildData.Guild_Members(GuildScroll + 1).User_Name = vbNullString Then GuildScroll = GuildScroll + 1
-                End Select
-                ' play sound
-                FMOD.Sound_Play Sound_ButtonClick
-            End If
-        End If
-    Next
-    
-    ' reset buttons
-    resetClickedButtons
-End Sub
-
-Public Sub Guild_MouseDown()
-Dim I As Long, X As Long, Y As Long
-    ' find out which button we're clicking
-    For I = 42 To 43
-        X = GUIWindow(GUI_GUILD).X + Buttons(I).X
-        Y = GUIWindow(GUI_GUILD).Y + Buttons(I).Y
-        ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
-            Buttons(I).state = 2 ' clicked
-        End If
-    Next
-End Sub
 Public Sub Pets_MouseUp()
-Dim I As Long, X As Long, Y As Long, z As Long, e As Long, G As Long
+Dim I As Long, x As Long, y As Long, z As Long, e As Long, G As Long
     If Player(MyIndex).Pet.Alive = False Then Exit Sub
     Dim buffer As clsBuffer
     ' find out which button we're clicking
     For I = 44 To 46
-        X = GUIWindow(GUI_PET).X + Buttons(I).X
-        Y = GUIWindow(GUI_PET).Y + Buttons(I).Y
+        x = GUIWindow(GUI_PET).x + Buttons(I).x
+        y = GUIWindow(GUI_PET).y + Buttons(I).y
         
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + 32) And (GlobalY >= Y And GlobalY <= Y + 32) Then
+        If (GlobalX >= x And GlobalX <= x + 32) And (GlobalY >= y And GlobalY <= y + 32) Then
             If Buttons(I).state = 2 Then
                 If Not Player(MyIndex).Pet.AttackBehaviour = I - 43 Then
                     Player(MyIndex).Pet.AttackBehaviour = I - 43
@@ -2523,10 +2478,10 @@ Dim I As Long, X As Long, Y As Long, z As Long, e As Long, G As Long
         End If
     Next
     
-    X = GUIWindow(GUI_PET).X
-    Y = GUIWindow(GUI_PET).Y
+    x = GUIWindow(GUI_PET).x
+    y = GUIWindow(GUI_PET).y
     
-    If (GlobalX >= X + 5 And GlobalX <= X + 70) And (GlobalY >= Y + 235 And GlobalY <= Y + 246) Then
+    If (GlobalX >= x + 5 And GlobalX <= x + 70) And (GlobalY >= y + 235 And GlobalY <= y + 246) Then
         Set buffer = New clsBuffer
         
         buffer.WriteLong CReleasePet
@@ -2538,13 +2493,13 @@ Dim I As Long, X As Long, Y As Long, z As Long, e As Long, G As Long
     End If
 End Sub
 Public Sub Pets_MouseDown()
-Dim I As Long, X As Long, Y As Long
+Dim I As Long, x As Long, y As Long
     ' find out which button we're clicking
     For I = 44 To 46
-        X = GUIWindow(GUI_GUILD).X + Buttons(I).X
-        Y = GUIWindow(GUI_GUILD).Y + Buttons(I).Y
+        x = GUIWindow(GUI_GUILD).x + Buttons(I).x
+        y = GUIWindow(GUI_GUILD).y + Buttons(I).y
         ' check if we're on the button
-        If (GlobalX >= X And GlobalX <= X + Buttons(I).Width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).Height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
             Buttons(I).state = 2 ' clicked
         End If
     Next
@@ -2571,18 +2526,7 @@ Dim buffer As clsBuffer
     End If
     
 End Sub
-Public Sub Quests_MouseDown()
-Dim I As Long, X As Long, Y As Long
-    ' find out which button we're clicking
-     I = 41
-'        X = GUIWindow(GUI_QUESTS).X + Buttons(I).X
-'        Y = GUIWindow(GUI_QUESTS).Y + Buttons(I).Y
-        ' check if we're on the button
-'        If (GlobalX >= X And GlobalX <= X + Buttons(I).width) And (GlobalY >= Y And GlobalY <= Y + Buttons(I).height) Then
-'            Buttons(I).state = 2 ' clicked
- '       End If
- 
-End Sub
+
 Public Sub QuestAccept_MouseDown()
     PlayerHandleQuest CLng(QuestAcceptTag), 1
     'inChat = False
@@ -2602,28 +2546,28 @@ Public Sub QuestClose_MouseDown()
     QuestSay = "-"
 End Sub
 Public Sub QuestDialogue_MouseDown()
-Dim I As Long, X As Long, Y As Long, Width As Long
+Dim I As Long, x As Long, y As Long, width As Long
     
     If QuestAcceptVisible = True Then
-        Width = EngineGetTextWidth(Font_Georgia, "[Accept]")
-        X = (GUIWindow(GUI_QUESTDIALOGUE).X + (GUIWindow(GUI_QUESTDIALOGUE).Width / 2)) - (Width / 2)
-        Y = GUIWindow(GUI_CHAT).Y + 105
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_Georgia, "[Accept]")
+        x = (GUIWindow(GUI_QUESTDIALOGUE).x + (GUIWindow(GUI_QUESTDIALOGUE).width / 2)) - (width / 2)
+        y = GUIWindow(GUI_CHAT).y + 105
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             QuestAcceptState = 2 ' clicked
         End If
     End If
     If QuestExtraVisible = True Then
-        Width = EngineGetTextWidth(Font_Georgia, "[" & QuestExtra & "]")
-        X = (GUIWindow(GUI_QUESTDIALOGUE).X + (GUIWindow(GUI_QUESTDIALOGUE).Width / 2)) - (Width / 2)
-        Y = GUIWindow(GUI_CHAT).Y + 107
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_Georgia, "[" & QuestExtra & "]")
+        x = (GUIWindow(GUI_QUESTDIALOGUE).x + (GUIWindow(GUI_QUESTDIALOGUE).width / 2)) - (width / 2)
+        y = GUIWindow(GUI_CHAT).y + 107
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             QuestExtraState = 2 ' clicked
         End If
     End If
-    Width = EngineGetTextWidth(Font_Georgia, "[Close]")
-    X = (GUIWindow(GUI_QUESTDIALOGUE).X + (GUIWindow(GUI_QUESTDIALOGUE).Width / 2)) - (Width / 2)
-    Y = GUIWindow(GUI_CHAT).Y + 120
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+    width = EngineGetTextWidth(Font_Georgia, "[Close]")
+    x = (GUIWindow(GUI_QUESTDIALOGUE).x + (GUIWindow(GUI_QUESTDIALOGUE).width / 2)) - (width / 2)
+    y = GUIWindow(GUI_CHAT).y + 120
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         QuestCloseState = 2 ' clicked
     End If
 End Sub
@@ -2631,12 +2575,12 @@ Public Sub QuestExtra_MouseDown()
     RunQuestDialogueExtraLabel
 End Sub
 Public Sub QuestDialogue_MouseUp()
-Dim I As Long, X As Long, Y As Long, Width As Long
+Dim I As Long, x As Long, y As Long, width As Long
     If QuestAcceptVisible = True Then
-        Width = EngineGetTextWidth(Font_Georgia, "[Accept]")
-        X = (GUIWindow(GUI_QUESTDIALOGUE).X + (GUIWindow(GUI_QUESTDIALOGUE).Width / 2)) - (Width / 2)
-        Y = GUIWindow(GUI_CHAT).Y + 105
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_Georgia, "[Accept]")
+        x = (GUIWindow(GUI_QUESTDIALOGUE).x + (GUIWindow(GUI_QUESTDIALOGUE).width / 2)) - (width / 2)
+        y = GUIWindow(GUI_CHAT).y + 105
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             If QuestAcceptState = 2 Then
                 QuestAccept_MouseDown
                 ' play sound
@@ -2646,10 +2590,10 @@ Dim I As Long, X As Long, Y As Long, Width As Long
         QuestAcceptState = 0
     End If
     If QuestExtraVisible = True Then
-        Width = EngineGetTextWidth(Font_Georgia, "[" & QuestExtra & "]")
-        X = (GUIWindow(GUI_QUESTDIALOGUE).X + (GUIWindow(GUI_QUESTDIALOGUE).Width / 2)) - (Width / 2)
-        Y = GUIWindow(GUI_CHAT).Y + 107
-        If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+        width = EngineGetTextWidth(Font_Georgia, "[" & QuestExtra & "]")
+        x = (GUIWindow(GUI_QUESTDIALOGUE).x + (GUIWindow(GUI_QUESTDIALOGUE).width / 2)) - (width / 2)
+        y = GUIWindow(GUI_CHAT).y + 107
+        If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
             If QuestExtraState = 2 Then
                 QuestExtra_MouseDown
                 ' play sound
@@ -2658,10 +2602,10 @@ Dim I As Long, X As Long, Y As Long, Width As Long
         End If
         QuestExtraState = 0
     End If
-    Width = EngineGetTextWidth(Font_Georgia, "[Close]")
-    X = (GUIWindow(GUI_QUESTDIALOGUE).X + (GUIWindow(GUI_QUESTDIALOGUE).Width / 2)) - (Width / 2)
-    Y = GUIWindow(GUI_CHAT).Y + 120
-    If (GlobalX >= X And GlobalX <= X + Width) And (GlobalY >= Y And GlobalY <= Y + 14) Then
+    width = EngineGetTextWidth(Font_Georgia, "[Close]")
+    x = (GUIWindow(GUI_QUESTDIALOGUE).x + (GUIWindow(GUI_QUESTDIALOGUE).width / 2)) - (width / 2)
+    y = GUIWindow(GUI_CHAT).y + 120
+    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
         If QuestCloseState = 2 Then
             QuestClose_MouseDown
             ' play sound

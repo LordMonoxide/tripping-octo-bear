@@ -21,7 +21,7 @@ Public Sub Main()
     Dim strDirectX As String
     Dim strTCPIP As String
     Dim strLoadingButtons As String
-    Dim i As Long
+    Dim I As Long
     
     strLoadingInterface = GetVar(FileName, "MESSAGES", "Loading_Interfaces")
     strLoadingOptions = GetVar(FileName, "MESSAGES", "Loading_Options")
@@ -29,7 +29,7 @@ Public Sub Main()
     strTCPIP = GetVar(FileName, "MESSAGES", "Init_TCPIP")
     strLoadingButtons = GetVar(FileName, "MESSAGES", "Loading_Buttons")
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     'Set the high-resolution timer
     timeBeginPeriod 1
@@ -81,7 +81,6 @@ Public Sub Main()
 
     ' load the main game (and by extension, pre-load DD7)
     GettingMap = True
-    vbQuote = ChrW$(34) ' "
     
     ' Update the form with the game's name before it's loaded
     frmMain.Caption = Options.Game_Name
@@ -112,29 +111,29 @@ Public Sub Main()
     DirArrowY(4) = 12
     
     ' set the main form size
-    frmMain.Width = 12090
-    frmMain.Height = 9420
+    frmMain.width = 12090
+    frmMain.height = 9420
     
     ' show the main menu
     frmMain.Show
     ShowMenu
     HideGame
 
-    If ConnectToServer(1) Then
+    If ConnectToServer() Then
         SStatus = "Online"
     Else
         SStatus = "Offline"
     End If
-    For i = 1 To 5
-        MenuNPC(i).x = Rand(0, ScreenWidth)
-        MenuNPC(i).y = Rand(0, ScreenHeight)
-        MenuNPC(i).dir = Rand(0, 1)
+    For I = 1 To 5
+        MenuNPC(I).x = Rand(0, ScreenWidth)
+        MenuNPC(I).y = Rand(0, ScreenHeight)
+        MenuNPC(I).dir = Rand(0, 1)
     Next
     MenuLoop
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "Main", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -145,7 +144,7 @@ Public Sub InitialiseGUI()
 'Loading Interface.ini data
 Dim FileName As String
 FileName = App.path & "\data files\interface.ini"
-Dim i As Long
+Dim I As Long
 
     ' re-set chat scroll
     ChatScroll = 8
@@ -156,8 +155,8 @@ Dim i As Long
     With GUIWindow(GUI_CHAT)
         .x = Val(GetVar(FileName, "GUI_CHAT", "X"))
         .y = Val(GetVar(FileName, "GUI_CHAT", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
+        .width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
+        .height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
         .visible = True
     End With
     
@@ -165,16 +164,16 @@ Dim i As Long
     With GUIWindow(GUI_HOTBAR)
         .x = Val(GetVar(FileName, "GUI_HOTBAR", "X"))
         .y = Val(GetVar(FileName, "GUI_HOTBAR", "Y"))
-        .Height = Val(GetVar(FileName, "GUI_HOTBAR", "Height"))
-        .Width = ((9 + 36) * (MAX_HOTBAR - 1))
+        .height = Val(GetVar(FileName, "GUI_HOTBAR", "Height"))
+        .width = ((9 + 36) * (MAX_HOTBAR - 1))
     End With
     
     ' 3 - Menu
     With GUIWindow(GUI_MENU)
         .x = Val(GetVar(FileName, "GUI_MENU", "X"))
         .y = Val(GetVar(FileName, "GUI_MENU", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_MENU", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_MENU", "Height"))
+        .width = Val(GetVar(FileName, "GUI_MENU", "Width"))
+        .height = Val(GetVar(FileName, "GUI_MENU", "Height"))
         .visible = True
     End With
     
@@ -182,8 +181,8 @@ Dim i As Long
     With GUIWindow(GUI_BARS)
         .x = Val(GetVar(FileName, "GUI_BARS", "X"))
         .y = Val(GetVar(FileName, "GUI_BARS", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_BARS", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_BARS", "Height"))
+        .width = Val(GetVar(FileName, "GUI_BARS", "Width"))
+        .height = Val(GetVar(FileName, "GUI_BARS", "Height"))
         .visible = True
     End With
     
@@ -191,8 +190,8 @@ Dim i As Long
     With GUIWindow(GUI_INVENTORY)
         .x = Val(GetVar(FileName, "GUI_INVENTORY", "X"))
         .y = Val(GetVar(FileName, "GUI_INVENTORY", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_INVENTORY", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_INVENTORY", "Height"))
+        .width = Val(GetVar(FileName, "GUI_INVENTORY", "Width"))
+        .height = Val(GetVar(FileName, "GUI_INVENTORY", "Height"))
         .visible = False
     End With
     
@@ -200,8 +199,8 @@ Dim i As Long
     With GUIWindow(GUI_SPELLS)
         .x = Val(GetVar(FileName, "GUI_SPELLS", "X"))
         .y = Val(GetVar(FileName, "GUI_SPELLS", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_SPELLS", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_SPELLS", "Height"))
+        .width = Val(GetVar(FileName, "GUI_SPELLS", "Width"))
+        .height = Val(GetVar(FileName, "GUI_SPELLS", "Height"))
         .visible = False
     End With
     
@@ -209,8 +208,8 @@ Dim i As Long
     With GUIWindow(GUI_CHARACTER)
         .x = Val(GetVar(FileName, "GUI_CHARACTER", "X"))
         .y = Val(GetVar(FileName, "GUI_CHARACTER", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_CHARACTER", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_CHARACTER", "Height"))
+        .width = Val(GetVar(FileName, "GUI_CHARACTER", "Width"))
+        .height = Val(GetVar(FileName, "GUI_CHARACTER", "Height"))
         .visible = False
     End With
     
@@ -218,15 +217,15 @@ Dim i As Long
     With GUIWindow(GUI_OPTIONS)
         .x = Val(GetVar(FileName, "GUI_OPTIONS", "X"))
         .y = Val(GetVar(FileName, "GUI_OPTIONS", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_OPTIONS", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_OPTIONS", "Height"))
+        .width = Val(GetVar(FileName, "GUI_OPTIONS", "Width"))
+        .height = Val(GetVar(FileName, "GUI_OPTIONS", "Height"))
         .visible = False
     End With
     With GUIWindow(GUI_QUESTDIALOGUE)
         .x = Val(GetVar(FileName, "GUI_CHAT", "X"))
         .y = Val(GetVar(FileName, "GUI_CHAT", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
+        .width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
+        .height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
         .visible = False
     End With
 
@@ -234,8 +233,8 @@ Dim i As Long
     With GUIWindow(GUI_PARTY)
         .x = Val(GetVar(FileName, "GUI_PARTY", "X"))
         .y = Val(GetVar(FileName, "GUI_PARTY", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_PARTY", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_PARTY", "Height"))
+        .width = Val(GetVar(FileName, "GUI_PARTY", "Width"))
+        .height = Val(GetVar(FileName, "GUI_PARTY", "Height"))
         .visible = False
     End With
     
@@ -243,16 +242,16 @@ Dim i As Long
     With GUIWindow(GUI_DESCRIPTION)
         .x = Val(GetVar(FileName, "GUI_DESCRIPTION", "X"))
         .y = Val(GetVar(FileName, "GUI_DESCRIPTION", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_DESCRIPTION", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_DESCRIPTION", "Height"))
+        .width = Val(GetVar(FileName, "GUI_DESCRIPTION", "Width"))
+        .height = Val(GetVar(FileName, "GUI_DESCRIPTION", "Height"))
         .visible = False
     End With
     
         With GUIWindow(GUI_QUESTS)
         .x = 120
         .y = 140
-        .Width = 600
-        .Height = 307
+        .width = 600
+        .height = 307
         .visible = False
     End With
     
@@ -260,8 +259,8 @@ Dim i As Long
     With GUIWindow(GUI_MAINMENU)
         .x = Val(GetVar(FileName, "GUI_MAINMENU", "X"))
         .y = Val(GetVar(FileName, "GUI_MAINMENU", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_MAINMENU", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_MAINMENU", "Height"))
+        .width = Val(GetVar(FileName, "GUI_MAINMENU", "Width"))
+        .height = Val(GetVar(FileName, "GUI_MAINMENU", "Height"))
         .visible = False
     End With
     
@@ -269,8 +268,8 @@ Dim i As Long
     With GUIWindow(GUI_SHOP)
          .x = Val(GetVar(FileName, "GUI_SHOP", "X"))
         .y = Val(GetVar(FileName, "GUI_SHOP", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_SHOP", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_SHOP", "Height"))
+        .width = Val(GetVar(FileName, "GUI_SHOP", "Width"))
+        .height = Val(GetVar(FileName, "GUI_SHOP", "Height"))
         .visible = False
     End With
     
@@ -278,8 +277,8 @@ Dim i As Long
     With GUIWindow(GUI_BANK)
         .x = Val(GetVar(FileName, "GUI_BANK", "X"))
         .y = Val(GetVar(FileName, "GUI_BANK", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_BANK", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_BANK", "Height"))
+        .width = Val(GetVar(FileName, "GUI_BANK", "Width"))
+        .height = Val(GetVar(FileName, "GUI_BANK", "Height"))
         .visible = False
     End With
     
@@ -287,8 +286,8 @@ Dim i As Long
     With GUIWindow(GUI_TRADE)
         .x = Val(GetVar(FileName, "GUI_TRADE", "X"))
         .y = Val(GetVar(FileName, "GUI_TRADE", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_TRADE", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_TRADE", "Height"))
+        .width = Val(GetVar(FileName, "GUI_TRADE", "Width"))
+        .height = Val(GetVar(FileName, "GUI_TRADE", "Height"))
         .visible = False
     End With
     
@@ -296,8 +295,8 @@ Dim i As Long
     With GUIWindow(GUI_CURRENCY)
         .x = Val(GetVar(FileName, "GUI_CHAT", "X"))
         .y = Val(GetVar(FileName, "GUI_CHAT", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
+        .width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
+        .height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
         .visible = False
     End With
     
@@ -305,8 +304,8 @@ Dim i As Long
     With GUIWindow(GUI_DIALOGUE)
         .x = Val(GetVar(FileName, "GUI_CHAT", "X"))
         .y = Val(GetVar(FileName, "GUI_CHAT", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
+        .width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
+        .height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
         .visible = False
     End With
     
@@ -314,8 +313,8 @@ Dim i As Long
     With GUIWindow(GUI_EVENTCHAT)
         .x = Val(GetVar(FileName, "GUI_CHAT", "X"))
         .y = Val(GetVar(FileName, "GUI_CHAT", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
+        .width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
+        .height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
         .visible = False
     End With
     
@@ -323,8 +322,8 @@ Dim i As Long
     With GUIWindow(GUI_TUTORIAL)
         .x = Val(GetVar(FileName, "GUI_CHAT", "X"))
         .y = Val(GetVar(FileName, "GUI_CHAT", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
+        .width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
+        .height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
         .visible = False
     End With
     
@@ -332,8 +331,8 @@ Dim i As Long
     With GUIWindow(GUI_RIGHTMENU)
         .x = 0
         .y = 0
-        .Width = 110
-        .Height = 145
+        .width = 110
+        .height = 145
         .visible = False
     End With
     
@@ -341,8 +340,8 @@ Dim i As Long
     With GUIWindow(GUI_GUILD)
         .x = Val(GetVar(FileName, "GUI_GUILD", "X"))
         .y = Val(GetVar(FileName, "GUI_GUILD", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_GUILD", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_GUILD", "Height"))
+        .width = Val(GetVar(FileName, "GUI_GUILD", "Width"))
+        .height = Val(GetVar(FileName, "GUI_GUILD", "Height"))
         .visible = False
     End With
     
@@ -350,8 +349,8 @@ Dim i As Long
     With GUIWindow(GUI_PET)
         .x = Val(GetVar(FileName, "GUI_PET", "X"))
         .y = Val(GetVar(FileName, "GUI_PET", "Y"))
-        .Width = Val(GetVar(FileName, "GUI_PET", "Width"))
-        .Height = Val(GetVar(FileName, "GUI_PET", "Height"))
+        .width = Val(GetVar(FileName, "GUI_PET", "Width"))
+        .height = Val(GetVar(FileName, "GUI_PET", "Height"))
         .visible = False
     End With
     
@@ -361,8 +360,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 6
         .y = 6
-        .Width = 36
-        .Height = 36
+        .width = 36
+        .height = 36
         .visible = True
         .PicNum = 1
     End With
@@ -372,8 +371,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 41
         .y = 6
-        .Width = 36
-        .Height = 36
+        .width = 36
+        .height = 36
         .visible = True
         .PicNum = 2
     End With
@@ -383,8 +382,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 76
         .y = 6
-        .Width = 36
-        .Height = 36
+        .width = 36
+        .height = 36
         .visible = True
         .PicNum = 3
     End With
@@ -394,8 +393,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 111
         .y = 6
-        .Width = 36
-        .Height = 36
+        .width = 36
+        .height = 36
         .visible = True
         .PicNum = 4
     End With
@@ -405,8 +404,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 146
         .y = 6
-        .Width = 36
-        .Height = 36
+        .width = 36
+        .height = 36
         .visible = True
         .PicNum = 5
     End With
@@ -416,8 +415,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 181
         .y = 6
-        .Width = 36
-        .Height = 36
+        .width = 36
+        .height = 36
         .visible = True
         .PicNum = 6
     End With
@@ -427,8 +426,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 54
         .y = 277
-        .Width = 89
-        .Height = 29
+        .width = 89
+        .height = 29
         .visible = True
         .PicNum = 7
     End With
@@ -438,8 +437,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 154
         .y = 277
-        .Width = 89
-        .Height = 29
+        .width = 89
+        .height = 29
         .visible = True
         .PicNum = 8
     End With
@@ -449,8 +448,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 254
         .y = 277
-        .Width = 89
-        .Height = 29
+        .width = 89
+        .height = 29
         .visible = True
         .PicNum = 9
     End With
@@ -460,8 +459,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 354
         .y = 277
-        .Width = 89
-        .Height = 29
+        .width = 89
+        .height = 29
         .visible = True
         .PicNum = 10
     End With
@@ -471,8 +470,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 206
         .y = 164
-        .Width = 89
-        .Height = 29
+        .width = 89
+        .height = 29
         .visible = True
         .PicNum = 11
     End With
@@ -482,8 +481,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 206
         .y = 169
-        .Width = 89
-        .Height = 29
+        .width = 89
+        .height = 29
         .visible = True
         .PicNum = 11
     End With
@@ -493,8 +492,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 248
         .y = 206
-        .Width = 89
-        .Height = 29
+        .width = 89
+        .height = 29
         .visible = True
         .PicNum = 11
     End With
@@ -504,8 +503,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 348
         .y = 206
-        .Width = 89
-        .Height = 29
+        .width = 89
+        .height = 29
         .visible = True
         .PicNum = 12
     End With
@@ -515,33 +514,33 @@ Dim i As Long
         .state = 0 ' normal
         .x = 205
         .y = 169
-        .Width = 89
-        .Height = 29
+        .width = 89
+        .height = 29
         .visible = True
         .PicNum = 11
     End With
     
     ' main - AddStats
-    For i = 16 To 20
-        With Buttons(i)
+    For I = 16 To 20
+        With Buttons(I)
             .state = 0 'normal
-            .Width = 12
-            .Height = 11
+            .width = 12
+            .height = 11
             .visible = True
             .PicNum = 13
         End With
     Next
     ' set the individual spaces
-    For i = 16 To 18 ' first 3
-        With Buttons(i)
+    For I = 16 To 18 ' first 3
+        With Buttons(I)
             .x = 80
-            .y = 22 + ((i - 16) * 15)
+            .y = 22 + ((I - 16) * 15)
         End With
     Next
-    For i = 19 To 20
-        With Buttons(i)
+    For I = 19 To 20
+        With Buttons(I)
             .x = 165
-            .y = 22 + ((i - 19) * 15)
+            .y = 22 + ((I - 19) * 15)
         End With
     Next
     
@@ -550,8 +549,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 12
         .y = 276
-        .Width = 69
-        .Height = 29
+        .width = 69
+        .height = 29
         .visible = True
         .PicNum = 14
     End With
@@ -561,8 +560,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 90
         .y = 276
-        .Width = 69
-        .Height = 29
+        .width = 69
+        .height = 29
         .visible = True
         .PicNum = 15
     End With
@@ -572,8 +571,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 90
         .y = 276
-        .Width = 69
-        .Height = 29
+        .width = 69
+        .height = 29
         .visible = True
         .PicNum = 16
     End With
@@ -583,8 +582,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 14
         .y = 209
-        .Width = 79
-        .Height = 29
+        .width = 79
+        .height = 29
         .visible = True
         .PicNum = 17
     End With
@@ -594,8 +593,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 101
         .y = 209
-        .Width = 79
-        .Height = 29
+        .width = 79
+        .height = 29
         .visible = True
         .PicNum = 18
     End With
@@ -605,8 +604,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 77
         .y = 14
-        .Width = 49
-        .Height = 19
+        .width = 49
+        .height = 19
         .visible = True
         .PicNum = 19
     End With
@@ -616,8 +615,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 132
         .y = 14
-        .Width = 49
-        .Height = 19
+        .width = 49
+        .height = 19
         .visible = True
         .PicNum = 20
     End With
@@ -627,8 +626,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 77
         .y = 39
-        .Width = 49
-        .Height = 19
+        .width = 49
+        .height = 19
         .visible = True
         .PicNum = 19
     End With
@@ -638,8 +637,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 132
         .y = 39
-        .Width = 49
-        .Height = 19
+        .width = 49
+        .height = 19
         .visible = True
         .PicNum = 20
     End With
@@ -649,8 +648,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 77
         .y = 64
-        .Width = 49
-        .Height = 19
+        .width = 49
+        .height = 19
         .visible = True
         .PicNum = 19
     End With
@@ -660,8 +659,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 132
         .y = 64
-        .Width = 49
-        .Height = 19
+        .width = 49
+        .height = 19
         .visible = True
         .PicNum = 20
     End With
@@ -671,8 +670,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 77
         .y = 89
-        .Width = 49
-        .Height = 19
+        .width = 49
+        .height = 19
         .visible = True
         .PicNum = 19
     End With
@@ -682,8 +681,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 132
         .y = 89
-        .Width = 49
-        .Height = 19
+        .width = 49
+        .height = 19
         .visible = True
         .PicNum = 20
     End With
@@ -693,8 +692,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 340
         .y = 2
-        .Width = 19
-        .Height = 19
+        .width = 19
+        .height = 19
         .visible = True
         .PicNum = 21
     End With
@@ -704,8 +703,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 340
         .y = 100
-        .Width = 19
-        .Height = 19
+        .width = 19
+        .height = 19
         .visible = True
         .PicNum = 22
     End With
@@ -715,8 +714,8 @@ Dim i As Long
         .state = 0 'normal
         .x = GUIWindow(GUI_TRADE).x + 125
         .y = GUIWindow(GUI_TRADE).y + 335
-        .Width = 89
-        .Height = 29
+        .width = 89
+        .height = 29
         .visible = True
         .PicNum = 11
     End With
@@ -726,8 +725,8 @@ Dim i As Long
         .state = 0 'normal
         .x = GUIWindow(GUI_TRADE).x + 265
         .y = GUIWindow(GUI_TRADE).y + 335
-        .Width = 89
-        .Height = 29
+        .width = 89
+        .height = 29
         .visible = True
         .PicNum = 10
     End With
@@ -736,8 +735,8 @@ Dim i As Long
         .state = 0 'normal
         .x = 92
         .y = 112
-        .Width = 19
-        .Height = 19
+        .width = 19
+        .height = 19
         .visible = True
         .PicNum = 23
     End With
@@ -746,8 +745,8 @@ Dim i As Long
         .state = 0 'normal
         .x = 147
         .y = 112
-        .Width = 19
-        .Height = 19
+        .width = 19
+        .height = 19
         .visible = True
         .PicNum = 24
     End With
@@ -756,8 +755,8 @@ Dim i As Long
         .state = 0 'normal
         .x = 92
         .y = 132
-        .Width = 19
-        .Height = 19
+        .width = 19
+        .height = 19
         .visible = True
         .PicNum = 23
     End With
@@ -766,8 +765,8 @@ Dim i As Long
         .state = 0 'normal
         .x = 147
         .y = 132
-        .Width = 19
-        .Height = 19
+        .width = 19
+        .height = 19
         .visible = True
         .PicNum = 24
     End With
@@ -776,8 +775,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 155
         .y = 119
-        .Width = 19
-        .Height = 19
+        .width = 19
+        .height = 19
         .visible = True
         .PicNum = 21
     End With
@@ -787,8 +786,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 155
         .y = 189
-        .Width = 19
-        .Height = 19
+        .width = 19
+        .height = 19
         .visible = True
         .PicNum = 22
     End With
@@ -798,8 +797,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 26
         .y = 143
-        .Width = 32
-        .Height = 32
+        .width = 32
+        .height = 32
         .visible = True
         .PicNum = 25
     End With
@@ -809,8 +808,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 81
         .y = 143
-        .Width = 32
-        .Height = 32
+        .width = 32
+        .height = 32
         .visible = True
         .PicNum = 26
     End With
@@ -820,8 +819,8 @@ Dim i As Long
         .state = 0 ' normal
         .x = 136
         .y = 143
-        .Width = 32
-        .Height = 32
+        .width = 32
+        .height = 32
         .visible = True
         .PicNum = 27
     End With
@@ -843,23 +842,23 @@ Public Sub MenuState(ByVal state As Long)
     strConnectedLogin = GetVar(FileName, "Messages", "Connected_Login")
     
    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
 
     Select Case state
         Case MENU_STATE_ADDCHAR
             isLoading = True
-            If ConnectToServer(1) Then
+            If ConnectToServer() Then
                 Call SetStatus(strConnectedAddChar)
                 Call SendAddChar(sChar, newCharSex, newCharClothes, newCharGear, newCharHair, newCharHeadgear)
             End If
         Case MENU_STATE_NEWACCOUNT
-            If ConnectToServer(1) Then
+            If ConnectToServer() Then
                 Call SetStatus(strConnectedAddAcc)
                 Call SendNewAccount(sUser, sPass)
             End If
         Case MENU_STATE_LOGIN
             isLoading = True
-            If ConnectToServer(1) Then
+            If ConnectToServer() Then
                 Call SetStatus(strConnectedLogin)
                 Call SendLogin(sUser, sPass)
                 Exit Sub
@@ -873,14 +872,14 @@ Public Sub MenuState(ByVal state As Long)
 
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "MenuState", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 End Sub
 
 Public Sub logoutGame()
-Dim i As Long
+Dim I As Long
 
     isLogging = True
     InGame = False
@@ -888,13 +887,12 @@ Dim i As Long
     Call DestroyTCP
     
     ' destroy the animations loaded
-    For i = 1 To MAX_BYTE
-        ClearAnimInstance (i)
+    For I = 1 To MAX_BYTE
+        ClearAnimInstance (I)
     Next
     
     ' destroy temp values
     DragInvSlotNum = 0
-    LastItemDesc = 0
     MyIndex = 0
     InventoryItemSelected = 0
     SpellBuffer = 0
@@ -912,8 +910,8 @@ Dim i As Long
     Unload frmEditor_Spell
     
     ' destroy the chat
-    For i = 1 To ChatTextBufferSize
-        ChatTextBuffer(i).Text = vbNullString
+    For I = 1 To ChatTextBufferSize
+        ChatTextBuffer(I).Text = vbNullString
     Next
     
     GUIWindow(GUI_MAINMENU).visible = True
@@ -933,7 +931,7 @@ Sub GameInit()
 Dim MusicFile As String
 
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     ' hide gui
     InBank = False
@@ -959,7 +957,7 @@ Dim MusicFile As String
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "GameInit", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -967,7 +965,7 @@ End Sub
 
 Public Sub DestroyGame()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     ' break out of GameLoop
     HideGame
@@ -985,7 +983,7 @@ Public Sub DestroyGame()
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "destroyGame", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -995,7 +993,7 @@ Public Sub UnloadAllForms()
 Dim frm As Form
 
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
 
     For Each frm In VB.Forms
         Unload frm
@@ -1003,7 +1001,7 @@ Dim frm As Form
 
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "UnloadAllForms", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -1011,13 +1009,13 @@ End Sub
 
 Public Sub SetStatus(ByVal Caption As String)
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     DoEvents
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "SetStatus", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -1026,7 +1024,7 @@ End Sub
 ' Used for adding text to packet debugger
 Public Sub TextAdd(ByVal Txt As TextBox, msg As String, NewLine As Boolean)
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
 
     If NewLine Then
         Txt.Text = Txt.Text + msg + vbCrLf
@@ -1038,7 +1036,7 @@ Public Sub TextAdd(ByVal Txt As TextBox, msg As String, NewLine As Boolean)
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "TextAdd", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -1046,13 +1044,13 @@ End Sub
 
 Public Function Rand(ByVal Low As Long, ByVal High As Long) As Long
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Rand = Int((High - Low + 1) * Rnd) + Low
     
     ' Error handler
     Exit Function
-ErrorHandler:
+errorhandler:
     HandleError "Rand", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Function
@@ -1060,7 +1058,7 @@ End Function
 
 Public Function isLoginLegal(ByVal Username As String, ByVal Password As String) As Boolean
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     If LenB(Trim$(Username)) >= 3 Then
         If LenB(Trim$(Password)) >= 3 Then
@@ -1070,22 +1068,22 @@ Public Function isLoginLegal(ByVal Username As String, ByVal Password As String)
 
     ' Error handler
     Exit Function
-ErrorHandler:
+errorhandler:
     HandleError "isLoginLegal", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Function
 End Function
 
 Public Function isStringLegal(ByVal sInput As String) As Boolean
-Dim i As Long
+Dim I As Long
 
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     ' Prevent high ascii chars
-    For i = 1 To Len(sInput)
+    For I = 1 To Len(sInput)
 
-        If Asc(Mid$(sInput, i, 1)) < vbKeySpace Or Asc(Mid$(sInput, i, 1)) > vbKeyF15 Then
+        If Asc(Mid$(sInput, I, 1)) < vbKeySpace Or Asc(Mid$(sInput, I, 1)) > vbKeyF15 Then
             Call MsgBox("You cannot use high ASCII characters in your name, please re-enter.", vbOKOnly, Options.Game_Name)
             Exit Function
         End If
@@ -1096,68 +1094,68 @@ Dim i As Long
     
     ' Error handler
     Exit Function
-ErrorHandler:
+errorhandler:
     HandleError "isStringLegal", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Function
 End Function
 
 Public Sub resetClickedButtons()
-Dim i As Long
+Dim I As Long
 
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     ' loop through entire array
-    For i = 1 To MAX_BUTTONS
-        Select Case i
+    For I = 1 To MAX_BUTTONS
+        Select Case I
             ' option buttons
             Case 26, 27, 28, 29, 30, 31, 32, 33
                 ' Nothing in here
             ' Everything else - reset
             Case Else
                 ' reset state and render
-                Buttons(i).state = 0 'normal
+                Buttons(I).state = 0 'normal
         End Select
     Next
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "resetClickedButtons", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 End Sub
 
 Public Sub PopulateLists()
-Dim strLoad As String, i As Long
+Dim strLoad As String, I As Long
 
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     ' Cache music list
     strLoad = dir(App.path & MUSIC_PATH & "*.*")
-    i = 1
+    I = 1
     Do While strLoad > vbNullString
-        ReDim Preserve musicCache(1 To i) As String
-        musicCache(i) = strLoad
+        ReDim Preserve musicCache(1 To I) As String
+        musicCache(I) = strLoad
         strLoad = dir
-        i = i + 1
+        I = I + 1
     Loop
     
     ' Cache sound list
     strLoad = dir(App.path & SOUND_PATH & "*.*")
-    i = 1
+    I = 1
     Do While strLoad > vbNullString
-        ReDim Preserve soundCache(1 To i) As String
-        soundCache(i) = strLoad
+        ReDim Preserve soundCache(1 To I) As String
+        soundCache(I) = strLoad
         strLoad = dir
-        i = i + 1
+        I = I + 1
     Loop
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "PopulateLists", "modGeneral", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -1191,24 +1189,24 @@ Public Sub HideMenu()
 End Sub
 
 Public Sub ShowGame()
-Dim i As Long
+Dim I As Long
 
-    For i = 5 To 10
-        GUIWindow(i).visible = False
+    For I = 5 To 10
+        GUIWindow(I).visible = False
     Next
 
-    For i = 1 To 4
-        GUIWindow(i).visible = True
+    For I = 1 To 4
+        GUIWindow(I).visible = True
     Next
     
     InGame = True
 End Sub
 
 Public Sub HideGame()
-Dim i As Long
+Dim I As Long
     
-    For i = 1 To 10
-        GUIWindow(i).visible = False
+    For I = 1 To 10
+        GUIWindow(I).visible = False
     Next
     
     InGame = False

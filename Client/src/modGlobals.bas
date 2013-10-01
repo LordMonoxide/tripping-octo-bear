@@ -48,7 +48,6 @@ Public autoTileFrame As Long
 Public tutorialState As Byte
 
 ' NPC Chat
-Public chatNpc As Long
 Public chatText As String
 Public chatOptState() As Byte
 Public chatContinueState As Byte
@@ -66,8 +65,6 @@ Public shpSelectedTop As Long
 Public shpSelectedLeft As Long
 Public shpSelectedHeight As Long
 Public shpSelectedWidth As Long
-Public shpLocTop As Long
-Public shpLocLeft As Long
 
 ' autotiling
 Public autoInner(1 To 4) As PointRec
@@ -148,12 +145,10 @@ Public Resources_Init As Boolean
 
 ' drag + drop
 Public DragInvSlotNum As Long
-Public DragBankSlotNum As Long
 Public DragSpell As Long
 
 ' gui
 Public InvItemFrame(1 To MAX_INV) As Byte ' Used for animated items
-Public LastItemDesc As Long ' Stores the last item we showed in desc
 Public LastSpellDesc As Long ' Stores the last spell we showed in desc
 Public LastBankDesc As Long ' Stores the last bank item we showed in desc
 Public tmpCurrencyItem As Long
@@ -234,15 +229,11 @@ Public BLoc As Boolean
 Public ElapsedTime As Long
 Public GameFPS As Long
 
-' Text vars
-Public vbQuote As String
-
 ' Mouse cursor tile location
 Public CurX As Long
 Public CurY As Long
 
 ' Game editors
-Public Editor As Byte
 Public EditorIndex As Long
 Public AnimEditorFrame(0 To 1) As Long
 Public AnimEditorTimer(0 To 1) As Long

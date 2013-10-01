@@ -1910,12 +1910,11 @@ errorhandler:
 End Sub
 
 Private Sub txtSearch_Change()
-Dim find As String, I As Long, found As Boolean
+Dim find As String, I As Long
     find = txtSearch.Text
 
     For I = 0 To lstIndex.ListCount - 1
         If StrComp(find, Replace(lstIndex.List(I), I + 1 & ": ", ""), vbTextCompare) = 0 Then
-            found = True
             lstIndex.SetFocus
             lstIndex.ListIndex = I
             Exit For

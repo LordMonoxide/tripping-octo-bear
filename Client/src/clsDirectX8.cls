@@ -21,8 +21,8 @@ Option Explicit
 ' Please do not mess with this file if you have no understanding of how DirectX8 works.
 
 Private Type D3DXIMAGE_INFO_A
-    Width As Long
-    Height As Long
+    width As Long
+    height As Long
     Depth As Long
     MipLevels As Long
     Format As CONST_D3DFORMAT
@@ -125,7 +125,7 @@ Dim I As Long
 End Sub
 
 Public Sub RenderTexture(ByVal Texture As Long, ByVal dX As Long, ByVal dY As Long, ByVal sX As Long, ByVal sY As Long, ByVal dw As Long, ByVal dH As Long, ByVal sW As Long, ByVal sH As Long, Optional ByVal Colour As Long = -1, Optional ByVal Degrees As Single = 0)
-Dim Box(0 To 3) As TLVERTEX, X As Long, textureWidth As Long, textureHeight As Long
+Dim Box(0 To 3) As TLVERTEX, x As Long, textureWidth As Long, textureHeight As Long
 Dim RadAngle As Single 'The angle in Radians
 Dim CenterX As Single
 Dim CenterY As Single
@@ -139,33 +139,33 @@ Dim I As Long
     Call SetTexture(Texture)
     
     ' set the texture size
-    textureWidth = gTexture(Texture).Width
-    textureHeight = gTexture(Texture).Height
+    textureWidth = gTexture(Texture).width
+    textureHeight = gTexture(Texture).height
     
     ' exit out if we need to
     If Texture <= 0 Or textureWidth <= 0 Or textureHeight <= 0 Then Exit Sub
     
-    For X = 0 To 3
-        Box(X).RHW = 1
-        Box(X).color = Colour
+    For x = 0 To 3
+        Box(x).RHW = 1
+        Box(x).color = Colour
     Next
 
-    Box(0).X = dX
-    Box(0).Y = dY
+    Box(0).x = dX
+    Box(0).y = dY
     Box(0).tu = (sX / textureWidth)
     Box(0).tv = (sY / textureHeight)
-    Box(1).X = dX + dw
+    Box(1).x = dX + dw
     Box(1).tu = (sX + sW + 1) / textureWidth
-    Box(2).X = Box(0).X
-    Box(3).X = Box(1).X
+    Box(2).x = Box(0).x
+    Box(3).x = Box(1).x
 
-    Box(2).Y = dY + dH
+    Box(2).y = dY + dH
     Box(2).tv = (sY + sH + 1) / textureHeight
 
-    Box(1).Y = Box(0).Y
+    Box(1).y = Box(0).y
     Box(1).tv = Box(0).tv
     Box(2).tu = Box(0).tu
-    Box(3).Y = Box(2).Y
+    Box(3).y = Box(2).y
     Box(3).tu = Box(1).tu
     Box(3).tv = Box(2).tv
     
@@ -187,12 +187,12 @@ Dim I As Long
         For I = 0 To 3
 
             'Calculates the new X and Y co-ordinates of the vertices for the given angle around the center co-ordinates
-            NewX = CenterX + (Box(I).X - CenterX) * CosRad - (Box(I).Y - CenterY) * SinRad
-            NewY = CenterY + (Box(I).Y - CenterY) * CosRad + (Box(I).X - CenterX) * SinRad
+            NewX = CenterX + (Box(I).x - CenterX) * CosRad - (Box(I).y - CenterY) * SinRad
+            NewY = CenterY + (Box(I).y - CenterY) * CosRad + (Box(I).x - CenterX) * SinRad
 
             'Applies the new co-ordinates to the buffer
-            Box(I).X = NewX
-            Box(I).Y = NewY
+            Box(I).x = NewX
+            Box(I).y = NewY
         Next
     End If
     
@@ -200,25 +200,25 @@ Dim I As Long
     gTexture(Texture).UnloadTimer = timeGetTime
 End Sub
 
-Public Sub RenderTextureRectangle(ByVal Sprite As Long, ByVal X As Long, ByVal Y As Long, ByVal Width As Long, ByVal Height As Long)
+Public Sub RenderTextureRectangle(ByVal Sprite As Long, ByVal x As Long, ByVal y As Long, ByVal width As Long, ByVal height As Long)
     '12x12 tiles
     
     'Corners
-    RenderTexture Tex_Design(Sprite), X, Y, 0, 0, 12, 12, 12, 12
-    RenderTexture Tex_Design(Sprite), X + Width - 12, Y, 24, 0, 12, 12, 12, 12
-    RenderTexture Tex_Design(Sprite), X, Y + Height - 12, 0, 24, 12, 12, 12, 12
-    RenderTexture Tex_Design(Sprite), X + Width - 12, Y + Height - 12, 24, 24, 12, 12, 12, 12
+    RenderTexture Tex_Design(Sprite), x, y, 0, 0, 12, 12, 12, 12
+    RenderTexture Tex_Design(Sprite), x + width - 12, y, 24, 0, 12, 12, 12, 12
+    RenderTexture Tex_Design(Sprite), x, y + height - 12, 0, 24, 12, 12, 12, 12
+    RenderTexture Tex_Design(Sprite), x + width - 12, y + height - 12, 24, 24, 12, 12, 12, 12
     
     'Vertical Borders
-    RenderTexture Tex_Design(Sprite), X, Y + 12, 0, 12, 12, Height - 24, 12, 12
-    RenderTexture Tex_Design(Sprite), X + Width - 12, Y + 12, 24, 12, 12, Height - 24, 12, 12
+    RenderTexture Tex_Design(Sprite), x, y + 12, 0, 12, 12, height - 24, 12, 12
+    RenderTexture Tex_Design(Sprite), x + width - 12, y + 12, 24, 12, 12, height - 24, 12, 12
     
     'Horizontal Borders
-    RenderTexture Tex_Design(Sprite), X + 12, Y, 12, 0, Width - 24, 12, 12, 12
-    RenderTexture Tex_Design(Sprite), X + 12, Y + Height - 12, 12, 24, Width - 24, 12, 12, 12
+    RenderTexture Tex_Design(Sprite), x + 12, y, 12, 0, width - 24, 12, 12, 12
+    RenderTexture Tex_Design(Sprite), x + 12, y + height - 12, 12, 24, width - 24, 12, 12, 12
     
     'Center
-    RenderTexture Tex_Design(Sprite), X + 12, Y + 12, 12, 12, Width - 24, Height - 24, 12, 12
+    RenderTexture Tex_Design(Sprite), x + 12, y + 12, 12, 12, width - 24, height - 24, 12, 12
 End Sub
 
 Public Sub RenderTextureByRects(Texture As Long, sRECT As RECT, dRect As RECT, Optional Colour As Long = -1)
@@ -268,8 +268,8 @@ On Error GoTo ERRORMSG
     
     DispMode.Format = D3DFMT_X8R8G8B8
     D3DWindow.SwapEffect = D3DSWAPEFFECT_COPY
-    DispMode.Width = ScreenWidth
-    DispMode.Height = ScreenHeight
+    DispMode.width = ScreenWidth
+    DispMode.height = ScreenHeight
     D3DWindow.BackBufferCount = 1
     D3DWindow.BackBufferFormat = DispMode.Format
     D3DWindow.BackBufferWidth = ScreenWidth
@@ -289,7 +289,7 @@ End Function
 
 Private Sub LoadTexture(ByVal TextureNum As Long)
 Dim SourceBitmap As cGDIpImage, ConvertedBitmap As cGDIpImage, GDIGraphics As cGDIpRenderer, GDIToken As cGDIpToken, I As Long
-Dim newWidth As Long, newHeight As Long, ImageData() As Byte, fn As Long
+Dim newWidth As Long, newHeight As Long, ImageData() As Byte
     
     If gTexture(TextureNum).loaded = False Then
         Set GDIToken = New cGDIpToken
@@ -297,12 +297,12 @@ Dim newWidth As Long, newHeight As Long, ImageData() As Byte, fn As Long
         Set SourceBitmap = New cGDIpImage
         Call SourceBitmap.LoadPicture_FileName(gTexture(TextureNum).path, GDIToken)
         
-        gTexture(TextureNum).RWidth = SourceBitmap.Width
-        gTexture(TextureNum).RHeight = SourceBitmap.Height
+        gTexture(TextureNum).RWidth = SourceBitmap.width
+        gTexture(TextureNum).RHeight = SourceBitmap.height
         
         newWidth = GetNearestPOT(gTexture(TextureNum).RWidth)
         newHeight = GetNearestPOT(gTexture(TextureNum).RHeight)
-        If newWidth <> SourceBitmap.Width Or newHeight <> SourceBitmap.Height Then
+        If newWidth <> SourceBitmap.width Or newHeight <> SourceBitmap.height Then
             Set ConvertedBitmap = New cGDIpImage
             Set GDIGraphics = New cGDIpRenderer
             I = GDIGraphics.CreateGraphicsFromImageClass(SourceBitmap)
@@ -334,8 +334,8 @@ Dim newWidth As Long, newHeight As Long, ImageData() As Byte, fn As Long
                                                     newHeight, _
                                                     D3DX_DEFAULT, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_POINT, D3DX_FILTER_NONE, ByVal (0), ByVal 0, ByVal 0)
     
-    gTexture(TextureNum).Width = newWidth
-    gTexture(TextureNum).Height = newHeight
+    gTexture(TextureNum).width = newWidth
+    gTexture(TextureNum).height = newHeight
     gTexture(TextureNum).loaded = True
     gTexture(TextureNum).UnloadTimer = timeGetTime
 End Sub
@@ -370,13 +370,13 @@ Private Sub LoadFontTextures()
     
     ' Georgia
     Set Font_Georgia.Texture = Direct3DX8.CreateTextureFromFileEx(D3DDevice8, App.path & Path_Font & "georgia.png", 256, 256, 0, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_POINT, D3DX_FILTER_POINT, RGB(255, 0, 255), ByVal 0, ByVal 0)
-    Font_Georgia.TextureSize.X = 256
-    Font_Georgia.TextureSize.Y = 256
+    Font_Georgia.TextureSize.x = 256
+    Font_Georgia.TextureSize.y = 256
     
     ' Georgia Shadow
     Set Font_GeorgiaShadow.Texture = Direct3DX8.CreateTextureFromFileEx(D3DDevice8, App.path & Path_Font & "georgiashadow.png", 256, 256, 0, 0, D3DFMT_UNKNOWN, D3DPOOL_MANAGED, D3DX_FILTER_POINT, D3DX_FILTER_POINT, RGB(255, 0, 255), ByVal 0, ByVal 0)
-    Font_Georgia.TextureSize.X = 256
-    Font_Georgia.TextureSize.Y = 256
+    Font_Georgia.TextureSize.x = 256
+    Font_Georgia.TextureSize.y = 256
     
 End Sub
 

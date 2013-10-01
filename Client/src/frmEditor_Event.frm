@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "Tabctl32.ocx"
+Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TABCTL32.OCX"
 Begin VB.Form frmEditor_Events 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Events Editor"
@@ -172,41 +172,23 @@ Begin VB.Form frmEditor_Events
          TabPicture(0)   =   "frmEditor_Event.frx":0000
          Tab(0).ControlEnabled=   0   'False
          Tab(0).Control(0)=   "cmdCommand(17)"
-         Tab(0).Control(0).Enabled=   0   'False
          Tab(0).Control(1)=   "cmdCommand(16)"
-         Tab(0).Control(1).Enabled=   0   'False
          Tab(0).Control(2)=   "cmdCommand(15)"
-         Tab(0).Control(2).Enabled=   0   'False
          Tab(0).Control(3)=   "cmdCommand(14)"
-         Tab(0).Control(3).Enabled=   0   'False
          Tab(0).Control(4)=   "cmdCommand(13)"
-         Tab(0).Control(4).Enabled=   0   'False
          Tab(0).Control(5)=   "cmdCommand(9)"
-         Tab(0).Control(5).Enabled=   0   'False
          Tab(0).Control(6)=   "cmdCommand(8)"
-         Tab(0).Control(6).Enabled=   0   'False
          Tab(0).Control(7)=   "cmdCommand(7)"
-         Tab(0).Control(7).Enabled=   0   'False
          Tab(0).Control(8)=   "cmdCommand(6)"
-         Tab(0).Control(8).Enabled=   0   'False
          Tab(0).Control(9)=   "cmdCommand(5)"
-         Tab(0).Control(9).Enabled=   0   'False
          Tab(0).Control(10)=   "cmdCommand(4)"
-         Tab(0).Control(10).Enabled=   0   'False
          Tab(0).Control(11)=   "cmdCommand(3)"
-         Tab(0).Control(11).Enabled=   0   'False
          Tab(0).Control(12)=   "cmdCommand(2)"
-         Tab(0).Control(12).Enabled=   0   'False
          Tab(0).Control(13)=   "cmdCommand(1)"
-         Tab(0).Control(13).Enabled=   0   'False
          Tab(0).Control(14)=   "cmdCommand(0)"
-         Tab(0).Control(14).Enabled=   0   'False
          Tab(0).Control(15)=   "cmdCommand(10)"
-         Tab(0).Control(15).Enabled=   0   'False
          Tab(0).Control(16)=   "cmdCommand(11)"
-         Tab(0).Control(16).Enabled=   0   'False
          Tab(0).Control(17)=   "cmdCommand(12)"
-         Tab(0).Control(17).Enabled=   0   'False
          Tab(0).ControlCount=   18
          TabCaption(1)   =   "2"
          TabPicture(1)   =   "frmEditor_Event.frx":001C
@@ -2044,27 +2026,27 @@ Option Explicit
 Private ListIndex As Long
 Private Sub cmbBranchItem_Click()
     If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = cmbBranchItem.ListIndex + 1
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = cmbBranchItem.ListIndex + 1
 End Sub
 
 Private Sub cmbBranchSkill_Click()
     If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = cmbBranchSkill.ListIndex + 1
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = cmbBranchSkill.ListIndex + 1
 End Sub
 
 Private Sub cmbBranchSwitch_Click()
     If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(5) = cmbBranchSwitch.ListIndex
+    Events(EditorIndex).SubEvents(ListIndex).data(5) = cmbBranchSwitch.ListIndex
 End Sub
 
 Private Sub cmbBranchSwitchReq_Click()
     If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = cmbBranchSwitchReq.ListIndex
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = cmbBranchSwitchReq.ListIndex
 End Sub
 
 Private Sub cmbBranchVar_Click()
     If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(6) = cmbBranchVar.ListIndex
+    Events(EditorIndex).SubEvents(ListIndex).data(6) = cmbBranchVar.ListIndex
 End Sub
 
 Private Sub cmbGraphic_Click()
@@ -2078,12 +2060,12 @@ End Sub
 
 Private Sub cmbChangeSkills_Click()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = cmbChangeSkills.ListIndex + 1
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = cmbChangeSkills.ListIndex + 1
 End Sub
 
 Private Sub cmbChatBubbleTarget_click()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = cmbChatBubbleTarget.ListIndex + 1
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = cmbChatBubbleTarget.ListIndex + 1
 End Sub
 
 Private Sub cmbLabel_Ok_Click()
@@ -2093,7 +2075,7 @@ End Sub
 
 Private Sub cmbLevelReqOperator_Click()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(5) = cmbLevelReqOperator.ListIndex
+    Events(EditorIndex).SubEvents(ListIndex).data(5) = cmbLevelReqOperator.ListIndex
 End Sub
 
 Private Sub cmbPlayerSwitch_Click()
@@ -2108,7 +2090,7 @@ End Sub
 
 Private Sub cmbPlayerSwitchSet_Click()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = cmbPlayerSwitchSet.ListIndex
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = cmbPlayerSwitchSet.ListIndex
 End Sub
 
 Private Sub cmbPlayerVar_Click()
@@ -2123,12 +2105,12 @@ End Sub
 
 Private Sub cmbSetAccess_Click()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = cmbSetAccess.ListIndex
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = cmbSetAccess.ListIndex
 End Sub
 
 Private Sub cmbSwitch_Click()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = cmbSwitch.ListIndex
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = cmbSwitch.ListIndex
 End Sub
 
 Private Sub cmbTrigger_Click()
@@ -2138,21 +2120,21 @@ End Sub
 
 Private Sub cmbVariable_Click()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = cmbVariable.ListIndex
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = cmbVariable.ListIndex
 End Sub
 
 Private Sub cmbVarReqOperator_Click()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(5) = cmbVarReqOperator.ListIndex
+    Events(EditorIndex).SubEvents(ListIndex).data(5) = cmbVarReqOperator.ListIndex
 End Sub
 
 Private Sub cmdAddMenuOption_Click()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     Dim optIdx As Long
     With Events(EditorIndex).SubEvents(ListIndex)
-        ReDim Preserve .Data(1 To UBound(.Data) + 1)
-        ReDim Preserve .Text(1 To UBound(.Data) + 1)
-        .Data(UBound(.Data)) = 1
+        ReDim Preserve .data(1 To UBound(.data) + 1)
+        ReDim Preserve .Text(1 To UBound(.data) + 1)
+        .data(UBound(.data)) = 1
     End With
     lstMenuOptions.AddItem ": " & 1
 End Sub
@@ -2179,7 +2161,7 @@ Private Sub cmdDelete_Click()
 Dim tmpIndex As Long
 
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     If EditorIndex <= 0 Or EditorIndex > MAX_EVENTS Then Exit Sub
     ListIndex = 0
@@ -2187,14 +2169,14 @@ Dim tmpIndex As Long
     
     tmpIndex = lstIndex.ListIndex
     lstIndex.RemoveItem EditorIndex - 1
-    lstIndex.AddItem EditorIndex & ": " & Trim$(Events(EditorIndex).Name), EditorIndex - 1
+    lstIndex.AddItem EditorIndex & ": " & Trim$(Events(EditorIndex).name), EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
     Event_Changed(EditorIndex) = True
     EventEditorInit
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "cmdDelete_Click", "frmEditor_Events", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -2215,13 +2197,12 @@ Private Sub cmdLabel_Cancel_Click()
 End Sub
 
 Private Sub cmdModifyMenuOption_Click()
-    Dim tempIndex As Long, optIdx As Long
-    tempIndex = lstSubEvents.ListIndex + 1
+    Dim optIdx As Long
     optIdx = lstMenuOptions.ListIndex + 1
-    If optIdx < 1 Or optIdx > UBound(Events(EditorIndex).SubEvents(ListIndex).Data) Then Exit Sub
+    If optIdx < 1 Or optIdx > UBound(Events(EditorIndex).SubEvents(ListIndex).data) Then Exit Sub
     
     Events(EditorIndex).SubEvents(ListIndex).Text(optIdx + 1) = Trim$(txtMenuOptText.Text)
-    Events(EditorIndex).SubEvents(ListIndex).Data(optIdx) = scrlMenuOptDest.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(optIdx) = scrlMenuOptDest.Value
     lstMenuOptions.List(optIdx - 1) = Trim$(txtMenuOptText.Text) & ": " & scrlMenuOptDest.Value
 End Sub
 
@@ -2231,10 +2212,10 @@ Private Sub cmdRemoveMenuOption_Click()
     Index = lstMenuOptions.ListIndex + 1
     If Index > 0 And Index < lstMenuOptions.ListCount And lstMenuOptions.ListCount > 0 Then
         For I = Index + 1 To lstMenuOptions.ListCount
-            Events(EditorIndex).SubEvents(ListIndex).Data(I - 1) = Events(EditorIndex).SubEvents(ListIndex).Data(I)
+            Events(EditorIndex).SubEvents(ListIndex).data(I - 1) = Events(EditorIndex).SubEvents(ListIndex).data(I)
             Events(EditorIndex).SubEvents(ListIndex).Text(I) = Events(EditorIndex).SubEvents(ListIndex).Text(I + 1)
         Next I
-        ReDim Preserve Events(EditorIndex).SubEvents(ListIndex).Data(1 To UBound(Events(EditorIndex).SubEvents(ListIndex).Data) - 1)
+        ReDim Preserve Events(EditorIndex).SubEvents(ListIndex).data(1 To UBound(Events(EditorIndex).SubEvents(ListIndex).data) - 1)
         ReDim Preserve Events(EditorIndex).SubEvents(ListIndex).Text(1 To UBound(Events(EditorIndex).SubEvents(ListIndex).Text) - 1)
         Call PopulateSubEventConfig
     End If
@@ -2314,14 +2295,14 @@ End Sub
 
 Private Sub cmdSave_Click()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Call EventEditorOk
     ListIndex = 0
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "cmdSave_Click", "frmEditor_Events", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -2329,14 +2310,14 @@ End Sub
 
 Private Sub cmdCancel_Click()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Call EventEditorCancel
     ListIndex = 0
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "cmdCancel_Click", "frmEditor_Events", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -2413,14 +2394,14 @@ End Sub
 Private Sub Form_Load()
     Dim I As Long, cap As Long
     'Move windows to right places
-    frmEditor_Events.Width = 9600
-    frmEditor_Events.Height = 8835
+    frmEditor_Events.width = 9600
+    frmEditor_Events.height = 8835
     fraEditCommand.Left = 232
     fraEditCommand.Top = 152
     fraCommands.Left = 232
     fraCommands.Top = 152
-    fraLabeling.Width = 609
-    fraLabeling.Height = 513
+    fraLabeling.width = 609
+    fraLabeling.height = 513
     
     ListIndex = 0
 
@@ -2442,8 +2423,8 @@ Private Sub Form_Load()
     cmbHasItem.Clear
     cmbBranchItem.Clear
     For I = 1 To MAX_ITEMS
-        cmbHasItem.AddItem Trim$(Item(I).Name)
-        cmbBranchItem.AddItem Trim$(Item(I).Name)
+        cmbHasItem.AddItem Trim$(Item(I).name)
+        cmbBranchItem.AddItem Trim$(Item(I).name)
     Next
     
     cmbSwitch.Clear
@@ -2467,16 +2448,16 @@ Private Sub Form_Load()
     cmbBranchSkill.Clear
     cmbChangeSkills.Clear
     For I = 1 To MAX_SPELLS
-        cmbBranchSkill.AddItem Trim$(Spell(I).Name)
-        cmbChangeSkills.AddItem Trim$(Spell(I).Name)
+        cmbBranchSkill.AddItem Trim$(spell(I).name)
+        cmbChangeSkills.AddItem Trim$(spell(I).name)
     Next
     
     cmbChatBubbleTarget.Clear
     For I = 1 To MAX_MAP_NPCS
-        If Map.Npc(I) <= 0 Then
+        If map.NPC(I) <= 0 Then
             cmbChatBubbleTarget.AddItem CStr(I) & ". "
         Else
-            cmbChatBubbleTarget.AddItem CStr(I) & ". " & Trim$(Npc(Map.Npc(I)).Name)
+            cmbChatBubbleTarget.AddItem CStr(I) & ". " & Trim$(NPC(map.NPC(I)).name)
         End If
     Next
 End Sub
@@ -2534,14 +2515,13 @@ Private Sub lstIndex_Click()
 End Sub
 
 Private Sub lstMenuOptions_Click()
-    Dim tempIndex As Long, optIdx As Long
-    tempIndex = lstSubEvents.ListIndex + 1
+    Dim optIdx As Long
     optIdx = lstMenuOptions.ListIndex + 1
-    If optIdx < 1 Or optIdx > UBound(Events(EditorIndex).SubEvents(ListIndex).Data) Then Exit Sub
+    If optIdx < 1 Or optIdx > UBound(Events(EditorIndex).SubEvents(ListIndex).data) Then Exit Sub
     
     txtMenuOptText.Text = Trim$(Events(EditorIndex).SubEvents(ListIndex).Text(optIdx + 1))
-    If Events(EditorIndex).SubEvents(ListIndex).Data(optIdx) <= 0 Then Events(EditorIndex).SubEvents(ListIndex).Data(optIdx) = 1
-    scrlMenuOptDest.Value = Events(EditorIndex).SubEvents(ListIndex).Data(optIdx)
+    If Events(EditorIndex).SubEvents(ListIndex).data(optIdx) <= 0 Then Events(EditorIndex).SubEvents(ListIndex).data(optIdx) = 1
+    scrlMenuOptDest.Value = Events(EditorIndex).SubEvents(ListIndex).data(optIdx)
 End Sub
 
 Private Sub lstSubEvents_Click()
@@ -2597,32 +2577,27 @@ If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
             txtBranchLevelReq.Enabled = True
     End Select
 
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = Index
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = Index
 End Sub
 
 Private Sub optExpAction_Click(Index As Integer)
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = Index
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = Index
 End Sub
 
 Private Sub optChangePK_Click(Index As Integer)
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = Index
-End Sub
-
-Private Sub optChangeSex_Click(Index As Integer)
- If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = Index
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = Index
 End Sub
 
 Private Sub optChangeSkills_Click(Index As Integer)
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = Index
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = Index
 End Sub
 
 Private Sub optChannel_Click(Index As Integer)
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = Index
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = Index
 End Sub
 
 Private Sub optChatBubbleTarget_Click(Index As Integer)
@@ -2632,27 +2607,27 @@ If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     ElseIf Index = 1 Then
         cmbChatBubbleTarget.visible = True
     End If
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = Index
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = Index
 End Sub
 
 Private Sub optItemOperation_Click(Index As Integer)
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(3) = Index
+    Events(EditorIndex).SubEvents(ListIndex).data(3) = Index
 End Sub
 
 Private Sub optLevelAction_Click(Index As Integer)
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = Index
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = Index
 End Sub
 
 Private Sub optOpenEventType_Click(Index As Integer)
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(3) = Index
+    Events(EditorIndex).SubEvents(ListIndex).data(3) = Index
 End Sub
 
 Private Sub optVariableAction_Click(Index As Integer)
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = Index
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = Index
     Select Case Index
         Case 0, 1, 2
             txtVariableData(0).Enabled = True
@@ -2667,46 +2642,41 @@ End Sub
 
 Private Sub scrlAddText_Colour_Change()
     frmEditor_Events.lblAddText_Colour.Caption = "Color: " & GetColorString(frmEditor_Events.scrlAddText_Colour.Value)
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = scrlAddText_Colour.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = scrlAddText_Colour.Value
 End Sub
 
 Private Sub scrlCustomScript_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblCustomScript.Caption = "Case: " & scrlCustomScript.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = scrlCustomScript.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = scrlCustomScript.Value
 End Sub
 
 Private Sub scrlChangeExp_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblChangeExp.Caption = "Exp: " & scrlChangeExp.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = scrlChangeExp.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = scrlChangeExp.Value
 End Sub
 
 Private Sub scrlGiveItemAmount_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblGiveItemAmount.Caption = "Amount: " & scrlGiveItemAmount.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = scrlGiveItemAmount.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = scrlGiveItemAmount.Value
 End Sub
 
 Private Sub scrlGiveItemID_Change()
-    Dim tempIndex As Long
-    tempIndex = lstSubEvents.ListIndex + 1
-    lblGiveItemID.Caption = "Item: " & scrlGiveItemID.Value & "-" & Item(scrlGiveItemID.Value).Name
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = scrlGiveItemID.Value
+    lblGiveItemID.Caption = "Item: " & scrlGiveItemID.Value & "-" & Item(scrlGiveItemID.Value).name
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = scrlGiveItemID.Value
 End Sub
 
 Private Sub scrlGOTO_Change()
     lblGOTO.Caption = "Goto: " & scrlGOTO.Value
-    Dim tempIndex As Long
-    tempIndex = lstSubEvents.ListIndex + 1
-    
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = scrlGOTO.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = scrlGOTO.Value
 End Sub
 
 Private Sub scrlChangeLevel_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblChangeLevel.Caption = "Level: " & scrlChangeLevel.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = scrlChangeLevel.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = scrlChangeLevel.Value
 End Sub
 
 Private Sub scrlMenuOptDest_Change()
@@ -2716,24 +2686,24 @@ End Sub
 Private Sub scrlOpenEventX_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblOpenEventX.Caption = "X: " & scrlOpenEventX.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = scrlOpenEventX.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = scrlOpenEventX.Value
 End Sub
 Private Sub scrlOpenEventY_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblOpenEventY.Caption = "Y: " & scrlOpenEventY.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = scrlOpenEventY.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = scrlOpenEventY.Value
 End Sub
 
 Private Sub scrlOpenShop_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    lblOpenShop.Caption = "Open Shop: " & scrlOpenShop.Value & "-" & Shop(scrlOpenShop.Value).Name
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = scrlOpenShop.Value
+    lblOpenShop.Caption = "Open Shop: " & scrlOpenShop.Value & "-" & Shop(scrlOpenShop.Value).name
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = scrlOpenShop.Value
 End Sub
 
 Private Sub scrlPlayAnimationAnim_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    lblPlayAnimationAnim.Caption = "Animation: " & scrlPlayAnimationAnim.Value & "-" & Animation(scrlPlayAnimationAnim.Value).Name
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = scrlPlayAnimationAnim.Value
+    lblPlayAnimationAnim.Caption = "Animation: " & scrlPlayAnimationAnim.Value & "-" & Animation(scrlPlayAnimationAnim.Value).name
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = scrlPlayAnimationAnim.Value
 End Sub
 
 Private Sub scrlPlayAnimationX_Change()
@@ -2743,7 +2713,7 @@ If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     Else
         lblPlayAnimationX.Caption = "X: Player's X Position"
     End If
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = scrlPlayAnimationX.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = scrlPlayAnimationX.Value
 End Sub
 
 Private Sub scrlPlayAnimationY_Change()
@@ -2753,36 +2723,36 @@ If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     Else
         lblPlayAnimationY.Caption = "Y: Player's Y Position"
     End If
-    Events(EditorIndex).SubEvents(ListIndex).Data(3) = scrlPlayAnimationY.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(3) = scrlPlayAnimationY.Value
 End Sub
 
 Private Sub scrlPositive_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblPositive.Caption = "Positive: " & scrlPositive.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(3) = scrlPositive.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(3) = scrlPositive.Value
 End Sub
 Private Sub scrlNegative_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblNegative.Caption = "Negative: " & scrlNegative.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(4) = scrlNegative.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(4) = scrlNegative.Value
 End Sub
 
 Private Sub scrlWarpMap_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblWarpMap.Caption = "Map: " & scrlWarpMap.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = scrlWarpMap.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = scrlWarpMap.Value
 End Sub
 
 Private Sub scrlWarpX_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblWarpX.Caption = "X: " & scrlWarpX.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = scrlWarpX.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = scrlWarpX.Value
 End Sub
 
 Private Sub scrlWarpY_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblWarpY.Caption = "Y: " & scrlWarpY.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(3) = scrlWarpY.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(3) = scrlWarpY.Value
 End Sub
 
 Private Sub txtAddText_Text_Change()
@@ -2791,17 +2761,17 @@ End Sub
 
 Private Sub txtBranchItemAmount_Change()
     If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(5) = Val(txtBranchItemAmount.Text)
+    Events(EditorIndex).SubEvents(ListIndex).data(5) = Val(txtBranchItemAmount.Text)
 End Sub
 
 Private Sub txtBranchLevelReq_Change()
     If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = Val(txtBranchLevelReq.Text)
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = Val(txtBranchLevelReq.Text)
 End Sub
 
 Private Sub txtBranchVarReq_Change()
     If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = Val(txtBranchVarReq.Text)
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = Val(txtBranchVarReq.Text)
 End Sub
 
 Private Sub txtChatbubbleText_Change()
@@ -2815,18 +2785,18 @@ Private Sub txtName_Validate(Cancel As Boolean)
 Dim tmpIndex As Long
 
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     If EditorIndex = 0 Or EditorIndex > MAX_EVENTS Then Exit Sub
     tmpIndex = lstIndex.ListIndex
-    Events(EditorIndex).Name = Trim$(txtName.Text)
+    Events(EditorIndex).name = Trim$(txtName.Text)
     lstIndex.RemoveItem EditorIndex - 1
-    lstIndex.AddItem EditorIndex & ": " & Events(EditorIndex).Name, EditorIndex - 1
+    lstIndex.AddItem EditorIndex & ": " & Events(EditorIndex).name, EditorIndex - 1
     lstIndex.ListIndex = tmpIndex
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "txtName_Validate", "frmEditor_Item", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -2865,134 +2835,134 @@ Public Sub PopulateSubEventConfig()
                 txtMenuQuery.Text = Trim$(.Text(1))
                 lstMenuOptions.Clear
                 For I = 2 To UBound(.Text)
-                    lstMenuOptions.AddItem Trim$(.Text(I)) & ": " & .Data(I - 1)
+                    lstMenuOptions.AddItem Trim$(.Text(I)) & ": " & .data(I - 1)
                 Next I
                 scrlMenuOptDest.Max = UBound(Events(EditorIndex).SubEvents)
                 fraMenu.visible = True
             Case Evt_OpenShop
-                If .Data(1) < 1 Or .Data(1) > MAX_SHOPS Then .Data(1) = 1
+                If .data(1) < 1 Or .data(1) > MAX_SHOPS Then .data(1) = 1
                 
-                scrlOpenShop.Value = .Data(1)
+                scrlOpenShop.Value = .data(1)
                 Call scrlOpenShop_Change
                 fraOpenShop.visible = True
             Case Evt_GiveItem
-                If .Data(1) < 1 Or .Data(1) > MAX_ITEMS Then .Data(1) = 1
-                If .Data(2) < 1 Then .Data(2) = 1
-                optItemOperation(.Data(3)).Value = True
-                scrlGiveItemID.Value = .Data(1)
-                scrlGiveItemAmount.Value = .Data(2)
+                If .data(1) < 1 Or .data(1) > MAX_ITEMS Then .data(1) = 1
+                If .data(2) < 1 Then .data(2) = 1
+                optItemOperation(.data(3)).Value = True
+                scrlGiveItemID.Value = .data(1)
+                scrlGiveItemAmount.Value = .data(2)
                 Call scrlGiveItemID_Change
                 Call scrlGiveItemAmount_Change
                 fraGiveItem.visible = True
             Case Evt_PlayAnimation
-                If .Data(1) < 1 Or .Data(1) > MAX_ANIMATIONS Then .Data(1) = 1
+                If .data(1) < 1 Or .data(1) > MAX_ANIMATIONS Then .data(1) = 1
                 
-                scrlPlayAnimationAnim.Value = .Data(1)
-                scrlPlayAnimationX.Value = .Data(2)
-                scrlPlayAnimationY.Value = .Data(3)
+                scrlPlayAnimationAnim.Value = .data(1)
+                scrlPlayAnimationX.Value = .data(2)
+                scrlPlayAnimationY.Value = .data(3)
                 Call scrlPlayAnimationAnim_Change
                 Call scrlPlayAnimationX_Change
                 Call scrlPlayAnimationY_Change
                 fraAnimation.visible = True
             Case Evt_Warp
-                If .Data(1) < 1 Or .Data(1) > MAX_MAPS Then .Data(1) = 1
+                If .data(1) < 1 Or .data(1) > MAX_MAPS Then .data(1) = 1
                 
-                scrlWarpMap.Value = .Data(1)
-                scrlWarpX.Value = .Data(2)
-                scrlWarpY.Value = .Data(3)
+                scrlWarpMap.Value = .data(1)
+                scrlWarpX.Value = .data(2)
+                scrlWarpY.Value = .data(3)
                 Call scrlWarpMap_Change
                 Call scrlWarpX_Change
                 Call scrlWarpY_Change
                 fraMapWarp.visible = True
             Case Evt_GOTO
-                If .Data(1) < 1 Or .Data(1) > UBound(Events(EditorIndex).SubEvents) Then .Data(1) = 1
+                If .data(1) < 1 Or .data(1) > UBound(Events(EditorIndex).SubEvents) Then .data(1) = 1
                 
                 scrlGOTO.Max = UBound(Events(EditorIndex).SubEvents)
-                scrlGOTO.Value = .Data(1)
+                scrlGOTO.Value = .data(1)
                 Call scrlGOTO_Change
                 fraGoTo.visible = True
             Case Evt_Switch
-                cmbSwitch.ListIndex = .Data(1)
-                cmbPlayerSwitchSet.ListIndex = .Data(2)
+                cmbSwitch.ListIndex = .data(1)
+                cmbPlayerSwitchSet.ListIndex = .data(2)
                 fraChangeSwitch.visible = True
             Case Evt_Variable
-                optVariableAction(.Data(1)).Value = True
-                If .Data(1) = 3 Then
-                    txtVariableData(1) = .Data(2)
-                    txtVariableData(2) = .Data(3)
+                optVariableAction(.data(1)).Value = True
+                If .data(1) = 3 Then
+                    txtVariableData(1) = .data(2)
+                    txtVariableData(2) = .data(3)
                 Else
-                    txtVariableData(0) = .Data(2)
+                    txtVariableData(0) = .data(2)
                 End If
                 fraChangeVariable.visible = True
             Case Evt_AddText
                 txtAddText_Text.Text = Trim$(.Text(1))
-                scrlAddText_Colour.Value = .Data(1)
-                optChannel(.Data(2)).Value = True
+                scrlAddText_Colour.Value = .data(1)
+                optChannel(.data(2)).Value = True
                 fraAddText.visible = True
             Case Evt_Chatbubble
                 txtChatbubbleText.Text = Trim$(.Text(1))
-                optChatBubbleTarget(.Data(1)).Value = True
-                cmbChatBubbleTarget.ListIndex = .Data(2) - 1
+                optChatBubbleTarget(.data(1)).Value = True
+                cmbChatBubbleTarget.ListIndex = .data(2) - 1
                 fraChatbubble.visible = True
             Case Evt_Branch
                 scrlPositive.Max = UBound(Events(EditorIndex).SubEvents)
                 scrlNegative.Max = UBound(Events(EditorIndex).SubEvents)
-                scrlPositive.Value = .Data(3)
-                scrlNegative.Value = .Data(4)
-                optCondition_Index(.Data(1)) = True
-                Select Case .Data(1)
+                scrlPositive.Value = .data(3)
+                scrlNegative.Value = .data(4)
+                optCondition_Index(.data(1)) = True
+                Select Case .data(1)
                     Case 0
-                        cmbBranchVar.ListIndex = .Data(6)
-                        txtBranchVarReq.Text = .Data(2)
-                        cmbVarReqOperator.ListIndex = .Data(5)
+                        cmbBranchVar.ListIndex = .data(6)
+                        txtBranchVarReq.Text = .data(2)
+                        cmbVarReqOperator.ListIndex = .data(5)
                     Case 1
-                        cmbBranchSwitch.ListIndex = .Data(5)
-                        cmbBranchSwitchReq.ListIndex = .Data(2)
+                        cmbBranchSwitch.ListIndex = .data(5)
+                        cmbBranchSwitchReq.ListIndex = .data(2)
                     Case 2
-                        cmbBranchItem.ListIndex = .Data(2) - 1
-                        txtBranchItemAmount.Text = .Data(5)
+                        cmbBranchItem.ListIndex = .data(2) - 1
+                        txtBranchItemAmount.Text = .data(5)
                     Case 4
-                        cmbBranchSkill.ListIndex = .Data(2) - 1
+                        cmbBranchSkill.ListIndex = .data(2) - 1
                     Case 5
-                        cmbLevelReqOperator.ListIndex = .Data(5)
-                        txtBranchLevelReq.Text = .Data(2)
+                        cmbLevelReqOperator.ListIndex = .data(5)
+                        txtBranchLevelReq.Text = .data(2)
                 End Select
                 fraBranch.visible = True
             Case Evt_ChangeSkill
-                cmbChangeSkills.ListIndex = .Data(1) - 1
-                optChangeSkills(.Data(2)).Value = True
+                cmbChangeSkills.ListIndex = .data(1) - 1
+                optChangeSkills(.data(2)).Value = True
                 fraChangeSkill.visible = True
             Case Evt_ChangeLevel
-                scrlChangeLevel.Value = .Data(1)
-                optLevelAction(.Data(2)).Value = True
+                scrlChangeLevel.Value = .data(1)
+                optLevelAction(.data(2)).Value = True
                 fraChangeLevel.visible = True
             Case Evt_ChangePK
-                optChangePK(.Data(1)).Value = True
+                optChangePK(.data(1)).Value = True
                 fraChangePK.visible = True
             Case Evt_ChangeExp
-                scrlChangeExp.Value = .Data(1)
-                optExpAction(.Data(2)).Value = True
+                scrlChangeExp.Value = .data(1)
+                optExpAction(.data(2)).Value = True
                 fraChangeExp.visible = True
             Case Evt_SetAccess
-                cmbSetAccess.ListIndex = .Data(1)
+                cmbSetAccess.ListIndex = .data(1)
                 fraSetAccess.visible = True
             Case Evt_CustomScript
-                scrlCustomScript.Value = .Data(1)
+                scrlCustomScript.Value = .data(1)
                 fraCustomScript.visible = True
             Case Evt_OpenEvent
-                scrlOpenEventX.Value = .Data(1)
-                scrlOpenEventY.Value = .Data(2)
-                optOpenEventType(.Data(3)).Value = True
-                cmbOpenEventType.ListIndex = .Data(4)
+                scrlOpenEventX.Value = .data(1)
+                scrlOpenEventY.Value = .data(2)
+                optOpenEventType(.data(3)).Value = True
+                cmbOpenEventType.ListIndex = .data(4)
                 fraOpenEvent.visible = True
             Case Evt_SpawnNPC
-                cmbSpawnNPC.ListIndex = .Data(1) - 1
+                cmbSpawnNPC.ListIndex = .data(1) - 1
                 fraSpawnNPC.visible = True
             Case Evt_Changegraphic
-                scrlChangeGraphicX.Value = .Data(1)
-                scrlChangeGraphicY.Value = .Data(2)
-                scrlChangeGraphic.Value = .Data(3)
-                cmbChangeGraphicType.ListIndex = .Data(4)
+                scrlChangeGraphicX.Value = .data(1)
+                scrlChangeGraphicY.Value = .data(2)
+                scrlChangeGraphic.Value = .data(3)
+                cmbChangeGraphicType.ListIndex = .data(4)
                 fraChangeGraphic.visible = True
         End Select
     End With
@@ -3022,8 +2992,6 @@ Private Sub HideMenus()
 End Sub
 
 Private Sub txtPlayerText_Change()
-    Dim tempIndex As Long
-    tempIndex = lstSubEvents.ListIndex + 1
     Events(EditorIndex).SubEvents(ListIndex).Text(1) = txtPlayerText.Text
 End Sub
 
@@ -3033,19 +3001,18 @@ End Sub
 
 Private Sub txtVariableData_Change(Index As Integer)
     Select Case Index
-        Case 0: Events(EditorIndex).SubEvents(ListIndex).Data(3) = Val(txtVariableData(0))
-        Case 1: Events(EditorIndex).SubEvents(ListIndex).Data(3) = Val(txtVariableData(1))
-        Case 2: Events(EditorIndex).SubEvents(ListIndex).Data(4) = Val(txtVariableData(2))
+        Case 0: Events(EditorIndex).SubEvents(ListIndex).data(3) = Val(txtVariableData(0))
+        Case 1: Events(EditorIndex).SubEvents(ListIndex).data(3) = Val(txtVariableData(1))
+        Case 2: Events(EditorIndex).SubEvents(ListIndex).data(4) = Val(txtVariableData(2))
     End Select
 End Sub
 
 Private Sub txtSearch_Change()
-Dim find As String, I As Long, found As Boolean
+Dim find As String, I As Long
     find = txtSearch.Text
 
     For I = 0 To lstIndex.ListCount - 1
         If StrComp(find, Replace(lstIndex.List(I), I + 1 & ": ", ""), vbTextCompare) = 0 Then
-            found = True
             lstIndex.SetFocus
             lstIndex.ListIndex = I
             Exit For
@@ -3055,25 +3022,25 @@ End Sub
 Private Sub scrlChangeGraphicX_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblChangeGraphicX.Caption = "X: " & scrlChangeGraphicX.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(1) = scrlChangeGraphicX.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(1) = scrlChangeGraphicX.Value
 End Sub
 Private Sub scrlChangeGraphicY_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblChangeGraphicY.Caption = "Y: " & scrlChangeGraphicY.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(2) = scrlChangeGraphicY.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(2) = scrlChangeGraphicY.Value
 End Sub
 Private Sub scrlChangeGraphic_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
     lblChangeGraphic.Caption = "Graphic#: " & scrlChangeGraphic.Value
-    Events(EditorIndex).SubEvents(ListIndex).Data(3) = scrlChangeGraphic.Value
+    Events(EditorIndex).SubEvents(ListIndex).data(3) = scrlChangeGraphic.Value
 End Sub
 
 Private Sub cmbOpenEventType_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(4) = cmbOpenEventType.ListIndex
+    Events(EditorIndex).SubEvents(ListIndex).data(4) = cmbOpenEventType.ListIndex
 End Sub
 
 Private Sub cmbChangeGraphicType_Change()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Events(EditorIndex).SubEvents(ListIndex).Data(4) = cmbChangeGraphicType.ListIndex
+    Events(EditorIndex).SubEvents(ListIndex).data(4) = cmbChangeGraphicType.ListIndex
 End Sub

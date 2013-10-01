@@ -315,25 +315,14 @@ Public Const RENDER_STATE_NONE As Long = 0
 Public Const RENDER_STATE_NORMAL As Long = 1
 Public Const RENDER_STATE_AUTOTILE As Long = 2
 
-' Do Events
-Public Const nLng As Long = (&H80 Or &H1 Or &H4 Or &H20) + (&H8 Or &H40)
-
 ' Scrolling action message constants
 Public Const ACTIONMSG_STATIC As Long = 0
 Public Const ACTIONMSG_SCROLL As Long = 1
 Public Const ACTIONMSG_SCREEN As Long = 2
 
 ' stuffs
-Public Const HalfX As Integer = ((MAX_MAPX + 1) / 2) * PIC_X
-Public Const HalfY As Integer = ((MAX_MAPY + 1) / 2) * PIC_Y
 Public Const ScreenX As Integer = (MAX_MAPX + 1) * PIC_X
 Public Const ScreenY As Integer = (MAX_MAPY + 1) * PIC_Y
-Public Const StartXValue As Integer = ((MAX_MAPX + 1) / 2)
-Public Const StartYValue As Integer = ((MAX_MAPY + 1) / 2)
-Public Const EndXValue As Integer = (MAX_MAPX + 1) + 1
-Public Const EndYValue As Integer = (MAX_MAPY + 1) + 1
-Public Const Half_PIC_X As Integer = PIC_X / 2
-Public Const Half_PIC_Y As Integer = PIC_Y / 2
 
 ' text color pointers
 Public Const Black As Byte = 0

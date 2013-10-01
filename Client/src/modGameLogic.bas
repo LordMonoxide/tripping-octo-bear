@@ -2,7 +2,7 @@ Attribute VB_Name = "modGameLogic"
 Option Explicit
 
 Public Sub GameLoop()
-Dim FrameTime As Long, Tick As Long, TickFPS As Long, FPS As Long, I As Long, WalkTimer As Long, X As Long, Y As Long
+Dim FrameTime As Long, Tick As Long, TickFPS As Long, FPS As Long, I As Long, WalkTimer As Long, x As Long, y As Long
 Dim tmr25 As Long, tmr1000 As Long, tmr10000 As Long, mapTimer As Long, chatTmr As Long, targetTmr As Long, fogTmr As Long, barTmr As Long
 Dim barDifference As Long, renderspeed As Long, targetanimTmr As Long
 
@@ -366,30 +366,30 @@ Dim I As Long
         
         For I = 1 To 5
             If MenuNPC(I).dir = DIR_DOWN Then
-                If MenuNPC(I).X = -100 Then
-                    MenuNPC(I).X = 800
+                If MenuNPC(I).x = -100 Then
+                    MenuNPC(I).x = 800
                     MenuNPC(I).dir = Rand(0, 1)
                 Else
-                    MenuNPC(I).X = MenuNPC(I).X - 1
+                    MenuNPC(I).x = MenuNPC(I).x - 1
                 End If
-                If MenuNPC(I).Y = 700 Then
-                    MenuNPC(I).Y = 0
+                If MenuNPC(I).y = 700 Then
+                    MenuNPC(I).y = 0
                     MenuNPC(I).dir = Rand(0, 1)
                 Else
-                    MenuNPC(I).Y = MenuNPC(I).Y + 1
+                    MenuNPC(I).y = MenuNPC(I).y + 1
                 End If
             Else
-                If MenuNPC(I).X = -100 Then
-                    MenuNPC(I).X = 800
+                If MenuNPC(I).x = -100 Then
+                    MenuNPC(I).x = 800
                     MenuNPC(I).dir = Rand(0, 1)
                 Else
-                    MenuNPC(I).X = MenuNPC(I).X - 1
+                    MenuNPC(I).x = MenuNPC(I).x - 1
                 End If
-                If MenuNPC(I).Y = -100 Then
-                    MenuNPC(I).Y = 600
+                If MenuNPC(I).y = -100 Then
+                    MenuNPC(I).y = 600
                     MenuNPC(I).dir = Rand(0, 1)
                 Else
-                    MenuNPC(I).Y = MenuNPC(I).Y - 1
+                    MenuNPC(I).y = MenuNPC(I).y - 1
                 End If
             End If
         Next
@@ -603,7 +603,7 @@ errorhandler:
 End Sub
 
 Sub CheckMapGetItem()
-Dim buffer As New clsBuffer, tmpIndex As Long, I As Long, X As Long
+Dim buffer As New clsBuffer, tmpIndex As Long, I As Long, x As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -613,13 +613,13 @@ Dim buffer As New clsBuffer, tmpIndex As Long, I As Long, X As Long
     If timeGetTime > TempPlayer(MyIndex).MapGetTimer + 250 Then
         ' find out if we want to pick it up
         For I = 1 To MAX_MAP_ITEMS
-            If MapItem(I).X = Player(MyIndex).X And MapItem(I).Y = Player(MyIndex).Y Then
+            If MapItem(I).x = Player(MyIndex).x And MapItem(I).y = Player(MyIndex).y Then
                 If MapItem(I).Num > 0 Then
                     If Item(MapItem(I).Num).BindType = 1 Then
                         ' make sure it's not a party drop
                         If Party.Leader > 0 Then
-                            For X = 1 To MAX_PARTY_MEMBERS
-                                tmpIndex = Party.Member(X)
+                            For x = 1 To MAX_PARTY_MEMBERS
+                                tmpIndex = Party.Member(x)
                                 If tmpIndex > 0 Then
                                     If Trim$(GetPlayerName(tmpIndex)) = Trim$(MapItem(I).playerName) Then
                             
@@ -712,8 +712,6 @@ errorhandler:
 End Function
 
 Function CanMove() As Boolean
-Dim d As Long
-    
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
@@ -764,8 +762,6 @@ Dim d As Long
         Exit Function
     End If
 
-    d = GetPlayerDir(MyIndex)
-    
     If DirUpLeft Then
         Call SetPlayerDir(MyIndex, DIR_UP_LEFT)
         If Last_Dir <> GetPlayerDir(MyIndex) Then
@@ -963,8 +959,8 @@ errorhandler:
 End Function
 
 Function CheckDirection(ByVal direction As Byte) As Boolean
-Dim X As Long
-Dim Y As Long
+Dim x As Long
+Dim y As Long
 Dim I As Long
 
     ' If debug mode, handle error then exit out
@@ -982,47 +978,47 @@ Dim I As Long
 
     Select Case direction
         Case DIR_UP
-            X = GetPlayerX(MyIndex)
-            Y = GetPlayerY(MyIndex) - 1
+            x = GetPlayerX(MyIndex)
+            y = GetPlayerY(MyIndex) - 1
         Case DIR_DOWN
-            X = GetPlayerX(MyIndex)
-            Y = GetPlayerY(MyIndex) + 1
+            x = GetPlayerX(MyIndex)
+            y = GetPlayerY(MyIndex) + 1
         Case DIR_LEFT
-            X = GetPlayerX(MyIndex) - 1
-            Y = GetPlayerY(MyIndex)
+            x = GetPlayerX(MyIndex) - 1
+            y = GetPlayerY(MyIndex)
         Case DIR_RIGHT
-            X = GetPlayerX(MyIndex) + 1
-            Y = GetPlayerY(MyIndex)
+            x = GetPlayerX(MyIndex) + 1
+            y = GetPlayerY(MyIndex)
         Case DIR_UP_LEFT
-            X = GetPlayerX(MyIndex) - 1
-            Y = GetPlayerY(MyIndex) - 1
+            x = GetPlayerX(MyIndex) - 1
+            y = GetPlayerY(MyIndex) - 1
         Case DIR_UP_RIGHT
-            X = GetPlayerX(MyIndex) + 1
-            Y = GetPlayerY(MyIndex) - 1
+            x = GetPlayerX(MyIndex) + 1
+            y = GetPlayerY(MyIndex) - 1
         Case DIR_DOWN_LEFT
-            X = GetPlayerX(MyIndex) - 1
-            Y = GetPlayerY(MyIndex) + 1
+            x = GetPlayerX(MyIndex) - 1
+            y = GetPlayerY(MyIndex) + 1
         Case DIR_DOWN_RIGHT
-            X = GetPlayerX(MyIndex) + 1
-            Y = GetPlayerY(MyIndex) + 1
+            x = GetPlayerX(MyIndex) + 1
+            y = GetPlayerY(MyIndex) + 1
     End Select
 
     ' Check to see if the map tile is blocked or not
-    If map.Tile(X, Y).Type = TILE_TYPE_BLOCKED Then
+    If map.Tile(x, y).Type = TILE_TYPE_BLOCKED Then
         CheckDirection = True
         Exit Function
     End If
 
     ' Check to see if the map tile is tree or not
-    If map.Tile(X, Y).Type = TILE_TYPE_RESOURCE Then
+    If map.Tile(x, y).Type = TILE_TYPE_RESOURCE Then
         CheckDirection = True
         Exit Function
     End If
     
-    If map.Tile(X, Y).Type = TILE_TYPE_EVENT Then
-        If map.Tile(X, Y).Data1 > 0 Then
-            If Events(map.Tile(X, Y).Data1).WalkThrought = NO Then
-                If Player(MyIndex).EventOpen(map.Tile(X, Y).Data1) = NO Then
+    If map.Tile(x, y).Type = TILE_TYPE_EVENT Then
+        If map.Tile(x, y).Data1 > 0 Then
+            If Events(map.Tile(x, y).Data1).WalkThrought = NO Then
+                If Player(MyIndex).EventOpen(map.Tile(x, y).Data1) = NO Then
                     CheckDirection = True
                     Exit Function
                 End If
@@ -1034,8 +1030,8 @@ Dim I As Long
     If map.Moral = 0 Then
         For I = 1 To Player_HighIndex
             If IsPlaying(I) And GetPlayerMap(I) = GetPlayerMap(MyIndex) Then
-                If GetPlayerX(I) = X Then
-                    If GetPlayerY(I) = Y Then
+                If GetPlayerX(I) = x Then
+                    If GetPlayerY(I) = y Then
                         CheckDirection = True
                         Exit Function
                     End If
@@ -1047,8 +1043,8 @@ Dim I As Long
     ' Check to see if a npc is already on that tile
     For I = 1 To Npc_HighIndex
         If MapNpc(I).Num > 0 Then
-            If MapNpc(I).X = X Then
-                If MapNpc(I).Y = Y Then
+            If MapNpc(I).x = x Then
+                If MapNpc(I).y = y Then
                     CheckDirection = True
                     Exit Function
                 End If
@@ -1157,13 +1153,13 @@ errorhandler:
     Exit Function
 End Function
 
-Public Function IsValidMapPoint(ByVal X As Long, ByVal Y As Long) As Boolean
+Public Function IsValidMapPoint(ByVal x As Long, ByVal y As Long) As Boolean
     IsValidMapPoint = False
 
-    If X < 0 Then Exit Function
-    If Y < 0 Then Exit Function
-    If X > map.MaxX Then Exit Function
-    If Y > map.MaxY Then Exit Function
+    If x < 0 Then Exit Function
+    If y < 0 Then Exit Function
+    If x > map.MaxX Then Exit Function
+    If y > map.MaxY Then Exit Function
     IsValidMapPoint = True
 End Function
 
@@ -1297,42 +1293,6 @@ errorhandler:
     Exit Sub
 End Sub
 
-Public Function TwipsToPixels(ByVal twip_val As Long, ByVal XorY As Byte) As Long
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If XorY = 0 Then
-        TwipsToPixels = twip_val / Screen.TwipsPerPixelX
-    ElseIf XorY = 1 Then
-        TwipsToPixels = twip_val / Screen.TwipsPerPixelY
-    End If
-    
-    ' Error handler
-    Exit Function
-errorhandler:
-    HandleError "TwipsToPixels", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-End Function
-
-Public Function PixelsToTwips(ByVal pixel_val As Long, ByVal XorY As Byte) As Long
-    ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo errorhandler
-    
-    If XorY = 0 Then
-        PixelsToTwips = pixel_val * Screen.TwipsPerPixelX
-    ElseIf XorY = 1 Then
-        PixelsToTwips = pixel_val * Screen.TwipsPerPixelY
-    End If
-    
-    ' Error handler
-    Exit Function
-errorhandler:
-    HandleError "PixelsToTwips", "modGameLogic", Err.Number, Err.Description, Err.Source, Err.HelpContext
-    Err.Clear
-    Exit Function
-End Function
-
 Public Function ConvertCurrency(ByVal Amount As Long) As String
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -1356,20 +1316,20 @@ errorhandler:
 End Function
 
 Public Sub CacheResources()
-Dim X As Long, Y As Long, Resource_Count As Long
+Dim x As Long, y As Long, Resource_Count As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Resource_Count = 0
 
-    For X = 0 To map.MaxX
-        For Y = 0 To map.MaxY
-            If map.Tile(X, Y).Type = TILE_TYPE_RESOURCE Then
+    For x = 0 To map.MaxX
+        For y = 0 To map.MaxY
+            If map.Tile(x, y).Type = TILE_TYPE_RESOURCE Then
                 Resource_Count = Resource_Count + 1
                 ReDim Preserve MapResource(0 To Resource_Count)
-                MapResource(Resource_Count).X = X
-                MapResource(Resource_Count).Y = Y
+                MapResource(Resource_Count).x = x
+                MapResource(Resource_Count).y = y
             End If
         Next
     Next
@@ -1384,7 +1344,7 @@ errorhandler:
     Exit Sub
 End Sub
 
-Public Sub CreateActionMsg(ByVal Message As String, ByVal color As Integer, ByVal MsgType As Byte, ByVal X As Long, ByVal Y As Long)
+Public Sub CreateActionMsg(ByVal Message As String, ByVal color As Integer, ByVal MsgType As Byte, ByVal x As Long, ByVal y As Long)
 Dim I As Long
 
     ' If debug mode, handle error then exit out
@@ -1399,14 +1359,14 @@ Dim I As Long
         .Type = MsgType
         .Created = timeGetTime
         .Scroll = 1
-        .X = X
-        .Y = Y
+        .x = x
+        .y = y
         .Alpha = 255
     End With
 
     If ActionMsg(ActionMsgIndex).Type = ACTIONMSG_SCROLL Then
-        ActionMsg(ActionMsgIndex).Y = ActionMsg(ActionMsgIndex).Y + Rand(-2, 6)
-        ActionMsg(ActionMsgIndex).X = ActionMsg(ActionMsgIndex).X + Rand(-8, 8)
+        ActionMsg(ActionMsgIndex).y = ActionMsg(ActionMsgIndex).y + Rand(-2, 6)
+        ActionMsg(ActionMsgIndex).x = ActionMsg(ActionMsgIndex).x + Rand(-8, 8)
     End If
     
     ' find the new high index
@@ -1438,8 +1398,8 @@ Dim I As Long
     ActionMsg(Index).Type = 0
     ActionMsg(Index).color = 0
     ActionMsg(Index).Scroll = 0
-    ActionMsg(Index).X = 0
-    ActionMsg(Index).Y = 0
+    ActionMsg(Index).x = 0
+    ActionMsg(Index).y = 0
     
     ' find the new high index
     For I = MAX_BYTE To 1 Step -1
@@ -1629,7 +1589,7 @@ errorhandler:
     Exit Function
 End Function
 
-Public Function IsHotbarSlot(ByVal X As Single, ByVal Y As Single) As Long
+Public Function IsHotbarSlot(ByVal x As Single, ByVal y As Single) As Long
 Dim Top As Long, Left As Long
 Dim I As Long
 
@@ -1639,10 +1599,10 @@ Dim I As Long
     IsHotbarSlot = 0
 
     For I = 1 To MAX_HOTBAR
-        Top = GUIWindow(GUI_HOTBAR).Y + HotbarTop
-        Left = GUIWindow(GUI_HOTBAR).X + HotbarLeft + ((HotbarOffsetX + 32) * (((I - 1) Mod MAX_HOTBAR)))
-        If X >= Left And X <= Left + PIC_X Then
-            If Y >= Top And Y <= Top + PIC_Y Then
+        Top = GUIWindow(GUI_HOTBAR).y + HotbarTop
+        Left = GUIWindow(GUI_HOTBAR).x + HotbarLeft + ((HotbarOffsetX + 32) * (((I - 1) Mod MAX_HOTBAR)))
+        If x >= Left And x <= Left + PIC_X Then
+            If y >= Top And y <= Top + PIC_Y Then
                 IsHotbarSlot = I
                 Exit Function
             End If
@@ -1657,7 +1617,7 @@ errorhandler:
     Exit Function
 End Function
 
-Public Sub PlayMapSound(ByVal X As Long, ByVal Y As Long, ByVal entityType As Long, ByVal entityNum As Long)
+Public Sub PlayMapSound(ByVal x As Long, ByVal y As Long, ByVal entityType As Long, ByVal entityNum As Long)
 Dim soundName As String
 
     ' If debug mode, handle error then exit out
@@ -1696,7 +1656,7 @@ Dim soundName As String
     If Trim$(soundName) = "None." Then Exit Sub
 
     ' play the sound
-    FMOD.Sound_Play soundName, X, Y
+    FMOD.Sound_Play soundName, x, y
     
     ' Error handler
     Exit Sub
@@ -1786,12 +1746,12 @@ Dim buffer As New clsBuffer
     End If
 End Sub
 
-Public Function ConvertMapX(ByVal X As Long) As Long
-    ConvertMapX = X - (TileView.Left * PIC_X) - Camera.Left
+Public Function ConvertMapX(ByVal x As Long) As Long
+    ConvertMapX = x - (TileView.Left * PIC_X) - Camera.Left
 End Function
 
-Public Function ConvertMapY(ByVal Y As Long) As Long
-    ConvertMapY = Y - (TileView.Top * PIC_Y) - Camera.Top
+Public Function ConvertMapY(ByVal y As Long) As Long
+    ConvertMapY = y - (TileView.Top * PIC_Y) - Camera.Top
 End Function
 
 Public Sub UpdateCamera()
@@ -1875,7 +1835,7 @@ Dim offsetX As Long, offsetY As Long, StartX As Long, StartY As Long, EndX As Lo
     GlobalY_Map = GlobalY + (TileView.Top * PIC_Y) + Camera.Top
 End Sub
 
-Public Function IsBankItem(ByVal X As Single, ByVal Y As Single, Optional ByVal emptySlot As Boolean = False) As Long
+Public Function IsBankItem(ByVal x As Single, ByVal y As Single, Optional ByVal emptySlot As Boolean = False) As Long
 Dim tempRec As RECT, skipThis As Boolean
 Dim I As Long
 
@@ -1891,14 +1851,14 @@ Dim I As Long
         
         If Not skipThis Then
             With tempRec
-                .Top = GUIWindow(GUI_BANK).Y + BankTop + ((BankOffsetY + 32) * ((I - 1) \ BankColumns))
+                .Top = GUIWindow(GUI_BANK).y + BankTop + ((BankOffsetY + 32) * ((I - 1) \ BankColumns))
                 .bottom = .Top + PIC_Y
-                .Left = GUIWindow(GUI_BANK).X + BankLeft + ((BankOffsetX + 32) * (((I - 1) Mod BankColumns)))
+                .Left = GUIWindow(GUI_BANK).x + BankLeft + ((BankOffsetX + 32) * (((I - 1) Mod BankColumns)))
                 .Right = .Left + PIC_X
             End With
             
-            If X >= tempRec.Left And X <= tempRec.Right Then
-                If Y >= tempRec.Top And Y <= tempRec.bottom Then
+            If x >= tempRec.Left And x <= tempRec.Right Then
+                If y >= tempRec.Top And y <= tempRec.bottom Then
                     
                     IsBankItem = I
                     Exit Function
@@ -1916,7 +1876,7 @@ errorhandler:
     Exit Function
 End Function
 
-Public Function IsShopItem(ByVal X As Single, ByVal Y As Single) As Long
+Public Function IsShopItem(ByVal x As Single, ByVal y As Single) As Long
 Dim I As Long, Top As Long, Left As Long
     
     ' If debug mode, handle error then exit out
@@ -1927,11 +1887,11 @@ Dim I As Long, Top As Long, Left As Long
     For I = 1 To MAX_TRADES
 
         If Shop(InShop).TradeItem(I).Item > 0 And Shop(InShop).TradeItem(I).Item <= MAX_ITEMS Then
-            Top = GUIWindow(GUI_SHOP).Y + ShopTop + ((ShopOffsetY + 32) * ((I - 1) \ ShopColumns))
-            Left = GUIWindow(GUI_SHOP).X + ShopLeft + ((ShopOffsetX + 32) * (((I - 1) Mod ShopColumns)))
+            Top = GUIWindow(GUI_SHOP).y + ShopTop + ((ShopOffsetY + 32) * ((I - 1) \ ShopColumns))
+            Left = GUIWindow(GUI_SHOP).x + ShopLeft + ((ShopOffsetX + 32) * (((I - 1) Mod ShopColumns)))
 
-            If X >= Left And X <= Left + 32 Then
-                If Y >= Top And Y <= Top + 32 Then
+            If x >= Left And x <= Left + 32 Then
+                If y >= Top And y <= Top + 32 Then
                     IsShopItem = I
                     Exit Function
                 End If
@@ -1947,7 +1907,7 @@ errorhandler:
     Exit Function
 End Function
 
-Public Function IsEqItem(ByVal X As Single, ByVal Y As Single) As Long
+Public Function IsEqItem(ByVal x As Single, ByVal y As Single) As Long
     Dim tempRec As RECT
     Dim I As Long
     
@@ -1961,14 +1921,14 @@ Public Function IsEqItem(ByVal X As Single, ByVal Y As Single) As Long
         If GetPlayerEquipment(MyIndex, I) > 0 And GetPlayerEquipment(MyIndex, I) <= MAX_ITEMS Then
 
             With tempRec
-                .Top = GUIWindow(GUI_CHARACTER).Y + EqTop
+                .Top = GUIWindow(GUI_CHARACTER).y + EqTop
                 .bottom = .Top + PIC_Y
-                .Left = GUIWindow(GUI_CHARACTER).X + EqLeft + ((EqOffsetX + 32) * (((I - 1) Mod EqColumns)))
+                .Left = GUIWindow(GUI_CHARACTER).x + EqLeft + ((EqOffsetX + 32) * (((I - 1) Mod EqColumns)))
                 .Right = .Left + PIC_X
             End With
 
-            If X >= tempRec.Left And X <= tempRec.Right Then
-                If Y >= tempRec.Top And Y <= tempRec.bottom Then
+            If x >= tempRec.Left And x <= tempRec.Right Then
+                If y >= tempRec.Top And y <= tempRec.bottom Then
                     IsEqItem = I
                     Exit Function
                 End If
@@ -1985,7 +1945,7 @@ errorhandler:
     Exit Function
 End Function
 
-Public Function IsPItem(ByVal X As Single, ByVal Y As Single) As Long
+Public Function IsPItem(ByVal x As Single, ByVal y As Single) As Long
     Dim tempRec As RECT
     Dim I As Long
     
@@ -2000,14 +1960,14 @@ Public Function IsPItem(ByVal X As Single, ByVal Y As Single) As Long
         If Player(MyIndex).Pet.spell(I) > 0 And Player(MyIndex).Pet.spell(I) <= MAX_SPELLS Then
 
             With tempRec
-                .Top = GUIWindow(GUI_PET).Y + PTop
+                .Top = GUIWindow(GUI_PET).y + PTop
                 .bottom = .Top + PIC_Y
-                .Left = GUIWindow(GUI_PET).X + PLeft + ((POffsetX + 32) * (((I - 1) Mod PColumns)))
+                .Left = GUIWindow(GUI_PET).x + PLeft + ((POffsetX + 32) * (((I - 1) Mod PColumns)))
                 .Right = .Left + PIC_X
             End With
 
-            If X >= tempRec.Left And X <= tempRec.Right Then
-                If Y >= tempRec.Top And Y <= tempRec.bottom Then
+            If x >= tempRec.Left And x <= tempRec.Right Then
+                If y >= tempRec.Top And y <= tempRec.bottom Then
                     IsPItem = I
                     Exit Function
                 End If
@@ -2023,7 +1983,7 @@ errorhandler:
     Err.Clear
     Exit Function
 End Function
-Public Function IsInvItem(ByVal X As Single, ByVal Y As Single, Optional ByVal emptySlot As Boolean = False) As Long
+Public Function IsInvItem(ByVal x As Single, ByVal y As Single, Optional ByVal emptySlot As Boolean = False) As Long
 Dim tempRec As RECT, skipThis As Boolean
 Dim I As Long
     
@@ -2040,14 +2000,14 @@ Dim I As Long
 
         If Not skipThis Then
             With tempRec
-                .Top = GUIWindow(GUI_INVENTORY).Y + InvTop + ((InvOffsetY + 32) * ((I - 1) \ InvColumns))
+                .Top = GUIWindow(GUI_INVENTORY).y + InvTop + ((InvOffsetY + 32) * ((I - 1) \ InvColumns))
                 .bottom = .Top + PIC_Y
-                .Left = GUIWindow(GUI_INVENTORY).X + InvLeft + ((InvOffsetX + 32) * (((I - 1) Mod InvColumns)))
+                .Left = GUIWindow(GUI_INVENTORY).x + InvLeft + ((InvOffsetX + 32) * (((I - 1) Mod InvColumns)))
                 .Right = .Left + PIC_X
             End With
     
-            If X >= tempRec.Left And X <= tempRec.Right Then
-                If Y >= tempRec.Top And Y <= tempRec.bottom Then
+            If x >= tempRec.Left And x <= tempRec.Right Then
+                If y >= tempRec.Top And y <= tempRec.bottom Then
                     IsInvItem = I
                     Exit Function
                 End If
@@ -2064,7 +2024,7 @@ errorhandler:
     Exit Function
 End Function
 
-Public Function IsPlayerSpell(ByVal X As Single, ByVal Y As Single, Optional ByVal emptySlot As Boolean = False) As Long
+Public Function IsPlayerSpell(ByVal x As Single, ByVal y As Single, Optional ByVal emptySlot As Boolean = False) As Long
 Dim tempRec As RECT, skipThis As Boolean
 Dim I As Long
     
@@ -2081,14 +2041,14 @@ Dim I As Long
 
         If Not skipThis Then
             With tempRec
-                .Top = GUIWindow(GUI_SPELLS).Y + SpellTop + ((SpellOffsetY + 32) * ((I - 1) \ SpellColumns))
+                .Top = GUIWindow(GUI_SPELLS).y + SpellTop + ((SpellOffsetY + 32) * ((I - 1) \ SpellColumns))
                 .bottom = .Top + PIC_Y
-                .Left = GUIWindow(GUI_SPELLS).X + SpellLeft + ((SpellOffsetX + 32) * (((I - 1) Mod SpellColumns)))
+                .Left = GUIWindow(GUI_SPELLS).x + SpellLeft + ((SpellOffsetX + 32) * (((I - 1) Mod SpellColumns)))
                 .Right = .Left + PIC_X
             End With
     
-            If X >= tempRec.Left And X <= tempRec.Right Then
-                If Y >= tempRec.Top And Y <= tempRec.bottom Then
+            If x >= tempRec.Left And x <= tempRec.Right Then
+                If y >= tempRec.Top And y <= tempRec.bottom Then
                     IsPlayerSpell = I
                     Exit Function
                 End If
@@ -2105,7 +2065,7 @@ errorhandler:
     Exit Function
 End Function
 
-Public Function IsTradeItem(ByVal X As Single, ByVal Y As Single, ByVal Yours As Boolean, Optional ByVal emptySlot As Boolean = False) As Long
+Public Function IsTradeItem(ByVal x As Single, ByVal y As Single, ByVal Yours As Boolean, Optional ByVal emptySlot As Boolean = False) As Long
     Dim tempRec As RECT, skipThis As Boolean
     Dim I As Long
     Dim IsTradeNum As Long
@@ -2129,14 +2089,14 @@ Public Function IsTradeItem(ByVal X As Single, ByVal Y As Single, ByVal Yours As
         
         If Not skipThis Then
              With tempRec
-                .Top = GUIWindow(GUI_TRADE).Y + 31 + InvTop + ((InvOffsetY + 32) * ((I - 1) \ InvColumns))
+                .Top = GUIWindow(GUI_TRADE).y + 31 + InvTop + ((InvOffsetY + 32) * ((I - 1) \ InvColumns))
                 .bottom = .Top + PIC_Y
-                .Left = GUIWindow(GUI_TRADE).X + 29 + InvLeft + ((InvOffsetX + 32) * (((I - 1) Mod InvColumns)))
+                .Left = GUIWindow(GUI_TRADE).x + 29 + InvLeft + ((InvOffsetX + 32) * (((I - 1) Mod InvColumns)))
                 .Right = .Left + PIC_X
             End With
     
-            If X >= tempRec.Left And X <= tempRec.Right Then
-                If Y >= tempRec.Top And Y <= tempRec.bottom Then
+            If x >= tempRec.Left And x <= tempRec.Right Then
+                If y >= tempRec.Top And y <= tempRec.bottom Then
                     IsTradeItem = I
                     Exit Function
                 End If
@@ -2157,75 +2117,75 @@ Public Function CensorWord(ByVal sString As String) As String
     CensorWord = String(Len(sString), "*")
 End Function
 
-Public Sub placeAutotile(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long, ByVal tileQuarter As Byte, ByVal autoTileLetter As String)
-    With Autotile(X, Y).Layer(layerNum).QuarterTile(tileQuarter)
+Public Sub placeAutotile(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long, ByVal tileQuarter As Byte, ByVal autoTileLetter As String)
+    With Autotile(x, y).Layer(layerNum).QuarterTile(tileQuarter)
         Select Case autoTileLetter
             Case "a"
-                .X = autoInner(1).X
-                .Y = autoInner(1).Y
+                .x = autoInner(1).x
+                .y = autoInner(1).y
             Case "b"
-                .X = autoInner(2).X
-                .Y = autoInner(2).Y
+                .x = autoInner(2).x
+                .y = autoInner(2).y
             Case "c"
-                .X = autoInner(3).X
-                .Y = autoInner(3).Y
+                .x = autoInner(3).x
+                .y = autoInner(3).y
             Case "d"
-                .X = autoInner(4).X
-                .Y = autoInner(4).Y
+                .x = autoInner(4).x
+                .y = autoInner(4).y
             Case "e"
-                .X = autoNW(1).X
-                .Y = autoNW(1).Y
+                .x = autoNW(1).x
+                .y = autoNW(1).y
             Case "f"
-                .X = autoNW(2).X
-                .Y = autoNW(2).Y
+                .x = autoNW(2).x
+                .y = autoNW(2).y
             Case "g"
-                .X = autoNW(3).X
-                .Y = autoNW(3).Y
+                .x = autoNW(3).x
+                .y = autoNW(3).y
             Case "h"
-                .X = autoNW(4).X
-                .Y = autoNW(4).Y
+                .x = autoNW(4).x
+                .y = autoNW(4).y
             Case "i"
-                .X = autoNE(1).X
-                .Y = autoNE(1).Y
+                .x = autoNE(1).x
+                .y = autoNE(1).y
             Case "j"
-                .X = autoNE(2).X
-                .Y = autoNE(2).Y
+                .x = autoNE(2).x
+                .y = autoNE(2).y
             Case "k"
-                .X = autoNE(3).X
-                .Y = autoNE(3).Y
+                .x = autoNE(3).x
+                .y = autoNE(3).y
             Case "l"
-                .X = autoNE(4).X
-                .Y = autoNE(4).Y
+                .x = autoNE(4).x
+                .y = autoNE(4).y
             Case "m"
-                .X = autoSW(1).X
-                .Y = autoSW(1).Y
+                .x = autoSW(1).x
+                .y = autoSW(1).y
             Case "n"
-                .X = autoSW(2).X
-                .Y = autoSW(2).Y
+                .x = autoSW(2).x
+                .y = autoSW(2).y
             Case "o"
-                .X = autoSW(3).X
-                .Y = autoSW(3).Y
+                .x = autoSW(3).x
+                .y = autoSW(3).y
             Case "p"
-                .X = autoSW(4).X
-                .Y = autoSW(4).Y
+                .x = autoSW(4).x
+                .y = autoSW(4).y
             Case "q"
-                .X = autoSE(1).X
-                .Y = autoSE(1).Y
+                .x = autoSE(1).x
+                .y = autoSE(1).y
             Case "r"
-                .X = autoSE(2).X
-                .Y = autoSE(2).Y
+                .x = autoSE(2).x
+                .y = autoSE(2).y
             Case "s"
-                .X = autoSE(3).X
-                .Y = autoSE(3).Y
+                .x = autoSE(3).x
+                .y = autoSE(3).y
             Case "t"
-                .X = autoSE(4).X
-                .Y = autoSE(4).Y
+                .x = autoSE(4).x
+                .y = autoSE(4).y
         End Select
     End With
 End Sub
 
 Public Sub initAutotiles()
-Dim X As Long, Y As Long, layerNum As Long
+Dim x As Long, y As Long, layerNum As Long
     ' Procedure used to cache autotile positions. All positioning is
     ' independant from the tileset. Calculations are convoluted and annoying.
     ' Maths is not my strong point. Luckily we're caching them so it's a one-off
@@ -2239,130 +2199,130 @@ Dim X As Long, Y As Long, layerNum As Long
     
     ' Inner tiles (Top right subtile region)
     ' NW - a
-    autoInner(1).X = 32
-    autoInner(1).Y = 0
+    autoInner(1).x = 32
+    autoInner(1).y = 0
     
     ' NE - b
-    autoInner(2).X = 48
-    autoInner(2).Y = 0
+    autoInner(2).x = 48
+    autoInner(2).y = 0
     
     ' SW - c
-    autoInner(3).X = 32
-    autoInner(3).Y = 16
+    autoInner(3).x = 32
+    autoInner(3).y = 16
     
     ' SE - d
-    autoInner(4).X = 48
-    autoInner(4).Y = 16
+    autoInner(4).x = 48
+    autoInner(4).y = 16
     
     ' Outer Tiles - NW (bottom subtile region)
     ' NW - e
-    autoNW(1).X = 0
-    autoNW(1).Y = 32
+    autoNW(1).x = 0
+    autoNW(1).y = 32
     
     ' NE - f
-    autoNW(2).X = 16
-    autoNW(2).Y = 32
+    autoNW(2).x = 16
+    autoNW(2).y = 32
     
     ' SW - g
-    autoNW(3).X = 0
-    autoNW(3).Y = 48
+    autoNW(3).x = 0
+    autoNW(3).y = 48
     
     ' SE - h
-    autoNW(4).X = 16
-    autoNW(4).Y = 48
+    autoNW(4).x = 16
+    autoNW(4).y = 48
     
     ' Outer Tiles - NE (bottom subtile region)
     ' NW - i
-    autoNE(1).X = 32
-    autoNE(1).Y = 32
+    autoNE(1).x = 32
+    autoNE(1).y = 32
     
     ' NE - g
-    autoNE(2).X = 48
-    autoNE(2).Y = 32
+    autoNE(2).x = 48
+    autoNE(2).y = 32
     
     ' SW - k
-    autoNE(3).X = 32
-    autoNE(3).Y = 48
+    autoNE(3).x = 32
+    autoNE(3).y = 48
     
     ' SE - l
-    autoNE(4).X = 48
-    autoNE(4).Y = 48
+    autoNE(4).x = 48
+    autoNE(4).y = 48
     
     ' Outer Tiles - SW (bottom subtile region)
     ' NW - m
-    autoSW(1).X = 0
-    autoSW(1).Y = 64
+    autoSW(1).x = 0
+    autoSW(1).y = 64
     
     ' NE - n
-    autoSW(2).X = 16
-    autoSW(2).Y = 64
+    autoSW(2).x = 16
+    autoSW(2).y = 64
     
     ' SW - o
-    autoSW(3).X = 0
-    autoSW(3).Y = 80
+    autoSW(3).x = 0
+    autoSW(3).y = 80
     
     ' SE - p
-    autoSW(4).X = 16
-    autoSW(4).Y = 80
+    autoSW(4).x = 16
+    autoSW(4).y = 80
     
     ' Outer Tiles - SE (bottom subtile region)
     ' NW - q
-    autoSE(1).X = 32
-    autoSE(1).Y = 64
+    autoSE(1).x = 32
+    autoSE(1).y = 64
     
     ' NE - r
-    autoSE(2).X = 48
-    autoSE(2).Y = 64
+    autoSE(2).x = 48
+    autoSE(2).y = 64
     
     ' SW - s
-    autoSE(3).X = 32
-    autoSE(3).Y = 80
+    autoSE(3).x = 32
+    autoSE(3).y = 80
     
     ' SE - t
-    autoSE(4).X = 48
-    autoSE(4).Y = 80
+    autoSE(4).x = 48
+    autoSE(4).y = 80
     
-    For X = 0 To map.MaxX
-        For Y = 0 To map.MaxY
+    For x = 0 To map.MaxX
+        For y = 0 To map.MaxY
             For layerNum = 1 To MapLayer.Layer_Count - 1
                 ' calculate the subtile positions and place them
-                calculateAutotile X, Y, layerNum
+                calculateAutotile x, y, layerNum
                 ' cache the rendering state of the tiles and set them
-                cacheRenderState X, Y, layerNum
+                cacheRenderState x, y, layerNum
             Next
         Next
     Next
 End Sub
 
-Public Sub cacheRenderState(ByVal X As Long, ByVal Y As Long, ByVal layerNum As Long)
+Public Sub cacheRenderState(ByVal x As Long, ByVal y As Long, ByVal layerNum As Long)
 Dim quarterNum As Long
 
     ' exit out early
-    If X < 0 Or X > map.MaxX Or Y < 0 Or Y > map.MaxY Then Exit Sub
+    If x < 0 Or x > map.MaxX Or y < 0 Or y > map.MaxY Then Exit Sub
 
-    With map.Tile(X, Y)
+    With map.Tile(x, y)
         ' check if the tile can be rendered
         If .Layer(layerNum).Tileset <= 0 Or .Layer(layerNum).Tileset > Count_Tileset Then
-            Autotile(X, Y).Layer(layerNum).renderState = RENDER_STATE_NONE
+            Autotile(x, y).Layer(layerNum).renderState = RENDER_STATE_NONE
             Exit Sub
         End If
         
         ' check if it needs to be rendered as an autotile
         If .Autotile(layerNum) = AUTOTILE_NONE Or .Autotile(layerNum) = AUTOTILE_FAKE Or Options.noAuto = 1 Then
             ' default to... default
-            Autotile(X, Y).Layer(layerNum).renderState = RENDER_STATE_NORMAL
+            Autotile(x, y).Layer(layerNum).renderState = RENDER_STATE_NORMAL
         Else
-            Autotile(X, Y).Layer(layerNum).renderState = RENDER_STATE_AUTOTILE
+            Autotile(x, y).Layer(layerNum).renderState = RENDER_STATE_AUTOTILE
             ' cache tileset positioning
             For quarterNum = 1 To 4
-                Autotile(X, Y).Layer(layerNum).srcX(quarterNum) = (map.Tile(X, Y).Layer(layerNum).X * 32) + Autotile(X, Y).Layer(layerNum).QuarterTile(quarterNum).X
-                Autotile(X, Y).Layer(layerNum).srcY(quarterNum) = (map.Tile(X, Y).Layer(layerNum).Y * 32) + Autotile(X, Y).Layer(layerNum).QuarterTile(quarterNum).Y
+                Autotile(x, y).Layer(layerNum).srcX(quarterNum) = (map.Tile(x, y).Layer(layerNum).x * 32) + Autotile(x, y).Layer(layerNum).QuarterTile(quarterNum).x
+                Autotile(x, y).Layer(layerNum).srcY(quarterNum) = (map.Tile(x, y).Layer(layerNum).y * 32) + Autotile(x, y).Layer(layerNum).QuarterTile(quarterNum).y
             Next
         End If
     End With
 End Sub
 
-Public Sub calculateAutotile(ByVal X As Long, ByVal Y As Long, ByVal layerNum As Long)
+Public Sub calculateAutotile(ByVal x As Long, ByVal y As Long, ByVal layerNum As Long)
     ' Right, so we've split the tile block in to an easy to remember
     ' collection of letters. We now need to do the calculations to find
     ' out which little lettered block needs to be rendered. We do this
@@ -2373,52 +2333,52 @@ Public Sub calculateAutotile(ByVal X As Long, ByVal Y As Long, ByVal layerNum As
     ' The situations are "inner", "outer", "horizontal", "vertical" and "fill".
     
     ' Exit out if we don't have an auatotile
-    If map.Tile(X, Y).Autotile(layerNum) = 0 Then Exit Sub
+    If map.Tile(x, y).Autotile(layerNum) = 0 Then Exit Sub
     
     ' Okay, we have autotiling but which one?
-    Select Case map.Tile(X, Y).Autotile(layerNum)
+    Select Case map.Tile(x, y).Autotile(layerNum)
     
         ' Normal or animated - same difference
         Case AUTOTILE_NORMAL, AUTOTILE_ANIM
             ' North West Quarter
-            CalculateNW_Normal layerNum, X, Y
+            CalculateNW_Normal layerNum, x, y
             
             ' North East Quarter
-            CalculateNE_Normal layerNum, X, Y
+            CalculateNE_Normal layerNum, x, y
             
             ' South West Quarter
-            CalculateSW_Normal layerNum, X, Y
+            CalculateSW_Normal layerNum, x, y
             
             ' South East Quarter
-            CalculateSE_Normal layerNum, X, Y
+            CalculateSE_Normal layerNum, x, y
             
         ' Cliff
         Case AUTOTILE_CLIFF
             ' North West Quarter
-            CalculateNW_Cliff layerNum, X, Y
+            CalculateNW_Cliff layerNum, x, y
             
             ' North East Quarter
-            CalculateNE_Cliff layerNum, X, Y
+            CalculateNE_Cliff layerNum, x, y
             
             ' South West Quarter
-            CalculateSW_Cliff layerNum, X, Y
+            CalculateSW_Cliff layerNum, x, y
             
             ' South East Quarter
-            CalculateSE_Cliff layerNum, X, Y
+            CalculateSE_Cliff layerNum, x, y
             
         ' Waterfalls
         Case AUTOTILE_WATERFALL
             ' North West Quarter
-            CalculateNW_Waterfall layerNum, X, Y
+            CalculateNW_Waterfall layerNum, x, y
             
             ' North East Quarter
-            CalculateNE_Waterfall layerNum, X, Y
+            CalculateNE_Waterfall layerNum, x, y
             
             ' South West Quarter
-            CalculateSW_Waterfall layerNum, X, Y
+            CalculateSW_Waterfall layerNum, x, y
             
             ' South East Quarter
-            CalculateSE_Waterfall layerNum, X, Y
+            CalculateSE_Waterfall layerNum, x, y
         
         ' Anything else
         Case Else
@@ -2427,18 +2387,18 @@ Public Sub calculateAutotile(ByVal X As Long, ByVal Y As Long, ByVal layerNum As
 End Sub
 
 ' Normal autotiling
-Public Sub CalculateNW_Normal(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long)
+Public Sub CalculateNW_Normal(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long)
 Dim tmpTile(1 To 3) As Boolean
 Dim situation As Byte
 
     ' North West
-    If checkTileMatch(layerNum, X, Y, X - 1, Y - 1) Then tmpTile(1) = True
+    If checkTileMatch(layerNum, x, y, x - 1, y - 1) Then tmpTile(1) = True
     
     ' North
-    If checkTileMatch(layerNum, X, Y, X, Y - 1) Then tmpTile(2) = True
+    If checkTileMatch(layerNum, x, y, x, y - 1) Then tmpTile(2) = True
     
     ' West
-    If checkTileMatch(layerNum, X, Y, X - 1, Y) Then tmpTile(3) = True
+    If checkTileMatch(layerNum, x, y, x - 1, y) Then tmpTile(3) = True
     
     ' Calculate Situation - Inner
     If Not tmpTile(2) And Not tmpTile(3) Then situation = AUTO_INNER
@@ -2454,30 +2414,30 @@ Dim situation As Byte
     ' Actually place the subtile
     Select Case situation
         Case AUTO_INNER
-            placeAutotile layerNum, X, Y, 1, "e"
+            placeAutotile layerNum, x, y, 1, "e"
         Case AUTO_OUTER
-            placeAutotile layerNum, X, Y, 1, "a"
+            placeAutotile layerNum, x, y, 1, "a"
         Case AUTO_HORIZONTAL
-            placeAutotile layerNum, X, Y, 1, "i"
+            placeAutotile layerNum, x, y, 1, "i"
         Case AUTO_VERTICAL
-            placeAutotile layerNum, X, Y, 1, "m"
+            placeAutotile layerNum, x, y, 1, "m"
         Case AUTO_FILL
-            placeAutotile layerNum, X, Y, 1, "q"
+            placeAutotile layerNum, x, y, 1, "q"
     End Select
 End Sub
 
-Public Sub CalculateNE_Normal(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long)
+Public Sub CalculateNE_Normal(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long)
 Dim tmpTile(1 To 3) As Boolean
 Dim situation As Byte
 
     ' North
-    If checkTileMatch(layerNum, X, Y, X, Y - 1) Then tmpTile(1) = True
+    If checkTileMatch(layerNum, x, y, x, y - 1) Then tmpTile(1) = True
     
     ' North East
-    If checkTileMatch(layerNum, X, Y, X + 1, Y - 1) Then tmpTile(2) = True
+    If checkTileMatch(layerNum, x, y, x + 1, y - 1) Then tmpTile(2) = True
     
     ' East
-    If checkTileMatch(layerNum, X, Y, X + 1, Y) Then tmpTile(3) = True
+    If checkTileMatch(layerNum, x, y, x + 1, y) Then tmpTile(3) = True
     
     ' Calculate Situation - Inner
     If Not tmpTile(1) And Not tmpTile(3) Then situation = AUTO_INNER
@@ -2493,30 +2453,30 @@ Dim situation As Byte
     ' Actually place the subtile
     Select Case situation
         Case AUTO_INNER
-            placeAutotile layerNum, X, Y, 2, "j"
+            placeAutotile layerNum, x, y, 2, "j"
         Case AUTO_OUTER
-            placeAutotile layerNum, X, Y, 2, "b"
+            placeAutotile layerNum, x, y, 2, "b"
         Case AUTO_HORIZONTAL
-            placeAutotile layerNum, X, Y, 2, "f"
+            placeAutotile layerNum, x, y, 2, "f"
         Case AUTO_VERTICAL
-            placeAutotile layerNum, X, Y, 2, "r"
+            placeAutotile layerNum, x, y, 2, "r"
         Case AUTO_FILL
-            placeAutotile layerNum, X, Y, 2, "n"
+            placeAutotile layerNum, x, y, 2, "n"
     End Select
 End Sub
 
-Public Sub CalculateSW_Normal(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long)
+Public Sub CalculateSW_Normal(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long)
 Dim tmpTile(1 To 3) As Boolean
 Dim situation As Byte
 
     ' West
-    If checkTileMatch(layerNum, X, Y, X - 1, Y) Then tmpTile(1) = True
+    If checkTileMatch(layerNum, x, y, x - 1, y) Then tmpTile(1) = True
     
     ' South West
-    If checkTileMatch(layerNum, X, Y, X - 1, Y + 1) Then tmpTile(2) = True
+    If checkTileMatch(layerNum, x, y, x - 1, y + 1) Then tmpTile(2) = True
     
     ' South
-    If checkTileMatch(layerNum, X, Y, X, Y + 1) Then tmpTile(3) = True
+    If checkTileMatch(layerNum, x, y, x, y + 1) Then tmpTile(3) = True
     
     ' Calculate Situation - Inner
     If Not tmpTile(1) And Not tmpTile(3) Then situation = AUTO_INNER
@@ -2532,30 +2492,30 @@ Dim situation As Byte
     ' Actually place the subtile
     Select Case situation
         Case AUTO_INNER
-            placeAutotile layerNum, X, Y, 3, "o"
+            placeAutotile layerNum, x, y, 3, "o"
         Case AUTO_OUTER
-            placeAutotile layerNum, X, Y, 3, "c"
+            placeAutotile layerNum, x, y, 3, "c"
         Case AUTO_HORIZONTAL
-            placeAutotile layerNum, X, Y, 3, "s"
+            placeAutotile layerNum, x, y, 3, "s"
         Case AUTO_VERTICAL
-            placeAutotile layerNum, X, Y, 3, "g"
+            placeAutotile layerNum, x, y, 3, "g"
         Case AUTO_FILL
-            placeAutotile layerNum, X, Y, 3, "k"
+            placeAutotile layerNum, x, y, 3, "k"
     End Select
 End Sub
 
-Public Sub CalculateSE_Normal(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long)
+Public Sub CalculateSE_Normal(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long)
 Dim tmpTile(1 To 3) As Boolean
 Dim situation As Byte
 
     ' South
-    If checkTileMatch(layerNum, X, Y, X, Y + 1) Then tmpTile(1) = True
+    If checkTileMatch(layerNum, x, y, x, y + 1) Then tmpTile(1) = True
     
     ' South East
-    If checkTileMatch(layerNum, X, Y, X + 1, Y + 1) Then tmpTile(2) = True
+    If checkTileMatch(layerNum, x, y, x + 1, y + 1) Then tmpTile(2) = True
     
     ' East
-    If checkTileMatch(layerNum, X, Y, X + 1, Y) Then tmpTile(3) = True
+    If checkTileMatch(layerNum, x, y, x + 1, y) Then tmpTile(3) = True
     
     ' Calculate Situation - Inner
     If Not tmpTile(1) And Not tmpTile(3) Then situation = AUTO_INNER
@@ -2571,96 +2531,96 @@ Dim situation As Byte
     ' Actually place the subtile
     Select Case situation
         Case AUTO_INNER
-            placeAutotile layerNum, X, Y, 4, "t"
+            placeAutotile layerNum, x, y, 4, "t"
         Case AUTO_OUTER
-            placeAutotile layerNum, X, Y, 4, "d"
+            placeAutotile layerNum, x, y, 4, "d"
         Case AUTO_HORIZONTAL
-            placeAutotile layerNum, X, Y, 4, "p"
+            placeAutotile layerNum, x, y, 4, "p"
         Case AUTO_VERTICAL
-            placeAutotile layerNum, X, Y, 4, "l"
+            placeAutotile layerNum, x, y, 4, "l"
         Case AUTO_FILL
-            placeAutotile layerNum, X, Y, 4, "h"
+            placeAutotile layerNum, x, y, 4, "h"
     End Select
 End Sub
 
 ' Waterfall autotiling
-Public Sub CalculateNW_Waterfall(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long)
+Public Sub CalculateNW_Waterfall(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long)
 Dim tmpTile As Boolean
     
     ' West
-    If checkTileMatch(layerNum, X, Y, X - 1, Y) Then tmpTile = True
+    If checkTileMatch(layerNum, x, y, x - 1, y) Then tmpTile = True
     
     ' Actually place the subtile
     If tmpTile Then
         ' Extended
-        placeAutotile layerNum, X, Y, 1, "i"
+        placeAutotile layerNum, x, y, 1, "i"
     Else
         ' Edge
-        placeAutotile layerNum, X, Y, 1, "e"
+        placeAutotile layerNum, x, y, 1, "e"
     End If
 End Sub
 
-Public Sub CalculateNE_Waterfall(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long)
+Public Sub CalculateNE_Waterfall(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long)
 Dim tmpTile As Boolean
     
     ' East
-    If checkTileMatch(layerNum, X, Y, X + 1, Y) Then tmpTile = True
+    If checkTileMatch(layerNum, x, y, x + 1, y) Then tmpTile = True
     
     ' Actually place the subtile
     If tmpTile Then
         ' Extended
-        placeAutotile layerNum, X, Y, 2, "f"
+        placeAutotile layerNum, x, y, 2, "f"
     Else
         ' Edge
-        placeAutotile layerNum, X, Y, 2, "j"
+        placeAutotile layerNum, x, y, 2, "j"
     End If
 End Sub
 
-Public Sub CalculateSW_Waterfall(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long)
+Public Sub CalculateSW_Waterfall(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long)
 Dim tmpTile As Boolean
     
     ' West
-    If checkTileMatch(layerNum, X, Y, X - 1, Y) Then tmpTile = True
+    If checkTileMatch(layerNum, x, y, x - 1, y) Then tmpTile = True
     
     ' Actually place the subtile
     If tmpTile Then
         ' Extended
-        placeAutotile layerNum, X, Y, 3, "k"
+        placeAutotile layerNum, x, y, 3, "k"
     Else
         ' Edge
-        placeAutotile layerNum, X, Y, 3, "g"
+        placeAutotile layerNum, x, y, 3, "g"
     End If
 End Sub
 
-Public Sub CalculateSE_Waterfall(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long)
+Public Sub CalculateSE_Waterfall(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long)
 Dim tmpTile As Boolean
     
     ' East
-    If checkTileMatch(layerNum, X, Y, X + 1, Y) Then tmpTile = True
+    If checkTileMatch(layerNum, x, y, x + 1, y) Then tmpTile = True
     
     ' Actually place the subtile
     If tmpTile Then
         ' Extended
-        placeAutotile layerNum, X, Y, 4, "h"
+        placeAutotile layerNum, x, y, 4, "h"
     Else
         ' Edge
-        placeAutotile layerNum, X, Y, 4, "l"
+        placeAutotile layerNum, x, y, 4, "l"
     End If
 End Sub
 
 ' Cliff autotiling
-Public Sub CalculateNW_Cliff(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long)
+Public Sub CalculateNW_Cliff(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long)
 Dim tmpTile(1 To 3) As Boolean
 Dim situation As Byte
 
     ' North West
-    If checkTileMatch(layerNum, X, Y, X - 1, Y - 1) Then tmpTile(1) = True
+    If checkTileMatch(layerNum, x, y, x - 1, y - 1) Then tmpTile(1) = True
     
     ' North
-    If checkTileMatch(layerNum, X, Y, X, Y - 1) Then tmpTile(2) = True
+    If checkTileMatch(layerNum, x, y, x, y - 1) Then tmpTile(2) = True
     
     ' West
-    If checkTileMatch(layerNum, X, Y, X - 1, Y) Then tmpTile(3) = True
+    If checkTileMatch(layerNum, x, y, x - 1, y) Then tmpTile(3) = True
     
     ' Calculate Situation - Horizontal
     If Not tmpTile(2) And tmpTile(3) Then situation = AUTO_HORIZONTAL
@@ -2674,28 +2634,28 @@ Dim situation As Byte
     ' Actually place the subtile
     Select Case situation
         Case AUTO_INNER
-            placeAutotile layerNum, X, Y, 1, "e"
+            placeAutotile layerNum, x, y, 1, "e"
         Case AUTO_HORIZONTAL
-            placeAutotile layerNum, X, Y, 1, "i"
+            placeAutotile layerNum, x, y, 1, "i"
         Case AUTO_VERTICAL
-            placeAutotile layerNum, X, Y, 1, "m"
+            placeAutotile layerNum, x, y, 1, "m"
         Case AUTO_FILL
-            placeAutotile layerNum, X, Y, 1, "q"
+            placeAutotile layerNum, x, y, 1, "q"
     End Select
 End Sub
 
-Public Sub CalculateNE_Cliff(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long)
+Public Sub CalculateNE_Cliff(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long)
 Dim tmpTile(1 To 3) As Boolean
 Dim situation As Byte
 
     ' North
-    If checkTileMatch(layerNum, X, Y, X, Y - 1) Then tmpTile(1) = True
+    If checkTileMatch(layerNum, x, y, x, y - 1) Then tmpTile(1) = True
     
     ' North East
-    If checkTileMatch(layerNum, X, Y, X + 1, Y - 1) Then tmpTile(2) = True
+    If checkTileMatch(layerNum, x, y, x + 1, y - 1) Then tmpTile(2) = True
     
     ' East
-    If checkTileMatch(layerNum, X, Y, X + 1, Y) Then tmpTile(3) = True
+    If checkTileMatch(layerNum, x, y, x + 1, y) Then tmpTile(3) = True
     
     ' Calculate Situation - Horizontal
     If Not tmpTile(1) And tmpTile(3) Then situation = AUTO_HORIZONTAL
@@ -2709,28 +2669,28 @@ Dim situation As Byte
     ' Actually place the subtile
     Select Case situation
         Case AUTO_INNER
-            placeAutotile layerNum, X, Y, 2, "j"
+            placeAutotile layerNum, x, y, 2, "j"
         Case AUTO_HORIZONTAL
-            placeAutotile layerNum, X, Y, 2, "f"
+            placeAutotile layerNum, x, y, 2, "f"
         Case AUTO_VERTICAL
-            placeAutotile layerNum, X, Y, 2, "r"
+            placeAutotile layerNum, x, y, 2, "r"
         Case AUTO_FILL
-            placeAutotile layerNum, X, Y, 2, "n"
+            placeAutotile layerNum, x, y, 2, "n"
     End Select
 End Sub
 
-Public Sub CalculateSW_Cliff(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long)
+Public Sub CalculateSW_Cliff(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long)
 Dim tmpTile(1 To 3) As Boolean
 Dim situation As Byte
 
     ' West
-    If checkTileMatch(layerNum, X, Y, X - 1, Y) Then tmpTile(1) = True
+    If checkTileMatch(layerNum, x, y, x - 1, y) Then tmpTile(1) = True
     
     ' South West
-    If checkTileMatch(layerNum, X, Y, X - 1, Y + 1) Then tmpTile(2) = True
+    If checkTileMatch(layerNum, x, y, x - 1, y + 1) Then tmpTile(2) = True
     
     ' South
-    If checkTileMatch(layerNum, X, Y, X, Y + 1) Then tmpTile(3) = True
+    If checkTileMatch(layerNum, x, y, x, y + 1) Then tmpTile(3) = True
     
     ' Calculate Situation - Horizontal
     If tmpTile(1) And Not tmpTile(3) Then situation = AUTO_HORIZONTAL
@@ -2744,28 +2704,28 @@ Dim situation As Byte
     ' Actually place the subtile
     Select Case situation
         Case AUTO_INNER
-            placeAutotile layerNum, X, Y, 3, "o"
+            placeAutotile layerNum, x, y, 3, "o"
         Case AUTO_HORIZONTAL
-            placeAutotile layerNum, X, Y, 3, "s"
+            placeAutotile layerNum, x, y, 3, "s"
         Case AUTO_VERTICAL
-            placeAutotile layerNum, X, Y, 3, "g"
+            placeAutotile layerNum, x, y, 3, "g"
         Case AUTO_FILL
-            placeAutotile layerNum, X, Y, 3, "k"
+            placeAutotile layerNum, x, y, 3, "k"
     End Select
 End Sub
 
-Public Sub CalculateSE_Cliff(ByVal layerNum As Long, ByVal X As Long, ByVal Y As Long)
+Public Sub CalculateSE_Cliff(ByVal layerNum As Long, ByVal x As Long, ByVal y As Long)
 Dim tmpTile(1 To 3) As Boolean
 Dim situation As Byte
 
     ' South
-    If checkTileMatch(layerNum, X, Y, X, Y + 1) Then tmpTile(1) = True
+    If checkTileMatch(layerNum, x, y, x, y + 1) Then tmpTile(1) = True
     
     ' South East
-    If checkTileMatch(layerNum, X, Y, X + 1, Y + 1) Then tmpTile(2) = True
+    If checkTileMatch(layerNum, x, y, x + 1, y + 1) Then tmpTile(2) = True
     
     ' East
-    If checkTileMatch(layerNum, X, Y, X + 1, Y) Then tmpTile(3) = True
+    If checkTileMatch(layerNum, x, y, x + 1, y) Then tmpTile(3) = True
     
     ' Calculate Situation -  Horizontal
     If Not tmpTile(1) And tmpTile(3) Then situation = AUTO_HORIZONTAL
@@ -2779,13 +2739,13 @@ Dim situation As Byte
     ' Actually place the subtile
     Select Case situation
         Case AUTO_INNER
-            placeAutotile layerNum, X, Y, 4, "t"
+            placeAutotile layerNum, x, y, 4, "t"
         Case AUTO_HORIZONTAL
-            placeAutotile layerNum, X, Y, 4, "p"
+            placeAutotile layerNum, x, y, 4, "p"
         Case AUTO_VERTICAL
-            placeAutotile layerNum, X, Y, 4, "l"
+            placeAutotile layerNum, x, y, 4, "l"
         Case AUTO_FILL
-            placeAutotile layerNum, X, Y, 4, "h"
+            placeAutotile layerNum, x, y, 4, "h"
     End Select
 End Sub
 
@@ -2818,12 +2778,12 @@ Public Function checkTileMatch(ByVal layerNum As Long, ByVal X1 As Long, ByVal Y
     End If
     
     ' check tiles match
-    If map.Tile(X1, Y1).Layer(layerNum).X <> map.Tile(X2, Y2).Layer(layerNum).X Then
+    If map.Tile(X1, Y1).Layer(layerNum).x <> map.Tile(X2, Y2).Layer(layerNum).x Then
         checkTileMatch = False
         Exit Function
     End If
         
-    If map.Tile(X1, Y1).Layer(layerNum).Y <> map.Tile(X2, Y2).Layer(layerNum).Y Then
+    If map.Tile(X1, Y1).Layer(layerNum).y <> map.Tile(X2, Y2).Layer(layerNum).y Then
         checkTileMatch = False
         Exit Function
     End If
@@ -2831,7 +2791,6 @@ End Function
 
 Public Sub OpenNpcChat(ByVal npcNum As Long, ByVal mT As String, ByVal o1 As String, ByVal o2 As String, ByVal o3 As String, ByVal o4 As String)
     ' set the shit
-    chatNpc = npcNum
     chatText = mT
     tutOpt(1) = o1
     tutOpt(2) = o2
@@ -3008,7 +2967,7 @@ Dim I As Long, Index As Long
 End Sub
 
 Public Sub FindNearestTarget()
-Dim I As Long, X As Long, Y As Long, X2 As Long, Y2 As Long, xDif As Long, yDif As Long
+Dim I As Long, x As Long, y As Long, X2 As Long, Y2 As Long, xDif As Long, yDif As Long
 Dim bestX As Long, bestY As Long, bestIndex As Long
 
     X2 = GetPlayerX(MyIndex)
@@ -3019,21 +2978,21 @@ Dim bestX As Long, bestY As Long, bestIndex As Long
     
     For I = 1 To MAX_MAP_NPCS
         If MapNpc(I).Num > 0 Then
-            X = MapNpc(I).X
-            Y = MapNpc(I).Y
+            x = MapNpc(I).x
+            y = MapNpc(I).y
             ' find the difference - x
-            If X < X2 Then
-                xDif = X2 - X
-            ElseIf X > X2 Then
-                xDif = X - X2
+            If x < X2 Then
+                xDif = X2 - x
+            ElseIf x > X2 Then
+                xDif = x - X2
             Else
                 xDif = 0
             End If
             ' find the difference - y
-            If Y < Y2 Then
-                yDif = Y2 - Y
-            ElseIf Y > Y2 Then
-                yDif = Y - Y2
+            If y < Y2 Then
+                yDif = Y2 - y
+            ElseIf y > Y2 Then
+                yDif = y - Y2
             Else
                 yDif = 0
             End If
@@ -3051,25 +3010,25 @@ Dim bestX As Long, bestY As Long, bestIndex As Long
 End Sub
 
 Public Sub FindTarget()
-Dim I As Long, X As Long, Y As Long
+Dim I As Long, x As Long, y As Long
 
     ' check players
     For I = 1 To MAX_PLAYERS
         If IsPlaying(I) And GetPlayerMap(MyIndex) = GetPlayerMap(I) Then
-            X = (GetPlayerX(I) * 32) + TempPlayer(I).XOffset + 32
-            Y = (GetPlayerY(I) * 32) + TempPlayer(I).YOffset + 32
-            If X >= GlobalX_Map And X <= GlobalX_Map + 32 Then
-                If Y >= GlobalY_Map And Y <= GlobalY_Map + 32 Then
+            x = (GetPlayerX(I) * 32) + TempPlayer(I).XOffset + 32
+            y = (GetPlayerY(I) * 32) + TempPlayer(I).YOffset + 32
+            If x >= GlobalX_Map And x <= GlobalX_Map + 32 Then
+                If y >= GlobalY_Map And y <= GlobalY_Map + 32 Then
                     ' found our target!
                     PlayerTarget I, TARGET_TYPE_PLAYER
                     Exit Sub
                 End If
             End If
             If Player(I).Pet.Alive Then
-                X = (Player(I).Pet.X * 32) + Player(I).Pet.XOffset + 32
-                Y = (Player(I).Pet.Y * 32) + Player(I).Pet.YOffset + 32
-                If X >= GlobalX_Map And X <= GlobalX_Map + 32 Then
-                    If Y >= GlobalY_Map And Y <= GlobalY_Map + 32 Then
+                x = (Player(I).Pet.x * 32) + Player(I).Pet.XOffset + 32
+                y = (Player(I).Pet.y * 32) + Player(I).Pet.YOffset + 32
+                If x >= GlobalX_Map And x <= GlobalX_Map + 32 Then
+                    If y >= GlobalY_Map And y <= GlobalY_Map + 32 Then
                         ' found our target!
                         PlayerTarget I, TARGET_TYPE_PET
                         Exit Sub
@@ -3082,10 +3041,10 @@ Dim I As Long, X As Long, Y As Long
     ' check npcs
     For I = 1 To MAX_MAP_NPCS
         If MapNpc(I).Num > 0 Then
-            X = (MapNpc(I).X * 32) + MapNpc(I).XOffset + 32
-            Y = (MapNpc(I).Y * 32) + MapNpc(I).YOffset + 32
-            If X >= GlobalX_Map And X <= GlobalX_Map + 32 Then
-                If Y >= GlobalY_Map And Y <= GlobalY_Map + 32 Then
+            x = (MapNpc(I).x * 32) + MapNpc(I).XOffset + 32
+            y = (MapNpc(I).y * 32) + MapNpc(I).YOffset + 32
+            If x >= GlobalX_Map And x <= GlobalX_Map + 32 Then
+                If y >= GlobalY_Map And y <= GlobalY_Map + 32 Then
                     ' found our target!
                     PlayerTarget I, TARGET_TYPE_NPC
                     
@@ -3096,22 +3055,22 @@ Dim I As Long, X As Long, Y As Long
     Next
 End Sub
 
-Public Sub SetBarWidth(ByRef MaxWidth As Long, ByRef Width As Long)
+Public Sub SetBarWidth(ByRef MaxWidth As Long, ByRef width As Long)
 Dim barDifference As Long
-    If MaxWidth < Width Then
+    If MaxWidth < width Then
         ' find out the amount to increase per loop
-        barDifference = ((Width - MaxWidth) / 100) * 10
+        barDifference = ((width - MaxWidth) / 100) * 10
         ' if it's less than 1 then default to 1
         If barDifference < 1 Then barDifference = 1
         ' set the width
-        Width = Width - barDifference
-    ElseIf MaxWidth > Width Then
+        width = width - barDifference
+    ElseIf MaxWidth > width Then
         ' find out the amount to increase per loop
-        barDifference = ((MaxWidth - Width) / 100) * 10
+        barDifference = ((MaxWidth - width) / 100) * 10
         ' if it's less than 1 then default to 1
         If barDifference < 1 Then barDifference = 1
         ' set the width
-        Width = Width + barDifference
+        width = width + barDifference
     End If
 End Sub
 
@@ -3437,20 +3396,20 @@ Dim ProjectileIndex As Integer
         ' ****** Get Target Type ******
         Select Case AttackerType
             Case TARGET_TYPE_PLAYER
-                .X = GetPlayerX(AttackerIndex) * PIC_X
-                .Y = GetPlayerY(AttackerIndex) * PIC_Y
+                .x = GetPlayerX(AttackerIndex) * PIC_X
+                .y = GetPlayerY(AttackerIndex) * PIC_Y
             Case TARGET_TYPE_NPC
-                .X = MapNpc(AttackerIndex).X * PIC_X
-                .Y = MapNpc(AttackerIndex).Y * PIC_Y
+                .x = MapNpc(AttackerIndex).x * PIC_X
+                .y = MapNpc(AttackerIndex).y * PIC_Y
         End Select
         
         Select Case TargetType
             Case TARGET_TYPE_PLAYER
-                .tx = Player(TargetIndex).X * PIC_X
-                .ty = Player(TargetIndex).Y * PIC_Y
+                .tx = Player(TargetIndex).x * PIC_X
+                .ty = Player(TargetIndex).y * PIC_Y
             Case TARGET_TYPE_NPC
-                .tx = MapNpc(TargetIndex).X * PIC_X
-                .ty = MapNpc(TargetIndex).Y * PIC_Y
+                .tx = MapNpc(TargetIndex).x * PIC_X
+                .ty = MapNpc(TargetIndex).y * PIC_Y
         End Select
         
     End With
@@ -3461,8 +3420,8 @@ Public Sub ClearProjectile(ByVal ProjectileIndex As Integer)
  
     'Clear the selected index
     ProjectileList(ProjectileIndex).Graphic = 0
-    ProjectileList(ProjectileIndex).X = 0
-    ProjectileList(ProjectileIndex).Y = 0
+    ProjectileList(ProjectileIndex).x = 0
+    ProjectileList(ProjectileIndex).y = 0
     ProjectileList(ProjectileIndex).tx = 0
     ProjectileList(ProjectileIndex).ty = 0
     ProjectileList(ProjectileIndex).Rotate = 0
