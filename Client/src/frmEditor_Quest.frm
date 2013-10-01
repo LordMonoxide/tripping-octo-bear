@@ -852,7 +852,6 @@ Attribute VB_Exposed = False
 '/////////////////////////////////////////////////////////////////////
 
 Option Explicit
-Private TempTask As Long
 
 Private Sub Form_Load()
     scrlTotalTasks.Max = MAX_TASKS
@@ -902,10 +901,7 @@ Private Sub lstIndex_Click()
 End Sub
 
 Private Sub scrlTotalTasks_Change()
-    Dim i As Long
-    
     lblSelected = "Selected Task: " & scrlTotalTasks.Value
-    
     LoadTask EditorIndex, scrlTotalTasks.Value
 End Sub
 

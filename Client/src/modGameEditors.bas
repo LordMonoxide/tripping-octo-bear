@@ -5,7 +5,6 @@ Option Explicit
 ' ////////////////
 Public Sub MapEditorInit()
 Dim I As Long
-Dim smusic() As String
     
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -54,7 +53,6 @@ End Sub
 
 Public Sub MapEditorProperties()
 Dim x As Long
-Dim y As Long
 Dim I As Long
     
     ' If debug mode, handle error then exit out
@@ -208,7 +206,6 @@ End Sub
 Public Sub MapEditorMouseDown(ByVal Button As Integer, ByVal x As Long, ByVal y As Long, Optional ByVal movedMouse As Boolean = True)
 Dim I As Long
 Dim CurLayer As Long
-Dim tmpDir As Byte
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -1574,7 +1571,6 @@ Public Sub Events_ClearChanged()
 End Sub
 
 Public Sub EventEditorInit()
-    Dim I As Long
     With frmEditor_Events
         If .visible = False Then Exit Sub
         EditorIndex = .lstIndex.ListIndex + 1

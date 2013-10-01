@@ -1506,7 +1506,6 @@ End Function
 
 Public Sub DrawPlayer(ByVal Index As Long)
     Dim Anim As Byte
-    Dim I As Long
     Dim x As Long
     Dim y As Long
     Dim spritetop As Long
@@ -2002,7 +2001,7 @@ Public Sub DrawDragSpell()
     Directx8.RenderTexture Tex_Spellicon(PicNum), GlobalX - 16, GlobalY - 16, 0, 0, 32, 32, 32, 32
 End Sub
 Public Sub DrawQuestDialogue()
-Dim I As Long, x As Long, y As Long, Sprite As Long, width As Long
+Dim x As Long, y As Long, width As Long
 Dim height As Long
 
     ' draw background
@@ -2593,7 +2592,7 @@ Dim spellSlot As Long
 End Sub
 
 Public Sub DrawSpellDesc(ByVal spellnum As Long, ByVal x As Long, ByVal y As Long, Optional ByVal spellSlot As Long = 0)
-Dim Colour As Long, theName As String, sUse As String, sInfo() As String, I As Long, tmpWidth As Long, barWidth As Long
+Dim Colour As Long, theName As String, sInfo() As String, I As Long
 Dim width As Long, height As Long
     
     ' don't show desc when dragging
@@ -4107,7 +4106,7 @@ Dim x As Long, y As Long
 End Sub
 
 Public Sub DrawRightMenu()
-Dim I As Long, x As Long, y As Long, Sprite As Long, width As Long
+Dim x As Long, y As Long, width As Long
 Dim height As Long
 'GUIWindow(GUI_RIGHTMENU).visible = False
 If myTargetType = TARGET_TYPE_NPC Then GUIWindow(GUI_RIGHTMENU).visible = False
@@ -4580,7 +4579,7 @@ Dim PSlot As Long
 End Sub
 
 Public Sub DrawTargetWindow()
-Dim tmpWidth As Long, barWidth As Long, x As Long, y As Long, dX As Long, dY As Long, sString As String
+Dim barWidth As Long, x As Long, y As Long, dX As Long, dY As Long, sString As String
 Dim width As Long, height As Long
 
     ' backwindow + empty bars
@@ -4717,7 +4716,7 @@ e:
     
 End Sub
 Public Sub DrawQuestsLog()
-Dim I As Long, x As Long, y As Long, Left As Long, Top As Long, Colour As Long, width As Long, buttonnum As Long, repeatable As Long
+Dim I As Long, width As Long, repeatable As Long
 Dim height As Long
 
     width = 600
@@ -4728,7 +4727,7 @@ Dim height As Long
 
     Dim QuestNum As Long
     Dim QuestSay As String, name As String, Desc As String, descLine() As String
-    Dim reqlvl As Long, reqitem As Long, reqquest As Long, descwidth As Long, Task As String
+    Dim reqlvl As Long, reqquest As Long, descwidth As Long, Task As String
     
 '    RenderText Font_GeorgiaShadow, WordWrap(DescLine(I), 340), GUIWindow(GUI_QUESTS).X + 200, GUIWindow(GUI_QUESTS).Y + 75 + (12 * I), White
     
@@ -4744,7 +4743,6 @@ Dim height As Long
         
         
         descwidth = EngineGetTextWidth(Font_GeorgiaShadow, Desc)
-        Dim TestArray() As String
         descLine = Split(Desc, "/r")
             If Trim$(frmMain.lstQuestLog.Text) = vbNullString Then Exit Sub
             

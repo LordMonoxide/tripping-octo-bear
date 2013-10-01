@@ -28,10 +28,6 @@ Public BarWidth_PlayerHP_Max(1 To MAX_PLAYERS) As Long
 Public BarWidth_TargetHP As Long
 Public BarWidth_TargetHP_Max As Long
 
-' elastic camera
-Public CameraLeft As Long
-Public CameraTop As Long
-
 ' fog
 Public fogOffsetX As Long
 Public fogOffsetY As Long
@@ -84,7 +80,6 @@ Public sUser As String
 Public sPass As String
 Public sPass2 As String
 Public sChar As String
-Public savePass As Boolean
 Public inMenu As Boolean
 Public curMenu As Long
 Public curTextbox As Long
@@ -100,23 +95,12 @@ Public musicCache() As String
 Public soundCache() As String
 Public hasPopulated As Boolean
 
-' Buttons
-Public LastButtonSound_Menu As Long
-Public LastButtonSound_Main As Long
-
 ' Hotbar
 Public Hotbar(1 To MAX_HOTBAR) As HotbarRec
 
 ' Amount of blood decals
 Public BloodCount As Long
 
-' main menu unloading
-Public EnteringGame As Boolean
-
-' GUI
-Public HPBar_Width As Long
-Public SPRBar_Width As Long
-Public EXPBar_Width As Long
 ' Party GUI
 Public Const Party_HPWidth As Long = 182
 Public Const Party_SPRWidth As Long = 182
@@ -131,12 +115,9 @@ Public DirArrowX(1 To 4) As Byte
 Public DirArrowY(1 To 4) As Byte
 
 ' trading
-Public TradeTimer As Long
 Public InTrade As Long
 Public TradeYourOffer(1 To MAX_INV) As PlayerInvRec
 Public TradeTheirOffer(1 To MAX_INV) As PlayerInvRec
-Public TradeX As Long
-Public TradeY As Long
 
 ' Cache the Resources in an array
 Public MapResource() As MapResourceRec
@@ -148,9 +129,6 @@ Public DragInvSlotNum As Long
 Public DragSpell As Long
 
 ' gui
-Public InvItemFrame(1 To MAX_INV) As Byte ' Used for animated items
-Public LastSpellDesc As Long ' Stores the last spell we showed in desc
-Public LastBankDesc As Long ' Stores the last bank item we showed in desc
 Public tmpCurrencyItem As Long
 Public InShop As Long ' is the player in a shop?
 Public InBank As Long
@@ -189,15 +167,6 @@ Public PlayerBuffer As String
 Public InGame As Boolean
 Public isLogging As Boolean
 
-' Text variables
-Public TexthDC As Long
-Public GameFont As Long
-
-' Draw map name location
-Public DrawMapNameX As Single
-Public DrawMapNameY As Single
-Public DrawMapNameColor As Long
-
 ' Game direction vars
 Public ShiftDown As Boolean
 Public ControlDown As Boolean
@@ -210,14 +179,6 @@ Public DirUpLeft As Boolean
 Public DirUpRight As Boolean
 Public DirDownLeft As Boolean
 Public DirDownRight As Boolean
-
-' Used for dragging Picture Boxes
-Public SOffsetX As Long
-Public SOffsetY As Long
-
-' Map animation #, used to keep track of what map animation is currently on
-Public MapAnim As Byte
-Public MapAnimTimer As Long
 
 ' Used to freeze controls when getting a new map
 Public GettingMap As Boolean
@@ -254,14 +215,6 @@ Public EditorShop As Long
 ' Used for map item editor
 Public ItemEditorNum As Long
 Public ItemEditorValue As Long
-
-' Used for map key editor
-Public KeyEditorNum As Long
-Public KeyEditorTake As Long
-
-' Used for map key open editor
-Public KeyOpenEditorX As Long
-Public KeyOpenEditorY As Long
 
 ' Map Resources
 Public ResourceEditorNum As Long
@@ -349,13 +302,6 @@ Public CharEditState As Byte
 Public Last_Dir As Long
 Public SocialIcon() As String
 Public SocialIconStatus() As Byte
-
-Public SoundIndex As Long
-Public MusicIndex As Long
-
-Public CurMusic As String
-Public CurSound As String
-Public MusicVolume As Double
 
 Public CurrentFog As Byte
 Public CurrentFogSpeed As Byte

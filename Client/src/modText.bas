@@ -3,8 +3,8 @@ Option Explicit
 
 ' Stuffs
 Public Type POINTAPI
-    X As Long
-    Y As Long
+    x As Long
+    y As Long
 End Type
 
 Private Type CharVA
@@ -126,14 +126,14 @@ If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_ATTACKONSIGHT Or NPC(npcNum).Behaviour 
         Colour = White
     End If
     
-    textX = MapNpc(Index).X * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (textSize \ 2)
-    textY = MapNpc(Index).Y * PIC_Y + MapNpc(Index).YOffset - 32
-    lvlx = MapNpc(Index).X * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (LevelSize \ 2)
-    lvly = MapNpc(Index).Y * PIC_Y + MapNpc(Index).YOffset - 32
+    textX = MapNpc(Index).x * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (textSize \ 2)
+    textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
+    lvlx = MapNpc(Index).x * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (LevelSize \ 2)
+    lvly = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
     
     If NPC(npcNum).Sprite >= 1 And NPC(npcNum).Sprite <= Count_Char Then
-        textY = MapNpc(Index).Y * PIC_Y + MapNpc(Index).YOffset - 32
-        lvly = MapNpc(Index).Y * PIC_Y + MapNpc(Index).YOffset - 32
+        textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
+        lvly = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
     End If
     
     
@@ -155,8 +155,8 @@ If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Or NPC(npcNum).Behaviour = N
             TitleSize = EngineGetTextWidth(Font_GeorgiaShadow, "<" & Title & ">")
             If Title = vbNullString Then Exit Sub
             
-            tx = MapNpc(Index).X * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (TitleSize \ 2)
-            ty = MapNpc(Index).Y * PIC_Y + MapNpc(Index).YOffset - 32
+            tx = MapNpc(Index).x * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (TitleSize \ 2)
+            ty = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
             Call RenderText(Font_Georgia, "<" & Title & ">", ConvertMapX(tx), ConvertMapY(ty), Blue)
 
     End If
@@ -167,10 +167,10 @@ If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Or NPC(npcNum).Behaviour = N
             If TempPlayer(MyIndex).PlayerQuest(I).Status = QUEST_STARTED Then
                 If Quest(I).Task(TempPlayer(MyIndex).PlayerQuest(I).ActualTask).NPC = npcNum Then
                     name = "[?]"
-                    textX = MapNpc(Index).X * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (EngineGetTextWidth(Font_GeorgiaShadow, name) / 2)
-                    textY = MapNpc(Index).Y * PIC_Y + MapNpc(Index).YOffset - 16
+                    textX = MapNpc(Index).x * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (EngineGetTextWidth(Font_GeorgiaShadow, name) / 2)
+                    textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 16
                     If NPC(npcNum).Sprite >= 1 And NPC(npcNum).Sprite <= Count_Char Then
-                        textY = MapNpc(Index).Y * PIC_Y + MapNpc(Index).YOffset - 32
+                        textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
                     End If
                     If Not NPC(npcNum).Behaviour = NPC_BEHAVIOUR_FRIENDLY Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Then
                         Call RenderText(Font_GeorgiaShadow, name, ConvertMapX(textX), ConvertMapY(textY - 12), Yellow)
@@ -187,10 +187,10 @@ If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Or NPC(npcNum).Behaviour = N
                 'the npc gives this quest?
                 If NPC(npcNum).Quest = 1 Then
                     name = "[!]"
-                    textX = MapNpc(Index).X * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (EngineGetTextWidth(Font_GeorgiaShadow, name) / 2)
-                    textY = MapNpc(Index).Y * PIC_Y + MapNpc(Index).YOffset - 16
+                    textX = MapNpc(Index).x * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (EngineGetTextWidth(Font_GeorgiaShadow, name) / 2)
+                    textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 16
                     If NPC(npcNum).Sprite >= 1 And NPC(npcNum).Sprite <= Count_Char Then
-                        textY = MapNpc(Index).Y * PIC_Y + MapNpc(Index).YOffset - 32
+                        textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
                     End If
                     If Not NPC(npcNum).Behaviour = NPC_BEHAVIOUR_FRIENDLY Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Then
                         Call RenderText(Font_GeorgiaShadow, name, ConvertMapX(textX), ConvertMapY(textY - 12), Yellow)
@@ -227,14 +227,14 @@ Dim textX As Long, textY As Long, Text As String, textSize As Long, Colour As Lo
         Colour = White
     End If
     
-    textX = Player(Index).Pet.X * PIC_X + Player(Index).Pet.XOffset + (PIC_X \ 2) - (textSize \ 2)
-    textY = Player(Index).Pet.Y * PIC_Y + Player(Index).Pet.YOffset - 32 + 12
+    textX = Player(Index).Pet.x * PIC_X + Player(Index).Pet.XOffset + (PIC_X \ 2) - (textSize \ 2)
+    textY = Player(Index).Pet.y * PIC_Y + Player(Index).Pet.YOffset - 32 + 12
     
     Call RenderText(Font_GeorgiaShadow, Text, ConvertMapX(textX), ConvertMapY(textY), Colour)
 End Sub
 
 Sub DrawBossMsg()
-    Dim X As Long, Y As Long, time As Long
+    Dim x As Long, y As Long, time As Long
     
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -243,12 +243,12 @@ Sub DrawBossMsg()
     If BossMsg.Created = 0 Then Exit Sub
     
     time = 15000
-    X = (ScreenWidth \ 2) - (EngineGetTextWidth(Font_GeorgiaShadow, Trim$(BossMsg.Message)) / 2)
-    Y = 114
+    x = (ScreenWidth \ 2) - (EngineGetTextWidth(Font_GeorgiaShadow, Trim$(BossMsg.Message)) / 2)
+    y = 114
     
     If timeGetTime < BossMsg.Created + time Then
         Directx8.RenderTextureRectangle 6, -2, 107, ScreenWidth + 4, 28
-        RenderText Font_GeorgiaShadow, Trim$(BossMsg.Message), X - 8, Y, BossMsg.color
+        RenderText Font_GeorgiaShadow, Trim$(BossMsg.Message), x - 8, y, BossMsg.color
     Else
         BossMsg.Message = vbNullString
         BossMsg.Created = 0
@@ -263,23 +263,15 @@ errorhandler:
     Exit Sub
 End Sub
 
-Public Sub RenderText(ByRef UseFont As CustomFont, ByVal Text As String, ByVal X As Long, ByVal Y As Long, ByVal color As Long, Optional ByVal Alpha As Long = 255, Optional Shadow As Boolean = True)
+Public Sub RenderText(ByRef UseFont As CustomFont, ByVal Text As String, ByVal x As Long, ByVal y As Long, ByVal color As Long, Optional ByVal Alpha As Long = 255, Optional Shadow As Boolean = True)
 Dim TempVA(0 To 3)  As TLVERTEX
-Dim TempVAS(0 To 3) As TLVERTEX
 Dim TempStr() As String
 Dim Count As Integer
 Dim Ascii() As Byte
-Dim Row As Integer
-Dim u As Single
-Dim v As Single
 Dim I As Long
 Dim j As Long
-Dim KeyPhrase As Byte
 Dim TempColor As Long
 Dim ResetColor As Byte
-Dim srcRect As RECT
-Dim v2 As D3DVECTOR2
-Dim v3 As D3DVECTOR2
 Dim YOffset As Single
 
     ' set the color
@@ -312,14 +304,14 @@ Dim YOffset As Single
                 Call CopyMemory(TempVA(0), UseFont.HeaderInfo.CharVA(Ascii(j - 1)).Vertex(0), FVF_Size * 4)
                 
                 'Set up the verticies
-                TempVA(0).X = X + Count
-                TempVA(0).Y = Y + YOffset
-                TempVA(1).X = TempVA(1).X + X + Count
-                TempVA(1).Y = TempVA(0).Y
-                TempVA(2).X = TempVA(0).X
-                TempVA(2).Y = TempVA(2).Y + TempVA(0).Y
-                TempVA(3).X = TempVA(1).X
-                TempVA(3).Y = TempVA(2).Y
+                TempVA(0).x = x + Count
+                TempVA(0).y = y + YOffset
+                TempVA(1).x = TempVA(1).x + x + Count
+                TempVA(1).y = TempVA(0).y
+                TempVA(2).x = TempVA(0).x
+                TempVA(2).y = TempVA(2).y + TempVA(0).y
+                TempVA(3).x = TempVA(1).x
+                TempVA(3).y = TempVA(2).y
                 
                 'Set the colors
                 TempVA(0).color = TempColor
@@ -396,8 +388,8 @@ Dim LoopI As Integer
 End Function
 
 Sub DrawActionMsg(ByVal Index As Integer)
-Dim X As Long, Y As Long, I As Long, time As Long
-Dim LenMsg As Long, Alpha As Long
+Dim x As Long, y As Long, I As Long, time As Long
+Dim LenMsg As Long
 
     If ActionMsg(Index).Message = vbNullString Then Exit Sub
 
@@ -408,24 +400,24 @@ Dim LenMsg As Long, Alpha As Long
             
             LenMsg = EngineGetTextWidth(Font_GeorgiaShadow, Trim$(ActionMsg(Index).Message))
 
-            If ActionMsg(Index).Y > 0 Then
-                X = ActionMsg(Index).X + Int(PIC_X \ 2) - (LenMsg / 2)
-                Y = ActionMsg(Index).Y + PIC_Y
+            If ActionMsg(Index).y > 0 Then
+                x = ActionMsg(Index).x + Int(PIC_X \ 2) - (LenMsg / 2)
+                y = ActionMsg(Index).y + PIC_Y
             Else
-                X = ActionMsg(Index).X + Int(PIC_X \ 2) - (LenMsg / 2)
-                Y = ActionMsg(Index).Y - Int(PIC_Y \ 2) + 18
+                x = ActionMsg(Index).x + Int(PIC_X \ 2) - (LenMsg / 2)
+                y = ActionMsg(Index).y - Int(PIC_Y \ 2) + 18
             End If
 
         Case ACTIONMSG_SCROLL
             time = 1500
         
-            If ActionMsg(Index).Y > 0 Then
-                X = ActionMsg(Index).X + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).Message)) \ 2) * 8)
-                Y = ActionMsg(Index).Y - Int(PIC_Y \ 2) - 2 - (ActionMsg(Index).Scroll * 0.6)
+            If ActionMsg(Index).y > 0 Then
+                x = ActionMsg(Index).x + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).Message)) \ 2) * 8)
+                y = ActionMsg(Index).y - Int(PIC_Y \ 2) - 2 - (ActionMsg(Index).Scroll * 0.6)
                 ActionMsg(Index).Scroll = ActionMsg(Index).Scroll + 1
             Else
-                X = ActionMsg(Index).X + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).Message)) \ 2) * 8)
-                Y = ActionMsg(Index).Y - Int(PIC_Y \ 2) + 18 + (ActionMsg(Index).Scroll * 0.001)
+                x = ActionMsg(Index).x + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).Message)) \ 2) * 8)
+                y = ActionMsg(Index).y - Int(PIC_Y \ 2) + 18 + (ActionMsg(Index).Scroll * 0.001)
                 ActionMsg(Index).Scroll = ActionMsg(Index).Scroll + 1
             End If
             
@@ -445,33 +437,33 @@ Dim LenMsg As Long, Alpha As Long
                 End If
             Next
     
-            X = (400) - ((EngineGetTextWidth(Font_GeorgiaShadow, Trim$(ActionMsg(Index).Message)) \ 2))
-            Y = 24
+            x = (400) - ((EngineGetTextWidth(Font_GeorgiaShadow, Trim$(ActionMsg(Index).Message)) \ 2))
+            y = 24
 
     End Select
     
-    X = ConvertMapX(X)
-    Y = ConvertMapY(Y)
+    x = ConvertMapX(x)
+    y = ConvertMapY(y)
 
     If ActionMsg(Index).Created > 0 Then
-        RenderText Font_GeorgiaShadow, ActionMsg(Index).Message, X, Y, ActionMsg(Index).color, ActionMsg(Index).Alpha
+        RenderText Font_GeorgiaShadow, ActionMsg(Index).Message, x, y, ActionMsg(Index).color, ActionMsg(Index).Alpha
     End If
 
 End Sub
 
 Public Function DrawMapAttributes()
-    Dim X As Long
-    Dim Y As Long
+    Dim x As Long
+    Dim y As Long
     Dim tx As Long
     Dim ty As Long
 
     If frmEditor_Map.optAttribs.Value Then
-        For X = TileView.Left To TileView.Right
-            For Y = TileView.Top To TileView.bottom
-                If IsValidMapPoint(X, Y) Then
-                    With map.Tile(X, Y)
-                        tx = ((ConvertMapX(X * PIC_X)) - 4) + (PIC_X * 0.5)
-                        ty = ((ConvertMapY(Y * PIC_Y)) - 7) + (PIC_Y * 0.5)
+        For x = TileView.Left To TileView.Right
+            For y = TileView.Top To TileView.bottom
+                If IsValidMapPoint(x, y) Then
+                    With map.Tile(x, y)
+                        tx = ((ConvertMapX(x * PIC_X)) - 4) + (PIC_X * 0.5)
+                        ty = ((ConvertMapY(y * PIC_Y)) - 7) + (PIC_Y * 0.5)
                         Select Case .Type
                             Case TILE_TYPE_BLOCKED
                                 RenderText Font_GeorgiaShadow, "B", tx, ty, BrightRed
@@ -736,14 +728,14 @@ Dim B As Long
 End Function
 
 Public Sub UpdateShowChatText()
-Dim CHATOFFSET As Long, I As Long, X As Long
+Dim CHATOFFSET As Long, I As Long, x As Long
 
     CHATOFFSET = 55
     
-    If EngineGetTextWidth(Font_GeorgiaShadow, MyText) > GUIWindow(GUI_CHAT).Width - CHATOFFSET Then
+    If EngineGetTextWidth(Font_GeorgiaShadow, MyText) > GUIWindow(GUI_CHAT).width - CHATOFFSET Then
         For I = Len(MyText) To 1 Step -1
-            X = X + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(MyText, I, 1)))
-            If X > GUIWindow(GUI_CHAT).Width - CHATOFFSET Then
+            x = x + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(MyText, I, 1)))
+            If x > GUIWindow(GUI_CHAT).width - CHATOFFSET Then
                 RenderChatText = Right$(MyText, Len(MyText) - I + 1)
                 Exit For
             End If
@@ -785,29 +777,29 @@ Dim v As Single
             .Vertex(0).RHW = 1
             .Vertex(0).tu = u
             .Vertex(0).tv = v
-            .Vertex(0).X = 0
-            .Vertex(0).Y = 0
+            .Vertex(0).x = 0
+            .Vertex(0).y = 0
             .Vertex(0).z = 0
             .Vertex(1).color = D3DColorARGB(255, 0, 0, 0)
             .Vertex(1).RHW = 1
             .Vertex(1).tu = u + theFont.ColFactor
             .Vertex(1).tv = v
-            .Vertex(1).X = theFont.HeaderInfo.CellWidth
-            .Vertex(1).Y = 0
+            .Vertex(1).x = theFont.HeaderInfo.CellWidth
+            .Vertex(1).y = 0
             .Vertex(1).z = 0
             .Vertex(2).color = D3DColorARGB(255, 0, 0, 0)
             .Vertex(2).RHW = 1
             .Vertex(2).tu = u
             .Vertex(2).tv = v + theFont.RowFactor
-            .Vertex(2).X = 0
-            .Vertex(2).Y = theFont.HeaderInfo.CellHeight
+            .Vertex(2).x = 0
+            .Vertex(2).y = theFont.HeaderInfo.CellHeight
             .Vertex(2).z = 0
             .Vertex(3).color = D3DColorARGB(255, 0, 0, 0)
             .Vertex(3).RHW = 1
             .Vertex(3).tu = u + theFont.ColFactor
             .Vertex(3).tv = v + theFont.RowFactor
-            .Vertex(3).X = theFont.HeaderInfo.CellWidth
-            .Vertex(3).Y = theFont.HeaderInfo.CellHeight
+            .Vertex(3).x = theFont.HeaderInfo.CellWidth
+            .Vertex(3).y = theFont.HeaderInfo.CellHeight
             .Vertex(3).z = 0
         End With
     Next LoopChar
@@ -823,13 +815,11 @@ Dim Row As Long
 Dim pos As Long
 Dim u As Single
 Dim v As Single
-Dim X As Single
-Dim Y As Single
+Dim x As Single
+Dim y As Single
 Dim Y2 As Single
-Dim I As Long
 Dim j As Long
 Dim Size As Integer
-Dim KeyPhrase As Byte
 Dim ResetColor As Byte
 Dim TempColor As Long
 Dim YOffset As Long
@@ -857,8 +847,8 @@ Dim YOffset As Long
     ReDim ChatVAS(0 To ChatArrayUbound)
     
     'Set the base position
-    X = GUIWindow(GUI_CHAT).X + ChatOffsetX
-    Y = GUIWindow(GUI_CHAT).Y + ChatOffsetY
+    x = GUIWindow(GUI_CHAT).x + ChatOffsetX
+    y = GUIWindow(GUI_CHAT).y + ChatOffsetY
 
     'Loop through each buffer string
     For LoopC = (Chunk * ChatBufferChunk) - (8 - 1) To Chunk * ChatBufferChunk
@@ -869,7 +859,7 @@ Dim YOffset As Long
         TempColor = ChatTextBuffer(LoopC).color
         
         'Set the Y position to be used
-        Y2 = Y - (LoopC * YOffset) + (Chunk * ChatBufferChunk * YOffset) - 32
+        Y2 = y - (LoopC * YOffset) + (Chunk * ChatBufferChunk * YOffset) - 32
         
         'Loop through each line if there are line breaks (vbCrLf)
         Count = 0   'Counts the offset value we are on
@@ -889,8 +879,8 @@ Dim YOffset As Long
                 ' ****** Rectangle | Top Left ******
                 With ChatVA(0 + (6 * pos))
                     .color = TempColor
-                    .X = (X) + Count
-                    .Y = (Y2)
+                    .x = (x) + Count
+                    .y = (Y2)
                     .tu = u
                     .tv = v
                     .RHW = 1
@@ -899,8 +889,8 @@ Dim YOffset As Long
                 ' ****** Rectangle | Bottom Left ******
                 With ChatVA(1 + (6 * pos))
                     .color = TempColor
-                    .X = (X) + Count
-                    .Y = (Y2) + Font_GeorgiaShadow.HeaderInfo.CellHeight
+                    .x = (x) + Count
+                    .y = (Y2) + Font_GeorgiaShadow.HeaderInfo.CellHeight
                     .tu = u
                     .tv = v + Font_GeorgiaShadow.RowFactor
                     .RHW = 1
@@ -909,8 +899,8 @@ Dim YOffset As Long
                 ' ****** Rectangle | Bottom Right ******
                 With ChatVA(2 + (6 * pos))
                     .color = TempColor
-                    .X = (X) + Count + Font_GeorgiaShadow.HeaderInfo.CellWidth
-                    .Y = (Y2) + Font_GeorgiaShadow.HeaderInfo.CellHeight
+                    .x = (x) + Count + Font_GeorgiaShadow.HeaderInfo.CellWidth
+                    .y = (Y2) + Font_GeorgiaShadow.HeaderInfo.CellHeight
                     .tu = u + Font_GeorgiaShadow.ColFactor
                     .tv = v + Font_GeorgiaShadow.RowFactor
                     .RHW = 1
@@ -923,8 +913,8 @@ Dim YOffset As Long
                 ' ****** Rectangle | Top Right ******
                 With ChatVA(4 + (6 * pos))
                     .color = TempColor
-                    .X = (X) + Count + Font_GeorgiaShadow.HeaderInfo.CellWidth
-                    .Y = (Y2)
+                    .x = (x) + Count + Font_GeorgiaShadow.HeaderInfo.CellWidth
+                    .y = (Y2)
                     .tu = u + Font_GeorgiaShadow.ColFactor
                     .tv = v
                     .RHW = 1
@@ -958,11 +948,6 @@ Dim YOffset As Long
     
 End Sub
 Public Sub RenderChatTextBuffer()
-Dim srcRect As RECT
-Dim v2 As D3DVECTOR2
-Dim v3 As D3DVECTOR2
-Dim I As Long
-
     'Clear the LastTexture, letting the rest of the engine know that the texture needs to be changed for next rect render
     D3DDevice8.SetTexture 0, Font_GeorgiaShadow.Texture
     CurrentTexture = -1

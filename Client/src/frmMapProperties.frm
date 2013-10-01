@@ -514,20 +514,20 @@ Option Explicit
 
 Private Sub chkDoNotAutoSpawn_Click()
     If lstNpcs.ListIndex > -1 Then
-        Map.NpcSpawnType(lstNpcs.ListIndex + 1) = chkDoNotAutoSpawn.Value
+        map.NpcSpawnType(lstNpcs.ListIndex + 1) = chkDoNotAutoSpawn.Value
     End If
 End Sub
 
 Private Sub cmdPlay_Click()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     FMOD.Music_Stop
     FMOD.Music_Play lstMusic.List(lstMusic.ListIndex)
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "cmdPlay_Click", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -535,37 +535,35 @@ End Sub
 
 Private Sub cmdStop_Click()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     FMOD.Music_Stop
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "cmdStop_Click", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 End Sub
 
 Private Sub cmdOk_Click()
-    Dim I As Long
-    Dim sTemp As Long
-    Dim X As Long, x2 As Long
-    Dim Y As Long, y2 As Long, layerNum As Long
+    Dim x As Long, X2 As Long
+    Dim y As Long, Y2 As Long
     Dim tempArr() As TileRec
     
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
 
-    If Not IsNumeric(txtMaxX.Text) Then txtMaxX.Text = Map.MaxX
+    If Not IsNumeric(txtMaxX.Text) Then txtMaxX.Text = map.MaxX
     If Val(txtMaxX.Text) < MAX_MAPX Then txtMaxX.Text = MAX_MAPX
     If Val(txtMaxX.Text) > MAX_BYTE Then txtMaxX.Text = MAX_BYTE
-    If Not IsNumeric(txtMaxY.Text) Then txtMaxY.Text = Map.MaxY
+    If Not IsNumeric(txtMaxY.Text) Then txtMaxY.Text = map.MaxY
     If Val(txtMaxY.Text) < MAX_MAPY Then txtMaxY.Text = MAX_MAPY
     If Val(txtMaxY.Text) > MAX_BYTE Then txtMaxY.Text = MAX_BYTE
 
-    With Map
-        .Name = Trim$(txtName.Text)
+    With map
+        .name = Trim$(txtName.Text)
         If lstMusic.ListIndex >= 0 Then
             .Music = lstMusic.List(lstMusic.ListIndex)
         Else
@@ -585,31 +583,31 @@ Private Sub cmdOk_Click()
         .FogSpeed = ScrlFogSpeed.Value
         .FogOpacity = scrlFogOpacity.Value
         
-        .Red = scrlR.Value
-        .Green = scrlG.Value
-        .Blue = scrlB.Value
+        .Red = ScrlR.Value
+        .Green = ScrlG.Value
+        .Blue = ScrlB.Value
         .Alpha = scrlA.Value
         
         .Panorama = cmbPanorama.ListIndex
         .DayNight = cmbDayNight.ListIndex
 
         ' set the data before changing it
-        tempArr = Map.Tile
-        x2 = Map.MaxX
-        y2 = Map.MaxY
+        tempArr = map.Tile
+        X2 = map.MaxX
+        Y2 = map.MaxY
         ' change the data
         .MaxX = Val(txtMaxX.Text)
         .MaxY = Val(txtMaxY.Text)
 
-        If x2 > .MaxX Then x2 = .MaxX
-        If y2 > .MaxY Then y2 = .MaxY
+        If X2 > .MaxX Then X2 = .MaxX
+        If Y2 > .MaxY Then Y2 = .MaxY
         
         ' redim the map size
-        ReDim Map.Tile(0 To .MaxX, 0 To .MaxY)
+        ReDim map.Tile(0 To .MaxX, 0 To .MaxY)
 
-        For X = 0 To x2
-            For Y = 0 To y2
-                .Tile(X, Y) = tempArr(X, Y)
+        For x = 0 To X2
+            For y = 0 To Y2
+                .Tile(x, y) = tempArr(x, y)
             Next
         Next
     End With
@@ -620,7 +618,7 @@ Private Sub cmdOk_Click()
         
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "cmdOk_Click", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -628,13 +626,13 @@ End Sub
 
 Private Sub cmdCancel_Click()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Unload frmEditor_MapProperties
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "cmdCancel_Click", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -650,7 +648,7 @@ Dim tmpString() As String
 Dim npcNum As Long
 
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
 
     ' exit out if needed
     If Not cmbNpc.ListCount > 0 Then Exit Sub
@@ -659,12 +657,12 @@ Dim npcNum As Long
     ' set the combo box properly
     tmpString = Split(lstNpcs.List(lstNpcs.ListIndex))
     npcNum = CLng(Left$(tmpString(0), Len(tmpString(0)) - 1))
-    cmbNpc.ListIndex = Map.Npc(npcNum)
-    chkDoNotAutoSpawn.Value = Map.NpcSpawnType(npcNum)
+    cmbNpc.ListIndex = map.NPC(npcNum)
+    chkDoNotAutoSpawn.Value = map.NpcSpawnType(npcNum)
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "lstNpcs_Click", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -673,10 +671,10 @@ End Sub
 Private Sub cmbNpc_Click()
 Dim tmpString() As String
 Dim npcNum As Long
-Dim X As Long, tmpIndex As Long
+Dim x As Long, tmpIndex As Long
 
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     ' exit out if needed
     If Not cmbNpc.ListCount > 0 Then Exit Sub
@@ -691,27 +689,27 @@ Dim X As Long, tmpIndex As Long
         npcNum = 0
     End If
 
-    For X = 1 To MAX_MAP_NPCS
-        If lstNpcs.Selected(X - 1) Then
-             Map.Npc(X) = npcNum
+    For x = 1 To MAX_MAP_NPCS
+        If lstNpcs.Selected(x - 1) Then
+             map.NPC(x) = npcNum
         End If
     Next
     
     ' re-load the list
     tmpIndex = lstNpcs.ListIndex
     lstNpcs.Clear
-    For X = 1 To MAX_MAP_NPCS
-        If Map.Npc(X) > 0 Then
-            lstNpcs.AddItem X & ": " & Trim$(Npc(Map.Npc(X)).Name)
+    For x = 1 To MAX_MAP_NPCS
+        If map.NPC(x) > 0 Then
+            lstNpcs.AddItem x & ": " & Trim$(NPC(map.NPC(x)).name)
         Else
-            lstNpcs.AddItem X & ": No NPC"
+            lstNpcs.AddItem x & ": No NPC"
         End If
     Next
     lstNpcs.ListIndex = tmpIndex
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "cmbNpc_Click", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -719,8 +717,8 @@ End Sub
 
 Private Sub scrlBoss_Change()
     If scrlBoss.Value > 0 Then
-        If Map.Npc(scrlBoss.Value) > 0 Then
-            lblBoss.Caption = "Boss Npc: " & Trim$(Npc(Map.Npc(scrlBoss.Value)).Name)
+        If map.NPC(scrlBoss.Value) > 0 Then
+            lblBoss.Caption = "Boss Npc: " & Trim$(NPC(map.NPC(scrlBoss.Value)).name)
         Else
             lblBoss.Caption = "Boss Npc: None"
         End If
@@ -731,13 +729,13 @@ End Sub
 
 Private Sub scrlA_Change()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     lblA.Caption = "A: " & scrlA.Value
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "ScrlA_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -745,13 +743,13 @@ End Sub
 
 Private Sub scrlB_Change()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    lblB.Caption = "B: " & scrlB.Value
+    lblB.Caption = "B: " & ScrlB.Value
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "ScrlB_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -759,7 +757,7 @@ End Sub
 
 Private Sub ScrlFog_Change()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     If ScrlFog.Value = 0 Then
         lblFog.Caption = "None."
@@ -769,7 +767,7 @@ Private Sub ScrlFog_Change()
 
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "ScrlFog_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -777,13 +775,13 @@ End Sub
 
 Private Sub scrlFogOpacity_Change()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     lblFogOpacity.Caption = "Fog Opacity: " & scrlFogOpacity.Value
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "ScrlFogOpacity_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -791,13 +789,13 @@ End Sub
 
 Private Sub ScrlFogSpeed_Change()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     lblFogSpeed.Caption = "Fog Speed: " & ScrlFogSpeed.Value
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "ScrlFogSpeed_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -805,13 +803,13 @@ End Sub
 
 Private Sub scrlG_Change()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    lblG.Caption = "G: " & scrlG.Value
+    lblG.Caption = "G: " & ScrlG.Value
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "ScrlG_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -819,13 +817,13 @@ End Sub
 
 Private Sub scrlR_Change()
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
-    lblR.Caption = "R: " & scrlR.Value
+    lblR.Caption = "R: " & ScrlR.Value
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "ScrlR_Change", "frmEditor_MapProperties", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub

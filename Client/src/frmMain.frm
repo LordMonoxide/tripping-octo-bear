@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "mswinsck.ocx"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.OCX"
 Begin VB.Form frmMain 
    BackColor       =   &H00E0E0E0&
    BorderStyle     =   1  'Fixed Single
@@ -519,14 +519,6 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
-' ************
-' ** Events **
-' ************
-Private MoveForm As Boolean
-Private MouseX As Long
-Private MouseY As Long
-Private PresentX As Long
-Private PresentY As Long
 
 Private Sub cmdAKick_Click()
         ' If debug mode, handle error then exit out

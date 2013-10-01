@@ -947,7 +947,6 @@ errorhandler:
 End Sub
 
 Sub HandleMapData(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
-Dim n As Long
 Dim x As Long
 Dim y As Long
 Dim I As Long
@@ -2642,7 +2641,6 @@ End Sub
 
 Private Sub HandleClientTime(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
 Dim buffer As clsBuffer
-Dim temp As Byte
     
     Set buffer = New clsBuffer
     buffer.WriteBytes data()

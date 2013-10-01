@@ -51,12 +51,10 @@ Public Type GuildRec
     Guild_Color As Long
     Guild_Logo As Long
 End Type
-Public Sub HandleAdminGuild(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Public Sub HandleAdminGuild(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
 Dim buffer As clsBuffer
-Dim i As Integer
-Dim B As Integer
 
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Set buffer = New clsBuffer
     
@@ -78,16 +76,16 @@ Dim B As Integer
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "HandleAdminGuild", "modGuild", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
 End Sub
-Public Sub HandleSendGuild(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Public Sub HandleSendGuild(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
 Dim buffer As clsBuffer
-Dim i As Integer
+Dim I As Integer
 Dim B As Integer
 
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Set buffer = New clsBuffer
     
@@ -101,21 +99,21 @@ Dim B As Integer
     GuildData.Guild_Logo = buffer.ReadLong
     
     'Get Members
-    For i = 1 To MAX_GUILD_MEMBERS
-        GuildData.Guild_Members(i).User_Name = buffer.ReadString
-        GuildData.Guild_Members(i).Rank = buffer.ReadInteger
-        GuildData.Guild_Members(i).Comment = buffer.ReadString
-        GuildData.Guild_Members(i).Online = buffer.ReadByte
-    Next i
+    For I = 1 To MAX_GUILD_MEMBERS
+        GuildData.Guild_Members(I).User_Name = buffer.ReadString
+        GuildData.Guild_Members(I).Rank = buffer.ReadInteger
+        GuildData.Guild_Members(I).Comment = buffer.ReadString
+        GuildData.Guild_Members(I).Online = buffer.ReadByte
+    Next I
     
     'Get Ranks
-    For i = 1 To MAX_GUILD_RANKS
-        GuildData.Guild_Ranks(i).name = buffer.ReadString
+    For I = 1 To MAX_GUILD_RANKS
+        GuildData.Guild_Ranks(I).name = buffer.ReadString
         For B = 1 To MAX_GUILD_RANKS_PERMISSION
-            GuildData.Guild_Ranks(i).RankPermission(B) = buffer.ReadByte
-            GuildData.Guild_Ranks(i).RankPermissionName(B) = buffer.ReadString
+            GuildData.Guild_Ranks(I).RankPermission(B) = buffer.ReadByte
+            GuildData.Guild_Ranks(I).RankPermissionName(B) = buffer.ReadString
         Next B
-    Next i
+    Next I
     
     'Update Guildadmin data
     Call frmGuildAdmin.Load_Guild_Admin
@@ -131,7 +129,7 @@ Dim B As Integer
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "HandleSendGuild", "modGuild", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
 End Sub
@@ -139,7 +137,7 @@ Public Sub GuildMsg(ByVal Text As String)
 Dim buffer As clsBuffer
 
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Set buffer = New clsBuffer
     buffer.WriteLong CSayGuild
@@ -149,7 +147,7 @@ Dim buffer As clsBuffer
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "GuildMsg", "modGuild", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -159,7 +157,7 @@ Public Sub GuildCommand(ByVal Command As Integer, ByVal SendText As String, Opti
 Dim buffer As clsBuffer
 
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Set buffer = New clsBuffer
     buffer.WriteLong CGuildCommand
@@ -171,7 +169,7 @@ Dim buffer As clsBuffer
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "GuildMsg", "modGuild", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
@@ -179,8 +177,7 @@ End Sub
 
 Public Sub GuildSave(ByVal SaveType As Integer, ByVal Index As Integer)
 Dim buffer As clsBuffer
-Dim i As Integer
-Dim B As Integer
+Dim I As Integer
 'SaveType
 '1=options
 '2=users
@@ -189,7 +186,7 @@ Dim B As Integer
 
 
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Set buffer = New clsBuffer
     buffer.WriteLong CSaveGuild
@@ -213,9 +210,9 @@ Dim B As Integer
     Case 3
         'ranks
         buffer.WriteString GuildData.Guild_Ranks(Index).name
-        For i = 1 To MAX_GUILD_RANKS_PERMISSION
-            buffer.WriteByte GuildData.Guild_Ranks(Index).RankPermission(i)
-        Next i
+        For I = 1 To MAX_GUILD_RANKS_PERMISSION
+            buffer.WriteByte GuildData.Guild_Ranks(Index).RankPermission(I)
+        Next I
     End Select
 
     SendData buffer.ToArray()
@@ -223,19 +220,19 @@ Dim B As Integer
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "GuildMsg", "modGuild", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub
 End Sub
 
-Public Sub HandleGuildInvite(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Public Sub HandleGuildInvite(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
 Dim buffer As clsBuffer
 Dim theName As String
 Dim GuildName As String
     
     ' If debug mode, handle error then exit out
-    If Options.Debug = 1 Then On Error GoTo ErrorHandler
+    If Options.Debug = 1 Then On Error GoTo errorhandler
     
     Set buffer = New clsBuffer
     buffer.WriteBytes data()
@@ -247,7 +244,7 @@ Dim GuildName As String
     
     ' Error handler
     Exit Sub
-ErrorHandler:
+errorhandler:
     HandleError "HandleGuildInvite", "modHandleData", Err.Number, Err.Description, Err.Source, Err.HelpContext
     Err.Clear
     Exit Sub

@@ -401,61 +401,61 @@ Public Sub Load_Menu_Options()
     txtMOTD.Text = Trim$(GuildData.Guild_MOTD)
 End Sub
 Public Sub Load_Menu_Ranks()
-    Dim i As Integer
+    Dim I As Integer
 
     listranks.Clear
     listranks.AddItem ("Select rank to edit...")
-    For i = 1 To MAX_GUILD_RANKS
-        listranks.AddItem ("Rank #" & i & ": " & GuildData.Guild_Ranks(i).name)
-    Next i
+    For I = 1 To MAX_GUILD_RANKS
+        listranks.AddItem ("Rank #" & I & ": " & GuildData.Guild_Ranks(I).name)
+    Next I
     
-        For i = 0 To 1
-            opAccess(i).visible = False
-        Next i
+        For I = 0 To 1
+            opAccess(I).visible = False
+        Next I
     
     frameranks.visible = False
     listranks.ListIndex = 0
 End Sub
 Public Sub Load_Menu_Users()
-    Dim i As Integer
+    Dim I As Integer
     
     listusers.Clear
     listusers.AddItem ("Select user to edit...")
     
-    For i = 1 To MAX_GUILD_MEMBERS
-        listusers.AddItem ("User #" & i & ": " & GuildData.Guild_Members(i).User_Name)
-    Next i
+    For I = 1 To MAX_GUILD_MEMBERS
+        listusers.AddItem ("User #" & I & ": " & GuildData.Guild_Members(I).User_Name)
+    Next I
     
     cmbRanks.Clear
     cmbRanks.AddItem ("Must Select Ranks...")
     cmbRanks.ListIndex = 0
-    For i = 1 To MAX_GUILD_RANKS
-        cmbRanks.AddItem (GuildData.Guild_Ranks(i).name)
-    Next i
+    For I = 1 To MAX_GUILD_RANKS
+        cmbRanks.AddItem (GuildData.Guild_Ranks(I).name)
+    Next I
     
     frameUser.visible = False
     listusers.ListIndex = 0
 End Sub
 
 Private Sub listAccess_Click()
-    Dim i As Integer
+    Dim I As Integer
     
     If listAccess.ListIndex = 0 Then
-        For i = 0 To 1
-            opAccess(i).visible = False
-        Next i
+        For I = 0 To 1
+            opAccess(I).visible = False
+        Next I
         Exit Sub
     Else
-        For i = 0 To 1
-            opAccess(i).visible = True
-        Next i
+        For I = 0 To 1
+            opAccess(I).visible = True
+        Next I
     End If
 
     opAccess(GuildData.Guild_Ranks(listranks.ListIndex).RankPermission(listAccess.ListIndex)).Value = True
 End Sub
 
 Private Sub listranks_Click()
-    Dim i As Integer
+    Dim I As Integer
     Dim HoldString As String
 
     If listranks.ListIndex = 0 Then
@@ -468,25 +468,23 @@ Private Sub listranks_Click()
     
     listAccess.Clear
     listAccess.AddItem ("Select permission to edit...")
-    For i = 1 To MAX_GUILD_RANKS_PERMISSION
-        If GuildData.Guild_Ranks(listranks.ListIndex).RankPermission(i) = 1 Then
+    For I = 1 To MAX_GUILD_RANKS_PERMISSION
+        If GuildData.Guild_Ranks(listranks.ListIndex).RankPermission(I) = 1 Then
             HoldString = "Can"
         Else
             HoldString = "Cannot"
         End If
-        listAccess.AddItem (GuildData.Guild_Ranks(listranks.ListIndex).RankPermissionName(i) & " (" & HoldString & ")")
-    Next i
+        listAccess.AddItem (GuildData.Guild_Ranks(listranks.ListIndex).RankPermissionName(I) & " (" & HoldString & ")")
+    Next I
     
-    For i = 0 To 1
-        opAccess(i).visible = False
-    Next i
+    For I = 0 To 1
+        opAccess(I).visible = False
+    Next I
     
     frameranks.visible = True
 End Sub
 
 Private Sub listusers_Click()
-Dim i As Integer
-    
     If listusers.ListIndex = 0 Then
         frameUser.visible = False
         Exit Sub

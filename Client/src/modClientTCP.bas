@@ -400,7 +400,6 @@ errorhandler:
 End Sub
 
 Public Sub SendMap()
-Dim packet As String
 Dim x As Long
 Dim y As Long
 Dim I As Long
@@ -1818,7 +1817,7 @@ Public Sub Events_SendChooseEventOption(ByVal I As Long)
 End Sub
 
 Sub RequestSwitchesAndVariables()
-Dim I As Long, buffer As clsBuffer
+Dim buffer As clsBuffer
 Set buffer = New clsBuffer
 buffer.WriteLong CRequestSwitchesAndVariables
 SendData buffer.ToArray

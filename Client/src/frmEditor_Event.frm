@@ -171,24 +171,24 @@ Begin VB.Form frmEditor_Events
          TabCaption(0)   =   "1"
          TabPicture(0)   =   "frmEditor_Event.frx":0000
          Tab(0).ControlEnabled=   0   'False
-         Tab(0).Control(0)=   "cmdCommand(17)"
-         Tab(0).Control(1)=   "cmdCommand(16)"
-         Tab(0).Control(2)=   "cmdCommand(15)"
-         Tab(0).Control(3)=   "cmdCommand(14)"
-         Tab(0).Control(4)=   "cmdCommand(13)"
-         Tab(0).Control(5)=   "cmdCommand(9)"
-         Tab(0).Control(6)=   "cmdCommand(8)"
-         Tab(0).Control(7)=   "cmdCommand(7)"
-         Tab(0).Control(8)=   "cmdCommand(6)"
-         Tab(0).Control(9)=   "cmdCommand(5)"
-         Tab(0).Control(10)=   "cmdCommand(4)"
-         Tab(0).Control(11)=   "cmdCommand(3)"
-         Tab(0).Control(12)=   "cmdCommand(2)"
-         Tab(0).Control(13)=   "cmdCommand(1)"
-         Tab(0).Control(14)=   "cmdCommand(0)"
-         Tab(0).Control(15)=   "cmdCommand(10)"
-         Tab(0).Control(16)=   "cmdCommand(11)"
-         Tab(0).Control(17)=   "cmdCommand(12)"
+         Tab(0).Control(0)=   "cmdCommand(12)"
+         Tab(0).Control(1)=   "cmdCommand(11)"
+         Tab(0).Control(2)=   "cmdCommand(10)"
+         Tab(0).Control(3)=   "cmdCommand(0)"
+         Tab(0).Control(4)=   "cmdCommand(1)"
+         Tab(0).Control(5)=   "cmdCommand(2)"
+         Tab(0).Control(6)=   "cmdCommand(3)"
+         Tab(0).Control(7)=   "cmdCommand(4)"
+         Tab(0).Control(8)=   "cmdCommand(5)"
+         Tab(0).Control(9)=   "cmdCommand(6)"
+         Tab(0).Control(10)=   "cmdCommand(7)"
+         Tab(0).Control(11)=   "cmdCommand(8)"
+         Tab(0).Control(12)=   "cmdCommand(9)"
+         Tab(0).Control(13)=   "cmdCommand(13)"
+         Tab(0).Control(14)=   "cmdCommand(14)"
+         Tab(0).Control(15)=   "cmdCommand(15)"
+         Tab(0).Control(16)=   "cmdCommand(16)"
+         Tab(0).Control(17)=   "cmdCommand(17)"
          Tab(0).ControlCount=   18
          TabCaption(1)   =   "2"
          TabPicture(1)   =   "frmEditor_Event.frx":001C
@@ -2130,7 +2130,6 @@ End Sub
 
 Private Sub cmdAddMenuOption_Click()
 If EditorIndex = 0 Or ListIndex = 0 Then Exit Sub
-    Dim optIdx As Long
     With Events(EditorIndex).SubEvents(ListIndex)
         ReDim Preserve .data(1 To UBound(.data) + 1)
         ReDim Preserve .Text(1 To UBound(.data) + 1)
@@ -2348,7 +2347,7 @@ Private Sub cmdSubEventEdit_Click()
 End Sub
 
 Private Sub cmdSubEventRemove_Click()
-    Dim Index As Long, I As Long
+    Dim I As Long
     If ListIndex > 0 And ListIndex <= lstSubEvents.ListCount Then
         For I = ListIndex + 1 To lstSubEvents.ListCount
             Events(EditorIndex).SubEvents(I - 1) = Events(EditorIndex).SubEvents(I)
@@ -2392,7 +2391,7 @@ Dim I As Long
 End Sub
 
 Private Sub Form_Load()
-    Dim I As Long, cap As Long
+    Dim I As Long
     'Move windows to right places
     frmEditor_Events.width = 9600
     frmEditor_Events.height = 8835
@@ -2819,7 +2818,7 @@ Public Sub PopulateSubEventList()
 End Sub
 
 Public Sub PopulateSubEventConfig()
-    Dim I As Long, cap As Long
+    Dim I As Long
     If Not (fraEditCommand.visible) Then Exit Sub
     If ListIndex = 0 Then Exit Sub
     HideMenus

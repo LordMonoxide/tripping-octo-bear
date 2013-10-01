@@ -2,9 +2,9 @@ Attribute VB_Name = "modGameLogic"
 Option Explicit
 
 Public Sub GameLoop()
-Dim FrameTime As Long, Tick As Long, TickFPS As Long, FPS As Long, I As Long, WalkTimer As Long, x As Long, y As Long
+Dim FrameTime As Long, Tick As Long, TickFPS As Long, FPS As Long, I As Long, WalkTimer As Long
 Dim tmr25 As Long, tmr1000 As Long, tmr10000 As Long, mapTimer As Long, chatTmr As Long, targetTmr As Long, fogTmr As Long, barTmr As Long
-Dim barDifference As Long, renderspeed As Long, targetanimTmr As Long
+Dim renderspeed As Long, targetanimTmr As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
@@ -1423,7 +1423,6 @@ Public Sub CheckAnimInstance(ByVal Index As Long)
 Dim looptime As Long
 Dim Layer As Long
 Dim FrameCount As Long
-Dim lockindex As Long
 
     ' If debug mode, handle error then exit out
     If Options.Debug = 1 Then On Error GoTo errorhandler
