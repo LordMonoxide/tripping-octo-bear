@@ -3,7 +3,10 @@
 *.oca
 *.vbw
 *.csi
+*.lvw
 *.obj
 *.exe
 
 time.ini
+
+[T|t]humbs.db
