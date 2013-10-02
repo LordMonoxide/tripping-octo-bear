@@ -756,6 +756,14 @@ Begin VB.Form frmEditor_NPC
          Width           =   1335
       End
    End
+   Begin VB.Label lblqustname 
+      Caption         =   "Quest Number: 0"
+      Height          =   255
+      Left            =   4200
+      TabIndex        =   83
+      Top             =   8400
+      Width           =   2895
+   End
 End
 Attribute VB_Name = "frmEditor_NPC"
 Attribute VB_GlobalNameSpace = False
@@ -839,7 +847,7 @@ Private Sub chkQuest_Click()
 End Sub
 
 Private Sub scrlQuest_Change()
-  '  lblQuest = scrlQuest.Value
+    lblQuest = "Quest Number: " & scrlQuest.Value
     NPC(EditorIndex).QuestNum = scrlQuest.Value
 End Sub
 
@@ -922,9 +930,9 @@ Private Sub txtChance_Validate(Cancel As Boolean)
     If Right$(txtChance.Text, 1) = "%" Then
         txtChance.Text = Left(txtChance.Text, Len(txtChance.Text) - 1) / 100
     ElseIf InStr(1, txtChance.Text, "/") > 0 Then
-        Dim i() As String
-        i = Split(txtChance.Text, "/")
-        txtChance.Text = Int(i(0) / i(1) * 1000) / 1000
+        Dim I() As String
+        I = Split(txtChance.Text, "/")
+        txtChance.Text = Int(I(0) / I(1) * 1000) / 1000
     End If
     
     If txtChance.Text > 1 Or txtChance.Text < 0 Then
@@ -984,13 +992,13 @@ Private Sub cmbSound_Click()
 End Sub
 
 Private Sub txtSearch_Change()
-Dim find As String, i As Long
+Dim find As String, I As Long
     find = txtSearch.Text
 
-    For i = 0 To lstIndex.ListCount - 1
-        If StrComp(find, Replace(lstIndex.List(i), i + 1 & ": ", ""), vbTextCompare) = 0 Then
+    For I = 0 To lstIndex.ListCount - 1
+        If StrComp(find, Replace(lstIndex.List(I), I + 1 & ": ", ""), vbTextCompare) = 0 Then
             lstIndex.SetFocus
-            lstIndex.ListIndex = i
+            lstIndex.ListIndex = I
             Exit For
         End If
     Next
@@ -1026,18 +1034,18 @@ Private Sub scrlA_Change()
 End Sub
 
 Private Sub scrlR_Change()
-    lblR.Caption = "Red: " & 255 - ScrlR.Value
-    NPC(EditorIndex).R = ScrlR.Value
+    lblR.Caption = "Red: " & 255 - scrlR.Value
+    NPC(EditorIndex).R = scrlR.Value
 End Sub
 
 Private Sub scrlG_Change()
-    lblG.Caption = "Green: " & 255 - ScrlG.Value
-    NPC(EditorIndex).G = ScrlG.Value
+    lblG.Caption = "Green: " & 255 - scrlG.Value
+    NPC(EditorIndex).G = scrlG.Value
 End Sub
 
 Private Sub scrlB_Change()
-    lblB.Caption = "Blue: " & 255 - ScrlB.Value
-    NPC(EditorIndex).B = ScrlB.Value
+    lblB.Caption = "Blue: " & 255 - scrlB.Value
+    NPC(EditorIndex).B = scrlB.Value
 End Sub
 Private Sub txtEXP_max_Change()
 
