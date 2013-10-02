@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.OCX"
+Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCN.OCX"
 Begin VB.Form frmMain 
    BackColor       =   &H00E0E0E0&
    BorderStyle     =   1  'Fixed Single
@@ -28,87 +28,6 @@ Begin VB.Form frmMain
    ScaleWidth      =   528
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
-   Begin VB.PictureBox picQuestLog 
-      Appearance      =   0  'Flat
-      AutoRedraw      =   -1  'True
-      AutoSize        =   -1  'True
-      BackColor       =   &H00000000&
-      BorderStyle     =   0  'None
-      ForeColor       =   &H80000008&
-      Height          =   4050
-      Left            =   0
-      ScaleHeight     =   270
-      ScaleMode       =   3  'Pixel
-      ScaleWidth      =   194
-      TabIndex        =   25
-      Top             =   0
-      Visible         =   0   'False
-      Width           =   2910
-      Begin VB.TextBox txtQuestTaskLog 
-         Appearance      =   0  'Flat
-         BackColor       =   &H00000000&
-         BeginProperty Font 
-            Name            =   "Verdana"
-            Size            =   6.75
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H000080FF&
-         Height          =   975
-         Left            =   240
-         Locked          =   -1  'True
-         MultiLine       =   -1  'True
-         ScrollBars      =   2  'Vertical
-         TabIndex        =   26
-         Top             =   1080
-         Width           =   2415
-      End
-      Begin VB.Image imgQuestButton 
-         Height          =   435
-         Index           =   1
-         Left            =   390
-         Top             =   3480
-         Width           =   315
-      End
-      Begin VB.Image imgQuestButton 
-         Height          =   435
-         Index           =   6
-         Left            =   2190
-         Top             =   3480
-         Width           =   315
-      End
-      Begin VB.Image imgQuestButton 
-         Height          =   435
-         Index           =   5
-         Left            =   1830
-         Top             =   3480
-         Width           =   315
-      End
-      Begin VB.Image imgQuestButton 
-         Height          =   435
-         Index           =   4
-         Left            =   1470
-         Top             =   3480
-         Width           =   315
-      End
-      Begin VB.Image imgQuestButton 
-         Height          =   435
-         Index           =   3
-         Left            =   1110
-         Top             =   3480
-         Width           =   315
-      End
-      Begin VB.Image imgQuestButton 
-         Height          =   435
-         Index           =   2
-         Left            =   750
-         Top             =   3480
-         Width           =   315
-      End
-   End
    Begin VB.PictureBox picQuestDialogue 
       Appearance      =   0  'Flat
       BackColor       =   &H00404040&
@@ -443,7 +362,7 @@ Begin VB.Form frmMain
       Left            =   2040
       List            =   "frmMain.frx":295E
       MousePointer    =   1  'Arrow
-      TabIndex        =   27
+      TabIndex        =   25
       Top             =   2280
       Visible         =   0   'False
       Width           =   2415
@@ -530,6 +449,10 @@ Private Sub cmdAKick_Click()
         End If
 
         SendKick Trim$(txtAName.Text)
+End Sub
+
+Private Sub picQuestLog_Click()
+
 End Sub
 
 ' Winsock event
