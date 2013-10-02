@@ -728,7 +728,7 @@ Sub LoadMaps()
                 
                 For x = 1 To MAX_MAP_NPCS
                     Get #F, , Map(i).NPC(x)
-                    MapNpc(i).NPC(x).Num = Map(i).NPC(x)
+                    Map(i).MapNpc(x).Num = Map(i).NPC(x)
                 Next
                 
                 Get #F, , Map(i).BossNpc
@@ -756,8 +756,8 @@ Sub LoadMaps()
 End Sub
 
 Sub ClearMapItem(ByVal Index As Long, ByVal mapNum As Long)
-    Call ZeroMemory(ByVal VarPtr(MapItem(mapNum, Index)), LenB(MapItem(mapNum, Index)))
-    MapItem(mapNum, Index).playerName = vbNullString
+    Call ZeroMemory(ByVal VarPtr(Map(mapNum).MapItem(Index)), LenB(Map(mapNum).MapItem(Index)))
+    Map(mapNum).MapItem(Index).playerName = vbNullString
 End Sub
 
 Sub ClearMapItems()
@@ -772,8 +772,7 @@ Sub ClearMapItems()
 End Sub
 
 Sub ClearMapNpc(ByVal Index As Long, ByVal mapNum As Long)
-    ReDim MapNpc(mapNum).NPC(1 To MAX_MAP_NPCS)
-    Call ZeroMemory(ByVal VarPtr(MapNpc(mapNum).NPC(Index)), LenB(MapNpc(mapNum).NPC(Index)))
+    Call ZeroMemory(ByVal VarPtr(Map(mapNum).MapNpc(Index)), LenB(Map(mapNum).MapNpc(Index)))
 End Sub
 
 Sub ClearMapNpcs()

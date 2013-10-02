@@ -11,8 +11,6 @@ Public Bank(1 To MAX_PLAYERS) As BankRec
 Public TempPlayer(1 To MAX_PLAYERS) As TempPlayerRec
 Public Item(1 To MAX_ITEMS) As ItemRec
 Public NPC(1 To MAX_NPCS) As NpcRec
-Public MapItem(1 To MAX_MAPS, 1 To MAX_MAP_ITEMS) As MapItemRec
-Public MapNpc(1 To MAX_MAPS) As MapDataRec
 Public Shop(1 To MAX_SHOPS) As ShopRec
 Public spell(1 To MAX_SPELLS) As SpellRec
 Public Resource(1 To MAX_RESOURCES) As ResourceRec
@@ -232,6 +230,46 @@ Private Type TileRec
     DirBlock As Byte
 End Type
 
+Private Type MapItemRec
+    Num As Long
+    Value As Long
+    x As Byte
+    y As Byte
+    ' ownership + despawn
+    playerName As String
+    playerTimer As Long
+    canDespawn As Boolean
+    despawnTimer As Long
+    Bound As Boolean
+End Type
+
+Private Type MapNpcRec
+    Num As Long
+    target As Long
+    targetType As Byte
+    Vital(1 To Vitals.Vital_Count - 1) As Long
+    x As Byte
+    y As Byte
+    dir As Byte
+    ' For server use only
+    SpawnWait As Long
+    AttackTimer As Long
+    StunDuration As Long
+    StunTimer As Long
+    ' regen
+    stopRegen As Boolean
+    stopRegenTimer As Long
+    ' dot/hot
+    DoT(1 To MAX_DOTS) As DoTRec
+    HoT(1 To MAX_DOTS) As DoTRec
+    ' spell casting
+    spellBuffer As SpellBufferRec
+    SpellCD(1 To MAX_NPC_SPELLS) As Long
+    ' Event
+    e_lastDir As Byte
+    inEventWith As Long
+End Type
+
 Private Type MapRec
     Name As String * NAME_LENGTH
     Music As String * NAME_LENGTH
@@ -267,6 +305,9 @@ Private Type MapRec
     Panorama As Byte
     DayNight As Byte
     NpcSpawnType(1 To MAX_MAP_NPCS) As Long
+    
+    MapItem(1 To MAX_MAP_ITEMS) As MapItemRec
+    MapNpc(1 To MAX_MAP_NPCS) As MapNpcRec
 End Type
 
 Private Type ItemRec
@@ -307,19 +348,6 @@ Private Type ItemRec
     ContainerChance(0 To 4) As Byte
 End Type
 
-Private Type MapItemRec
-    Num As Long
-    Value As Long
-    x As Byte
-    y As Byte
-    ' ownership + despawn
-    playerName As String
-    playerTimer As Long
-    canDespawn As Boolean
-    despawnTimer As Long
-    Bound As Boolean
-End Type
-
 Private Type NpcRec
     Name As String * NAME_LENGTH
     AttackSay As String * 100
@@ -358,33 +386,6 @@ Private Type NpcRec
     b As Byte
     SpawnAtDay As Byte
     SpawnAtNight As Byte
-End Type
-
-Private Type MapNpcRec
-    Num As Long
-    target As Long
-    targetType As Byte
-    Vital(1 To Vitals.Vital_Count - 1) As Long
-    x As Byte
-    y As Byte
-    dir As Byte
-    ' For server use only
-    SpawnWait As Long
-    AttackTimer As Long
-    StunDuration As Long
-    StunTimer As Long
-    ' regen
-    stopRegen As Boolean
-    stopRegenTimer As Long
-    ' dot/hot
-    DoT(1 To MAX_DOTS) As DoTRec
-    HoT(1 To MAX_DOTS) As DoTRec
-    ' spell casting
-    spellBuffer As SpellBufferRec
-    SpellCD(1 To MAX_NPC_SPELLS) As Long
-    ' Event
-    e_lastDir As Byte
-    inEventWith As Long
 End Type
 
 Private Type TradeItemRec
@@ -430,10 +431,6 @@ Private Type SpellRec
     Vital(1 To Vitals.Vital_Count - 1) As Long
     VitalType(1 To Vitals.Vital_Count - 1) As Byte
     BuffType As Long
-End Type
-
-Private Type MapDataRec
-    NPC() As MapNpcRec
 End Type
 
 Private Type MapResourceRec
