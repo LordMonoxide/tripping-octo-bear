@@ -380,7 +380,7 @@ End Function
 Sub DrawActionMsg(ByVal Index As Integer)
 Dim x As Long, y As Long, I As Long
 Dim LenMsg As Long
-
+Dim time As Long
     If ActionMsg(Index).Message = vbNullString Then Exit Sub
 
     ' how long we want each message to appear
@@ -398,7 +398,7 @@ Dim LenMsg As Long
             End If
 
         Case ACTIONMSG_SCROLL
-'            time = 1500
+            time = 1500
         
             If ActionMsg(Index).y > 0 Then
                 x = ActionMsg(Index).x + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).Message)) \ 2) * 8)
