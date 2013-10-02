@@ -28,140 +28,6 @@ Begin VB.Form frmMain
    ScaleWidth      =   528
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
-   Begin VB.PictureBox picQuestDialogue 
-      Appearance      =   0  'Flat
-      BackColor       =   &H00404040&
-      BorderStyle     =   0  'None
-      ForeColor       =   &H80000008&
-      Height          =   2295
-      Left            =   0
-      ScaleHeight     =   153
-      ScaleMode       =   3  'Pixel
-      ScaleWidth      =   327
-      TabIndex        =   18
-      Top             =   0
-      Visible         =   0   'False
-      Width           =   4905
-      Begin VB.Label lblQuestSay 
-         BackStyle       =   0  'Transparent
-         Caption         =   "-"
-         BeginProperty Font 
-            Name            =   "Georgia"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   400
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H00FFFFFF&
-         Height          =   1125
-         Left            =   240
-         TabIndex        =   24
-         Top             =   720
-         Width           =   4425
-      End
-      Begin VB.Label lblQuestAccept 
-         AutoSize        =   -1  'True
-         BackStyle       =   0  'Transparent
-         Caption         =   "Accept Quest"
-         BeginProperty Font 
-            Name            =   "Georgia"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H00C0FFC0&
-         Height          =   210
-         Left            =   240
-         TabIndex        =   23
-         Top             =   1920
-         Visible         =   0   'False
-         Width           =   1245
-      End
-      Begin VB.Label lblQuestClose 
-         AutoSize        =   -1  'True
-         BackStyle       =   0  'Transparent
-         Caption         =   "Close"
-         BeginProperty Font 
-            Name            =   "Georgia"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H008080FF&
-         Height          =   210
-         Left            =   4200
-         TabIndex        =   22
-         Top             =   1920
-         Width           =   495
-      End
-      Begin VB.Label lblQuestName 
-         BackStyle       =   0  'Transparent
-         Caption         =   "Quest Name"
-         BeginProperty Font 
-            Name            =   "Verdana"
-            Size            =   9.75
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H0080C0FF&
-         Height          =   240
-         Left            =   240
-         TabIndex        =   21
-         Top             =   120
-         Width           =   4335
-      End
-      Begin VB.Label lblQuestExtra 
-         AutoSize        =   -1  'True
-         BackStyle       =   0  'Transparent
-         Caption         =   "Extra"
-         BeginProperty Font 
-            Name            =   "Georgia"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H0000FFFF&
-         Height          =   210
-         Left            =   240
-         TabIndex        =   20
-         Top             =   1920
-         Visible         =   0   'False
-         Width           =   540
-      End
-      Begin VB.Label lblQuestSubtitle 
-         BackStyle       =   0  'Transparent
-         Caption         =   "Subtitle"
-         BeginProperty Font 
-            Name            =   "Verdana"
-            Size            =   8.25
-            Charset         =   0
-            Weight          =   700
-            Underline       =   0   'False
-            Italic          =   0   'False
-            Strikethrough   =   0   'False
-         EndProperty
-         ForeColor       =   &H0080C0FF&
-         Height          =   240
-         Left            =   240
-         TabIndex        =   19
-         Top             =   480
-         Width           =   4335
-      End
-   End
    Begin MSWinsockLib.Winsock Socket 
       Left            =   0
       Top             =   0
@@ -362,7 +228,7 @@ Begin VB.Form frmMain
       Left            =   2040
       List            =   "frmMain.frx":295E
       MousePointer    =   1  'Arrow
-      TabIndex        =   25
+      TabIndex        =   18
       Top             =   2280
       Visible         =   0   'False
       Width           =   2415
