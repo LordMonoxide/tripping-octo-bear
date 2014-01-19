@@ -16,19 +16,19 @@ Function FindOpenPlayerSlot() As Long
     Next
 End Function
 
-Function FindOpenMapItemSlot(ByVal mapNum As Long) As Long
+Function FindOpenMapItemSlot(ByVal MapNum As Long) As Long
     Dim i As Long
 
     FindOpenMapItemSlot = 0
 
     ' Check for subscript out of range
-    If mapNum <= 0 Or mapNum > MAX_MAPS Then
+    If MapNum <= 0 Or MapNum > MAX_MAPS Then
         Exit Function
     End If
 
     For i = 1 To MAX_MAP_ITEMS
 
-        If MapItem(mapNum, i).Num = 0 Then
+        If Map(MapNum).MapItem(i).Num = 0 Then
             FindOpenMapItemSlot = i
             Exit Function
         End If
@@ -71,32 +71,32 @@ Function FindPlayer(ByVal Name As String) As Long
     FindPlayer = 0
 End Function
 
-Sub SpawnItem(ByVal itemnum As Long, ByVal ItemVal As Long, ByVal mapNum As Long, ByVal x As Long, ByVal y As Long, Optional ByVal playerName As String = vbNullString)
+Sub SpawnItem(ByVal itemnum As Long, ByVal ItemVal As Long, ByVal MapNum As Long, ByVal X As Long, ByVal Y As Long, Optional ByVal playerName As String = vbNullString)
     Dim i As Long
 
     ' Find open map item slot
-    i = FindOpenMapItemSlot(mapNum)
-    Call SpawnItemSlot(i, itemnum, ItemVal, mapNum, x, y, playerName)
+    i = FindOpenMapItemSlot(MapNum)
+    Call SpawnItemSlot(i, itemnum, ItemVal, MapNum, X, Y, playerName)
 End Sub
 
-Sub SpawnItemSlot(ByVal MapItemSlot As Long, ByVal itemnum As Long, ByVal ItemVal As Long, ByVal mapNum As Long, ByVal x As Long, ByVal y As Long, Optional ByVal playerName As String = vbNullString, Optional ByVal canDespawn As Boolean = True, Optional ByVal isSB As Boolean = False)
+Sub SpawnItemSlot(ByVal MapItemSlot As Long, ByVal itemnum As Long, ByVal ItemVal As Long, ByVal MapNum As Long, ByVal X As Long, ByVal Y As Long, Optional ByVal playerName As String = vbNullString, Optional ByVal canDespawn As Boolean = True, Optional ByVal isSB As Boolean = False)
     Dim i As Long
 
     i = MapItemSlot
 
     If i <> 0 Then
         If itemnum >= 0 And itemnum <= MAX_ITEMS Then
-            MapItem(mapNum, i).playerName = playerName
-            MapItem(mapNum, i).playerTimer = timeGetTime + ITEM_SPAWN_TIME
-            MapItem(mapNum, i).canDespawn = canDespawn
-            MapItem(mapNum, i).despawnTimer = timeGetTime + ITEM_DESPAWN_TIME
-            MapItem(mapNum, i).Num = itemnum
-            MapItem(mapNum, i).Value = ItemVal
-            MapItem(mapNum, i).x = x
-            MapItem(mapNum, i).y = y
-            MapItem(mapNum, i).Bound = isSB
+            Map(MapNum).MapItem(i).playerName = playerName
+            Map(MapNum).MapItem(i).playerTimer = timeGetTime + ITEM_SPAWN_TIME
+            Map(MapNum).MapItem(i).canDespawn = canDespawn
+            Map(MapNum).MapItem(i).despawnTimer = timeGetTime + ITEM_DESPAWN_TIME
+            Map(MapNum).MapItem(i).Num = itemnum
+            Map(MapNum).MapItem(i).Value = ItemVal
+            Map(MapNum).MapItem(i).X = X
+            Map(MapNum).MapItem(i).Y = Y
+            Map(MapNum).MapItem(i).Bound = isSB
             ' send to map
-            SendSpawnItemToMap mapNum, i
+            SendSpawnItemToMap MapNum, i
         End If
     End If
 End Sub
@@ -109,22 +109,22 @@ Sub SpawnAllMapsItems()
     Next
 End Sub
 
-Sub SpawnMapItems(ByVal mapNum As Long)
-    Dim x As Long
-    Dim y As Long
+Sub SpawnMapItems(ByVal MapNum As Long)
+    Dim X As Long
+    Dim Y As Long
 
     ' Spawn what we have
-    For x = 0 To Map(mapNum).MaxX
-        For y = 0 To Map(mapNum).MaxY
+    For X = 0 To Map(MapNum).MaxX
+        For Y = 0 To Map(MapNum).MaxY
 
             ' Check if the tile type is an item or a saved tile incase someone drops something
-            If (Map(mapNum).Tile(x, y).Type = TILE_TYPE_ITEM) Then
+            If (Map(MapNum).Tile(X, Y).Type = TILE_TYPE_ITEM) Then
 
                 ' Check to see if its a currency and if they set the value to 0 set it to 1 automatically
-                If Item(Map(mapNum).Tile(x, y).Data1).Type = ITEM_TYPE_CURRENCY Or Item(Map(mapNum).Tile(x, y).Data1).Stackable = YES And Map(mapNum).Tile(x, y).Data2 <= 0 Then
-                    Call SpawnItem(Map(mapNum).Tile(x, y).Data1, 1, mapNum, x, y)
+                If Item(Map(MapNum).Tile(X, Y).Data1).Type = ITEM_TYPE_CURRENCY Or Item(Map(MapNum).Tile(X, Y).Data1).Stackable = YES And Map(MapNum).Tile(X, Y).Data2 <= 0 Then
+                    Call SpawnItem(Map(MapNum).Tile(X, Y).Data1, 1, MapNum, X, Y)
                 Else
-                    Call SpawnItem(Map(mapNum).Tile(x, y).Data1, Map(mapNum).Tile(x, y).Data2, mapNum, x, y)
+                    Call SpawnItem(Map(MapNum).Tile(X, Y).Data1, Map(MapNum).Tile(X, Y).Data2, MapNum, X, Y)
                 End If
             End If
 
@@ -136,37 +136,37 @@ Function Random(ByVal Low As Long, ByVal High As Long) As Long
     Random = ((High - Low + 1) * Rnd) + Low
 End Function
 
-Public Sub SpawnNpc(ByVal mapNpcNum As Long, ByVal mapNum As Long, Optional ForcedSpawn As Boolean = False)
+Public Sub SpawnNpc(ByVal MapNPCNum As Long, ByVal MapNum As Long, Optional ForcedSpawn As Boolean = False)
     Dim Buffer As clsBuffer
-    Dim npcNum As Long
+    Dim NPCNum As Long
     Dim i As Long
-    Dim x As Long
-    Dim y As Long
+    Dim X As Long
+    Dim Y As Long
     Dim Spawned As Boolean
 
-    npcNum = Map(mapNum).NPC(mapNpcNum)
-    If ForcedSpawn = False And Map(mapNum).NpcSpawnType(mapNpcNum) = 1 Then Exit Sub
+    NPCNum = Map(MapNum).NPC(MapNPCNum)
+    If ForcedSpawn = False And Map(MapNum).NpcSpawnType(MapNPCNum) = 1 Then Exit Sub
     
-    With MapNpc(mapNum).NPC(mapNpcNum)
-        .Num = npcNum
+    With Map(MapNum).MapNpc(MapNPCNum)
+        .Num = NPCNum
         .target = 0
         .targetType = 0 ' clear
-        .Vital(Vitals.HP) = GetNpcMaxVital(npcNum, Vitals.HP)
-        .Vital(Vitals.MP) = GetNpcMaxVital(npcNum, Vitals.MP)
-        .dir = Int(Rnd * 4)
+        .Vital(Vitals.HP) = GetNpcMaxVital(NPCNum, Vitals.HP)
+        .Vital(Vitals.MP) = GetNpcMaxVital(NPCNum, Vitals.MP)
+        .Dir = Int(Rnd * 4)
         .spellBuffer.spell = 0
         .spellBuffer.Timer = 0
         .spellBuffer.target = 0
         .spellBuffer.tType = 0
     
         'Check if theres a spawn tile for the specific npc
-        For x = 0 To Map(mapNum).MaxX
-            For y = 0 To Map(mapNum).MaxY
-                If Map(mapNum).Tile(x, y).Type = TILE_TYPE_NPCSPAWN Then
-                    If Map(mapNum).Tile(x, y).Data1 = mapNpcNum Then
-                        .x = x
-                        .y = y
-                        .dir = Map(mapNum).Tile(x, y).Data2
+        For X = 0 To Map(MapNum).MaxX
+            For Y = 0 To Map(MapNum).MaxY
+                If Map(MapNum).Tile(X, Y).Type = TILE_TYPE_NPCSPAWN Then
+                    If Map(MapNum).Tile(X, Y).Data1 = MapNPCNum Then
+                        .X = X
+                        .Y = Y
+                        .Dir = Map(MapNum).Tile(X, Y).Data2
                         Spawned = True
                         Exit For
                     End If
@@ -178,16 +178,16 @@ Public Sub SpawnNpc(ByVal mapNpcNum As Long, ByVal mapNum As Long, Optional Forc
     
             ' Well try 100 times to randomly place the sprite
             For i = 1 To 100
-                x = Random(0, Map(mapNum).MaxX)
-                y = Random(0, Map(mapNum).MaxY)
+                X = Random(0, Map(MapNum).MaxX)
+                Y = Random(0, Map(MapNum).MaxY)
     
-                If x > Map(mapNum).MaxX Then x = Map(mapNum).MaxX
-                If y > Map(mapNum).MaxY Then y = Map(mapNum).MaxY
+                If X > Map(MapNum).MaxX Then X = Map(MapNum).MaxX
+                If Y > Map(MapNum).MaxY Then Y = Map(MapNum).MaxY
     
                 ' Check if the tile is walkable
-                If NpcTileIsOpen(mapNum, x, y) Then
-                    .x = x
-                    .y = y
+                If NpcTileIsOpen(MapNum, X, Y) Then
+                    .X = X
+                    .Y = Y
                     Spawned = True
                     Exit For
                 End If
@@ -199,12 +199,12 @@ Public Sub SpawnNpc(ByVal mapNpcNum As Long, ByVal mapNum As Long, Optional Forc
         ' Didn't spawn, so now we'll just try to find a free tile
         If Not Spawned Then
 
-            For x = 0 To Map(mapNum).MaxX
-                For y = 0 To Map(mapNum).MaxY
+            For X = 0 To Map(MapNum).MaxX
+                For Y = 0 To Map(MapNum).MaxY
 
-                    If NpcTileIsOpen(mapNum, x, y) Then
-                        .x = x
-                        .y = y
+                    If NpcTileIsOpen(MapNum, X, Y) Then
+                        .X = X
+                        .Y = Y
                         Spawned = True
                     End If
 
@@ -217,31 +217,31 @@ Public Sub SpawnNpc(ByVal mapNpcNum As Long, ByVal mapNum As Long, Optional Forc
         If Spawned Then
             Set Buffer = New clsBuffer
             Buffer.WriteLong SSpawnNpc
-            Buffer.WriteLong mapNpcNum
+            Buffer.WriteLong MapNPCNum
             Buffer.WriteLong .Num
-            Buffer.WriteLong .x
-            Buffer.WriteLong .y
-            Buffer.WriteLong .dir
-            SendDataToMap mapNum, Buffer.ToArray()
+            Buffer.WriteLong .X
+            Buffer.WriteLong .Y
+            Buffer.WriteLong .Dir
+            SendDataToMap MapNum, Buffer.ToArray()
             Set Buffer = Nothing
         End If
         
-        SendMapNpcVitals mapNum, mapNpcNum
+        SendMapNpcVitals MapNum, MapNPCNum
     End With
 End Sub
 
-Public Function NpcTileIsOpen(ByVal mapNum As Long, ByVal x As Long, ByVal y As Long) As Boolean
+Public Function NpcTileIsOpen(ByVal MapNum As Long, ByVal X As Long, ByVal Y As Long) As Boolean
     Dim LoopI As Long
 
     NpcTileIsOpen = True
 
-    If PlayersOnMap(mapNum) Then
+    If PlayersOnMap(MapNum) Then
 
         For LoopI = 1 To Player_HighIndex
 
-            If GetPlayerMap(LoopI) = mapNum Then
-                If GetPlayerX(LoopI) = x Then
-                    If GetPlayerY(LoopI) = y Then
+            If GetPlayerMap(LoopI) = MapNum Then
+                If GetPlayerX(LoopI) = X Then
+                    If GetPlayerY(LoopI) = Y Then
                         NpcTileIsOpen = False
                         Exit Function
                     End If
@@ -254,9 +254,9 @@ Public Function NpcTileIsOpen(ByVal mapNum As Long, ByVal x As Long, ByVal y As 
 
     For LoopI = 1 To MAX_MAP_NPCS
 
-        If MapNpc(mapNum).NPC(LoopI).Num > 0 Then
-            If MapNpc(mapNum).NPC(LoopI).x = x Then
-                If MapNpc(mapNum).NPC(LoopI).y = y Then
+        If Map(MapNum).MapNpc(LoopI).Num > 0 Then
+            If Map(MapNum).MapNpc(LoopI).X = X Then
+                If Map(MapNum).MapNpc(LoopI).Y = Y Then
                     NpcTileIsOpen = False
                     Exit Function
                 End If
@@ -265,24 +265,24 @@ Public Function NpcTileIsOpen(ByVal mapNum As Long, ByVal x As Long, ByVal y As 
 
     Next
 
-    If Map(mapNum).Tile(x, y).Type <> TILE_TYPE_WALKABLE Then
-        If Map(mapNum).Tile(x, y).Type <> TILE_TYPE_NPCSPAWN Then
-            If Map(mapNum).Tile(x, y).Type <> TILE_TYPE_ITEM Then
+    If Map(MapNum).Tile(X, Y).Type <> TILE_TYPE_WALKABLE Then
+        If Map(MapNum).Tile(X, Y).Type <> TILE_TYPE_NPCSPAWN Then
+            If Map(MapNum).Tile(X, Y).Type <> TILE_TYPE_ITEM Then
                 NpcTileIsOpen = False
             End If
         End If
     End If
 End Function
 
-Sub SpawnMapNpcs(ByVal mapNum As Long)
+Sub SpawnMapNpcs(ByVal MapNum As Long)
     Dim i As Long
 
     For i = 1 To MAX_MAP_NPCS
-        If Map(mapNum).NPC(i) > 0 And Map(mapNum).NPC(i) <= MAX_NPCS Then
-            If DayTime = True And NPC(Map(mapNum).NPC(i)).SpawnAtDay = 0 Then
-                Call SpawnNpc(i, mapNum)
-            ElseIf DayTime = False And NPC(Map(mapNum).NPC(i)).SpawnAtNight = 0 Then
-                Call SpawnNpc(i, mapNum)
+        If Map(MapNum).NPC(i) > 0 And Map(MapNum).NPC(i) <= MAX_NPCS Then
+            If DayTime = True And NPC(Map(MapNum).NPC(i)).SpawnAtDay = 0 Then
+                Call SpawnNpc(i, MapNum)
+            ElseIf DayTime = False And NPC(Map(MapNum).NPC(i)).SpawnAtNight = 0 Then
+                Call SpawnNpc(i, MapNum)
             End If
         End If
     Next
@@ -296,21 +296,21 @@ Sub SpawnAllMapNpcs()
     Next
 End Sub
 
-Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As Byte) As Boolean
+Function CanNpcMove(ByVal MapNum As Long, ByVal MapNPCNum As Long, ByVal Dir As Byte) As Boolean
     Dim i As Long
     Dim n As Long
-    Dim x As Long
-    Dim y As Long
+    Dim X As Long
+    Dim Y As Long
 
-    x = MapNpc(mapNum).NPC(mapNpcNum).x
-    y = MapNpc(mapNum).NPC(mapNpcNum).y
+    X = Map(MapNum).MapNpc(MapNPCNum).X
+    Y = Map(MapNum).MapNpc(MapNPCNum).Y
     CanNpcMove = True
 
-    Select Case dir
+    Select Case Dir
         Case DIR_UP_LEFT
             ' Check to make sure not outside of boundries
-            If y > 0 And x > 0 Then
-                n = Map(mapNum).Tile(x - 1, y - 1).Type
+            If Y > 0 And X > 0 Then
+                n = Map(MapNum).Tile(X - 1, Y - 1).Type
 
                 ' Check to make sure that the tile is walkable
                 If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
@@ -321,11 +321,11 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
                 ' Check to make sure that there is not a player in the way
                 For i = 1 To Player_HighIndex
                     If IsPlaying(i) Then
-                        If (GetPlayerMap(i) = mapNum) And (GetPlayerX(i) = MapNpc(mapNum).NPC(mapNpcNum).x - 1) And (GetPlayerY(i) = MapNpc(mapNum).NPC(mapNpcNum).y - 1) Then
+                        If (GetPlayerMap(i) = MapNum) And (GetPlayerX(i) = Map(MapNum).MapNpc(MapNPCNum).X - 1) And (GetPlayerY(i) = Map(MapNum).MapNpc(MapNPCNum).Y - 1) Then
                             CanNpcMove = False
                             Exit Function
                         End If
-                        If (GetPlayerMap(i) = mapNum) And (Player(i).Pet.x = MapNpc(mapNum).NPC(mapNpcNum).x - 1) And (Player(i).Pet.y = MapNpc(mapNum).NPC(mapNpcNum).y - 1) Then
+                        If (GetPlayerMap(i) = MapNum) And (Player(i).Pet.X = Map(MapNum).MapNpc(MapNPCNum).X - 1) And (Player(i).Pet.Y = Map(MapNum).MapNpc(MapNPCNum).Y - 1) Then
                             CanNpcMove = False
                             Exit Function
                         End If
@@ -334,14 +334,14 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
 
                 ' Check to make sure that there is not another npc in the way
                 For i = 1 To MAX_MAP_NPCS
-                    If (i <> mapNpcNum) And (MapNpc(mapNum).NPC(i).Num > 0) And (MapNpc(mapNum).NPC(i).x = MapNpc(mapNum).NPC(mapNpcNum).x - 1) And (MapNpc(mapNum).NPC(i).y = MapNpc(mapNum).NPC(mapNpcNum).y - 1) Then
+                    If (i <> MapNPCNum) And (Map(MapNum).MapNpc(i).Num > 0) And (Map(MapNum).MapNpc(i).X = Map(MapNum).MapNpc(MapNPCNum).X - 1) And (Map(MapNum).MapNpc(i).Y = Map(MapNum).MapNpc(MapNPCNum).Y - 1) Then
                         CanNpcMove = False
                         Exit Function
                     End If
                 Next
                         
                 ' Directional blocking
-                If isDirBlocked(Map(mapNum).Tile(MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y).DirBlock, DIR_UP + 1) And isDirBlocked(Map(mapNum).Tile(MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y).DirBlock, DIR_LEFT + 1) Then
+                If isDirBlocked(Map(MapNum).Tile(Map(MapNum).MapNpc(MapNPCNum).X, Map(MapNum).MapNpc(MapNPCNum).Y).DirBlock, DIR_UP + 1) And isDirBlocked(Map(MapNum).Tile(Map(MapNum).MapNpc(MapNPCNum).X, Map(MapNum).MapNpc(MapNPCNum).Y).DirBlock, DIR_LEFT + 1) Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -351,8 +351,8 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
                
         Case DIR_UP_RIGHT
             ' Check to make sure not outside of boundries
-            If y > 0 And x < Map(mapNum).MaxX Then
-                n = Map(mapNum).Tile(x + 1, y - 1).Type
+            If Y > 0 And X < Map(MapNum).MaxX Then
+                n = Map(MapNum).Tile(X + 1, Y - 1).Type
 
                 ' Check to make sure that the tile is walkable
                 If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
@@ -363,11 +363,11 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
                 ' Check to make sure that there is not a player in the way
                 For i = 1 To Player_HighIndex
                     If IsPlaying(i) Then
-                        If (GetPlayerMap(i) = mapNum) And (GetPlayerX(i) = MapNpc(mapNum).NPC(mapNpcNum).x + 1) And (GetPlayerY(i) = MapNpc(mapNum).NPC(mapNpcNum).y - 1) Then
+                        If (GetPlayerMap(i) = MapNum) And (GetPlayerX(i) = Map(MapNum).MapNpc(MapNPCNum).X + 1) And (GetPlayerY(i) = Map(MapNum).MapNpc(MapNPCNum).Y - 1) Then
                             CanNpcMove = False
                             Exit Function
                         End If
-                        If (GetPlayerMap(i) = mapNum) And (Player(i).Pet.x = MapNpc(mapNum).NPC(mapNpcNum).x + 1) And (Player(i).Pet.y = MapNpc(mapNum).NPC(mapNpcNum).y - 1) Then
+                        If (GetPlayerMap(i) = MapNum) And (Player(i).Pet.X = Map(MapNum).MapNpc(MapNPCNum).X + 1) And (Player(i).Pet.Y = Map(MapNum).MapNpc(MapNPCNum).Y - 1) Then
                             CanNpcMove = False
                             Exit Function
                         End If
@@ -376,14 +376,14 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
 
                 ' Check to make sure that there is not another npc in the way
                 For i = 1 To MAX_MAP_NPCS
-                    If (i <> mapNpcNum) And (MapNpc(mapNum).NPC(i).Num > 0) And (MapNpc(mapNum).NPC(i).x = MapNpc(mapNum).NPC(mapNpcNum).x + 1) And (MapNpc(mapNum).NPC(i).y = MapNpc(mapNum).NPC(mapNpcNum).y - 1) Then
+                    If (i <> MapNPCNum) And (Map(MapNum).MapNpc(i).Num > 0) And (Map(MapNum).MapNpc(i).X = Map(MapNum).MapNpc(MapNPCNum).X + 1) And (Map(MapNum).MapNpc(i).Y = Map(MapNum).MapNpc(MapNPCNum).Y - 1) Then
                         CanNpcMove = False
                         Exit Function
                     End If
                 Next
                         
                 ' Directional blocking
-                If isDirBlocked(Map(mapNum).Tile(MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y).DirBlock, DIR_UP + 1) And isDirBlocked(Map(mapNum).Tile(MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y).DirBlock, DIR_RIGHT + 1) Then
+                If isDirBlocked(Map(MapNum).Tile(Map(MapNum).MapNpc(MapNPCNum).X, Map(MapNum).MapNpc(MapNPCNum).Y).DirBlock, DIR_UP + 1) And isDirBlocked(Map(MapNum).Tile(Map(MapNum).MapNpc(MapNPCNum).X, Map(MapNum).MapNpc(MapNPCNum).Y).DirBlock, DIR_RIGHT + 1) Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -393,8 +393,8 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
                 
         Case DIR_DOWN_LEFT
             ' Check to make sure not outside of boundries
-            If y < Map(mapNum).MaxY And x > 0 Then
-                n = Map(mapNum).Tile(x - 1, y + 1).Type
+            If Y < Map(MapNum).MaxY And X > 0 Then
+                n = Map(MapNum).Tile(X - 1, Y + 1).Type
 
                 ' Check to make sure that the tile is walkable
                 If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
@@ -405,11 +405,11 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
                 ' Check to make sure that there is not a player in the way
                 For i = 1 To Player_HighIndex
                     If IsPlaying(i) Then
-                        If (GetPlayerMap(i) = mapNum) And (GetPlayerX(i) = MapNpc(mapNum).NPC(mapNpcNum).x - 1) And (GetPlayerY(i) = MapNpc(mapNum).NPC(mapNpcNum).y + 1) Then
+                        If (GetPlayerMap(i) = MapNum) And (GetPlayerX(i) = Map(MapNum).MapNpc(MapNPCNum).X - 1) And (GetPlayerY(i) = Map(MapNum).MapNpc(MapNPCNum).Y + 1) Then
                             CanNpcMove = False
                             Exit Function
                         End If
-                        If (GetPlayerMap(i) = mapNum) And (Player(i).Pet.x = MapNpc(mapNum).NPC(mapNpcNum).x - 1) And (Player(i).Pet.y = MapNpc(mapNum).NPC(mapNpcNum).y + 1) Then
+                        If (GetPlayerMap(i) = MapNum) And (Player(i).Pet.X = Map(MapNum).MapNpc(MapNPCNum).X - 1) And (Player(i).Pet.Y = Map(MapNum).MapNpc(MapNPCNum).Y + 1) Then
                             CanNpcMove = False
                             Exit Function
                         End If
@@ -418,14 +418,14 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
 
                 ' Check to make sure that there is not another npc in the way
                 For i = 1 To MAX_MAP_NPCS
-                    If (i <> mapNpcNum) And (MapNpc(mapNum).NPC(i).Num > 0) And (MapNpc(mapNum).NPC(i).x = MapNpc(mapNum).NPC(mapNpcNum).x - 1) And (MapNpc(mapNum).NPC(i).y = MapNpc(mapNum).NPC(mapNpcNum).y + 1) Then
+                    If (i <> MapNPCNum) And (Map(MapNum).MapNpc(i).Num > 0) And (Map(MapNum).MapNpc(i).X = Map(MapNum).MapNpc(MapNPCNum).X - 1) And (Map(MapNum).MapNpc(i).Y = Map(MapNum).MapNpc(MapNPCNum).Y + 1) Then
                         CanNpcMove = False
                         Exit Function
                     End If
                 Next
                         
                 ' Directional blocking
-                If isDirBlocked(Map(mapNum).Tile(MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y).DirBlock, DIR_DOWN + 1) And isDirBlocked(Map(mapNum).Tile(MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y).DirBlock, DIR_LEFT + 1) Then
+                If isDirBlocked(Map(MapNum).Tile(Map(MapNum).MapNpc(MapNPCNum).X, Map(MapNum).MapNpc(MapNPCNum).Y).DirBlock, DIR_DOWN + 1) And isDirBlocked(Map(MapNum).Tile(Map(MapNum).MapNpc(MapNPCNum).X, Map(MapNum).MapNpc(MapNPCNum).Y).DirBlock, DIR_LEFT + 1) Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -435,8 +435,8 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
                 
         Case DIR_DOWN_RIGHT
             ' Check to make sure not outside of boundries
-            If y < Map(mapNum).MaxY And x < Map(mapNum).MaxX Then
-                n = Map(mapNum).Tile(x + 1, y + 1).Type
+            If Y < Map(MapNum).MaxY And X < Map(MapNum).MaxX Then
+                n = Map(MapNum).Tile(X + 1, Y + 1).Type
 
                 ' Check to make sure that the tile is walkable
                 If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
@@ -447,11 +447,11 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
                 ' Check to make sure that there is not a player in the way
                 For i = 1 To Player_HighIndex
                     If IsPlaying(i) Then
-                        If (GetPlayerMap(i) = mapNum) And (GetPlayerX(i) = MapNpc(mapNum).NPC(mapNpcNum).x + 1) And (GetPlayerY(i) = MapNpc(mapNum).NPC(mapNpcNum).y + 1) Then
+                        If (GetPlayerMap(i) = MapNum) And (GetPlayerX(i) = Map(MapNum).MapNpc(MapNPCNum).X + 1) And (GetPlayerY(i) = Map(MapNum).MapNpc(MapNPCNum).Y + 1) Then
                             CanNpcMove = False
                             Exit Function
                         End If
-                        If (GetPlayerMap(i) = mapNum) And (Player(i).Pet.x = MapNpc(mapNum).NPC(mapNpcNum).x + 1) And (Player(i).Pet.y = MapNpc(mapNum).NPC(mapNpcNum).y + 1) Then
+                        If (GetPlayerMap(i) = MapNum) And (Player(i).Pet.X = Map(MapNum).MapNpc(MapNPCNum).X + 1) And (Player(i).Pet.Y = Map(MapNum).MapNpc(MapNPCNum).Y + 1) Then
                             CanNpcMove = False
                             Exit Function
                         End If
@@ -460,14 +460,14 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
 
                 ' Check to make sure that there is not another npc in the way
                 For i = 1 To MAX_MAP_NPCS
-                    If (i <> mapNpcNum) And (MapNpc(mapNum).NPC(i).Num > 0) And (MapNpc(mapNum).NPC(i).x = MapNpc(mapNum).NPC(mapNpcNum).x + 1) And (MapNpc(mapNum).NPC(i).y = MapNpc(mapNum).NPC(mapNpcNum).y + 1) Then
+                    If (i <> MapNPCNum) And (Map(MapNum).MapNpc(i).Num > 0) And (Map(MapNum).MapNpc(i).X = Map(MapNum).MapNpc(MapNPCNum).X + 1) And (Map(MapNum).MapNpc(i).Y = Map(MapNum).MapNpc(MapNPCNum).Y + 1) Then
                         CanNpcMove = False
                         Exit Function
                     End If
                 Next
                         
                 ' Directional blocking
-                If isDirBlocked(Map(mapNum).Tile(MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y).DirBlock, DIR_DOWN + 1) And isDirBlocked(Map(mapNum).Tile(MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y).DirBlock, DIR_RIGHT + 1) Then
+                If isDirBlocked(Map(MapNum).Tile(Map(MapNum).MapNpc(MapNPCNum).X, Map(MapNum).MapNpc(MapNPCNum).Y).DirBlock, DIR_DOWN + 1) And isDirBlocked(Map(MapNum).Tile(Map(MapNum).MapNpc(MapNPCNum).X, Map(MapNum).MapNpc(MapNPCNum).Y).DirBlock, DIR_RIGHT + 1) Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -477,8 +477,8 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
         Case DIR_UP
 
             ' Check to make sure not outside of boundries
-            If y > 0 Then
-                n = Map(mapNum).Tile(x, y - 1).Type
+            If Y > 0 Then
+                n = Map(MapNum).Tile(X, Y - 1).Type
 
                 ' Check to make sure that the tile is walkable
                 If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
@@ -489,11 +489,11 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
                 ' Check to make sure that there is not a player in the way
                 For i = 1 To Player_HighIndex
                     If IsPlaying(i) Then
-                        If (GetPlayerMap(i) = mapNum) And (GetPlayerX(i) = MapNpc(mapNum).NPC(mapNpcNum).x) And (GetPlayerY(i) = MapNpc(mapNum).NPC(mapNpcNum).y - 1) Then
+                        If (GetPlayerMap(i) = MapNum) And (GetPlayerX(i) = Map(MapNum).MapNpc(MapNPCNum).X) And (GetPlayerY(i) = Map(MapNum).MapNpc(MapNPCNum).Y - 1) Then
                             CanNpcMove = False
                             Exit Function
                         End If
-                        If (GetPlayerMap(i) = mapNum) And (Player(i).Pet.x = MapNpc(mapNum).NPC(mapNpcNum).x) And (Player(i).Pet.y = MapNpc(mapNum).NPC(mapNpcNum).y - 1) Then
+                        If (GetPlayerMap(i) = MapNum) And (Player(i).Pet.X = Map(MapNum).MapNpc(MapNPCNum).X) And (Player(i).Pet.Y = Map(MapNum).MapNpc(MapNPCNum).Y - 1) Then
                             CanNpcMove = False
                             Exit Function
                         End If
@@ -502,14 +502,14 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
 
                 ' Check to make sure that there is not another npc in the way
                 For i = 1 To MAX_MAP_NPCS
-                    If (i <> mapNpcNum) And (MapNpc(mapNum).NPC(i).Num > 0) And (MapNpc(mapNum).NPC(i).x = MapNpc(mapNum).NPC(mapNpcNum).x) And (MapNpc(mapNum).NPC(i).y = MapNpc(mapNum).NPC(mapNpcNum).y - 1) Then
+                    If (i <> MapNPCNum) And (Map(MapNum).MapNpc(i).Num > 0) And (Map(MapNum).MapNpc(i).X = Map(MapNum).MapNpc(MapNPCNum).X) And (Map(MapNum).MapNpc(i).Y = Map(MapNum).MapNpc(MapNPCNum).Y - 1) Then
                         CanNpcMove = False
                         Exit Function
                     End If
                 Next
                 
                 ' Directional blocking
-                If isDirBlocked(Map(mapNum).Tile(MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y).DirBlock, DIR_UP + 1) Then
+                If isDirBlocked(Map(MapNum).Tile(Map(MapNum).MapNpc(MapNPCNum).X, Map(MapNum).MapNpc(MapNPCNum).Y).DirBlock, DIR_UP + 1) Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -520,8 +520,8 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
         Case DIR_DOWN
 
             ' Check to make sure not outside of boundries
-            If y < Map(mapNum).MaxY Then
-                n = Map(mapNum).Tile(x, y + 1).Type
+            If Y < Map(MapNum).MaxY Then
+                n = Map(MapNum).Tile(X, Y + 1).Type
 
                 ' Check to make sure that the tile is walkable
                 If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
@@ -532,11 +532,11 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
                 ' Check to make sure that there is not a player in the way
                 For i = 1 To Player_HighIndex
                     If IsPlaying(i) Then
-                        If (GetPlayerMap(i) = mapNum) And (GetPlayerX(i) = MapNpc(mapNum).NPC(mapNpcNum).x) And (GetPlayerY(i) = MapNpc(mapNum).NPC(mapNpcNum).y + 1) Then
+                        If (GetPlayerMap(i) = MapNum) And (GetPlayerX(i) = Map(MapNum).MapNpc(MapNPCNum).X) And (GetPlayerY(i) = Map(MapNum).MapNpc(MapNPCNum).Y + 1) Then
                             CanNpcMove = False
                             Exit Function
                         End If
-                        If (GetPlayerMap(i) = mapNum) And (Player(i).Pet.x = MapNpc(mapNum).NPC(mapNpcNum).x) And (Player(i).Pet.y = MapNpc(mapNum).NPC(mapNpcNum).y + 1) Then
+                        If (GetPlayerMap(i) = MapNum) And (Player(i).Pet.X = Map(MapNum).MapNpc(MapNPCNum).X) And (Player(i).Pet.Y = Map(MapNum).MapNpc(MapNPCNum).Y + 1) Then
                             CanNpcMove = False
                             Exit Function
                         End If
@@ -545,14 +545,14 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
 
                 ' Check to make sure that there is not another npc in the way
                 For i = 1 To MAX_MAP_NPCS
-                    If (i <> mapNpcNum) And (MapNpc(mapNum).NPC(i).Num > 0) And (MapNpc(mapNum).NPC(i).x = MapNpc(mapNum).NPC(mapNpcNum).x) And (MapNpc(mapNum).NPC(i).y = MapNpc(mapNum).NPC(mapNpcNum).y + 1) Then
+                    If (i <> MapNPCNum) And (Map(MapNum).MapNpc(i).Num > 0) And (Map(MapNum).MapNpc(i).X = Map(MapNum).MapNpc(MapNPCNum).X) And (Map(MapNum).MapNpc(i).Y = Map(MapNum).MapNpc(MapNPCNum).Y + 1) Then
                         CanNpcMove = False
                         Exit Function
                     End If
                 Next
                 
                 ' Directional blocking
-                If isDirBlocked(Map(mapNum).Tile(MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y).DirBlock, DIR_DOWN + 1) Then
+                If isDirBlocked(Map(MapNum).Tile(Map(MapNum).MapNpc(MapNPCNum).X, Map(MapNum).MapNpc(MapNPCNum).Y).DirBlock, DIR_DOWN + 1) Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -563,8 +563,8 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
         Case DIR_LEFT
 
             ' Check to make sure not outside of boundries
-            If x > 0 Then
-                n = Map(mapNum).Tile(x - 1, y).Type
+            If X > 0 Then
+                n = Map(MapNum).Tile(X - 1, Y).Type
 
                 ' Check to make sure that the tile is walkable
                 If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
@@ -575,11 +575,11 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
                 ' Check to make sure that there is not a player in the way
                 For i = 1 To Player_HighIndex
                     If IsPlaying(i) Then
-                        If (GetPlayerMap(i) = mapNum) And (GetPlayerX(i) = MapNpc(mapNum).NPC(mapNpcNum).x - 1) And (GetPlayerY(i) = MapNpc(mapNum).NPC(mapNpcNum).y) Then
+                        If (GetPlayerMap(i) = MapNum) And (GetPlayerX(i) = Map(MapNum).MapNpc(MapNPCNum).X - 1) And (GetPlayerY(i) = Map(MapNum).MapNpc(MapNPCNum).Y) Then
                             CanNpcMove = False
                             Exit Function
                         End If
-                        If (GetPlayerMap(i) = mapNum) And (Player(i).Pet.x = MapNpc(mapNum).NPC(mapNpcNum).x - 1) And (Player(i).Pet.y = MapNpc(mapNum).NPC(mapNpcNum).y) Then
+                        If (GetPlayerMap(i) = MapNum) And (Player(i).Pet.X = Map(MapNum).MapNpc(MapNPCNum).X - 1) And (Player(i).Pet.Y = Map(MapNum).MapNpc(MapNPCNum).Y) Then
                             CanNpcMove = False
                             Exit Function
                         End If
@@ -588,14 +588,14 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
 
                 ' Check to make sure that there is not another npc in the way
                 For i = 1 To MAX_MAP_NPCS
-                    If (i <> mapNpcNum) And (MapNpc(mapNum).NPC(i).Num > 0) And (MapNpc(mapNum).NPC(i).x = MapNpc(mapNum).NPC(mapNpcNum).x - 1) And (MapNpc(mapNum).NPC(i).y = MapNpc(mapNum).NPC(mapNpcNum).y) Then
+                    If (i <> MapNPCNum) And (Map(MapNum).MapNpc(i).Num > 0) And (Map(MapNum).MapNpc(i).X = Map(MapNum).MapNpc(MapNPCNum).X - 1) And (Map(MapNum).MapNpc(i).Y = Map(MapNum).MapNpc(MapNPCNum).Y) Then
                         CanNpcMove = False
                         Exit Function
                     End If
                 Next
                 
                 ' Directional blocking
-                If isDirBlocked(Map(mapNum).Tile(MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y).DirBlock, DIR_LEFT + 1) Then
+                If isDirBlocked(Map(MapNum).Tile(Map(MapNum).MapNpc(MapNPCNum).X, Map(MapNum).MapNpc(MapNPCNum).Y).DirBlock, DIR_LEFT + 1) Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -606,8 +606,8 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
         Case DIR_RIGHT
 
             ' Check to make sure not outside of boundries
-            If x < Map(mapNum).MaxX Then
-                n = Map(mapNum).Tile(x + 1, y).Type
+            If X < Map(MapNum).MaxX Then
+                n = Map(MapNum).Tile(X + 1, Y).Type
 
                 ' Check to make sure that the tile is walkable
                 If n <> TILE_TYPE_WALKABLE And n <> TILE_TYPE_ITEM And n <> TILE_TYPE_NPCSPAWN Then
@@ -618,11 +618,11 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
                 ' Check to make sure that there is not a player in the way
                 For i = 1 To Player_HighIndex
                     If IsPlaying(i) Then
-                        If (GetPlayerMap(i) = mapNum) And (GetPlayerX(i) = MapNpc(mapNum).NPC(mapNpcNum).x + 1) And (GetPlayerY(i) = MapNpc(mapNum).NPC(mapNpcNum).y) Then
+                        If (GetPlayerMap(i) = MapNum) And (GetPlayerX(i) = Map(MapNum).MapNpc(MapNPCNum).X + 1) And (GetPlayerY(i) = Map(MapNum).MapNpc(MapNPCNum).Y) Then
                             CanNpcMove = False
                             Exit Function
                         End If
-                        If (GetPlayerMap(i) = mapNum) And (Player(i).Pet.x = MapNpc(mapNum).NPC(mapNpcNum).x + 1) And (Player(i).Pet.y = MapNpc(mapNum).NPC(mapNpcNum).y) Then
+                        If (GetPlayerMap(i) = MapNum) And (Player(i).Pet.X = Map(MapNum).MapNpc(MapNPCNum).X + 1) And (Player(i).Pet.Y = Map(MapNum).MapNpc(MapNPCNum).Y) Then
                             CanNpcMove = False
                             Exit Function
                         End If
@@ -631,14 +631,14 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
 
                 ' Check to make sure that there is not another npc in the way
                 For i = 1 To MAX_MAP_NPCS
-                    If (i <> mapNpcNum) And (MapNpc(mapNum).NPC(i).Num > 0) And (MapNpc(mapNum).NPC(i).x = MapNpc(mapNum).NPC(mapNpcNum).x + 1) And (MapNpc(mapNum).NPC(i).y = MapNpc(mapNum).NPC(mapNpcNum).y) Then
+                    If (i <> MapNPCNum) And (Map(MapNum).MapNpc(i).Num > 0) And (Map(MapNum).MapNpc(i).X = Map(MapNum).MapNpc(MapNPCNum).X + 1) And (Map(MapNum).MapNpc(i).Y = Map(MapNum).MapNpc(MapNPCNum).Y) Then
                         CanNpcMove = False
                         Exit Function
                     End If
                 Next
                 
                 ' Directional blocking
-                If isDirBlocked(Map(mapNum).Tile(MapNpc(mapNum).NPC(mapNpcNum).x, MapNpc(mapNum).NPC(mapNpcNum).y).DirBlock, DIR_RIGHT + 1) Then
+                If isDirBlocked(Map(MapNum).Tile(Map(MapNum).MapNpc(MapNPCNum).X, Map(MapNum).MapNpc(MapNPCNum).Y).DirBlock, DIR_RIGHT + 1) Then
                     CanNpcMove = False
                     Exit Function
                 End If
@@ -649,120 +649,120 @@ Function CanNpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As 
     End Select
 End Function
 
-Sub NpcMove(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As Long, ByVal movement As Long)
+Sub NpcMove(ByVal MapNum As Long, ByVal MapNPCNum As Long, ByVal Dir As Long, ByVal Movement As Long)
     Dim Buffer As clsBuffer
 
-    MapNpc(mapNum).NPC(mapNpcNum).dir = dir
+    Map(MapNum).MapNpc(MapNPCNum).Dir = Dir
 
-    Select Case dir
+    Select Case Dir
         Case DIR_UP_LEFT
-            MapNpc(mapNum).NPC(mapNpcNum).y = MapNpc(mapNum).NPC(mapNpcNum).y - 1
-            MapNpc(mapNum).NPC(mapNpcNum).x = MapNpc(mapNum).NPC(mapNpcNum).x - 1
+            Map(MapNum).MapNpc(MapNPCNum).Y = Map(MapNum).MapNpc(MapNPCNum).Y - 1
+            Map(MapNum).MapNpc(MapNPCNum).X = Map(MapNum).MapNpc(MapNPCNum).X - 1
             Set Buffer = New clsBuffer
             Buffer.WriteLong SNpcMove
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).dir
-            Buffer.WriteLong movement
-            SendDataToMap mapNum, Buffer.ToArray()
+            Buffer.WriteLong MapNPCNum
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).X
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Y
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Dir
+            Buffer.WriteLong Movement
+            SendDataToMap MapNum, Buffer.ToArray()
             Set Buffer = Nothing
         Case DIR_UP_RIGHT
-            MapNpc(mapNum).NPC(mapNpcNum).y = MapNpc(mapNum).NPC(mapNpcNum).y - 1
-            MapNpc(mapNum).NPC(mapNpcNum).x = MapNpc(mapNum).NPC(mapNpcNum).x + 1
+            Map(MapNum).MapNpc(MapNPCNum).Y = Map(MapNum).MapNpc(MapNPCNum).Y - 1
+            Map(MapNum).MapNpc(MapNPCNum).X = Map(MapNum).MapNpc(MapNPCNum).X + 1
             Set Buffer = New clsBuffer
             Buffer.WriteLong SNpcMove
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).dir
-            Buffer.WriteLong movement
-            SendDataToMap mapNum, Buffer.ToArray()
+            Buffer.WriteLong MapNPCNum
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).X
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Y
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Dir
+            Buffer.WriteLong Movement
+            SendDataToMap MapNum, Buffer.ToArray()
             Set Buffer = Nothing
         Case DIR_DOWN_LEFT
-            MapNpc(mapNum).NPC(mapNpcNum).y = MapNpc(mapNum).NPC(mapNpcNum).y + 1
-            MapNpc(mapNum).NPC(mapNpcNum).x = MapNpc(mapNum).NPC(mapNpcNum).x - 1
+            Map(MapNum).MapNpc(MapNPCNum).Y = Map(MapNum).MapNpc(MapNPCNum).Y + 1
+            Map(MapNum).MapNpc(MapNPCNum).X = Map(MapNum).MapNpc(MapNPCNum).X - 1
             Set Buffer = New clsBuffer
             Buffer.WriteLong SNpcMove
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).dir
-            Buffer.WriteLong movement
-            SendDataToMap mapNum, Buffer.ToArray()
+            Buffer.WriteLong MapNPCNum
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).X
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Y
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Dir
+            Buffer.WriteLong Movement
+            SendDataToMap MapNum, Buffer.ToArray()
             Set Buffer = Nothing
         Case DIR_DOWN_RIGHT
-            MapNpc(mapNum).NPC(mapNpcNum).y = MapNpc(mapNum).NPC(mapNpcNum).y + 1
-            MapNpc(mapNum).NPC(mapNpcNum).x = MapNpc(mapNum).NPC(mapNpcNum).x + 1
+            Map(MapNum).MapNpc(MapNPCNum).Y = Map(MapNum).MapNpc(MapNPCNum).Y + 1
+            Map(MapNum).MapNpc(MapNPCNum).X = Map(MapNum).MapNpc(MapNPCNum).X + 1
             Set Buffer = New clsBuffer
             Buffer.WriteLong SNpcMove
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).dir
-            Buffer.WriteLong movement
-            SendDataToMap mapNum, Buffer.ToArray()
+            Buffer.WriteLong MapNPCNum
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).X
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Y
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Dir
+            Buffer.WriteLong Movement
+            SendDataToMap MapNum, Buffer.ToArray()
             Set Buffer = Nothing
         Case DIR_UP
-            MapNpc(mapNum).NPC(mapNpcNum).y = MapNpc(mapNum).NPC(mapNpcNum).y - 1
+            Map(MapNum).MapNpc(MapNPCNum).Y = Map(MapNum).MapNpc(MapNPCNum).Y - 1
             Set Buffer = New clsBuffer
             Buffer.WriteLong SNpcMove
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).dir
-            Buffer.WriteLong movement
-            SendDataToMap mapNum, Buffer.ToArray()
+            Buffer.WriteLong MapNPCNum
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).X
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Y
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Dir
+            Buffer.WriteLong Movement
+            SendDataToMap MapNum, Buffer.ToArray()
             Set Buffer = Nothing
         Case DIR_DOWN
-            MapNpc(mapNum).NPC(mapNpcNum).y = MapNpc(mapNum).NPC(mapNpcNum).y + 1
+            Map(MapNum).MapNpc(MapNPCNum).Y = Map(MapNum).MapNpc(MapNPCNum).Y + 1
             Set Buffer = New clsBuffer
             Buffer.WriteLong SNpcMove
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).dir
-            Buffer.WriteLong movement
-            SendDataToMap mapNum, Buffer.ToArray()
+            Buffer.WriteLong MapNPCNum
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).X
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Y
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Dir
+            Buffer.WriteLong Movement
+            SendDataToMap MapNum, Buffer.ToArray()
             Set Buffer = Nothing
         Case DIR_LEFT
-            MapNpc(mapNum).NPC(mapNpcNum).x = MapNpc(mapNum).NPC(mapNpcNum).x - 1
+            Map(MapNum).MapNpc(MapNPCNum).X = Map(MapNum).MapNpc(MapNPCNum).X - 1
             Set Buffer = New clsBuffer
             Buffer.WriteLong SNpcMove
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).dir
-            Buffer.WriteLong movement
-            SendDataToMap mapNum, Buffer.ToArray()
+            Buffer.WriteLong MapNPCNum
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).X
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Y
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Dir
+            Buffer.WriteLong Movement
+            SendDataToMap MapNum, Buffer.ToArray()
             Set Buffer = Nothing
         Case DIR_RIGHT
-            MapNpc(mapNum).NPC(mapNpcNum).x = MapNpc(mapNum).NPC(mapNpcNum).x + 1
+            Map(MapNum).MapNpc(MapNPCNum).X = Map(MapNum).MapNpc(MapNPCNum).X + 1
             Set Buffer = New clsBuffer
             Buffer.WriteLong SNpcMove
-            Buffer.WriteLong mapNpcNum
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).x
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).y
-            Buffer.WriteLong MapNpc(mapNum).NPC(mapNpcNum).dir
-            Buffer.WriteLong movement
-            SendDataToMap mapNum, Buffer.ToArray()
+            Buffer.WriteLong MapNPCNum
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).X
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Y
+            Buffer.WriteLong Map(MapNum).MapNpc(MapNPCNum).Dir
+            Buffer.WriteLong Movement
+            SendDataToMap MapNum, Buffer.ToArray()
             Set Buffer = Nothing
     End Select
 End Sub
 
-Sub NpcDir(ByVal mapNum As Long, ByVal mapNpcNum As Long, ByVal dir As Long)
+Sub NpcDir(ByVal MapNum As Long, ByVal MapNPCNum As Long, ByVal Dir As Long)
     Dim Buffer As clsBuffer
 
-    MapNpc(mapNum).NPC(mapNpcNum).dir = dir
+    Map(MapNum).MapNpc(MapNPCNum).Dir = Dir
     Set Buffer = New clsBuffer
     Buffer.WriteLong SNpcDir
-    Buffer.WriteLong mapNpcNum
-    Buffer.WriteLong dir
-    SendDataToMap mapNum, Buffer.ToArray()
+    Buffer.WriteLong MapNPCNum
+    Buffer.WriteLong Dir
+    SendDataToMap MapNum, Buffer.ToArray()
     Set Buffer = Nothing
 End Sub
 
-Function GetTotalMapPlayers(ByVal mapNum As Long) As Long
+Function GetTotalMapPlayers(ByVal MapNum As Long) As Long
     Dim i As Long
     Dim n As Long
 
@@ -770,7 +770,7 @@ Function GetTotalMapPlayers(ByVal mapNum As Long) As Long
 
     For i = 1 To Player_HighIndex
 
-        If IsPlaying(i) And GetPlayerMap(i) = mapNum Then
+        If IsPlaying(i) And GetPlayerMap(i) = MapNum Then
             n = n + 1
         End If
 
@@ -779,26 +779,26 @@ Function GetTotalMapPlayers(ByVal mapNum As Long) As Long
     GetTotalMapPlayers = n
 End Function
 
-Public Sub CacheResources(ByVal mapNum As Long)
-    Dim x As Long, y As Long, Resource_Count As Long
+Public Sub CacheResources(ByVal MapNum As Long)
+    Dim X As Long, Y As Long, Resource_Count As Long
 
     Resource_Count = 0
 
-    For x = 0 To Map(mapNum).MaxX
-        For y = 0 To Map(mapNum).MaxY
+    For X = 0 To Map(MapNum).MaxX
+        For Y = 0 To Map(MapNum).MaxY
 
-            If Map(mapNum).Tile(x, y).Type = TILE_TYPE_RESOURCE Then
+            If Map(MapNum).Tile(X, Y).Type = TILE_TYPE_RESOURCE Then
                 Resource_Count = Resource_Count + 1
-                ReDim Preserve ResourceCache(mapNum).ResourceData(0 To Resource_Count)
-                ResourceCache(mapNum).ResourceData(Resource_Count).x = x
-                ResourceCache(mapNum).ResourceData(Resource_Count).y = y
-                ResourceCache(mapNum).ResourceData(Resource_Count).cur_health = Resource(Map(mapNum).Tile(x, y).Data1).Health
+                ReDim Preserve ResourceCache(MapNum).ResourceData(0 To Resource_Count)
+                ResourceCache(MapNum).ResourceData(Resource_Count).X = X
+                ResourceCache(MapNum).ResourceData(Resource_Count).Y = Y
+                ResourceCache(MapNum).ResourceData(Resource_Count).cur_health = Resource(Map(MapNum).Tile(X, Y).Data1).Health
             End If
 
         Next
     Next
 
-    ResourceCache(mapNum).Resource_Count = Resource_Count
+    ResourceCache(MapNum).Resource_Count = Resource_Count
 End Sub
 
 Sub PlayerSwitchBankSlots(ByVal Index As Long, ByVal oldSlot As Long, ByVal newSlot As Long)
@@ -900,8 +900,8 @@ Dim nVal As Long
     If nVal <= Range Then isInRange = True
 End Function
 
-Public Function isDirBlocked(ByRef blockvar As Byte, ByRef dir As Byte) As Boolean
-    If Not blockvar And (2 ^ dir) Then
+Public Function isDirBlocked(ByRef blockvar As Byte, ByRef Dir As Byte) As Boolean
+    If Not blockvar And (2 ^ Dir) Then
         isDirBlocked = False
     Else
         isDirBlocked = True
@@ -1048,7 +1048,7 @@ Dim partyNum As Long, i As Long
 End Sub
 
 Public Sub Party_InviteAccept(ByVal Index As Long, ByVal TARGETPLAYER As Long)
-Dim partyNum As Long, i As Long, x As Long
+Dim partyNum As Long, i As Long, X As Long
 
     If TempPlayer(Index).inParty > 0 Then
         ' get the partynumber
@@ -1063,9 +1063,9 @@ Dim partyNum As Long, i As Long, x As Long
                 ' send update to all - including new player
                 SendPartyUpdate partyNum
                 ' Send party vitals to everyone again
-                For x = 1 To MAX_PARTY_MEMBERS
-                    If Party(partyNum).Member(x) > 0 Then
-                        SendPartyVitals partyNum, Party(partyNum).Member(x)
+                For X = 1 To MAX_PARTY_MEMBERS
+                    If Party(partyNum).Member(X) > 0 Then
+                        SendPartyVitals partyNum, Party(partyNum).Member(X)
                     End If
                 Next
                 ' let everyone know they've joined
@@ -1118,7 +1118,7 @@ Public Sub Party_InviteDecline(ByVal Index As Long, ByVal TARGETPLAYER As Long)
 End Sub
 
 Public Sub Party_CountMembers(ByVal partyNum As Long)
-Dim i As Long, highIndex As Long, x As Long
+Dim i As Long, highIndex As Long, X As Long
 
     For i = MAX_PARTY_MEMBERS To 1 Step -1
         If Party(partyNum).Member(i) > 0 Then
@@ -1133,9 +1133,9 @@ Dim i As Long, highIndex As Long, x As Long
             ' is it lower than the high index?
             If i < highIndex Then
                 ' move everyone down a slot
-                For x = i To MAX_PARTY_MEMBERS - 1
-                    Party(partyNum).Member(x) = Party(partyNum).Member(x + 1)
-                    Party(partyNum).Member(x + 1) = 0
+                For X = i To MAX_PARTY_MEMBERS - 1
+                    Party(partyNum).Member(X) = Party(partyNum).Member(X + 1)
+                    Party(partyNum).Member(X + 1) = 0
                 Next
             Else
                 ' not lower - highindex is count
@@ -1155,19 +1155,19 @@ Dim i As Long, highIndex As Long, x As Long
     Party_CountMembers partyNum
 End Sub
 
-Public Sub Party_ShareExp(ByVal partyNum As Long, ByVal exp As Long, ByVal Index As Long, Optional ByVal enemyLevel As Long = 0)
+Public Sub Party_ShareExp(ByVal partyNum As Long, ByVal Exp As Long, ByVal Index As Long, Optional ByVal enemyLevel As Long = 0)
 Dim expShare As Long, leftOver As Long, i As Long, tmpIndex As Long
 
     ' check if it's worth sharing
-    If Not exp >= Party(partyNum).MemberCount Then
+    If Not Exp >= Party(partyNum).MemberCount Then
         ' no party - keep exp for self
-        GivePlayerEXP Index, exp, enemyLevel
+        GivePlayerEXP Index, Exp, enemyLevel
         Exit Sub
     End If
     
     ' find out the equal share
-    expShare = exp \ Party(partyNum).MemberCount
-    leftOver = exp Mod Party(partyNum).MemberCount
+    expShare = Exp \ Party(partyNum).MemberCount
+    leftOver = Exp Mod Party(partyNum).MemberCount
     
     ' loop through and give everyone exp
     For i = 1 To MAX_PARTY_MEMBERS
@@ -1188,7 +1188,7 @@ Dim expShare As Long, leftOver As Long, i As Long, tmpIndex As Long
     GivePlayerEXP tmpIndex, leftOver, enemyLevel
 End Sub
 
-Public Sub GivePlayerEXP(ByVal Index As Long, ByVal exp As Long, Optional ByVal enemyLevel As Long = 0)
+Public Sub GivePlayerEXP(ByVal Index As Long, ByVal Exp As Long, Optional ByVal enemyLevel As Long = 0)
 Dim multiplier As Long, partyNum As Long, expBonus As Long
 
     ' make sure we're not max level
@@ -1201,7 +1201,7 @@ Dim multiplier As Long, partyNum As Long, expBonus As Long
                 Exit Sub
             ElseIf enemyLevel <= GetPlayerLevel(Index) - 2 Then
                 ' half exp if enemy is 2 levels lower
-                exp = exp / 2
+                Exp = Exp / 2
             End If
         End If
         ' check if in party
@@ -1210,15 +1210,15 @@ Dim multiplier As Long, partyNum As Long, expBonus As Long
             If Party(partyNum).MemberCount > 1 Then
                 multiplier = Party(partyNum).MemberCount - 1
                 ' multiply the exp
-                expBonus = (exp / 100) * (multiplier * 3) ' 3 = 3% per party member
+                expBonus = (Exp / 100) * (multiplier * 3) ' 3 = 3% per party member
                 ' Modify the exp
-                exp = exp + expBonus
+                Exp = Exp + expBonus
             End If
         End If
         ' give the exp
-        Call SetPlayerExp(Index, GetPlayerExp(Index) + exp)
+        Call SetPlayerExp(Index, GetPlayerExp(Index) + Exp)
         SendEXP Index
-        SendActionMsg GetPlayerMap(Index), "+" & exp & " EXP", White, 1, (GetPlayerX(Index) * 32), (GetPlayerY(Index) * 32)
+        SendActionMsg GetPlayerMap(Index), "+" & Exp & " EXP", White, 1, (GetPlayerX(Index) * 32), (GetPlayerY(Index) * 32)
         ' check if we've leveled
         CheckPlayerLevelUp Index
     Else
@@ -1227,7 +1227,7 @@ Dim multiplier As Long, partyNum As Long, expBonus As Long
     End If
 End Sub
 
-Public Sub GivePlayerSkillEXP(ByVal Index As Long, ByVal exp As Long, ByVal Skill As Skills)
+Public Sub GivePlayerSkillEXP(ByVal Index As Long, ByVal Exp As Long, ByVal Skill As Skills)
 Dim multiplier As Long, partyNum As Long, expBonus As Long
 
     ' make sure we're not max level
@@ -1238,15 +1238,15 @@ Dim multiplier As Long, partyNum As Long, expBonus As Long
             If Party(partyNum).MemberCount > 1 Then
                 multiplier = Party(partyNum).MemberCount - 1
                 ' multiply the exp
-                expBonus = (exp / 100) * (multiplier * 3) ' 3 = 3% per party member
+                expBonus = (Exp / 100) * (multiplier * 3) ' 3 = 3% per party member
                 ' Modify the exp
-                exp = exp + expBonus
+                Exp = Exp + expBonus
             End If
         End If
         ' give the exp
-        Call SetPlayerSkillExp(Index, GetPlayerSkillExp(Index, Skill) + exp, Skill)
+        Call SetPlayerSkillExp(Index, GetPlayerSkillExp(Index, Skill) + Exp, Skill)
         SendEXP Index
-        SendActionMsg GetPlayerMap(Index), "+" & exp & " EXP", White, 1, (GetPlayerX(Index) * 32), (GetPlayerY(Index) * 32)
+        SendActionMsg GetPlayerMap(Index), "+" & Exp & " EXP", White, 1, (GetPlayerX(Index) * 32), (GetPlayerY(Index) * 32)
         ' check if we've leveled
         CheckPlayerSkillLevelUp Index, Skill
     Else
@@ -1255,21 +1255,21 @@ Dim multiplier As Long, partyNum As Long, expBonus As Long
     End If
 End Sub
 
-Sub DespawnNPC(ByVal mapNum As Long, ByVal npcNum As Long)
+Sub DespawnNPC(ByVal MapNum As Long, ByVal NPCNum As Long)
 Dim i As Long, Buffer As clsBuffer
                        
     ' Reset the targets..
-    MapNpc(mapNum).NPC(npcNum).target = 0
-    MapNpc(mapNum).NPC(npcNum).targetType = TARGET_TYPE_NONE
+    Map(MapNum).MapNpc(NPCNum).target = 0
+    Map(MapNum).MapNpc(NPCNum).targetType = TARGET_TYPE_NONE
     
     ' Set the NPC data to blank so it despawns.
-    MapNpc(mapNum).NPC(npcNum).Num = 0
-    MapNpc(mapNum).NPC(npcNum).SpawnWait = 0
-    MapNpc(mapNum).NPC(npcNum).Vital(Vitals.HP) = 0
+    Map(MapNum).MapNpc(NPCNum).Num = 0
+    Map(MapNum).MapNpc(NPCNum).SpawnWait = 0
+    Map(MapNum).MapNpc(NPCNum).Vital(Vitals.HP) = 0
         
     ' clear DoTs and HoTs
     For i = 1 To MAX_DOTS
-        With MapNpc(mapNum).NPC(npcNum).DoT(i)
+        With Map(MapNum).MapNpc(NPCNum).DoT(i)
             .spell = 0
             .Timer = 0
             .Caster = 0
@@ -1277,7 +1277,7 @@ Dim i As Long, Buffer As clsBuffer
             .Used = False
         End With
             
-        With MapNpc(mapNum).NPC(npcNum).HoT(i)
+        With Map(MapNum).MapNpc(NPCNum).HoT(i)
             .spell = 0
             .Timer = 0
             .Caster = 0
@@ -1289,16 +1289,16 @@ Dim i As Long, Buffer As clsBuffer
     ' send death to the map
     Set Buffer = New clsBuffer
     Buffer.WriteLong SNpcDead
-    Buffer.WriteLong npcNum
-    SendDataToMap mapNum, Buffer.ToArray()
+    Buffer.WriteLong NPCNum
+    SendDataToMap MapNum, Buffer.ToArray()
     Set Buffer = Nothing
         
     'Loop through entire map and purge NPC from targets
     For i = 1 To Player_HighIndex
         If IsPlaying(i) And IsConnected(i) Then
-            If Player(i).Map = mapNum Then
+            If Player(i).Map = MapNum Then
                 If TempPlayer(i).targetType = TARGET_TYPE_NPC Then
-                    If TempPlayer(i).target = npcNum Then
+                    If TempPlayer(i).target = NPCNum Then
                         TempPlayer(i).target = 0
                         TempPlayer(i).targetType = TARGET_TYPE_NONE
                         SendTarget i

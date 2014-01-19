@@ -547,8 +547,8 @@ End Sub
 ' :: Moving character packet ::
 ' :::::::::::::::::::::::::::::
 Sub HandlePlayerMove(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim dir As Long
-    Dim movement As Long
+    Dim Dir As Long
+    Dim Movement As Long
     Dim Buffer As clsBuffer
     Dim tmpX As Long, tmpY As Long
 
@@ -559,19 +559,19 @@ Sub HandlePlayerMove(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr 
         Exit Sub
     End If
 
-    dir = Buffer.ReadLong 'CLng(Parse(1))
-    movement = Buffer.ReadLong 'CLng(Parse(2))
+    Dir = Buffer.ReadLong 'CLng(Parse(1))
+    Movement = Buffer.ReadLong 'CLng(Parse(2))
     tmpX = Buffer.ReadLong
     tmpY = Buffer.ReadLong
     Set Buffer = Nothing
 
     ' Prevent hacking
-    If dir < DIR_UP Or dir > DIR_DOWN_RIGHT Then
+    If Dir < DIR_UP Or Dir > DIR_DOWN_RIGHT Then
         Exit Sub
     End If
 
     ' Prevent hacking
-    If movement < 1 Or movement > 2 Then
+    If Movement < 1 Or Movement > 2 Then
         Exit Sub
     End If
 
@@ -620,14 +620,14 @@ Sub HandlePlayerMove(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr 
         Call Events_SendEventQuit(Index)
     End If
     
-    Call PlayerMove(Index, dir, movement)
+    Call PlayerMove(Index, Dir, Movement)
 End Sub
 
 ' :::::::::::::::::::::::::::::
 ' :: Moving character packet ::
 ' :::::::::::::::::::::::::::::
 Sub HandlePlayerDir(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim dir As Long
+    Dim Dir As Long
     Dim Buffer As clsBuffer
 
     Set Buffer = New clsBuffer
@@ -637,15 +637,15 @@ Sub HandlePlayerDir(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
         Exit Sub
     End If
 
-    dir = Buffer.ReadLong 'CLng(Parse(1))
+    Dir = Buffer.ReadLong 'CLng(Parse(1))
     Set Buffer = Nothing
 
     ' Prevent hacking
-    If dir < DIR_UP Or dir > DIR_DOWN_RIGHT Then
+    If Dir < DIR_UP Or Dir > DIR_DOWN_RIGHT Then
         Exit Sub
     End If
 
-    Call SetPlayerDir(Index, dir)
+    Call SetPlayerDir(Index, Dir)
     Set Buffer = New clsBuffer
     Buffer.WriteLong SPlayerDir
     Buffer.WriteLong Index
@@ -672,7 +672,7 @@ End Sub
 ' :: Player attack packet ::
 ' ::::::::::::::::::::::::::
 Sub HandleAttack(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-Dim i As Long, TempIndex As Long, x As Long, y As Long, shoot As Boolean
+Dim i As Long, TempIndex As Long, X As Long, Y As Long, shoot As Boolean
     
     If TempPlayer(Index).spellBuffer.spell > 0 Then Exit Sub
     
@@ -729,40 +729,40 @@ Dim i As Long, TempIndex As Long, x As Long, y As Long, shoot As Boolean
         Case DIR_UP
 
             If GetPlayerY(Index) = 0 Then Exit Sub
-            x = GetPlayerX(Index)
-            y = GetPlayerY(Index) - 1
+            X = GetPlayerX(Index)
+            Y = GetPlayerY(Index) - 1
         Case DIR_DOWN
             If GetPlayerY(Index) = Map(GetPlayerMap(Index)).MaxY Then Exit Sub
-            x = GetPlayerX(Index)
-            y = GetPlayerY(Index) + 1
+            X = GetPlayerX(Index)
+            Y = GetPlayerY(Index) + 1
         Case DIR_LEFT
             If GetPlayerX(Index) = 0 Then Exit Sub
-            x = GetPlayerX(Index) - 1
-            y = GetPlayerY(Index)
+            X = GetPlayerX(Index) - 1
+            Y = GetPlayerY(Index)
         Case DIR_RIGHT
             If GetPlayerX(Index) = Map(GetPlayerMap(Index)).MaxX Then Exit Sub
-            x = GetPlayerX(Index) + 1
-            y = GetPlayerY(Index)
+            X = GetPlayerX(Index) + 1
+            Y = GetPlayerY(Index)
         Case DIR_UP_LEFT
             If GetPlayerY(Index) = 0 Or GetPlayerX(Index) = 0 Then Exit Sub
-            x = GetPlayerX(Index) - 1
-            y = GetPlayerY(Index) - 1
+            X = GetPlayerX(Index) - 1
+            Y = GetPlayerY(Index) - 1
         Case DIR_UP_RIGHT
             If GetPlayerX(Index) = Map(GetPlayerMap(Index)).MaxX Or GetPlayerY(Index) = 0 Then Exit Sub
-            x = GetPlayerX(Index) + 1
-            y = GetPlayerY(Index) - 1
+            X = GetPlayerX(Index) + 1
+            Y = GetPlayerY(Index) - 1
         Case DIR_DOWN_LEFT
             If GetPlayerY(Index) = Map(GetPlayerMap(Index)).MaxY Or GetPlayerX(Index) = 0 Then Exit Sub
-            x = GetPlayerX(Index) - 1
-            y = GetPlayerY(Index) + 1
+            X = GetPlayerX(Index) - 1
+            Y = GetPlayerY(Index) + 1
         Case DIR_DOWN_RIGHT
             If GetPlayerY(Index) = Map(GetPlayerMap(Index)).MaxY Or GetPlayerX(Index) = Map(GetPlayerMap(Index)).MaxX Then Exit Sub
-            x = GetPlayerX(Index) + 1
-            y = GetPlayerY(Index) + 1
+            X = GetPlayerX(Index) + 1
+            Y = GetPlayerY(Index) + 1
     End Select
     
-    CheckResource Index, x, y
-    CheckEvent Index, x, y
+    CheckResource Index, X, Y
+    CheckEvent Index, X, Y
 End Sub
 
 ' ::::::::::::::::::::::
@@ -951,20 +951,20 @@ End Sub
 ' :: Player request for a new map ::
 ' ::::::::::::::::::::::::::::::::::
 Sub HandleRequestNewMap(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim dir As Long
+    Dim Dir As Long
     Dim Buffer As clsBuffer
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
-    dir = Buffer.ReadLong 'CLng(Parse(1))
+    Dir = Buffer.ReadLong 'CLng(Parse(1))
     Set Buffer = Nothing
 
     ' Prevent hacking
-    If dir < DIR_UP Or dir > DIR_DOWN_RIGHT Then
+    If Dir < DIR_UP Or Dir > DIR_DOWN_RIGHT Then
         Exit Sub
     End If
 
-    Call PlayerMove(Index, dir, 1)
+    Call PlayerMove(Index, Dir, 1)
 End Sub
 
 ' :::::::::::::::::::::
@@ -972,9 +972,9 @@ End Sub
 ' :::::::::::::::::::::
 Sub HandleMapData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim i As Long
-    Dim mapNum As Long
-    Dim x As Long
-    Dim y As Long
+    Dim MapNum As Long
+    Dim X As Long
+    Dim Y As Long
     Dim Buffer As clsBuffer
 
     Set Buffer = New clsBuffer
@@ -985,84 +985,84 @@ Sub HandleMapData(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As 
         Exit Sub
     End If
 
-    mapNum = GetPlayerMap(Index)
-    i = Map(mapNum).Revision + 1
-    Call ClearMap(mapNum)
+    MapNum = GetPlayerMap(Index)
+    i = Map(MapNum).Revision + 1
+    Call ClearMap(MapNum)
     
-    Map(mapNum).Name = Buffer.ReadString
-    Map(mapNum).Music = Buffer.ReadString
-    Map(mapNum).Revision = i
-    Map(mapNum).Moral = Buffer.ReadByte
-    Map(mapNum).Up = Buffer.ReadLong
-    Map(mapNum).Down = Buffer.ReadLong
-    Map(mapNum).Left = Buffer.ReadLong
-    Map(mapNum).Right = Buffer.ReadLong
-    Map(mapNum).BootMap = Buffer.ReadLong
-    Map(mapNum).BootX = Buffer.ReadByte
-    Map(mapNum).BootY = Buffer.ReadByte
-    Map(mapNum).MaxX = Buffer.ReadByte
-    Map(mapNum).MaxY = Buffer.ReadByte
-    Map(mapNum).BossNpc = Buffer.ReadLong
+    Map(MapNum).Name = Buffer.ReadString
+    Map(MapNum).Music = Buffer.ReadString
+    Map(MapNum).Revision = i
+    Map(MapNum).Moral = Buffer.ReadByte
+    Map(MapNum).Up = Buffer.ReadLong
+    Map(MapNum).Down = Buffer.ReadLong
+    Map(MapNum).Left = Buffer.ReadLong
+    Map(MapNum).Right = Buffer.ReadLong
+    Map(MapNum).BootMap = Buffer.ReadLong
+    Map(MapNum).BootX = Buffer.ReadByte
+    Map(MapNum).BootY = Buffer.ReadByte
+    Map(MapNum).MaxX = Buffer.ReadByte
+    Map(MapNum).MaxY = Buffer.ReadByte
+    Map(MapNum).BossNpc = Buffer.ReadLong
     
-    ReDim Map(mapNum).Tile(0 To Map(mapNum).MaxX, 0 To Map(mapNum).MaxY)
+    ReDim Map(MapNum).Tile(0 To Map(MapNum).MaxX, 0 To Map(MapNum).MaxY)
 
-    For x = 0 To Map(mapNum).MaxX
-        For y = 0 To Map(mapNum).MaxY
+    For X = 0 To Map(MapNum).MaxX
+        For Y = 0 To Map(MapNum).MaxY
             For i = 1 To MapLayer.Layer_Count - 1
-                Map(mapNum).Tile(x, y).Layer(i).x = Buffer.ReadLong
-                Map(mapNum).Tile(x, y).Layer(i).y = Buffer.ReadLong
-                Map(mapNum).Tile(x, y).Layer(i).Tileset = Buffer.ReadLong
-                Map(mapNum).Tile(x, y).Autotile(i) = Buffer.ReadByte
+                Map(MapNum).Tile(X, Y).Layer(i).X = Buffer.ReadLong
+                Map(MapNum).Tile(X, Y).Layer(i).Y = Buffer.ReadLong
+                Map(MapNum).Tile(X, Y).Layer(i).Tileset = Buffer.ReadLong
+                Map(MapNum).Tile(X, Y).Autotile(i) = Buffer.ReadByte
             Next
-            Map(mapNum).Tile(x, y).Type = Buffer.ReadByte
-            Map(mapNum).Tile(x, y).Data1 = Buffer.ReadLong
-            Map(mapNum).Tile(x, y).Data2 = Buffer.ReadLong
-            Map(mapNum).Tile(x, y).Data3 = Buffer.ReadLong
-            Map(mapNum).Tile(x, y).DirBlock = Buffer.ReadByte
+            Map(MapNum).Tile(X, Y).Type = Buffer.ReadByte
+            Map(MapNum).Tile(X, Y).Data1 = Buffer.ReadLong
+            Map(MapNum).Tile(X, Y).Data2 = Buffer.ReadLong
+            Map(MapNum).Tile(X, Y).Data3 = Buffer.ReadLong
+            Map(MapNum).Tile(X, Y).DirBlock = Buffer.ReadByte
         Next
     Next
 
-    For x = 1 To MAX_MAP_NPCS
-        Map(mapNum).NPC(x) = Buffer.ReadLong
-        Call ClearMapNpc(x, mapNum)
+    For X = 1 To MAX_MAP_NPCS
+        Map(MapNum).NPC(X) = Buffer.ReadLong
+        Call ClearMapNpc(X, MapNum)
     Next
     
-    Map(mapNum).Fog = Buffer.ReadByte
-    Map(mapNum).FogSpeed = Buffer.ReadByte
-    Map(mapNum).FogOpacity = Buffer.ReadByte
+    Map(MapNum).Fog = Buffer.ReadByte
+    Map(MapNum).FogSpeed = Buffer.ReadByte
+    Map(MapNum).FogOpacity = Buffer.ReadByte
     
-    Map(mapNum).Red = Buffer.ReadByte
-    Map(mapNum).Green = Buffer.ReadByte
-    Map(mapNum).Blue = Buffer.ReadByte
-    Map(mapNum).Alpha = Buffer.ReadByte
+    Map(MapNum).Red = Buffer.ReadByte
+    Map(MapNum).Green = Buffer.ReadByte
+    Map(MapNum).Blue = Buffer.ReadByte
+    Map(MapNum).Alpha = Buffer.ReadByte
     
-    Map(mapNum).Panorama = Buffer.ReadByte
-    Map(mapNum).DayNight = Buffer.ReadByte
+    Map(MapNum).Panorama = Buffer.ReadByte
+    Map(MapNum).DayNight = Buffer.ReadByte
     
-    For x = 1 To MAX_MAP_NPCS
-        Map(mapNum).NpcSpawnType(x) = Buffer.ReadLong
+    For X = 1 To MAX_MAP_NPCS
+        Map(MapNum).NpcSpawnType(X) = Buffer.ReadLong
     Next
 
-    Call SendMapNpcsToMap(mapNum)
-    Call SpawnMapNpcs(mapNum)
+    Call SendMapNpcsToMap(MapNum)
+    Call SpawnMapNpcs(MapNum)
 
     ' Clear out it all
     For i = 1 To MAX_MAP_ITEMS
-        Call SpawnItemSlot(i, 0, 0, GetPlayerMap(Index), MapItem(GetPlayerMap(Index), i).x, MapItem(GetPlayerMap(Index), i).y)
+        Call SpawnItemSlot(i, 0, 0, GetPlayerMap(Index), Map(GetPlayerMap(Index)).MapItem(i).X, Map(GetPlayerMap(Index)).MapItem(i).Y)
         Call ClearMapItem(i, GetPlayerMap(Index))
     Next
 
     ' Respawn
     Call SpawnMapItems(GetPlayerMap(Index))
     ' Save the map
-    Call SaveMap(mapNum)
-    Call MapCache_Create(mapNum)
-    Call CacheResources(mapNum)
+    Call SaveMap(MapNum)
+    Call MapCache_Create(MapNum)
+    Call CacheResources(MapNum)
 
     ' Refresh map for everyone online
     For i = 1 To Player_HighIndex
-        If IsPlaying(i) And GetPlayerMap(i) = mapNum Then
-            Call PlayerWarp(i, mapNum, GetPlayerX(i), GetPlayerY(i))
+        If IsPlaying(i) And GetPlayerMap(i) = MapNum Then
+            Call PlayerWarp(i, MapNum, GetPlayerX(i), GetPlayerY(i))
         End If
     Next
 
@@ -1152,7 +1152,7 @@ Sub HandleMapRespawn(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr 
 
     ' Clear out it all
     For i = 1 To MAX_MAP_ITEMS
-        Call SpawnItemSlot(i, 0, 0, GetPlayerMap(Index), MapItem(GetPlayerMap(Index), i).x, MapItem(GetPlayerMap(Index), i).y)
+        Call SpawnItemSlot(i, 0, 0, GetPlayerMap(Index), Map(GetPlayerMap(Index)).MapItem(i).X, Map(GetPlayerMap(Index)).MapItem(i).Y)
         Call ClearMapItem(i, GetPlayerMap(Index))
     Next
 
@@ -1455,7 +1455,7 @@ End Sub
 ' :: Save npc packet ::
 ' :::::::::::::::::::::
 Private Sub HandleSaveNpc(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim npcNum As Long
+    Dim NPCNum As Long
     Dim Buffer As clsBuffer
     Dim NPCSize As Long
     Dim NPCData() As Byte
@@ -1466,21 +1466,21 @@ Private Sub HandleSaveNpc(ByVal Index As Long, ByRef Data() As Byte, ByVal Start
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
-    npcNum = Buffer.ReadLong
+    NPCNum = Buffer.ReadLong
 
     ' Prevent hacking
-    If npcNum < 0 Or npcNum > MAX_NPCS Then
+    If NPCNum < 0 Or NPCNum > MAX_NPCS Then
         Exit Sub
     End If
 
-    NPCSize = LenB(NPC(npcNum))
+    NPCSize = LenB(NPC(NPCNum))
     ReDim NPCData(NPCSize - 1)
     NPCData = Buffer.ReadBytes(NPCSize)
-    CopyMemory ByVal VarPtr(NPC(npcNum)), ByVal VarPtr(NPCData(0)), NPCSize
+    CopyMemory ByVal VarPtr(NPC(NPCNum)), ByVal VarPtr(NPCData(0)), NPCSize
     ' Save it
-    Call SendUpdateNpcToAll(npcNum)
-    Call SaveNpc(npcNum)
-    Call AddLog(GetPlayerName(Index) & " saved Npc #" & npcNum & ".", ADMIN_LOG)
+    Call SendUpdateNpcToAll(NPCNum)
+    Call SaveNpc(NPCNum)
+    Call AddLog(GetPlayerName(Index) & " saved Npc #" & NPCNum & ".", ADMIN_LOG)
 End Sub
 
 ' :::::::::::::::::::::::::::::
@@ -1603,7 +1603,7 @@ End Sub
 ' :: Save spell packet ::
 ' :::::::::::::::::::::::
 Sub HandleSaveSpell(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim spellnum As Long
+    Dim SpellNum As Long
     Dim Buffer As clsBuffer
     Dim SpellSize As Long
     Dim SpellData() As Byte
@@ -1614,21 +1614,21 @@ Sub HandleSaveSpell(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
 
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
-    spellnum = Buffer.ReadLong
+    SpellNum = Buffer.ReadLong
 
     ' Prevent hacking
-    If spellnum < 0 Or spellnum > MAX_SPELLS Then
+    If SpellNum < 0 Or SpellNum > MAX_SPELLS Then
         Exit Sub
     End If
 
-    SpellSize = LenB(spell(spellnum))
+    SpellSize = LenB(spell(SpellNum))
     ReDim SpellData(SpellSize - 1)
     SpellData = Buffer.ReadBytes(SpellSize)
-    CopyMemory ByVal VarPtr(spell(spellnum)), ByVal VarPtr(SpellData(0)), SpellSize
+    CopyMemory ByVal VarPtr(spell(SpellNum)), ByVal VarPtr(SpellData(0)), SpellSize
     ' Save it
-    Call SendUpdateSpellToAll(spellnum)
-    Call SaveSpell(spellnum)
-    Call AddLog(GetPlayerName(Index) & " saved Spell #" & spellnum & ".", ADMIN_LOG)
+    Call SendUpdateSpellToAll(SpellNum)
+    Call SaveSpell(SpellNum)
+    Call AddLog(GetPlayerName(Index) & " saved Spell #" & SpellNum & ".", ADMIN_LOG)
 End Sub
 
 ' :::::::::::::::::::::::
@@ -2108,19 +2108,19 @@ End Sub
 
 Sub HandleAdminWarp(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim Buffer As clsBuffer
-    Dim x As Long
-    Dim y As Long
+    Dim X As Long
+    Dim Y As Long
     
     Set Buffer = New clsBuffer
     Buffer.WriteBytes Data()
     
-    x = Buffer.ReadLong
-    y = Buffer.ReadLong
+    X = Buffer.ReadLong
+    Y = Buffer.ReadLong
     
     If GetPlayerAccess(Index) >= ADMIN_MAPPER Then
         'PlayerWarp index, GetPlayerMap(index), x, y
-        SetPlayerX Index, x
-        SetPlayerY Index, y
+        SetPlayerX Index, X
+        SetPlayerY Index, Y
         SendPlayerXYToMap Index
     End If
     
@@ -2148,10 +2148,10 @@ Dim tradeTarget As Long, sX As Long, sY As Long, tX As Long, tY As Long
     If Not Player(tradeTarget).Map = Player(Index).Map Then Exit Sub
     
     ' make sure they're stood next to each other
-    tX = Player(tradeTarget).x
-    tY = Player(tradeTarget).y
-    sX = Player(Index).x
-    sY = Player(Index).y
+    tX = Player(tradeTarget).X
+    tY = Player(tradeTarget).Y
+    sX = Player(Index).X
+    sY = Player(Index).Y
     
     ' within range?
     If tX < sX - 1 Or tX > sX + 1 Then
@@ -2846,15 +2846,15 @@ Sub HandleSaveChest(ByVal Index As Long, ByRef Data() As Byte, ByVal StartAddr A
     n = Buffer.ReadLong
     If n < 1 Or n > MAX_CHESTS Then Exit Sub
     'Remove previous instance
-    If Chest(n).Map > 0 Then Map(Chest(n).Map).Tile(Chest(n).x, Chest(n).y).Type = 0
+    If Chest(n).Map > 0 Then Map(Chest(n).Map).Tile(Chest(n).X, Chest(n).Y).Type = 0
 
 'Update chest
 Chest(n).Type = Buffer.ReadLong
 Chest(n).Data1 = Buffer.ReadLong
 Chest(n).Data2 = Buffer.ReadLong
 Chest(n).Map = Buffer.ReadLong
-Chest(n).x = Buffer.ReadByte
-Chest(n).y = Buffer.ReadByte
+Chest(n).X = Buffer.ReadByte
+Chest(n).Y = Buffer.ReadByte
 Set Buffer = Nothing
 Call SendUpdateChestToAll(n)
 Call SaveChest(n)
