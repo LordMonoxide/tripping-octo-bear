@@ -28,91 +28,11 @@ Begin VB.Form frmEditor_Item
    Visible         =   0   'False
    Begin VB.Frame fraContainer 
       Caption         =   "Container/Chest"
-      Height          =   3255
+      Height          =   2055
       Left            =   3360
       TabIndex        =   114
       Top             =   5160
       Width           =   6255
-      Begin VB.TextBox TxtChestChance 
-         Height          =   270
-         Index           =   4
-         Left            =   4680
-         TabIndex        =   138
-         Top             =   2040
-         Width           =   975
-      End
-      Begin VB.TextBox TxtChestItem 
-         Height          =   270
-         Index           =   4
-         Left            =   4680
-         TabIndex        =   137
-         Top             =   1680
-         Width           =   975
-      End
-      Begin VB.TextBox TxtChestChance 
-         Height          =   270
-         Index           =   3
-         Left            =   3720
-         TabIndex        =   136
-         Top             =   2040
-         Width           =   975
-      End
-      Begin VB.TextBox TxtChestItem 
-         Height          =   270
-         Index           =   3
-         Left            =   3720
-         TabIndex        =   135
-         Top             =   1680
-         Width           =   975
-      End
-      Begin VB.TextBox TxtChestChance 
-         Height          =   270
-         Index           =   2
-         Left            =   2760
-         TabIndex        =   134
-         Top             =   2040
-         Width           =   975
-      End
-      Begin VB.TextBox TxtChestItem 
-         Height          =   270
-         Index           =   2
-         Left            =   2760
-         TabIndex        =   133
-         Top             =   1680
-         Width           =   975
-      End
-      Begin VB.TextBox TxtChestChance 
-         Height          =   270
-         Index           =   1
-         Left            =   1800
-         TabIndex        =   132
-         Top             =   2040
-         Width           =   975
-      End
-      Begin VB.TextBox TxtChestItem 
-         Height          =   270
-         Index           =   1
-         Left            =   1800
-         TabIndex        =   131
-         Top             =   1680
-         Width           =   975
-      End
-      Begin VB.TextBox TxtChestChance 
-         Height          =   270
-         Index           =   0
-         Left            =   840
-         TabIndex        =   128
-         Top             =   2040
-         Width           =   975
-      End
-      Begin VB.TextBox TxtChestItem 
-         Height          =   270
-         Index           =   0
-         Left            =   840
-         TabIndex        =   127
-         Top             =   1680
-         Width           =   975
-      End
       Begin VB.TextBox TxtContainerChance 
          Height          =   270
          Index           =   4
@@ -192,22 +112,6 @@ Begin VB.Form frmEditor_Item
          TabIndex        =   115
          Top             =   480
          Width           =   1095
-      End
-      Begin VB.Label Label10 
-         Caption         =   "Chance"
-         Height          =   375
-         Left            =   120
-         TabIndex        =   130
-         Top             =   2040
-         Width           =   735
-      End
-      Begin VB.Label Label9 
-         Caption         =   "Item"
-         Height          =   255
-         Left            =   120
-         TabIndex        =   129
-         Top             =   1680
-         Width           =   495
       End
       Begin VB.Label Label7 
          Caption         =   "Chance"
@@ -1604,14 +1508,14 @@ Private Sub txtPrice_Change()
 End Sub
 
 Private Sub txtSearch_Change()
-Dim find As String, i As Long
+Dim find As String, I As Long
 
     find = txtSearch.Text
 
-    For i = 0 To lstIndex.ListCount - 1
-        If StrComp(find, Replace(lstIndex.List(i), i + 1 & ": ", ""), vbTextCompare) = 0 Then
+    For I = 0 To lstIndex.ListCount - 1
+        If StrComp(find, Replace(lstIndex.List(I), I + 1 & ": ", ""), vbTextCompare) = 0 Then
             lstIndex.SetFocus
-            lstIndex.ListIndex = i
+            lstIndex.ListIndex = I
             Exit For
         End If
     Next

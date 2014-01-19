@@ -101,7 +101,7 @@ End Sub
 
 Public Sub DrawNpcName(ByVal Index As Long)
 Dim textX As Long, textY As Long, Text As String, textSize As Long, npcNum As Long, Colour As Long, Level As Long, LevelSize As Long, lvlx As Long, lvly As Long
-Dim i As Long, name As String
+Dim I As Long, name As String
     npcNum = MapNpc(Index).Num
     
     'If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_GUARD Then Exit Sub
@@ -161,11 +161,11 @@ If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Or NPC(npcNum).Behaviour = N
 
     End If
     If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_FRIENDLY Then
-    For i = 1 To MAX_QUESTS
+    For I = 1 To MAX_QUESTS
         'check if the npc is the next task to any quest: [?] symbol
-        If Quest(i).name <> "" Then
-            If TempPlayer(MyIndex).PlayerQuest(i).Status = QUEST_STARTED Then
-                If Quest(i).Task(TempPlayer(MyIndex).PlayerQuest(i).ActualTask).NPC = npcNum Then
+        If Quest(I).name <> "" Then
+            If TempPlayer(MyIndex).PlayerQuest(I).Status = QUEST_STARTED Then
+                If Quest(I).Task(TempPlayer(MyIndex).PlayerQuest(I).ActualTask).NPC = npcNum Then
                     name = "[?]"
                     textX = MapNpc(Index).x * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (EngineGetTextWidth(Font_GeorgiaShadow, name) / 2)
                     textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 16
@@ -183,7 +183,7 @@ If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Or NPC(npcNum).Behaviour = N
             
             'check if the npc is the starter to any quest: [!] symbol
             'can accept the quest as a new one?
-            If TempPlayer(MyIndex).PlayerQuest(i).Status = QUEST_NOT_STARTED Or TempPlayer(MyIndex).PlayerQuest(i).Status = QUEST_COMPLETED_BUT Then
+            If TempPlayer(MyIndex).PlayerQuest(I).Status = QUEST_NOT_STARTED Or TempPlayer(MyIndex).PlayerQuest(I).Status = QUEST_COMPLETED_BUT Then
                 'the npc gives this quest?
                 If NPC(npcNum).Quest = 1 Then
                     name = "[!]"
@@ -258,7 +258,7 @@ Dim TempVA(0 To 3)  As TLVERTEX
 Dim TempStr() As String
 Dim Count As Integer
 Dim Ascii() As Byte
-Dim i As Long
+Dim I As Long
 Dim j As Long
 Dim TempColor As Long
 Dim ResetColor As Byte
@@ -281,15 +281,15 @@ Dim YOffset As Single
     CurrentTexture = -1
     
     'Loop through each line if there are line breaks (vbCrLf)
-    For i = 0 To UBound(TempStr)
-        If Len(TempStr(i)) > 0 Then
-            YOffset = i * UseFont.CharHeight
+    For I = 0 To UBound(TempStr)
+        If Len(TempStr(I)) > 0 Then
+            YOffset = I * UseFont.CharHeight
             Count = 0
             'Convert the characters to the ascii value
-            Ascii() = StrConv(TempStr(i), vbFromUnicode)
+            Ascii() = StrConv(TempStr(I), vbFromUnicode)
             
             'Loop through the characters
-            For j = 1 To Len(TempStr(i))
+            For j = 1 To Len(TempStr(I))
                 'Copy from the cached vertex array to the temp vertex array
                 Call CopyMemory(TempVA(0), UseFont.HeaderInfo.CharVA(Ascii(j - 1)).Vertex(0), FVF_Size * 4)
                 
@@ -322,7 +322,7 @@ Dim YOffset As Single
                 End If
             Next j
         End If
-    Next i
+    Next I
 End Sub
 
 Public Function dx8Colour(ByVal colourNum As Long, ByVal Alpha As Long) As Long
@@ -378,9 +378,9 @@ Dim LoopI As Integer
 End Function
 
 Sub DrawActionMsg(ByVal Index As Integer)
-Dim x As Long, y As Long, i As Long
+Dim x As Long, y As Long, I As Long
 Dim LenMsg As Long
-
+Dim time As Long
     If ActionMsg(Index).Message = vbNullString Then Exit Sub
 
     ' how long we want each message to appear
@@ -417,11 +417,11 @@ Dim LenMsg As Long
             time = 3000
 
             ' This will kill any action screen messages that there in the system
-            For i = MAX_BYTE To 1 Step -1
-                If ActionMsg(i).Type = ACTIONMSG_SCREEN Then
-                    If i <> Index Then
+            For I = MAX_BYTE To 1 Step -1
+                If ActionMsg(I).Type = ACTIONMSG_SCREEN Then
+                    If I <> Index Then
                         ClearActionMsg Index
-                        Index = i
+                        Index = I
                     End If
                 End If
             Next
@@ -502,7 +502,7 @@ Dim TempSplit() As String
 Dim TSLoop As Long
 Dim lastSpace As Long
 Dim Size As Long
-Dim i As Long
+Dim I As Long
 Dim B As Long
 Dim color As Long
 
@@ -519,42 +519,42 @@ Dim color As Long
         lastSpace = 1
         
         'Loop through all the characters
-        For i = 1 To Len(TempSplit(TSLoop))
+        For I = 1 To Len(TempSplit(TSLoop))
         
             'If it is a space, store it so we can easily break at it
-            Select Case Mid$(TempSplit(TSLoop), i, 1)
-                Case " ": lastSpace = i
-                Case "_": lastSpace = i
-                Case "-": lastSpace = i
+            Select Case Mid$(TempSplit(TSLoop), I, 1)
+                Case " ": lastSpace = I
+                Case "_": lastSpace = I
+                Case "-": lastSpace = I
             End Select
             
             'Add up the size
-            Size = Size + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(TempSplit(TSLoop), i, 1)))
+            Size = Size + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(TempSplit(TSLoop), I, 1)))
             
             'Check for too large of a size
             If Size > ChatWidth Then
                 
                 'Check if the last space was too far back
-                If i - lastSpace > 10 Then
+                If I - lastSpace > 10 Then
                 
                     'Too far away to the last space, so break at the last character
-                    AddToChatTextBuffer_Overflow Trim$(Mid$(TempSplit(TSLoop), B, (i - 1) - B)), color
-                    B = i - 1
+                    AddToChatTextBuffer_Overflow Trim$(Mid$(TempSplit(TSLoop), B, (I - 1) - B)), color
+                    B = I - 1
                     Size = 0
                 Else
                     'Break at the last space to preserve the word
                     AddToChatTextBuffer_Overflow Trim$(Mid$(TempSplit(TSLoop), B, lastSpace - B)), color
                     B = lastSpace + 1
                     'Count all the words we ignored (the ones that weren't printed, but are before "i")
-                    Size = EngineGetTextWidth(Font_GeorgiaShadow, Mid$(TempSplit(TSLoop), lastSpace, i - lastSpace))
+                    Size = EngineGetTextWidth(Font_GeorgiaShadow, Mid$(TempSplit(TSLoop), lastSpace, I - lastSpace))
                 End If
             End If
             
             'This handles the remainder
-            If i = Len(TempSplit(TSLoop)) Then
-                If B <> i Then AddToChatTextBuffer_Overflow Mid$(TempSplit(TSLoop), B, i), color
+            If I = Len(TempSplit(TSLoop)) Then
+                If B <> I Then AddToChatTextBuffer_Overflow Mid$(TempSplit(TSLoop), B, I), color
             End If
-        Next i
+        Next I
     Next TSLoop
     
     'Only update if we have set up the text (that way we can add to the buffer before it is even made)
@@ -584,7 +584,7 @@ Dim LoopC As Long
 End Sub
 
 Public Sub WordWrap_Array(ByVal Text As String, ByVal MaxLineLen As Long, ByRef theArray() As String)
-Dim lineCount As Long, i As Long, Size As Long, lastSpace As Long, B As Long
+Dim lineCount As Long, I As Long, Size As Long, lastSpace As Long, B As Long
     
     'Too small of text
     If Len(Text) < 2 Then
@@ -598,26 +598,26 @@ Dim lineCount As Long, i As Long, Size As Long, lastSpace As Long, B As Long
     lastSpace = 1
     Size = 0
     
-    For i = 1 To Len(Text)
+    For I = 1 To Len(Text)
         ' if it's a space, store it
-        Select Case Mid$(Text, i, 1)
-            Case " ": lastSpace = i
-            Case "_": lastSpace = i
-            Case "-": lastSpace = i
+        Select Case Mid$(Text, I, 1)
+            Case " ": lastSpace = I
+            Case "_": lastSpace = I
+            Case "-": lastSpace = I
         End Select
         
         'Add up the size
-        Size = Size + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(Text, i, 1)))
+        Size = Size + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(Text, I, 1)))
         
         'Check for too large of a size
         If Size > MaxLineLen Then
             'Check if the last space was too far back
-            If i - lastSpace > 12 Then
+            If I - lastSpace > 12 Then
                 'Too far away to the last space, so break at the last character
                 lineCount = lineCount + 1
                 ReDim Preserve theArray(1 To lineCount) As String
-                theArray(lineCount) = Trim$(Mid$(Text, B, (i - 1) - B))
-                B = i - 1
+                theArray(lineCount) = Trim$(Mid$(Text, B, (I - 1) - B))
+                B = I - 1
                 Size = 0
             Else
                 'Break at the last space to preserve the word
@@ -627,16 +627,16 @@ Dim lineCount As Long, i As Long, Size As Long, lastSpace As Long, B As Long
                 B = lastSpace + 1
                 
                 'Count all the words we ignored (the ones that weren't printed, but are before "i")
-                Size = EngineGetTextWidth(Font_GeorgiaShadow, Mid$(Text, lastSpace, i - lastSpace))
+                Size = EngineGetTextWidth(Font_GeorgiaShadow, Mid$(Text, lastSpace, I - lastSpace))
             End If
         End If
         
         ' Remainder
-        If i = Len(Text) Then
-            If B <> i Then
+        If I = Len(Text) Then
+            If B <> I Then
                 lineCount = lineCount + 1
                 ReDim Preserve theArray(1 To lineCount) As String
-                theArray(lineCount) = theArray(lineCount) & Mid$(Text, B, i)
+                theArray(lineCount) = theArray(lineCount) & Mid$(Text, B, I)
             End If
         End If
     Next
@@ -647,7 +647,7 @@ Dim TempSplit() As String
 Dim TSLoop As Long
 Dim lastSpace As Long
 Dim Size As Long
-Dim i As Long
+Dim I As Long
 Dim B As Long
 
     'Too small of text
@@ -673,25 +673,25 @@ Dim B As Long
         If InStr(1, TempSplit(TSLoop), " ") Or InStr(1, TempSplit(TSLoop), "-") Or InStr(1, TempSplit(TSLoop), "_") Then
             
             'Loop through all the characters
-            For i = 1 To Len(TempSplit(TSLoop))
+            For I = 1 To Len(TempSplit(TSLoop))
             
                 'If it is a space, store it so we can easily break at it
-                Select Case Mid$(TempSplit(TSLoop), i, 1)
-                    Case " ": lastSpace = i
-                    Case "_": lastSpace = i
-                    Case "-": lastSpace = i
+                Select Case Mid$(TempSplit(TSLoop), I, 1)
+                    Case " ": lastSpace = I
+                    Case "_": lastSpace = I
+                    Case "-": lastSpace = I
                 End Select
     
                 'Add up the size
-                Size = Size + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(TempSplit(TSLoop), i, 1)))
+                Size = Size + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(TempSplit(TSLoop), I, 1)))
  
                 'Check for too large of a size
                 If Size > MaxLineLen Then
                     'Check if the last space was too far back
-                    If i - lastSpace > 12 Then
+                    If I - lastSpace > 12 Then
                         'Too far away to the last space, so break at the last character
-                        WordWrap = WordWrap & Trim$(Mid$(TempSplit(TSLoop), B, (i - 1) - B)) & vbNewLine
-                        B = i - 1
+                        WordWrap = WordWrap & Trim$(Mid$(TempSplit(TSLoop), B, (I - 1) - B)) & vbNewLine
+                        B = I - 1
                         Size = 0
                     Else
                         'Break at the last space to preserve the word
@@ -699,17 +699,17 @@ Dim B As Long
                         B = lastSpace + 1
                         
                         'Count all the words we ignored (the ones that weren't printed, but are before "i")
-                        Size = EngineGetTextWidth(Font_GeorgiaShadow, Mid$(TempSplit(TSLoop), lastSpace, i - lastSpace))
+                        Size = EngineGetTextWidth(Font_GeorgiaShadow, Mid$(TempSplit(TSLoop), lastSpace, I - lastSpace))
                     End If
                 End If
                 
                 'This handles the remainder
-                If i = Len(TempSplit(TSLoop)) Then
-                    If B <> i Then
-                        WordWrap = WordWrap & Mid$(TempSplit(TSLoop), B, i)
+                If I = Len(TempSplit(TSLoop)) Then
+                    If B <> I Then
+                        WordWrap = WordWrap & Mid$(TempSplit(TSLoop), B, I)
                     End If
                 End If
-            Next i
+            Next I
         Else
             WordWrap = WordWrap & TempSplit(TSLoop)
         End If
@@ -717,15 +717,15 @@ Dim B As Long
 End Function
 
 Public Sub UpdateShowChatText()
-Dim CHATOFFSET As Long, i As Long, x As Long
+Dim CHATOFFSET As Long, I As Long, x As Long
 
     CHATOFFSET = 55
     
     If EngineGetTextWidth(Font_GeorgiaShadow, MyText) > GUIWindow(GUI_CHAT).width - CHATOFFSET Then
-        For i = Len(MyText) To 1 Step -1
-            x = x + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(MyText, i, 1)))
+        For I = Len(MyText) To 1 Step -1
+            x = x + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(MyText, I, 1)))
             If x > GUIWindow(GUI_CHAT).width - CHATOFFSET Then
-                RenderChatText = Right$(MyText, Len(MyText) - i + 1)
+                RenderChatText = Right$(MyText, Len(MyText) - I + 1)
                 Exit For
             End If
         Next
@@ -951,7 +951,7 @@ Public Sub RenderChatTextBuffer()
 End Sub
 
 Public Function SwearFilter_Replace(ByVal Message As String) As String
-    Dim i As Long
+    Dim I As Long
 
     ' Check to see if there are any swear words in memory.
     If MaxSwearWords = 0 Then
@@ -960,13 +960,13 @@ Public Function SwearFilter_Replace(ByVal Message As String) As String
     End If
 
     ' Loop through all of the words.
-    For i = 1 To MaxSwearWords
+    For I = 1 To MaxSwearWords
         ' Check if the word exists in the sentence.
-        If InStr(LCase(Message), LCase(SwearFilter(i).BadWord)) Then
+        If InStr(LCase(Message), LCase(SwearFilter(I).BadWord)) Then
             ' Replace the bad words with the replacement words.
-            Message = Replace$(LCase(Message), LCase(SwearFilter(i).BadWord), SwearFilter(i).NewWord, 1, -1, vbTextCompare)
+            Message = Replace$(LCase(Message), LCase(SwearFilter(I).BadWord), SwearFilter(I).NewWord, 1, -1, vbTextCompare)
         End If
-    Next i
+    Next I
 
     ' Return the filtered word message.
     SwearFilter_Replace = Message

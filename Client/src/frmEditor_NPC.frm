@@ -2,7 +2,7 @@ VERSION 5.00
 Begin VB.Form frmEditor_NPC 
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Npc Editor"
-   ClientHeight    =   9075
+   ClientHeight    =   8355
    ClientLeft      =   45
    ClientTop       =   330
    ClientWidth     =   9615
@@ -20,28 +20,12 @@ Begin VB.Form frmEditor_NPC
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
    MinButton       =   0   'False
-   ScaleHeight     =   605
+   ScaleHeight     =   557
    ScaleMode       =   3  'Pixel
    ScaleWidth      =   641
    ShowInTaskbar   =   0   'False
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
-   Begin VB.HScrollBar scrlQuest 
-      Height          =   255
-      Left            =   4320
-      Max             =   255
-      TabIndex        =   81
-      Top             =   8640
-      Width           =   3015
-   End
-   Begin VB.CheckBox chkQuest 
-      Caption         =   "Quest Giver?"
-      Height          =   255
-      Left            =   2880
-      TabIndex        =   80
-      Top             =   8640
-      Width           =   1335
-   End
    Begin VB.Frame fraGraphic 
       Caption         =   "Graphic"
       Height          =   2295
@@ -158,7 +142,7 @@ Begin VB.Form frmEditor_NPC
       Height          =   1455
       Left            =   6480
       TabIndex        =   47
-      Top             =   5880
+      Top             =   5520
       Width           =   3015
       Begin VB.HScrollBar scrlSpellNum 
          Height          =   255
@@ -205,11 +189,27 @@ Begin VB.Form frmEditor_NPC
    End
    Begin VB.Frame Frame4 
       Caption         =   "Info"
-      Height          =   4575
+      Height          =   5775
       Left            =   3360
       TabIndex        =   34
       Top             =   2520
       Width           =   3015
+      Begin VB.CheckBox chkQuest 
+         Caption         =   "Quest Giver?"
+         Height          =   255
+         Left            =   120
+         TabIndex        =   83
+         Top             =   4560
+         Width           =   1335
+      End
+      Begin VB.HScrollBar scrlQuest 
+         Height          =   255
+         Left            =   120
+         Max             =   255
+         TabIndex        =   81
+         Top             =   5280
+         Width           =   2775
+      End
       Begin VB.TextBox txtSpawnSecs 
          Alignment       =   1  'Right Justify
          Height          =   285
@@ -299,6 +299,14 @@ Begin VB.Form frmEditor_NPC
          Top             =   600
          Width           =   2055
       End
+      Begin VB.Label lblqustname 
+         Caption         =   "Quest Number: 0"
+         Height          =   255
+         Left            =   120
+         TabIndex        =   82
+         Top             =   4920
+         Width           =   1935
+      End
       Begin VB.Label Label16 
          AutoSize        =   -1  'True
          Caption         =   "Spawn Rate:"
@@ -384,15 +392,15 @@ Begin VB.Form frmEditor_NPC
    End
    Begin VB.Frame Fra7 
       Caption         =   "Vitals"
-      Height          =   1815
+      Height          =   1695
       Left            =   6480
       TabIndex        =   25
-      Top             =   3960
+      Top             =   3840
       Width           =   3015
       Begin VB.TextBox txtEXP_max 
          Height          =   270
          Left            =   2040
-         TabIndex        =   82
+         TabIndex        =   80
          Top             =   960
          Width           =   855
       End
@@ -653,27 +661,27 @@ Begin VB.Form frmEditor_NPC
    End
    Begin VB.CommandButton cmdSave 
       Caption         =   "Save"
-      Height          =   375
+      Height          =   255
       Left            =   6480
       TabIndex        =   4
-      Top             =   7440
-      Width           =   1455
+      Top             =   8040
+      Width           =   1215
    End
    Begin VB.CommandButton cmdCancel 
       Caption         =   "Cancel"
-      Height          =   375
-      Left            =   8040
+      Height          =   255
+      Left            =   7800
       TabIndex        =   3
-      Top             =   7440
-      Width           =   1455
+      Top             =   8040
+      Width           =   1215
    End
    Begin VB.CommandButton cmdDelete 
-      Caption         =   "Delete"
-      Height          =   375
-      Left            =   6480
+      Caption         =   "Del"
+      Height          =   255
+      Left            =   9240
       TabIndex        =   2
-      Top             =   7920
-      Width           =   1455
+      Top             =   8040
+      Width           =   375
    End
    Begin VB.Frame Frame3 
       Caption         =   "NPC List"
@@ -702,9 +710,9 @@ Begin VB.Form frmEditor_NPC
    Begin VB.Frame Frame1 
       Caption         =   "Projectile"
       Height          =   1095
-      Left            =   3360
+      Left            =   6480
       TabIndex        =   55
-      Top             =   7200
+      Top             =   6960
       Width           =   3015
       Begin VB.HScrollBar scrlProjectileRotation 
          Height          =   255
@@ -839,7 +847,7 @@ Private Sub chkQuest_Click()
 End Sub
 
 Private Sub scrlQuest_Change()
-  '  lblQuest = scrlQuest.Value
+    lblQuest = "Quest Number: " & scrlQuest.Value
     NPC(EditorIndex).QuestNum = scrlQuest.Value
 End Sub
 
@@ -922,9 +930,9 @@ Private Sub txtChance_Validate(Cancel As Boolean)
     If Right$(txtChance.Text, 1) = "%" Then
         txtChance.Text = Left(txtChance.Text, Len(txtChance.Text) - 1) / 100
     ElseIf InStr(1, txtChance.Text, "/") > 0 Then
-        Dim i() As String
-        i = Split(txtChance.Text, "/")
-        txtChance.Text = Int(i(0) / i(1) * 1000) / 1000
+        Dim I() As String
+        I = Split(txtChance.Text, "/")
+        txtChance.Text = Int(I(0) / I(1) * 1000) / 1000
     End If
     
     If txtChance.Text > 1 Or txtChance.Text < 0 Then
@@ -984,13 +992,13 @@ Private Sub cmbSound_Click()
 End Sub
 
 Private Sub txtSearch_Change()
-Dim find As String, i As Long
+Dim find As String, I As Long
     find = txtSearch.Text
 
-    For i = 0 To lstIndex.ListCount - 1
-        If StrComp(find, Replace(lstIndex.List(i), i + 1 & ": ", ""), vbTextCompare) = 0 Then
+    For I = 0 To lstIndex.ListCount - 1
+        If StrComp(find, Replace(lstIndex.List(I), I + 1 & ": ", ""), vbTextCompare) = 0 Then
             lstIndex.SetFocus
-            lstIndex.ListIndex = i
+            lstIndex.ListIndex = I
             Exit For
         End If
     Next
@@ -1026,18 +1034,18 @@ Private Sub scrlA_Change()
 End Sub
 
 Private Sub scrlR_Change()
-    lblR.Caption = "Red: " & 255 - ScrlR.Value
-    NPC(EditorIndex).R = ScrlR.Value
+    lblR.Caption = "Red: " & 255 - scrlR.Value
+    NPC(EditorIndex).R = scrlR.Value
 End Sub
 
 Private Sub scrlG_Change()
-    lblG.Caption = "Green: " & 255 - ScrlG.Value
-    NPC(EditorIndex).G = ScrlG.Value
+    lblG.Caption = "Green: " & 255 - scrlG.Value
+    NPC(EditorIndex).G = scrlG.Value
 End Sub
 
 Private Sub scrlB_Change()
-    lblB.Caption = "Blue: " & 255 - ScrlB.Value
-    NPC(EditorIndex).B = ScrlB.Value
+    lblB.Caption = "Blue: " & 255 - scrlB.Value
+    NPC(EditorIndex).B = scrlB.Value
 End Sub
 Private Sub txtEXP_max_Change()
 
