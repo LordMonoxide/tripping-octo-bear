@@ -1,0 +1,1 @@
+midl /mktyplib203 lib.idl

@@ -1,0 +1,216 @@
+[
+  uuid(1c46375b-6e58-41e9-9dda-53a12ba90c5b),
+  version(1.0)
+]
+library CoreyWinsAtVB {
+  typedef struct Byte16 {
+    byte b[2];
+  } Byte16;
+  
+  typedef struct Byte32 {
+    byte b[4];
+  } Byte32;
+  
+  typedef struct Byte64 {
+    byte b[8];
+  } Byte64;
+  
+  typedef struct Int32 {
+    short i[2];
+  } Int32;
+  
+  typedef struct Int64 {
+    short i[4];
+  } Int64;
+  
+  typedef struct Long64 {
+    int l[2];
+  } Long64;
+  
+  [
+    dllname("msvbvm60.dll"),
+  ]
+  module VBVM6 {
+    [
+      entry("GetMem1"), propget
+    ]
+    HRESULT __stdcall AtByte(
+      [in]            int  addr,
+      [out, retval]  byte* ret
+    );
+    
+    [
+      entry("PutMem1"), propput
+    ]
+    HRESULT __stdcall AtByte(
+      [in]            int  addr,
+      [in]           byte  val
+    );
+    
+    [
+      entry("GetMem2"), propget
+    ]
+    HRESULT __stdcall AtInt(
+      [in]            int  addr,
+      [out, retval] short* ret
+    );
+    
+    [
+      entry("PutMem2"), propput
+    ]
+    HRESULT __stdcall AtInt(
+      [in]            int  addr,
+      [in]          short  val
+    );
+    
+    [
+      entry("GetMem4"), propget
+    ]
+    HRESULT __stdcall AtLong(
+      [in]           int  addr,
+      [out, retval]  int* ret
+    );
+    
+    [
+      entry("PutMem4"), propput
+    ]
+    HRESULT __stdcall AtLong(
+      [in]           int  addr,
+      [in]           int  val
+    );
+    
+    [
+      entry("GetMem8"), propget
+    ]
+    HRESULT __stdcall AtDouble(
+      [in]           int  addr,
+      [out, retval] double* ret
+    );
+    
+    [
+      entry("PutMem8"), propput
+    ]
+    HRESULT __stdcall AtDouble(
+      [in]           int  addr,
+      [in]        double  val
+    );
+    
+    [
+      entry("GetMem1"), propget
+    ]
+    HRESULT __stdcall AsByte(
+      [in]           void* addr,
+      [out, retval]  byte* ret
+    );
+    
+    [
+      entry("PutMem1"), propput
+    ]
+    HRESULT __stdcall AsByte(
+      [in]           void* addr,
+      [in]           byte  val
+    );
+    
+    [
+      entry("GetMem2"), propget
+    ]
+    HRESULT __stdcall AsInt(
+      [in]           void* addr,
+      [out, retval] short* ret
+    );
+    
+    [
+      entry("PutMem2"), propput
+    ]
+    HRESULT __stdcall AsInt(
+      [in]           void* addr,
+      [in]          short  val
+    );
+    
+    [
+      entry("GetMem4"), propget
+    ]
+    HRESULT __stdcall AsLong(
+      [in]          void* addr,
+      [out, retval]  int* ret
+    );
+    
+    [
+      entry("PutMem4"), propput
+    ]
+    HRESULT __stdcall AsLong(
+      [in]          void* addr,
+      [in]           int  val
+    );
+    
+    [
+      entry("GetMem8"), propget
+    ]
+    HRESULT __stdcall AsDouble(
+      [in]          void* addr,
+      [out, retval] double* ret
+    );
+    
+    [
+      entry("PutMem8"), propput
+    ]
+    HRESULT __stdcall AsDouble(
+      [in]          void* addr,
+      [in]        double  val
+    );
+    
+    [
+      entry("GetMem1")
+    ]
+    HRESULT __stdcall Move8(
+      [in]           void* src,
+      [in, out]      void* dst
+    );
+    
+    [
+      entry("GetMem2")
+    ]
+    HRESULT __stdcall Move16(
+      [in]           void* src,
+      [in, out]      void* dst
+    );
+    
+    [
+      entry("GetMem4")
+    ]
+    HRESULT __stdcall Move32(
+      [in]           void* src,
+      [in, out]      void* dst
+    );
+    
+    [
+      entry("GetMem8")
+    ]
+    HRESULT __stdcall Move64(
+      [in]           void* src,
+      [in, out]      void* dst
+    );
+  }
+  
+  [
+    dllname("kernel32.dll"),
+  ]
+  module Kernel {
+    [
+      entry("RtlMoveMemory")
+    ]
+    HRESULT __stdcall memmove(
+      [in, out]      void* dst,
+      [in]           void* src,
+      [in]            int  len
+    );
+    
+    [
+      entry("RtlZeroMemory")
+    ]
+    HRESULT __stdcall memzero(
+      [in, out]      void* dst,
+      [in]            int  len
+    );
+  }
+}
