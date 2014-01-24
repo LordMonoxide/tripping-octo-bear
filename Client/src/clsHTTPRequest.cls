@@ -168,5 +168,6 @@ Private Sub mSocket_DataArrival(ByVal bytesTotal As Long)
 Dim data As String
 
   Call mSocket.GetData(data, vbString, bytesTotal)
-  Call mResponse.append(data)
+  Call mResponse.Append(data)
+  Debug.Print data
 End Sub
