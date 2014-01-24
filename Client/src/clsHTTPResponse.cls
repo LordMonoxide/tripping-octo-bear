@@ -66,9 +66,16 @@ Public Property Get cookie() As clsHTTPCookie
   Set cookie = mCookie
 End Property
 
-Public Sub append(ByRef response As String)
+Public Sub Append(ByRef response As String)
   mResponse = mResponse & response
   Call parse
+End Sub
+
+Public Sub await()
+  Do Until mDone
+    Call Sleep(1)
+    DoEvents
+  Loop
 End Sub
 
 Public Sub parse()
