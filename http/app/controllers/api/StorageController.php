@@ -1,6 +1,8 @@
 <?php namespace api;
 
+use Auth;
 use Controller;
+use Response;
 
 class StorageController extends Controller {
   public function __construct() {
