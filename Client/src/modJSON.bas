@@ -60,6 +60,7 @@ Private Function parseObject(ByRef str As String, ByRef index As Long) As Collec
 
    Set parseObject = New Collection
    Dim sKey As String
+   Dim oldIndex As Long
    
    ' "{"
    Call skipChar(str, index)
@@ -95,8 +96,10 @@ Private Function parseObject(ByRef str As String, ByRef index As Long) As Collec
       kv.val = ""
       
       On Error Resume Next
+        oldIndex = index
         kv.val = parseValue(str, index)
         If Err.Number = 450 Then
+          index = oldIndex
           Set kv.val = parseValue(str, index)
         End If
       On Error GoTo 0
