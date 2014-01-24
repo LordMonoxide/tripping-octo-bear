@@ -5,6 +5,11 @@ Attribute VB_Name = "modJSON"
 
 Option Explicit
 
+Public Enum JSONTypeEnum
+  JSON_TYPE_OBJECT
+  JSON_TYPE_ARRAY
+End Enum
+
 Const INVALID_JSON      As Long = 1
 Const INVALID_OBJECT    As Long = 2
 Const INVALID_ARRAY     As Long = 3
@@ -42,8 +47,6 @@ Public Function parseJSON(ByRef str As String) As Object
       Case Else
          psErrors = "Invalid JSON"
    End Select
-
-
 End Function
 
  '
@@ -81,8 +84,20 @@ Private Function parseObject(ByRef str As String, ByRef index As Long) As Collec
       sKey = parseKey(str, index)
       On Error Resume Next
       
-      'MsgBox parseValue(str, index)
-      parseObject.Add parseValue(str, index), sKey
+      Dim kv As clsJSONPair
+      Set kv = New clsJSONPair
+      kv.jsonType = JSON_TYPE_OBJECT
+      kv.key = sKey
+      kv.val = ""
+      
+      On Error Resume Next
+        kv.val = parseValue(str, index)
+        If Err.Number = 450 Then
+          Set kv.val = parseValue(str, index)
+        End If
+      On Error GoTo 0
+      
+      parseObject.add kv, sKey
       If Err.Number <> 0 Then
          psErrors = psErrors & Err.Description & ": " & sKey & vbCrLf
          Exit Do
@@ -124,7 +139,13 @@ Private Function parseArray(ByRef str As String, ByRef index As Long) As Collect
 
       ' add value
       On Error Resume Next
-      parseArray.Add parseValue(str, index)
+      
+      Dim kv As clsJSONPair
+      Set kv = New clsJSONPair
+      kv.jsonType = JSON_TYPE_ARRAY
+      kv.val = parseValue(str, index)
+      
+      parseArray.add kv
       If Err.Number <> 0 Then
          psErrors = psErrors & Err.Description & ": " & Mid(str, index, 20) & vbCrLf
          Exit Do
@@ -200,7 +221,7 @@ Private Function parseString(ByRef str As String, ByRef index As Long) As String
                Case "u"
                   index = index + 1
                   Code = Mid(str, index, 4)
-                  SB.Append ChrW(Val("&h" + Code))
+                  SB.Append ChrW(val("&h" + Code))
                   index = index + 4
             End Select
          Case quote
@@ -399,11 +420,11 @@ Public Function toString(ByRef obj As Variant) As String
             SB.Append "{"
             Dim keys
             keys = obj.keys
-            For i = 0 To obj.Count - 1
+            For i = 0 To obj.count - 1
                If bFI Then bFI = False Else SB.Append ","
                Dim key
                key = keys(i)
-               SB.Append """" & key & """:" & toString(obj.Item(key))
+               SB.Append """" & key & """:" & toString(obj.item(key))
             Next i
             SB.Append "}"
 
