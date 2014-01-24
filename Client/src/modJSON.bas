@@ -47,6 +47,10 @@ Public Function parseJSON(ByRef str As String) As Object
       Case Else
          psErrors = "Invalid JSON"
    End Select
+   
+   If LenB(psErrors) <> 0 Then
+     Call MsgBox(psErrors)
+   End If
 End Function
 
  '
