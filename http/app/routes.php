@@ -9,6 +9,9 @@ Route::group(['prefix' => 'api'], function() {
   });
   
   Route::group(['prefix' => 'storage'], function() {
-    Route::get('/characters', ['as' => 'api.storage.characters', 'uses' => 'api\StorageController@characters']);
+    Route::group(['prefix' => 'characters'], function() {
+      Route::get('/',       ['as' => 'api.storage.characters', 'uses' => 'api\storage\CharacterController@all']);
+      Route::put('/create', ['as' => 'api.storage.characters', 'uses' => 'api\storage\CharacterController@create']);
+    });
   });
 });
