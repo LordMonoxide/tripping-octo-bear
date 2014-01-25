@@ -39,4 +39,17 @@ class CharacterController extends Controller {
       return Response::json($validator->messages(), 409);
     }
   }
+  
+  public function delete() {
+    $validator = Validator::make(Input::all(), [
+      'id' => ['required', 'integer', 'unique:characters,id']
+    ]);
+    
+    if($validator->passes()) {
+      Character::destroy(Input::get('id'));
+      return Response::json(null, 200);
+    } else {
+      return Response::json($validator->messages(), 409);
+    }
+  }
 }
