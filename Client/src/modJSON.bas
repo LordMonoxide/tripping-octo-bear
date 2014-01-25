@@ -118,6 +118,7 @@ End Function
 '   parse list
 '
 Private Function parseArray(ByRef str As String, ByRef index As Long) As Collection
+Dim oldIndex As Long
 
    Set parseArray = New Collection
 
@@ -150,7 +151,12 @@ Private Function parseArray(ByRef str As String, ByRef index As Long) As Collect
       Dim kv As clsJSONPair
       Set kv = New clsJSONPair
       kv.jsonType = JSON_TYPE_ARRAY
+      oldIndex = index
       kv.val = parseValue(str, index)
+      If Err.Number = 450 Then
+        index = oldIndex
+        Set kv.val = parseValue(str, index)
+      End If
       
       parseArray.add kv
       If Err.Number <> 0 Then
