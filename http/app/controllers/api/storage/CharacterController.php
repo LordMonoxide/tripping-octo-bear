@@ -42,7 +42,7 @@ class CharacterController extends Controller {
   
   public function delete() {
     $validator = Validator::make(Input::all(), [
-      'id' => ['required', 'integer', 'unique:characters,id']
+      'id' => ['required', 'integer', 'exists:characters,id']
     ]);
     
     if($validator->passes()) {
