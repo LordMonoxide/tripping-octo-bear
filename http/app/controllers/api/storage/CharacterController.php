@@ -2,7 +2,11 @@
 
 use Auth;
 use Controller;
+use Input;
 use Response;
+use Validator;
+
+use Character;
 
 class CharacterController extends Controller {
   public function __construct() {
@@ -15,7 +19,7 @@ class CharacterController extends Controller {
   
   public function create() {
     $validator = Validator::make(Input::all(), [
-      'name' => ['required', 'min:6', 'max:20', 'unique:characters,name'],
+      'name' => ['required', 'min:4', 'max:20', 'unique:characters,name'],
       'sex'  => ['required', 'in:male,female']
     ]);
     
@@ -24,6 +28,10 @@ class CharacterController extends Controller {
       $char->user()->associate(Auth::user());
       $char->name = Input::get('name');
       $char->sex  = Input::get('sex');
+      $char->map  = 0;
+      $char->x    = 0;
+      $char->y    = 0;
+      $char->dir  = 'down';
       $char->save();
       
       return Response::json(null, 201);
