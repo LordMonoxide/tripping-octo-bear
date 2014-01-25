@@ -10,7 +10,7 @@ class CreateTableCharacters extends Migration {
       $table->integer('guild_id')->unsigned();
       
       $table->string('name', 20);
-      $table->tinyInteger('sex');
+      $table->enum('sex', ['male', 'female']);
       
       $table->tinyInteger('lvl');
       $table->integer('exp');
