@@ -7,40 +7,42 @@ class CreateTableCharacters extends Migration {
     Schema::create('characters', function($table) {
       $table->increments('id');
       $table->integer('user_id')->unsigned();
-      $table->integer('guild_id')->unsigned();
+      $table->integer('guild_id')->unsigned()->nullable();
       
       $table->string('name', 20);
       $table->enum('sex', ['male', 'female']);
       
-      $table->tinyInteger('lvl');
-      $table->integer('exp');
-      $table->integer('pts');
+      $table->integer('lvl')->unsigned()->default(1);
+      $table->integer('exp')->unsigned()->default(0);
+      $table->integer('pts')->unsigned()->default(0);
       
-      $table->integer('hp');
-      $table->integer('mp');
+      $table->integer('hp')->unsigned();
+      $table->integer('mp')->unsigned();
       
-      $table->integer('str');
-      $table->integer('end');
-      $table->integer('int');
-      $table->integer('agl');
-      $table->integer('wil');
+      $table->integer('str')->unsigned()->default(1);
+      $table->integer('end')->unsigned()->default(1);
+      $table->integer('int')->unsigned()->default(1);
+      $table->integer('agl')->unsigned()->default(1);
+      $table->integer('wil')->unsigned()->default(1);
       
-      $table->integer('weapon');
-      $table->integer('armour');
-      $table->integer('shield');
-      $table->integer('aura');
+      $table->integer('weapon')->unsigned()->nullable();
+      $table->integer('armour')->unsigned()->nullable();
+      $table->integer('shield')->unsigned()->nullable();
+      $table->integer('aura')->unsigned()->nullable();
       
-      $table->integer('clothes');
-      $table->integer('gear');
-      $table->integer('hair');
-      $table->integer('head');
+      $table->integer('clothes')->unsigned()->nullable();
+      $table->integer('gear')->unsigned()->nullable();
+      $table->integer('hair')->unsigned()->nullable();
+      $table->integer('head')->unsigned()->nullable();
       
-      $table->integer('map');
-      $table->tinyInteger('x');
-      $table->tinyInteger('y');
-      $table->tinyInteger('dir');
+      $table->integer('map')->unsigned();
+      $table->integer('x')->unsigned();
+      $table->integer('y')->unsigned();
+      $table->enum('dir', ['up', 'down', 'left', 'right', 'upleft', 'upright', 'downleft', 'downright']);
       
-      $table->tinyInteger('threshold');
+      $table->boolean('threshold')->default(false);
+      
+      $table->timestamps();
       
       $table->foreign('user_id')
              ->references('id')
