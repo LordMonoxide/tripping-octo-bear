@@ -13,8 +13,29 @@ Public Declare Function timeBeginPeriod Lib "winmm.dll" (ByVal uPeriod As Long) 
 Public Declare Sub ZeroMemory Lib "kernel32.dll" Alias "RtlZeroMemory" (Destination As Any, ByVal Length As Long)
 
 Public Sub Main()
-    Dim i As Long
-    
+Dim request As clsHTTPRequest
+Dim response As clsHTTPResponse
+Dim i As Long, n As Long
+
+  API.host = "essence.monoxidedesign.com"
+  API.port = 80
+  
+  API.routes.auth.check.route = "api/auth/check"
+  API.routes.auth.check.method = HTTP_METHOD_GET
+  API.routes.auth.register.route = "api/auth/register"
+  API.routes.auth.register.method = HTTP_METHOD_PUT
+  API.routes.auth.login.route = "api/auth/login"
+  API.routes.auth.login.method = HTTP_METHOD_POST
+  API.routes.auth.logout.route = "api/auth/logout"
+  API.routes.auth.logout.method = HTTP_METHOD_POST
+  
+  API.routes.storage.characters.all.route = "api/storage/characters"
+  API.routes.storage.characters.all.method = HTTP_METHOD_GET
+  API.routes.storage.characters.create.route = "api/storage/characters/create"
+  API.routes.storage.characters.create.method = HTTP_METHOD_PUT
+  API.routes.storage.characters.delete.route = "api/storage/characters/delete"
+  API.routes.storage.characters.delete.method = HTTP_METHOD_DELETE
+  
     'Set the high-resolution timer
     timeBeginPeriod 1
     
@@ -30,6 +51,7 @@ Public Sub Main()
     LoadOptions
     
     ' Check if the directory is there, if its not make it
+    ChkDir App.path & "\", "cookies"
     ChkDir App.path & "\data files\", "graphics"
     ChkDir App.path & "\data files\graphics\", "animations"
     ChkDir App.path & "\data files\graphics\", "characters"
@@ -54,11 +76,11 @@ Public Sub Main()
     ChkDir App.path & "\data files\", "sound"
     
     ' load dx8
-    Directx8.Init
+    Directx8.init
     LoadSocialicons
     
     ' initialise sound & music engines
-    FMOD.Init
+    FMOD.init
 
     ' load the main game (and by extension, pre-load DD7)
     GettingMap = True
@@ -93,20 +115,303 @@ Public Sub Main()
     
     ' show the main menu
     frmMain.Show
-    ShowMenu
-    HideGame
+  
+  Call disableLogin
+  Call disableChars
+  
+  Call showLogin
+  Call menuStatus("Checking session...")
+  
+  Set request = New clsHTTPRequest
+  request.method = API.routes.storage.characters.all.method
+  request.route = API.routes.storage.characters.all.route
+  Call request.addHeader("Accept", "application/json")
+  Set response = request.dispatch
+  Call response.await
+  
+  Select Case response.responseCode
+    Case 200
+      Call menuStatus
+      Call hideLogin
+      Call getChars
+    
+    Case 401
+      Call menuStatus
+      Call enableLogin
+    
+    Case Else
+      Call MsgBox("This shouldn't happen:" & vbNewLine & response.responseBody)
+  End Select
+  
+  If ConnectToServer() Then
+      SStatus = "Online"
+  Else
+      SStatus = "Offline"
+  End If
+  For i = 1 To 5
+      MenuNPC(i).x = Rand(0, ScreenWidth)
+      MenuNPC(i).y = Rand(0, ScreenHeight)
+      MenuNPC(i).dir = Rand(0, 1)
+  Next
+  
+  Call MenuLoop
+End Sub
 
-    If ConnectToServer() Then
-        SStatus = "Online"
-    Else
-        SStatus = "Offline"
-    End If
-    For i = 1 To 5
-        MenuNPC(i).x = Rand(0, ScreenWidth)
-        MenuNPC(i).y = Rand(0, ScreenHeight)
-        MenuNPC(i).dir = Rand(0, 1)
-    Next
-    MenuLoop
+Public Sub menuStatus(Optional ByRef Text As String)
+  frmMain.lblStatus.Caption = Text
+End Sub
+
+Public Sub enableLogin()
+  frmMain.fraLogin.Enabled = True
+  Call frmMain.txtEmail.SetFocus
+End Sub
+
+Public Sub disableLogin()
+  frmMain.fraLogin.Enabled = False
+End Sub
+
+Public Sub showLogin()
+  frmMain.fraLogin.Left = (frmMain.ScaleWidth - frmMain.fraLogin.width) / 2
+  frmMain.fraLogin.Top = (frmMain.ScaleHeight - frmMain.fraLogin.height) / 2
+  frmMain.fraLogin.visible = True
+End Sub
+
+Public Sub hideLogin()
+  frmMain.fraLogin.visible = False
+End Sub
+
+Public Sub clearLoginError()
+  frmMain.lblEmailErr.Caption = vbNullString
+  frmMain.lblPasswordErr.Caption = vbNullString
+End Sub
+
+Public Sub clearNewCharError()
+  frmMain.lblNewCharNameErr.Caption = vbNullString
+  frmMain.lblNewCharSexErr.Caption = vbNullString
+End Sub
+
+Public Sub enableChars()
+  frmMain.fraChars.Enabled = True
+End Sub
+
+Public Sub disableChars()
+  frmMain.fraChars.Enabled = False
+End Sub
+
+Public Sub showChars()
+  frmMain.fraChars.Left = (frmMain.ScaleWidth - frmMain.fraChars.width) / 2
+  frmMain.fraChars.Top = (frmMain.ScaleHeight - frmMain.fraChars.height) / 2
+  frmMain.fraChars.visible = True
+End Sub
+
+Public Sub hideChars()
+  frmMain.fraChars.visible = False
+End Sub
+
+Public Sub enableNewChar()
+  frmMain.fraNewChar.Enabled = True
+End Sub
+
+Public Sub disableNewChar()
+  frmMain.fraNewChar.Enabled = False
+End Sub
+
+Public Sub showNewChar()
+  frmMain.fraNewChar.Left = (frmMain.ScaleWidth - frmMain.fraNewChar.width) / 2
+  frmMain.fraNewChar.Top = (frmMain.ScaleHeight - frmMain.fraNewChar.height) / 2
+  frmMain.fraNewChar.visible = True
+End Sub
+
+Public Sub hideNewChar()
+  frmMain.fraNewChar.visible = False
+End Sub
+
+Public Sub login(ByRef email As String, ByRef password As String)
+Dim request As clsHTTPRequest
+Dim response As clsHTTPResponse
+Dim pair As clsJSONPair
+Dim json As Object
+Dim o As Object
+
+  Call menuStatus("Logging in...")
+  Call disableLogin
+  Call clearLoginError
+  
+  Set request = New clsHTTPRequest
+  request.method = API.routes.auth.login.method
+  request.route = API.routes.auth.login.route
+  Call request.addHeader("Accept", "application/json")
+  Call request.addData("email", email)
+  Call request.addData("password", password)
+  Set response = request.dispatch
+  Call response.await
+  
+  Select Case response.responseCode
+    Case 200
+      Call menuStatus
+      Call hideLogin
+      Call getChars
+    
+    Case 409
+      Set json = response.responseJSON
+      
+      For Each pair In json
+        Select Case pair.key
+          Case "email":    frmMain.lblEmailErr.Caption = pair.val(1).val
+          Case "password": frmMain.lblPasswordErr.Caption = pair.val(1).val
+        End Select
+      Next
+      
+      Call menuStatus
+      Call enableLogin
+    
+    Case Else
+      Call MsgBox("This shouldn't happen:" & vbNewLine & response.responseBody)
+  End Select
+End Sub
+
+Public Sub logout()
+Dim request As clsHTTPRequest
+Dim response As clsHTTPResponse
+Dim pair As clsJSONPair
+Dim json As Object
+
+  Call disableChars
+  
+  Set request = New clsHTTPRequest
+  request.method = API.routes.auth.logout.method
+  request.route = API.routes.auth.logout.route
+  Call request.addHeader("Accept", "application/json")
+  Set response = request.dispatch
+  Call response.await
+  
+  Select Case response.responseCode
+    Case 200
+      Call hideChars
+      Call showLogin
+      Call enableLogin
+    
+    Case 409
+      Set json = response.responseJSON
+      
+      For Each pair In json
+        Call MsgBox(pair.key & ": " & pair.val(1).val)
+      Next
+      
+      Call enableChars
+    
+    Case Else
+      Call MsgBox("This shouldn't happen:" & vbNewLine & response.responseBody)
+  End Select
+End Sub
+
+Public Sub getChars()
+Dim request As clsHTTPRequest
+Dim response As clsHTTPResponse
+Dim pair As clsJSONPair
+
+  Call showChars
+  Call disableChars
+  
+  Set request = New clsHTTPRequest
+  request.method = API.routes.storage.characters.all.method
+  request.route = API.routes.storage.characters.all.route
+  Call request.addHeader("Accept", "application/json")
+  Set response = request.dispatch
+  Call response.await
+  
+  Call frmMain.lstChars.Clear
+  
+  Select Case response.responseCode
+    Case 200
+      For Each pair In response.responseJSON
+        Call frmMain.lstChars.AddItem(pair.val("name").val & ", level " & pair.val("lvl").val & " " & pair.val("sex").val)
+        frmMain.lstChars.ItemData(frmMain.lstChars.ListCount - 1) = pair.val("id").val
+      Next
+      
+      If frmMain.lstChars.ListCount <> 0 Then
+        frmMain.lstChars.ListIndex = 0
+      End If
+    
+    Case 409
+      Call hideChars
+      Call showLogin
+      Call menuStatus(response.responseJSON(1).val(1).val)
+      Call enableLogin
+    
+    Case Else
+      Call MsgBox("This shouldn't happen:" & vbNewLine & response.responseBody)
+  End Select
+  
+  Call enableChars
+End Sub
+
+Public Sub delChar(ByVal id As Long)
+Dim request As clsHTTPRequest
+Dim response As clsHTTPResponse
+
+  Call disableChars
+  
+  Set request = New clsHTTPRequest
+  request.method = API.routes.storage.characters.delete.method
+  request.route = API.routes.storage.characters.delete.route
+  Call request.addHeader("Accept", "application/json")
+  Call request.addData("id", str$(id))
+  Set response = request.dispatch
+  Call response.await
+  
+  Select Case response.responseCode
+    Case 200
+      Call getChars
+    
+    Case 409
+      MsgBox response.responseBody
+    
+    Case Else
+      MsgBox response.responseBody
+  End Select
+  
+  Call enableChars
+End Sub
+
+Public Sub newChar(ByRef name As String, ByRef sex As String)
+Dim request As clsHTTPRequest
+Dim response As clsHTTPResponse
+Dim pair As clsJSONPair
+Dim json As Object
+
+  Call disableNewChar
+  Call clearNewCharError
+  
+  Set request = New clsHTTPRequest
+  request.method = API.routes.storage.characters.create.method
+  request.route = API.routes.storage.characters.create.route
+  Call request.addHeader("Accept", "application/json")
+  Call request.addData("name", name)
+  Call request.addData("sex", sex)
+  Set response = request.dispatch
+  Call response.await
+  
+  Select Case response.responseCode
+    Case 201
+      Call hideNewChar
+      Call getChars
+    
+    Case 409
+      Set json = response.responseJSON
+      
+      For Each pair In json
+        Select Case pair.key
+          Case "name": frmMain.lblNewCharNameErr.Caption = pair.val(1).val
+          Case "sex":  frmMain.lblNewCharSexErr.Caption = pair.val(1).val
+        End Select
+      Next
+    
+    Case Else
+      Call MsgBox("This shouldn't happen:" & vbNewLine & response.responseBody)
+  End Select
+  
+  Call enableNewChar
 End Sub
 
 Public Sub InitialiseGUI()
@@ -123,97 +428,97 @@ Dim i As Long
     
     ' 1 - Chat
     With GUIWindow(GUI_CHAT)
-        .x = Val(GetVar(FileName, "GUI_CHAT", "X"))
-        .y = Val(GetVar(FileName, "GUI_CHAT", "Y"))
-        .width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
-        .height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
+        .x = val(GetVar(FileName, "GUI_CHAT", "X"))
+        .y = val(GetVar(FileName, "GUI_CHAT", "Y"))
+        .width = val(GetVar(FileName, "GUI_CHAT", "Width"))
+        .height = val(GetVar(FileName, "GUI_CHAT", "Height"))
         .visible = True
     End With
     
     ' 2 - Hotbar
     With GUIWindow(GUI_HOTBAR)
-        .x = Val(GetVar(FileName, "GUI_HOTBAR", "X"))
-        .y = Val(GetVar(FileName, "GUI_HOTBAR", "Y"))
-        .height = Val(GetVar(FileName, "GUI_HOTBAR", "Height"))
+        .x = val(GetVar(FileName, "GUI_HOTBAR", "X"))
+        .y = val(GetVar(FileName, "GUI_HOTBAR", "Y"))
+        .height = val(GetVar(FileName, "GUI_HOTBAR", "Height"))
         .width = ((9 + 36) * (MAX_HOTBAR - 1))
     End With
     
     ' 3 - Menu
     With GUIWindow(GUI_MENU)
-        .x = Val(GetVar(FileName, "GUI_MENU", "X"))
-        .y = Val(GetVar(FileName, "GUI_MENU", "Y"))
-        .width = Val(GetVar(FileName, "GUI_MENU", "Width"))
-        .height = Val(GetVar(FileName, "GUI_MENU", "Height"))
+        .x = val(GetVar(FileName, "GUI_MENU", "X"))
+        .y = val(GetVar(FileName, "GUI_MENU", "Y"))
+        .width = val(GetVar(FileName, "GUI_MENU", "Width"))
+        .height = val(GetVar(FileName, "GUI_MENU", "Height"))
         .visible = True
     End With
     
     ' 4 - Bars
     With GUIWindow(GUI_BARS)
-        .x = Val(GetVar(FileName, "GUI_BARS", "X"))
-        .y = Val(GetVar(FileName, "GUI_BARS", "Y"))
-        .width = Val(GetVar(FileName, "GUI_BARS", "Width"))
-        .height = Val(GetVar(FileName, "GUI_BARS", "Height"))
+        .x = val(GetVar(FileName, "GUI_BARS", "X"))
+        .y = val(GetVar(FileName, "GUI_BARS", "Y"))
+        .width = val(GetVar(FileName, "GUI_BARS", "Width"))
+        .height = val(GetVar(FileName, "GUI_BARS", "Height"))
         .visible = True
     End With
     
     ' 5 - Inventory
     With GUIWindow(GUI_INVENTORY)
-        .x = Val(GetVar(FileName, "GUI_INVENTORY", "X"))
-        .y = Val(GetVar(FileName, "GUI_INVENTORY", "Y"))
-        .width = Val(GetVar(FileName, "GUI_INVENTORY", "Width"))
-        .height = Val(GetVar(FileName, "GUI_INVENTORY", "Height"))
+        .x = val(GetVar(FileName, "GUI_INVENTORY", "X"))
+        .y = val(GetVar(FileName, "GUI_INVENTORY", "Y"))
+        .width = val(GetVar(FileName, "GUI_INVENTORY", "Width"))
+        .height = val(GetVar(FileName, "GUI_INVENTORY", "Height"))
         .visible = False
     End With
     
     ' 6 - Spells
     With GUIWindow(GUI_SPELLS)
-        .x = Val(GetVar(FileName, "GUI_SPELLS", "X"))
-        .y = Val(GetVar(FileName, "GUI_SPELLS", "Y"))
-        .width = Val(GetVar(FileName, "GUI_SPELLS", "Width"))
-        .height = Val(GetVar(FileName, "GUI_SPELLS", "Height"))
+        .x = val(GetVar(FileName, "GUI_SPELLS", "X"))
+        .y = val(GetVar(FileName, "GUI_SPELLS", "Y"))
+        .width = val(GetVar(FileName, "GUI_SPELLS", "Width"))
+        .height = val(GetVar(FileName, "GUI_SPELLS", "Height"))
         .visible = False
     End With
     
     ' 7 - Character
     With GUIWindow(GUI_CHARACTER)
-        .x = Val(GetVar(FileName, "GUI_CHARACTER", "X"))
-        .y = Val(GetVar(FileName, "GUI_CHARACTER", "Y"))
-        .width = Val(GetVar(FileName, "GUI_CHARACTER", "Width"))
-        .height = Val(GetVar(FileName, "GUI_CHARACTER", "Height"))
+        .x = val(GetVar(FileName, "GUI_CHARACTER", "X"))
+        .y = val(GetVar(FileName, "GUI_CHARACTER", "Y"))
+        .width = val(GetVar(FileName, "GUI_CHARACTER", "Width"))
+        .height = val(GetVar(FileName, "GUI_CHARACTER", "Height"))
         .visible = False
     End With
     
     ' 8 - Options
     With GUIWindow(GUI_OPTIONS)
-        .x = Val(GetVar(FileName, "GUI_OPTIONS", "X"))
-        .y = Val(GetVar(FileName, "GUI_OPTIONS", "Y"))
-        .width = Val(GetVar(FileName, "GUI_OPTIONS", "Width"))
-        .height = Val(GetVar(FileName, "GUI_OPTIONS", "Height"))
+        .x = val(GetVar(FileName, "GUI_OPTIONS", "X"))
+        .y = val(GetVar(FileName, "GUI_OPTIONS", "Y"))
+        .width = val(GetVar(FileName, "GUI_OPTIONS", "Width"))
+        .height = val(GetVar(FileName, "GUI_OPTIONS", "Height"))
         .visible = False
     End With
     With GUIWindow(GUI_QUESTDIALOGUE)
-        .x = Val(GetVar(FileName, "GUI_CHAT", "X"))
-        .y = Val(GetVar(FileName, "GUI_CHAT", "Y"))
-        .width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
-        .height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
+        .x = val(GetVar(FileName, "GUI_CHAT", "X"))
+        .y = val(GetVar(FileName, "GUI_CHAT", "Y"))
+        .width = val(GetVar(FileName, "GUI_CHAT", "Width"))
+        .height = val(GetVar(FileName, "GUI_CHAT", "Height"))
         .visible = False
     End With
 
     ' 9 - Party
     With GUIWindow(GUI_PARTY)
-        .x = Val(GetVar(FileName, "GUI_PARTY", "X"))
-        .y = Val(GetVar(FileName, "GUI_PARTY", "Y"))
-        .width = Val(GetVar(FileName, "GUI_PARTY", "Width"))
-        .height = Val(GetVar(FileName, "GUI_PARTY", "Height"))
+        .x = val(GetVar(FileName, "GUI_PARTY", "X"))
+        .y = val(GetVar(FileName, "GUI_PARTY", "Y"))
+        .width = val(GetVar(FileName, "GUI_PARTY", "Width"))
+        .height = val(GetVar(FileName, "GUI_PARTY", "Height"))
         .visible = False
     End With
     
     ' 10 - Description
     With GUIWindow(GUI_DESCRIPTION)
-        .x = Val(GetVar(FileName, "GUI_DESCRIPTION", "X"))
-        .y = Val(GetVar(FileName, "GUI_DESCRIPTION", "Y"))
-        .width = Val(GetVar(FileName, "GUI_DESCRIPTION", "Width"))
-        .height = Val(GetVar(FileName, "GUI_DESCRIPTION", "Height"))
+        .x = val(GetVar(FileName, "GUI_DESCRIPTION", "X"))
+        .y = val(GetVar(FileName, "GUI_DESCRIPTION", "Y"))
+        .width = val(GetVar(FileName, "GUI_DESCRIPTION", "Width"))
+        .height = val(GetVar(FileName, "GUI_DESCRIPTION", "Height"))
         .visible = False
     End With
     
@@ -227,73 +532,73 @@ Dim i As Long
     
     ' 11 - Main Menu
     With GUIWindow(GUI_MAINMENU)
-        .x = Val(GetVar(FileName, "GUI_MAINMENU", "X"))
-        .y = Val(GetVar(FileName, "GUI_MAINMENU", "Y"))
-        .width = Val(GetVar(FileName, "GUI_MAINMENU", "Width"))
-        .height = Val(GetVar(FileName, "GUI_MAINMENU", "Height"))
+        .x = val(GetVar(FileName, "GUI_MAINMENU", "X"))
+        .y = val(GetVar(FileName, "GUI_MAINMENU", "Y"))
+        .width = val(GetVar(FileName, "GUI_MAINMENU", "Width"))
+        .height = val(GetVar(FileName, "GUI_MAINMENU", "Height"))
         .visible = False
     End With
     
     ' 12 - Shop
     With GUIWindow(GUI_SHOP)
-         .x = Val(GetVar(FileName, "GUI_SHOP", "X"))
-        .y = Val(GetVar(FileName, "GUI_SHOP", "Y"))
-        .width = Val(GetVar(FileName, "GUI_SHOP", "Width"))
-        .height = Val(GetVar(FileName, "GUI_SHOP", "Height"))
+         .x = val(GetVar(FileName, "GUI_SHOP", "X"))
+        .y = val(GetVar(FileName, "GUI_SHOP", "Y"))
+        .width = val(GetVar(FileName, "GUI_SHOP", "Width"))
+        .height = val(GetVar(FileName, "GUI_SHOP", "Height"))
         .visible = False
     End With
     
     ' 13 - Bank
     With GUIWindow(GUI_BANK)
-        .x = Val(GetVar(FileName, "GUI_BANK", "X"))
-        .y = Val(GetVar(FileName, "GUI_BANK", "Y"))
-        .width = Val(GetVar(FileName, "GUI_BANK", "Width"))
-        .height = Val(GetVar(FileName, "GUI_BANK", "Height"))
+        .x = val(GetVar(FileName, "GUI_BANK", "X"))
+        .y = val(GetVar(FileName, "GUI_BANK", "Y"))
+        .width = val(GetVar(FileName, "GUI_BANK", "Width"))
+        .height = val(GetVar(FileName, "GUI_BANK", "Height"))
         .visible = False
     End With
     
     ' 14 - Trade
     With GUIWindow(GUI_TRADE)
-        .x = Val(GetVar(FileName, "GUI_TRADE", "X"))
-        .y = Val(GetVar(FileName, "GUI_TRADE", "Y"))
-        .width = Val(GetVar(FileName, "GUI_TRADE", "Width"))
-        .height = Val(GetVar(FileName, "GUI_TRADE", "Height"))
+        .x = val(GetVar(FileName, "GUI_TRADE", "X"))
+        .y = val(GetVar(FileName, "GUI_TRADE", "Y"))
+        .width = val(GetVar(FileName, "GUI_TRADE", "Width"))
+        .height = val(GetVar(FileName, "GUI_TRADE", "Height"))
         .visible = False
     End With
     
     ' 15 - Currency
     With GUIWindow(GUI_CURRENCY)
-        .x = Val(GetVar(FileName, "GUI_CHAT", "X"))
-        .y = Val(GetVar(FileName, "GUI_CHAT", "Y"))
-        .width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
-        .height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
+        .x = val(GetVar(FileName, "GUI_CHAT", "X"))
+        .y = val(GetVar(FileName, "GUI_CHAT", "Y"))
+        .width = val(GetVar(FileName, "GUI_CHAT", "Width"))
+        .height = val(GetVar(FileName, "GUI_CHAT", "Height"))
         .visible = False
     End With
     
     ' 16 - Dialogue
     With GUIWindow(GUI_DIALOGUE)
-        .x = Val(GetVar(FileName, "GUI_CHAT", "X"))
-        .y = Val(GetVar(FileName, "GUI_CHAT", "Y"))
-        .width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
-        .height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
+        .x = val(GetVar(FileName, "GUI_CHAT", "X"))
+        .y = val(GetVar(FileName, "GUI_CHAT", "Y"))
+        .width = val(GetVar(FileName, "GUI_CHAT", "Width"))
+        .height = val(GetVar(FileName, "GUI_CHAT", "Height"))
         .visible = False
     End With
     
     ' 17 - Event Chat
     With GUIWindow(GUI_EVENTCHAT)
-        .x = Val(GetVar(FileName, "GUI_CHAT", "X"))
-        .y = Val(GetVar(FileName, "GUI_CHAT", "Y"))
-        .width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
-        .height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
+        .x = val(GetVar(FileName, "GUI_CHAT", "X"))
+        .y = val(GetVar(FileName, "GUI_CHAT", "Y"))
+        .width = val(GetVar(FileName, "GUI_CHAT", "Width"))
+        .height = val(GetVar(FileName, "GUI_CHAT", "Height"))
         .visible = False
     End With
     
     ' 18 - Tutorial
     With GUIWindow(GUI_TUTORIAL)
-        .x = Val(GetVar(FileName, "GUI_CHAT", "X"))
-        .y = Val(GetVar(FileName, "GUI_CHAT", "Y"))
-        .width = Val(GetVar(FileName, "GUI_CHAT", "Width"))
-        .height = Val(GetVar(FileName, "GUI_CHAT", "Height"))
+        .x = val(GetVar(FileName, "GUI_CHAT", "X"))
+        .y = val(GetVar(FileName, "GUI_CHAT", "Y"))
+        .width = val(GetVar(FileName, "GUI_CHAT", "Width"))
+        .height = val(GetVar(FileName, "GUI_CHAT", "Height"))
         .visible = False
     End With
     
@@ -308,19 +613,10 @@ Dim i As Long
     
     ' 20 - Guild Window
     With GUIWindow(GUI_GUILD)
-        .x = Val(GetVar(FileName, "GUI_GUILD", "X"))
-        .y = Val(GetVar(FileName, "GUI_GUILD", "Y"))
-        .width = Val(GetVar(FileName, "GUI_GUILD", "Width"))
-        .height = Val(GetVar(FileName, "GUI_GUILD", "Height"))
-        .visible = False
-    End With
-    
-    ' 21 - Pet
-    With GUIWindow(GUI_PET)
-        .x = Val(GetVar(FileName, "GUI_PET", "X"))
-        .y = Val(GetVar(FileName, "GUI_PET", "Y"))
-        .width = Val(GetVar(FileName, "GUI_PET", "Width"))
-        .height = Val(GetVar(FileName, "GUI_PET", "Height"))
+        .x = val(GetVar(FileName, "GUI_GUILD", "X"))
+        .y = val(GetVar(FileName, "GUI_GUILD", "Y"))
+        .width = val(GetVar(FileName, "GUI_GUILD", "Width"))
+        .height = val(GetVar(FileName, "GUI_GUILD", "Height"))
         .visible = False
     End With
     
@@ -761,64 +1057,59 @@ Dim i As Long
         .visible = True
         .PicNum = 22
     End With
-    
-    ' main - Pet Attack On Sight
-    With Buttons(44)
-        .state = 0 ' normal
-        .x = 26
-        .y = 143
-        .width = 32
-        .height = 32
-        .visible = True
-        .PicNum = 25
-    End With
-    
-' main - Pet Guard
-    With Buttons(45)
-        .state = 0 ' normal
-        .x = 81
-        .y = 143
-        .width = 32
-        .height = 32
-        .visible = True
-        .PicNum = 26
-    End With
-    
-' main - Pet Do Nothing
-    With Buttons(46)
-        .state = 0 ' normal
-        .x = 136
-        .y = 143
-        .width = 32
-        .height = 32
-        .visible = True
-        .PicNum = 27
-    End With
 End Sub
 
 Public Sub MenuState(ByVal state As Long)
-    Select Case state
-        Case MENU_STATE_ADDCHAR
-            isLoading = True
-            If ConnectToServer() Then
-                Call SendAddChar(sChar, newCharSex, newCharClothes, newCharGear, newCharHair, newCharHeadgear)
-            End If
-        Case MENU_STATE_NEWACCOUNT
-            If ConnectToServer() Then
-                Call SendNewAccount(sUser, sPass)
-            End If
-        Case MENU_STATE_LOGIN
-            isLoading = True
-            If ConnectToServer() Then
-                Call SendLogin(sUser, sPass)
-                Exit Sub
-            End If
-    End Select
+Dim request As clsHTTPRequest
+Dim response As clsHTTPResponse
+Dim json As Object
+Dim i As Long
 
-    If Not IsConnected Then
+  Select Case state
+    Case MENU_STATE_ADDCHAR
+      isLoading = True
+      If ConnectToServer() Then
+        Call SendAddChar(sChar, newCharSex, newCharClothes, newCharGear, newCharHair, newCharHeadgear)
+      End If
+    
+    Case MENU_STATE_NEWACCOUNT
+      If ConnectToServer() Then
+        Call SendNewAccount(sUser, sPass)
+      End If
+    
+    Case MENU_STATE_LOGIN
+      isLoading = True
+      'If ConnectToServer() Then
+      '  Call SendLogin(sUser, sPass)
+      '  Exit Sub
+      'End If
+      
+      Set request = New clsHTTPRequest
+      request.method = API.routes.auth.login.method
+      request.route = API.routes.auth.login.route
+      Call request.addHeader("Accept", "application/json")
+      Call request.addData("email", sUser)
+      Call request.addData("password", sPass)
+      Set response = request.dispatch
+      
+      If response.responseCode <> 201 Then
+        Set json = response.responseJSON
+        If Not json Is Nothing Then
+          For i = 1 To json.count
+            Call MsgBox(json(i)(1))
+          Next
+        End If
+        
         isLoading = False
-        Call MsgBox("The Server Appears to be Offline! Visit http://www.prospekt2D.com for more info.", vbOKOnly, Options.Game_Name)
-    End If
+        
+        Exit Sub
+      End If
+  End Select
+  
+  If IsConnected = False Then
+    isLoading = False
+    Call MsgBox("The Server Appears to be Offline! Visit http://www.prospekt2D.com for more info.", vbOKOnly, Options.Game_Name)
+  End If
 End Sub
 
 Public Sub logoutGame()
@@ -862,7 +1153,7 @@ Dim i As Long
     ' Load the username + pass
     sUser = Trim$(Options.Username)
     If Options.savePass = 1 Then
-        sPass = Trim$(Options.Password)
+        sPass = Trim$(Options.password)
     End If
     curTextbox = 1
     curMenu = MENU_LOGIN
@@ -899,7 +1190,6 @@ End Sub
 Public Sub DestroyGame()
     ' break out of GameLoop
     HideGame
-    HideMenu
     Call DestroyTCP
     
     ' destroy music & sound engines
@@ -935,9 +1225,9 @@ Public Function Rand(ByVal Low As Long, ByVal High As Long) As Long
     Rand = Int((High - Low + 1) * Rnd) + Low
 End Function
 
-Public Function isLoginLegal(ByVal Username As String, ByVal Password As String) As Boolean
+Public Function isLoginLegal(ByVal Username As String, ByVal password As String) As Boolean
     If LenB(Trim$(Username)) >= 3 Then
-        If LenB(Trim$(Password)) >= 3 Then
+        If LenB(Trim$(password)) >= 3 Then
             isLoginLegal = True
         End If
     End If
@@ -998,33 +1288,6 @@ Dim strLoad As String, i As Long
         strLoad = dir
         i = i + 1
     Loop
-End Sub
-
-Public Sub ShowMenu()
-    ' Load the username + pass
-    sUser = Trim$(Options.Username)
-    If Options.savePass = 1 Then
-        sPass = Trim$(Options.Password)
-    End If
-    curTextbox = 1
-    ' set the menu
-    curMenu = MENU_LOGIN
-    
-    ' show the GUI
-    GUIWindow(GUI_MAINMENU).visible = True
-    
-    inMenu = True
-    
-    ' fader
-    faderAlpha = 255
-    faderState = 0
-    faderSpeed = 4
-    canFade = True
-End Sub
-
-Public Sub HideMenu()
-    GUIWindow(GUI_MAINMENU).visible = False
-    inMenu = False
 End Sub
 
 Public Sub ShowGame()

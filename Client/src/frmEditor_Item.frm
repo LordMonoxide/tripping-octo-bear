@@ -30,14 +30,14 @@ Begin VB.Form frmEditor_Item
       Caption         =   "Container/Chest"
       Height          =   2055
       Left            =   3360
-      TabIndex        =   114
+      TabIndex        =   103
       Top             =   5160
       Width           =   6255
       Begin VB.TextBox TxtContainerChance 
          Height          =   270
          Index           =   4
          Left            =   5040
-         TabIndex        =   124
+         TabIndex        =   113
          Top             =   840
          Width           =   1095
       End
@@ -45,7 +45,7 @@ Begin VB.Form frmEditor_Item
          Height          =   270
          Index           =   4
          Left            =   5040
-         TabIndex        =   123
+         TabIndex        =   112
          Top             =   480
          Width           =   1095
       End
@@ -53,7 +53,7 @@ Begin VB.Form frmEditor_Item
          Height          =   270
          Index           =   3
          Left            =   3960
-         TabIndex        =   122
+         TabIndex        =   111
          Top             =   840
          Width           =   1095
       End
@@ -61,7 +61,7 @@ Begin VB.Form frmEditor_Item
          Height          =   270
          Index           =   3
          Left            =   3960
-         TabIndex        =   121
+         TabIndex        =   110
          Top             =   480
          Width           =   1095
       End
@@ -69,7 +69,7 @@ Begin VB.Form frmEditor_Item
          Height          =   270
          Index           =   2
          Left            =   3000
-         TabIndex        =   120
+         TabIndex        =   109
          Top             =   840
          Width           =   1095
       End
@@ -77,7 +77,7 @@ Begin VB.Form frmEditor_Item
          Height          =   270
          Index           =   2
          Left            =   3000
-         TabIndex        =   119
+         TabIndex        =   108
          Top             =   480
          Width           =   1095
       End
@@ -85,7 +85,7 @@ Begin VB.Form frmEditor_Item
          Height          =   270
          Index           =   1
          Left            =   1920
-         TabIndex        =   118
+         TabIndex        =   107
          Top             =   840
          Width           =   1095
       End
@@ -93,7 +93,7 @@ Begin VB.Form frmEditor_Item
          Height          =   270
          Index           =   1
          Left            =   1920
-         TabIndex        =   117
+         TabIndex        =   106
          Top             =   480
          Width           =   1095
       End
@@ -101,7 +101,7 @@ Begin VB.Form frmEditor_Item
          Height          =   270
          Index           =   0
          Left            =   840
-         TabIndex        =   116
+         TabIndex        =   105
          Top             =   840
          Width           =   1095
       End
@@ -109,7 +109,7 @@ Begin VB.Form frmEditor_Item
          Height          =   270
          Index           =   0
          Left            =   840
-         TabIndex        =   115
+         TabIndex        =   104
          Top             =   480
          Width           =   1095
       End
@@ -117,7 +117,7 @@ Begin VB.Form frmEditor_Item
          Caption         =   "Chance"
          Height          =   375
          Left            =   120
-         TabIndex        =   126
+         TabIndex        =   115
          Top             =   840
          Width           =   735
       End
@@ -125,77 +125,9 @@ Begin VB.Form frmEditor_Item
          Caption         =   "Item"
          Height          =   255
          Left            =   120
-         TabIndex        =   125
+         TabIndex        =   114
          Top             =   480
          Width           =   495
-      End
-   End
-   Begin VB.Frame fraPetStats 
-      Caption         =   "Pet Stats"
-      Height          =   3255
-      Left            =   3360
-      TabIndex        =   103
-      Top             =   5160
-      Width           =   6255
-      Begin VB.ComboBox cmbPetStat 
-         Height          =   300
-         ItemData        =   "frmEditor_Item.frx":3332
-         Left            =   1440
-         List            =   "frmEditor_Item.frx":3351
-         Style           =   2  'Dropdown List
-         TabIndex        =   107
-         Top             =   960
-         Width           =   3735
-      End
-      Begin VB.OptionButton optIncDec 
-         Caption         =   "Increase"
-         Height          =   255
-         Index           =   0
-         Left            =   3000
-         TabIndex        =   106
-         Top             =   1320
-         Width           =   975
-      End
-      Begin VB.OptionButton optIncDec 
-         Caption         =   "Decrease"
-         Height          =   255
-         Index           =   1
-         Left            =   4080
-         TabIndex        =   105
-         Top             =   1320
-         Width           =   1095
-      End
-      Begin VB.HScrollBar scrlPetPercent 
-         Height          =   255
-         Left            =   1680
-         Max             =   100
-         TabIndex        =   104
-         Top             =   1680
-         Width           =   3495
-      End
-      Begin VB.Label lblPetStat 
-         Caption         =   "Stat:"
-         Height          =   255
-         Left            =   960
-         TabIndex        =   110
-         Top             =   960
-         Width           =   495
-      End
-      Begin VB.Label Label5 
-         Caption         =   "Increase Or Decrease:"
-         Height          =   255
-         Left            =   960
-         TabIndex        =   109
-         Top             =   1320
-         Width           =   1815
-      End
-      Begin VB.Label lblPetPercent 
-         Caption         =   "Percent:"
-         Height          =   255
-         Left            =   960
-         TabIndex        =   108
-         Top             =   1680
-         Width           =   735
       End
    End
    Begin VB.Frame Frame4 
@@ -334,9 +266,9 @@ Begin VB.Form frmEditor_Item
       End
       Begin VB.ComboBox cmbBind 
          Height          =   300
-         ItemData        =   "frmEditor_Item.frx":338D
+         ItemData        =   "frmEditor_Item.frx":3332
          Left            =   3840
-         List            =   "frmEditor_Item.frx":339A
+         List            =   "frmEditor_Item.frx":333F
          Style           =   2  'Dropdown List
          TabIndex        =   22
          Top             =   600
@@ -352,9 +284,9 @@ Begin VB.Form frmEditor_Item
       End
       Begin VB.ComboBox cmbType 
          Height          =   300
-         ItemData        =   "frmEditor_Item.frx":33C3
+         ItemData        =   "frmEditor_Item.frx":3368
          Left            =   120
-         List            =   "frmEditor_Item.frx":33F1
+         List            =   "frmEditor_Item.frx":3390
          Style           =   2  'Dropdown List
          TabIndex        =   20
          Top             =   1200
@@ -945,9 +877,9 @@ Begin VB.Form frmEditor_Item
          End
          Begin VB.ComboBox cmbTool 
             Height          =   300
-            ItemData        =   "frmEditor_Item.frx":346E
+            ItemData        =   "frmEditor_Item.frx":33FD
             Left            =   3360
-            List            =   "frmEditor_Item.frx":3481
+            List            =   "frmEditor_Item.frx":3410
             Style           =   2  'Dropdown List
             TabIndex        =   71
             Top             =   600
@@ -1167,29 +1099,6 @@ Begin VB.Form frmEditor_Item
          Width           =   780
       End
    End
-   Begin VB.Frame fraPet 
-      Caption         =   "Pet Data"
-      Height          =   3255
-      Left            =   3360
-      TabIndex        =   111
-      Top             =   5160
-      Width           =   6255
-      Begin VB.HScrollBar scrlPet 
-         Height          =   255
-         Left            =   240
-         TabIndex        =   112
-         Top             =   1440
-         Width           =   5775
-      End
-      Begin VB.Label lblPet 
-         Caption         =   "Pet: None"
-         Height          =   255
-         Left            =   240
-         TabIndex        =   113
-         Top             =   1200
-         Width           =   975
-      End
-   End
 End
 Attribute VB_Name = "frmEditor_Item"
 Attribute VB_GlobalNameSpace = False
@@ -1290,18 +1199,7 @@ Private Sub cmbType_Click()
         fraUnique.visible = False
     End If
     
-    If cmbType.ListIndex = ITEM_TYPE_PET Then
-        fraPet.visible = True
-    Else
-        fraPet.visible = False
-    End If
-    
-    If cmbType.ListIndex = ITEM_TYPE_PET_STATS Then
-        fraPetStats.visible = True
-    Else
-        fraPetStats.visible = False
-    End If
-        If (cmbType.ListIndex = ITEM_TYPE_CONTAINER) Then
+    If (cmbType.ListIndex = ITEM_TYPE_CONTAINER) Then
         fraContainer.visible = True
     Else
         fraContainer.visible = False
@@ -1557,25 +1455,6 @@ End Sub
 Private Sub txtRDef_Change()
     If Val(txtMDef.Text) > MAX_LONG Then txtMDef.Text = MAX_LONG
     Item(EditorIndex).RDef = Val(txtRDef.Text)
-End Sub
-
-Private Sub scrlPet_Change()
-    If scrlPet.Value = 0 Then
-        lblPet.Caption = "Pet: None"
-    Else
-        lblPet.Caption = "Pet: " & Trim$(Pet(scrlPet.Value).name)
-    End If
-    Item(EditorIndex).Data1 = scrlPet.Value
-End Sub
-
-Private Sub scrlPetPercent_Change()
-lblPetPercent.Caption = "Percent: " & scrlPetPercent.Value & "%"
-Item(EditorIndex).Data3 = scrlPetPercent.Value
-End Sub
-
-Private Sub cmbPetStat_Click()
-lblPetStat.Caption = "Stat: " & cmbPetStat.Text
-Item(EditorIndex).Data1 = cmbPetStat.ListIndex
 End Sub
 
 Private Sub optIncDec_Click(Index As Integer)

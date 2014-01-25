@@ -101,12 +101,6 @@ Public Enum ServerPackets
     SAdminGuild
     SGuildAdminSwitchTab
     SGuildInvite
-    SPetEditor
-    SUpdatePet
-    SPetMove
-    SPetDir
-    SPetVital
-    SClearPetSpellBuffer
     SSwearFilter
     SPlayerOpenChest
     SUpdateChest
@@ -220,13 +214,6 @@ Public Enum ClientPackets
     CSayGuild
     CSaveGuild
     CRequestGuildAdminTabSwitch
-    CRequestEditPet
-    CSavePet
-    CRequestPets
-    CPetMove
-    csetbehaviour
-    CReleasePet
-    CPetSpell
     CSendChest
     ' Make sure CMSG_COUNT is below everything else
     CMSG_COUNT
@@ -320,7 +307,6 @@ Public Enum GUIType
     GUI_TUTORIAL
     GUI_RIGHTMENU
     GUI_GUILD
-    GUI_PET
     GUI_QUESTDIALOGUE
     GUI_QUESTS
     GUI_Count

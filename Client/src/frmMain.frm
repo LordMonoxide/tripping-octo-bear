@@ -1,5 +1,4 @@
 VERSION 5.00
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCN.OCX"
 Begin VB.Form frmMain 
    BackColor       =   &H00E0E0E0&
    BorderStyle     =   1  'Fixed Single
@@ -22,18 +21,234 @@ Begin VB.Form frmMain
    MaxButton       =   0   'False
    MinButton       =   0   'False
    MouseIcon       =   "frmMain.frx":23D2
-   MousePointer    =   99  'Custom
    ScaleHeight     =   316
    ScaleMode       =   3  'Pixel
    ScaleWidth      =   528
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
-   Begin MSWinsockLib.Winsock Socket 
-      Left            =   0
-      Top             =   0
-      _ExtentX        =   741
-      _ExtentY        =   741
-      _Version        =   393216
+   Begin VB.Frame fraNewChar 
+      Caption         =   "New Character"
+      Height          =   1995
+      Left            =   2700
+      TabIndex        =   34
+      Top             =   2520
+      Visible         =   0   'False
+      Width           =   3855
+      Begin VB.CommandButton cmdNewCharCancel 
+         Caption         =   "Cancel"
+         Height          =   315
+         Left            =   2040
+         TabIndex        =   40
+         Top             =   1560
+         Width           =   795
+      End
+      Begin VB.CommandButton cmdNewCharCreate 
+         Caption         =   "Create"
+         Height          =   315
+         Left            =   2940
+         TabIndex        =   39
+         Top             =   1560
+         Width           =   795
+      End
+      Begin VB.OptionButton optNewCharFemale 
+         Caption         =   "Female"
+         Height          =   195
+         Left            =   960
+         TabIndex        =   38
+         Top             =   1020
+         Width           =   930
+      End
+      Begin VB.OptionButton optNewCharMale 
+         Caption         =   "Male"
+         Height          =   195
+         Left            =   180
+         TabIndex        =   37
+         Top             =   1020
+         Width           =   690
+      End
+      Begin VB.TextBox txtNewCharName 
+         Height          =   315
+         Left            =   120
+         TabIndex        =   36
+         Top             =   420
+         Width           =   3615
+      End
+      Begin VB.Label lblNewCharSexErr 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Height          =   195
+         Left            =   540
+         TabIndex        =   43
+         Top             =   780
+         Width           =   60
+      End
+      Begin VB.Label lblNewCharNameErr 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Height          =   195
+         Left            =   720
+         TabIndex        =   42
+         Top             =   240
+         Width           =   60
+      End
+      Begin VB.Label lblNewCharSex 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Sex:"
+         Height          =   195
+         Left            =   120
+         TabIndex        =   41
+         Top             =   780
+         Width           =   405
+      End
+      Begin VB.Label lblNewCharName 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Name:"
+         Height          =   195
+         Left            =   120
+         TabIndex        =   35
+         Top             =   240
+         Width           =   570
+      End
+   End
+   Begin VB.Frame fraChars 
+      Caption         =   "Characters"
+      Height          =   1995
+      Left            =   660
+      TabIndex        =   26
+      Top             =   2520
+      Visible         =   0   'False
+      Width           =   3855
+      Begin VB.CommandButton cmdCharLogout 
+         Caption         =   "Logout"
+         Height          =   315
+         Left            =   180
+         TabIndex        =   33
+         Top             =   1560
+         Width           =   795
+      End
+      Begin VB.CommandButton cmdCharNew 
+         Caption         =   "New"
+         Height          =   315
+         Left            =   2100
+         TabIndex        =   29
+         Top             =   1560
+         Width           =   735
+      End
+      Begin VB.CommandButton cmdCharDel 
+         Caption         =   "Delete"
+         Height          =   315
+         Left            =   1200
+         TabIndex        =   30
+         Top             =   1560
+         Width           =   915
+      End
+      Begin VB.CommandButton cmdCharUse 
+         Caption         =   "Use"
+         Height          =   315
+         Left            =   2940
+         TabIndex        =   28
+         Top             =   1560
+         Width           =   735
+      End
+      Begin VB.ListBox lstChars 
+         Height          =   1230
+         Left            =   120
+         TabIndex        =   27
+         Top             =   240
+         Width           =   3615
+      End
+   End
+   Begin VB.Frame fraLogin 
+      Caption         =   "Login"
+      Enabled         =   0   'False
+      Height          =   1695
+      Left            =   2280
+      TabIndex        =   19
+      Top             =   960
+      Visible         =   0   'False
+      Width           =   3315
+      Begin VB.CommandButton cmdLogin 
+         Caption         =   "Login"
+         Height          =   315
+         Left            =   2400
+         TabIndex        =   24
+         Top             =   1260
+         Width           =   735
+      End
+      Begin VB.TextBox txtPassword 
+         BeginProperty Font 
+            Name            =   "Symbol"
+            Size            =   8.25
+            Charset         =   2
+            Weight          =   400
+            Underline       =   0   'False
+            Italic          =   0   'False
+            Strikethrough   =   0   'False
+         EndProperty
+         Height          =   285
+         IMEMode         =   3  'DISABLE
+         Left            =   120
+         PasswordChar    =   "·"
+         TabIndex        =   23
+         Top             =   900
+         Width           =   3075
+      End
+      Begin VB.TextBox txtEmail 
+         Height          =   285
+         Left            =   120
+         TabIndex        =   21
+         Top             =   420
+         Width           =   3075
+      End
+      Begin VB.Label lblPasswordErr 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Height          =   195
+         Left            =   1080
+         TabIndex        =   32
+         Top             =   720
+         Width           =   60
+      End
+      Begin VB.Label lblEmailErr 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Height          =   195
+         Left            =   720
+         TabIndex        =   31
+         Top             =   240
+         Width           =   60
+      End
+      Begin VB.Label lblStatus 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Height          =   195
+         Left            =   120
+         TabIndex        =   25
+         Top             =   1320
+         Width           =   60
+      End
+      Begin VB.Label lblPassword 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Password:"
+         Height          =   195
+         Left            =   120
+         TabIndex        =   22
+         Top             =   720
+         Width           =   885
+      End
+      Begin VB.Label lblEmail 
+         AutoSize        =   -1  'True
+         BackStyle       =   0  'Transparent
+         Caption         =   "Email:"
+         Height          =   195
+         Left            =   120
+         TabIndex        =   20
+         Top             =   240
+         Width           =   540
+      End
    End
    Begin VB.PictureBox picAdmin 
       Appearance      =   0  'Flat
@@ -260,9 +475,6 @@ Begin VB.Form frmMain
       Begin VB.Menu mnuEditEvent 
          Caption         =   "&Event"
       End
-      Begin VB.Menu mnuEditPet 
-         Caption         =   "&Pet"
-      End
    End
    Begin VB.Menu mnuMisc 
       Caption         =   "&Miscellaneous"
@@ -326,6 +538,36 @@ Private Sub Socket_DataArrival(ByVal bytesTotal As Long)
     If IsConnected Then
         Call IncomingData(bytesTotal)
     End If
+End Sub
+
+Private Sub cmdLogin_Click()
+  Call login(txtEmail.Text, txtPassword.Text)
+End Sub
+
+Private Sub cmdCharLogout_Click()
+  Call logout
+End Sub
+
+Private Sub cmdCharDel_Click()
+  Call delChar(lstChars.ItemData(lstChars.ListIndex))
+End Sub
+
+Private Sub cmdCharNew_Click()
+  Call hideChars
+  Call showNewChar
+End Sub
+
+Private Sub cmdNewCharCancel_Click()
+  Call hideNewChar
+  Call showChars
+End Sub
+
+Private Sub cmdNewCharCreate_Click()
+Dim sex As String
+
+  If optNewCharMale.Value Then sex = "male"
+  If optNewCharFemale.Value Then sex = "female"
+  Call newChar(txtNewCharName.Text, sex)
 End Sub
 
 Private Sub Form_DblClick()
@@ -426,11 +668,6 @@ Private Sub mnuEditEvent_Click()
     Call RequestSwitchesAndVariables
     Call Events_SendRequestEventsData
     Call Events_SendRequestEditEvents
-End Sub
-
-Private Sub mnuEditPet_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
-    SendRequestEditPet
 End Sub
 
 Private Sub mnuLoc_Click()
@@ -566,12 +803,12 @@ Private Sub cmdASpawn_Click()
         Exit Sub
     End If
     
-    SendSpawnItem scrlAItem.Value, Val(txtAAmount.Text)
+    SendSpawnItem scrlAItem.Value, val(txtAAmount.Text)
 End Sub
 
 Private Sub scrlAItem_Change()
-    lblAItem.Caption = "Item: " & Trim$(Item(scrlAItem.Value).name)
-    If Item(scrlAItem.Value).Type = ITEM_TYPE_CURRENCY Or Item(scrlAItem.Value).Stackable = YES Then
+    lblAItem.Caption = "Item: " & Trim$(item(scrlAItem.Value).name)
+    If item(scrlAItem.Value).Type = ITEM_TYPE_CURRENCY Or item(scrlAItem.Value).Stackable = YES Then
         txtAAmount.Enabled = True
         Exit Sub
     End If

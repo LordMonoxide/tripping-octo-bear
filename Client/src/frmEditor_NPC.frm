@@ -801,9 +801,9 @@ Private Sub Form_Load()
 End Sub
 
 Private Sub cmdSave_Click()
-    If txtEXP > txtEXP_max Then
-        txtEXP_max.Text = txtEXP
-        txtEXP.Text = 0
+    If txtExp > txtEXP_max Then
+        txtEXP_max.Text = txtExp
+        txtExp.Text = 0
     End If
     
     Call NpcEditorOk
@@ -847,7 +847,7 @@ Private Sub chkQuest_Click()
 End Sub
 
 Private Sub scrlQuest_Change()
-    lblQuest = "Quest Number: " & scrlQuest.Value
+    'lblQuest = "Quest Number: " & scrlQuest.Value
     NPC(EditorIndex).QuestNum = scrlQuest.Value
 End Sub
 
@@ -954,8 +954,8 @@ Private Sub txtDamage_Change()
 End Sub
 
 Private Sub txtExp_Change()
-    If Not Len(txtEXP.Text) > 0 Then Exit Sub
-    If IsNumeric(txtEXP.Text) Then NPC(EditorIndex).EXP = Val(txtEXP.Text)
+    If Not Len(txtExp.Text) > 0 Then Exit Sub
+    If IsNumeric(txtExp.Text) Then NPC(EditorIndex).EXP = Val(txtExp.Text)
 End Sub
 
 Private Sub txtHP_Change()

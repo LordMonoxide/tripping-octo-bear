@@ -206,33 +206,6 @@ If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Or NPC(npcNum).Behaviour = N
         End If
 End Sub
 
-Public Sub DrawPetName(ByVal Index As Long)
-Dim textX As Long, textY As Long, Text As String, textSize As Long, Colour As Long
-
-    Text = Trim$(GetPlayerName(Index)) & "´s " & Trim$(Player(Index).Pet.name)
-    textSize = EngineGetTextWidth(Font_GeorgiaShadow, Text)
-    
-    If Player(Index).Pet.AttackBehaviour = PET_ATTACK_BEHAVIOUR_ATTACKONSIGHT Or Player(Index).Pet.AttackBehaviour = PET_ATTACK_BEHAVIOUR_GUARD Then
-        ' get the colour
-        If Player(Index).Pet.Level <= GetPlayerLevel(MyIndex) - 3 Then
-            Colour = Grey
-        ElseIf Player(Index).Pet.Level <= GetPlayerLevel(MyIndex) - 2 Then
-            Colour = Green
-        ElseIf Player(Index).Pet.Level > GetPlayerLevel(MyIndex) Then
-            Colour = Red
-        Else
-            Colour = White
-        End If
-    Else
-        Colour = White
-    End If
-    
-    textX = Player(Index).Pet.x * PIC_X + Player(Index).Pet.XOffset + (PIC_X \ 2) - (textSize \ 2)
-    textY = Player(Index).Pet.y * PIC_Y + Player(Index).Pet.YOffset - 32 + 12
-    
-    Call RenderText(Font_GeorgiaShadow, Text, ConvertMapX(textX), ConvertMapY(textY), Colour)
-End Sub
-
 Sub DrawBossMsg()
     Dim x As Long, y As Long, time As Long
     

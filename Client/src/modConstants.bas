@@ -58,12 +58,6 @@ Public Const EqLeft As Long = 18
 Public Const EqOffsetX As Long = 10
 Public Const EqColumns As Long = 4
 
-' Pet consts
-Public Const PTop As Long = 202
-Public Const PLeft As Long = 18
-Public Const POffsetX As Long = 10
-Public Const PColumns As Long = 4
-
 ' values
 Public Const MAX_BYTE As Byte = 255
 Public Const MAX_INTEGER As Integer = 32767
@@ -204,11 +198,9 @@ Public Const ITEM_TYPE_CONSUME As Byte = 5
 Public Const ITEM_TYPE_CURRENCY As Byte = 6
 Public Const ITEM_TYPE_SPELL As Byte = 7
 Public Const ITEM_TYPE_UNIQUE As Byte = 8
-Public Const ITEM_TYPE_PET As Byte = 9
-Public Const ITEM_TYPE_PET_STATS As Byte = 10
-Public Const ITEM_TYPE_LOGO_GUILD As Byte = 11
-Public Const ITEM_TYPE_CONTAINER As Byte = 12
-Public Const ITEM_TYPE_CHEST As Byte = 13
+Public Const ITEM_TYPE_LOGO_GUILD As Byte = 9
+Public Const ITEM_TYPE_CONTAINER As Byte = 10
+Public Const ITEM_TYPE_CHEST As Byte = 11
 
 ' Direction constants
 Public Const DIR_UP As Byte = 0

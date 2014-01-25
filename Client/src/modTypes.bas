@@ -6,7 +6,7 @@ Public map As MapRec
 Public Bank As BankRec
 Public Player(1 To MAX_PLAYERS) As PlayerRec
 Public TempPlayer(1 To MAX_PLAYERS) As TempPlayerRec
-Public Item(1 To MAX_ITEMS) As ItemRec
+Public item(1 To MAX_ITEMS) As ItemRec
 Public NPC(1 To MAX_NPCS) As NpcRec
 Public MapItem(1 To MAX_MAP_ITEMS) As MapItemRec
 Public MapNpc(1 To MAX_MAP_NPCS) As MapNpcRec
@@ -44,6 +44,41 @@ Private Type ChestRec
     y As Byte
 End Type
 
+Private Type APIRouteStruct
+  route As String
+  method As HTTP_METHOD
+End Type
+
+Private Type APIRoutesAuthStruct
+  check As APIRouteStruct
+  register As APIRouteStruct
+  login As APIRouteStruct
+  logout As APIRouteStruct
+End Type
+
+Private Type APIRoutesStorageCharactersStruct
+  all As APIRouteStruct
+  create As APIRouteStruct
+  delete As APIRouteStruct
+End Type
+
+Private Type APIRoutesStorageStruct
+  characters As APIRoutesStorageCharactersStruct
+End Type
+
+Private Type APIRoutesStruct
+  auth As APIRoutesAuthStruct
+  storage As APIRoutesStorageStruct
+End Type
+
+Private Type APIStruct
+  host As String
+  port As Long
+  routes As APIRoutesStruct
+End Type
+
+Public API As APIStruct
+
 ' options
 Public Options As OptionsRec
 
@@ -51,10 +86,10 @@ Public Options As OptionsRec
 Private Type OptionsRec
     Game_Name As String
     savePass As Byte
-    Password As String * NAME_LENGTH
+    password As String * NAME_LENGTH
     Username As String * ACCOUNT_LENGTH
     IP As String
-    Port As Long
+    port As Long
     MenuMusic As String
     Music As Byte
     Sound As Byte
@@ -78,7 +113,7 @@ Public Type PlayerInvRec
 End Type
 
 Private Type BankRec
-    Item(1 To MAX_BANK) As PlayerInvRec
+    item(1 To MAX_BANK) As PlayerInvRec
 End Type
 
 Private Type SpellAnim
@@ -90,7 +125,7 @@ End Type
 Private Type PlayerRec
     ' General
     name As String
-    Sex As Byte
+    sex As Byte
     Clothes As Long
     Gear As Long
     Hair As Long
@@ -118,7 +153,6 @@ Private Type PlayerRec
     SkillExp(1 To Skills.Skill_Count - 1) As Long
     Donator As Byte
     EventGraphic(1 To MAX_EVENTS) As Byte
-    Pet As PlayerPetRec
     ChestOpen(1 To MAX_CHESTS) As Boolean 'Chests
     End Type
 
@@ -274,8 +308,8 @@ Private Type NpcRec
     ProjectileRange As Byte
     Rotation As Integer
     Moral As Byte
-    A As Byte
-    R As Byte
+    a As Byte
+    r As Byte
     G As Byte
     B As Byte
     SpawnAtDay As Byte
@@ -303,7 +337,7 @@ Private Type MapNpcRec
 End Type
 
 Private Type TradeItemRec
-    Item As Long
+    item As Long
     ItemValue As Long
     CostItem As Long
     CostValue As Long
