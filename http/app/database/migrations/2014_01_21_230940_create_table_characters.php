@@ -16,8 +16,8 @@ class CreateTableCharacters extends Migration {
       $table->integer('exp')->unsigned()->default(0);
       $table->integer('pts')->unsigned()->default(0);
       
-      $table->integer('hp')->unsigned();
-      $table->integer('mp')->unsigned();
+      $table->integer('hp')->unsigned()->default(0);
+      $table->integer('mp')->unsigned()->default(0);
       
       $table->integer('str')->unsigned()->default(1);
       $table->integer('end')->unsigned()->default(1);
