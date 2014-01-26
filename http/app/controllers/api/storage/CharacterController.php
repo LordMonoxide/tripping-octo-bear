@@ -10,7 +10,7 @@ use Character;
 
 class CharacterController extends Controller {
   public function __construct() {
-    $this->beforeFilter('auth.401');
+    $this->beforeFilter('user.security');
   }
   
   public function all() {

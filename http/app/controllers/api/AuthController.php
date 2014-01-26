@@ -12,8 +12,8 @@ use User;
 
 class AuthController extends Controller {
   public function __construct() {
-    $this->beforeFilter('auth.401',  ['only'   => ['check', 'logout']]);
-    $this->beforeFilter('nauth.409', ['except' => ['check', 'logout']]);
+    $this->beforeFilter('auth.401',  ['only'   => ['check', 'logout', 'security', 'unlock']]);
+    $this->beforeFilter('nauth.409', ['except' => ['check', 'logout', 'security', 'unlock']]);
   }
   
   public function check() {
@@ -67,9 +67,39 @@ class AuthController extends Controller {
       
       $ip = Auth::user()->ips()->where('ip', '=', ip2long(Request::getClientIp()))->first();
       if(!$ip->authorised) {
-        return Response::json(['auth' => 'This IP has not been authorised for this account.  You\'ll need to answer your security questions to proceed.'], 401);
+        Auth::user()->suspend_until_authorised = true;
+        Auth::user()->save();
+        
+        return Response::json([
+          'error' => 'security',
+          'show'  => 'security'
+        ], 401);
       }
       
+      return Response::json(null, 200);
+    } else {
+      return Response::json($validator->messages(), 409);
+    }
+  }
+  
+  public function security() {
+    return Response::json(Auth::user()->securityQuestions, 200);
+  }
+  
+  public function unlock() {
+    $i = 0;
+    foreach(Auth::user()->securityQuestions as $s) {
+      $rules['answer' . $i++] = ['required', 'in:' . $s->answer];
+    }
+    
+    $validator = Validator::make(Input::all(), $rules);
+    if($validator->passes()) {
+      $ip = Auth::user()->ips()->where('ip', '=', ip2long(Request::getClientIp()))->first();
+      $ip->authorised = true;
+      $ip->save();
+      
+      Auth::user()->suspend_until_authorised = false;
+      Auth::user()->save();
       return Response::json(null, 200);
     } else {
       return Response::json($validator->messages(), 409);
