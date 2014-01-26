@@ -7,6 +7,7 @@ class CreateTableCharacters extends Migration {
     Schema::create('characters', function($table) {
       $table->increments('id');
       $table->integer('user_id')->unsigned();
+      $table->integer('auth_id')->unsigned()->nullable();
       $table->integer('guild_id')->unsigned()->nullable();
       
       $table->string('name', 20);
