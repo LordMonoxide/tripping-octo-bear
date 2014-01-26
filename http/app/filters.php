@@ -37,16 +37,28 @@ Route::filter('auth', function() {
   if(Auth::guest()) return Redirect::guest('login');
 });
 
-Route::filter('auth.401', function() {
-  if(Auth::guest()) return Response::json(['error' => ['Login required.']], 401);
-});
-
 Route::filter('nauth.409', function() {
   if(Auth::check()) return Response::json(['error' => ['Already logged in.']], 409);
 });
 
 Route::filter('auth.basic', function() {
   return Auth::basic();
+});
+
+Route::filter('user.security', function() {
+  if(Auth::guest()) {
+    return Response::json([
+      'error' => 'loginrequired',
+      'show'  => 'login'
+    ], 401);
+  }
+  
+  if(Auth::user()->suspend_until_authorised) {
+    return Response::json([
+      'error' => 'security',
+      'show'  => 'security'
+    ], 401);
+  }
 });
 
 /*
