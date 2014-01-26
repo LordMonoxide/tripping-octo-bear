@@ -12,11 +12,29 @@ class DatabaseSeeder extends Seeder {
 
 class UserTableSeeder extends Seeder {
   public function run() {
-    User::create([
+    $user = User::create([
       'email'      => 'corey@narwhunderful.com',
       'password'   => Hash::make('monoxide'),
       'name_first' => 'Corey',
       'name_last'  => 'Frenette'
+    ]);
+    
+    UserSecurityQuestion::create([
+      'user_id' => $user->id,
+      'question' => 'The answer to this question is 1',
+      'answer' => '1'
+    ]);
+    
+    UserSecurityQuestion::create([
+      'user_id' => $user->id,
+      'question' => 'The answer to this question is 2',
+      'answer' => '2'
+    ]);
+    
+    UserSecurityQuestion::create([
+      'user_id' => $user->id,
+      'question' => 'The answer to this question is 3',
+      'answer' => '3'
     ]);
   }
 }
