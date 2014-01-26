@@ -6,4 +6,8 @@ class UserIP extends Eloquent {
   public function user() {
     return $this->belongsTo('User');
   }
+  
+  public function characters() {
+    return $this->hasMany('Character');
+  }
 }
