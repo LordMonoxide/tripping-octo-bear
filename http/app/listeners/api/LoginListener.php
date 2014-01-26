@@ -12,7 +12,11 @@ class LoginListener {
       $ip = new UserIP;
       $ip->user()->associate($user);
       $ip->ip = ip2long(Request::getClientIp());
-      $ip->authorised = true;
+      
+      if($user->ips->count() === 0) {
+        $ip->authorised = true;
+      }
+      
       $ip->save();
     } else {
       $ip->touch();
