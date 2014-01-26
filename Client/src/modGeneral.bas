@@ -28,12 +28,16 @@ Dim i As Long, n As Long
   API.routes.auth.login.method = HTTP_METHOD_POST
   API.routes.auth.logout.route = "api/auth/logout"
   API.routes.auth.logout.method = HTTP_METHOD_POST
+  API.routes.auth.security.get.route = "api/auth/security"
+  API.routes.auth.security.get.method = HTTP_METHOD_GET
+  API.routes.auth.security.submit.route = "api/auth/security"
+  API.routes.auth.security.submit.method = HTTP_METHOD_POST
   
   API.routes.storage.characters.all.route = "api/storage/characters"
   API.routes.storage.characters.all.method = HTTP_METHOD_GET
-  API.routes.storage.characters.create.route = "api/storage/characters/create"
+  API.routes.storage.characters.create.route = "api/storage/characters"
   API.routes.storage.characters.create.method = HTTP_METHOD_PUT
-  API.routes.storage.characters.delete.route = "api/storage/characters/delete"
+  API.routes.storage.characters.delete.route = "api/storage/characters"
   API.routes.storage.characters.delete.method = HTTP_METHOD_DELETE
   
     'Set the high-resolution timer
@@ -122,26 +126,7 @@ Dim i As Long, n As Long
   Call showLogin
   Call menuStatus("Checking session...")
   
-  Set request = New clsHTTPRequest
-  request.method = API.routes.storage.characters.all.method
-  request.route = API.routes.storage.characters.all.route
-  Call request.addHeader("Accept", "application/json")
-  Set response = request.dispatch
-  Call response.await
-  
-  Select Case response.responseCode
-    Case 200
-      Call menuStatus
-      Call hideLogin
-      Call getChars
-    
-    Case 401
-      Call menuStatus
-      Call enableLogin
-    
-    Case Else
-      Call MsgBox("This shouldn't happen:" & vbNewLine & response.responseBody)
-  End Select
+  Call getChars
   
   If ConnectToServer() Then
       SStatus = "Online"
@@ -178,6 +163,24 @@ End Sub
 
 Public Sub hideLogin()
   frmMain.fraLogin.visible = False
+End Sub
+
+Public Sub enableLoginSecurity()
+  frmMain.fraLoginSecurity.Enabled = True
+End Sub
+
+Public Sub disableLoginSecurity()
+  frmMain.fraLoginSecurity.Enabled = False
+End Sub
+
+Public Sub showLoginSecurity()
+  frmMain.fraLoginSecurity.Left = (frmMain.ScaleWidth - frmMain.fraLoginSecurity.width) / 2
+  frmMain.fraLoginSecurity.Top = (frmMain.ScaleHeight - frmMain.fraLoginSecurity.height) / 2
+  frmMain.fraLoginSecurity.visible = True
+End Sub
+
+Public Sub hideLoginSecurity()
+  frmMain.fraLoginSecurity.visible = False
 End Sub
 
 Public Sub clearLoginError()
@@ -226,6 +229,23 @@ Public Sub hideNewChar()
   frmMain.fraNewChar.visible = False
 End Sub
 
+Public Sub parse401(ByVal json As Object)
+  Call hideLogin
+  Call hideLoginSecurity
+  Call hideChars
+  Call hideNewChar
+  
+  Select Case json("show").val
+    Case "login"
+      Call menuStatus(json("error").val)
+      Call showLogin
+      Call enableLogin
+    
+    Case "security"
+      Call loginSecurity
+  End Select
+End Sub
+
 Public Sub login(ByRef email As String, ByRef password As String)
 Dim request As clsHTTPRequest
 Dim response As clsHTTPResponse
@@ -252,6 +272,9 @@ Dim o As Object
       Call hideLogin
       Call getChars
     
+    Case 401
+      Call parse401(response.responseJSON)
+    
     Case 409
       Set json = response.responseJSON
       
@@ -268,6 +291,92 @@ Dim o As Object
     Case Else
       Call MsgBox("This shouldn't happen:" & vbNewLine & response.responseBody)
   End Select
+End Sub
+
+Public Sub loginSecurity()
+Dim request As clsHTTPRequest
+Dim response As clsHTTPResponse
+Dim pair As clsJSONPair
+Dim i As Long
+
+  Call disableLoginSecurity
+  Call showLoginSecurity
+  
+  Set request = New clsHTTPRequest
+  request.method = API.routes.auth.security.get.method
+  request.route = API.routes.auth.security.get.route
+  Call request.addHeader("Accept", "application/json")
+  Set response = request.dispatch
+  Call response.await
+  
+  For i = 1 To frmMain.lblLoginSecurityQuestion.count - 1
+    Call Unload(frmMain.lblLoginSecurityQuestion(i))
+    Call Unload(frmMain.txtLoginSecurityAnswer(i))
+  Next
+  
+  Select Case response.responseCode
+    Case 200
+      For i = 1 To response.responseJSON.count - 1
+        Call Load(frmMain.lblLoginSecurityQuestion(i))
+        Call Load(frmMain.txtLoginSecurityAnswer(i))
+        
+        frmMain.lblLoginSecurityQuestion(i).Left = frmMain.lblLoginSecurityQuestion(i - 1).Left
+        frmMain.lblLoginSecurityQuestion(i).Top = frmMain.txtLoginSecurityAnswer(i - 1).Top + frmMain.txtLoginSecurityAnswer(i - 1).height + 4
+        frmMain.lblLoginSecurityQuestion(i).visible = True
+        frmMain.txtLoginSecurityAnswer(i).Left = frmMain.txtLoginSecurityAnswer(i - 1).Left
+        frmMain.txtLoginSecurityAnswer(i).Top = frmMain.lblLoginSecurityQuestion(i).Top + frmMain.lblLoginSecurityQuestion(i).height
+        frmMain.txtLoginSecurityAnswer(i).visible = True
+      Next
+      
+      i = 0
+      For Each pair In response.responseJSON
+        frmMain.lblLoginSecurityQuestion(i).Caption = pair.val("question").val
+        i = i + 1
+      Next
+      
+      frmMain.picLoginSecurity.height = frmMain.txtLoginSecurityAnswer(frmMain.txtLoginSecurityAnswer.UBound).Top + frmMain.txtLoginSecurityAnswer(frmMain.txtLoginSecurityAnswer.UBound).height + 4
+      frmMain.scrlLoginSecurity.Max = frmMain.picLoginSecurity.height - frmMain.picLoginSecurityCont.ScaleHeight
+      
+      Call enableLoginSecurity
+    
+    Case 409
+      Call MsgBox(response.responseBody)
+    
+    Case Else
+      Call MsgBox("This shouldn't happen:" & vbNewLine & response.responseBody)
+  End Select
+End Sub
+
+Public Sub loginSecuritySubmit(ByRef answer() As String)
+Dim request As clsHTTPRequest
+Dim response As clsHTTPResponse
+Dim i As Long
+
+  Call disableLoginSecurity
+  
+  Set request = New clsHTTPRequest
+  request.method = API.routes.auth.security.submit.method
+  request.route = API.routes.auth.security.submit.route
+  Call request.addHeader("Accept", "application/json")
+  
+  For i = 0 To aryLenS(answer) - 1
+    Call request.addData("answer" & i, answer(i))
+  Next
+  
+  Set response = request.dispatch
+  Call response.await
+  
+  Select Case response.responseCode
+    Case 200
+      Call hideLoginSecurity
+      Call getChars
+    
+    Case 409
+      Call MsgBox(response.responseBody)
+      'Call MsgBox(response.responseJSON("error").val)
+  End Select
+  
+  Call enableLoginSecurity
 End Sub
 
 Public Sub logout()
@@ -333,6 +442,9 @@ Dim pair As clsJSONPair
         frmMain.lstChars.ListIndex = 0
       End If
     
+    Case 401
+      Call parse401(response.responseJSON)
+    
     Case 409
       Call hideChars
       Call showLogin
@@ -363,6 +475,9 @@ Dim response As clsHTTPResponse
   Select Case response.responseCode
     Case 200
       Call getChars
+    
+    Case 401
+      Call parse401(response.responseJSON)
     
     Case 409
       MsgBox response.responseBody
@@ -397,6 +512,9 @@ Dim json As Object
       Call hideNewChar
       Call getChars
     
+    Case 401
+      Call parse401(response.responseJSON)
+    
     Case 409
       Set json = response.responseJSON
       
@@ -412,6 +530,10 @@ Dim json As Object
   End Select
   
   Call enableNewChar
+End Sub
+
+Public Sub useChar(ByVal id As Long)
+  
 End Sub
 
 Public Sub InitialiseGUI()

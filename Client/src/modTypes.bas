@@ -49,11 +49,17 @@ Private Type APIRouteStruct
   method As HTTP_METHOD
 End Type
 
+Private Type APIRoutesAuthSecurityStruct
+  get As APIRouteStruct
+  submit As APIRouteStruct
+End Type
+
 Private Type APIRoutesAuthStruct
   check As APIRouteStruct
   register As APIRouteStruct
   login As APIRouteStruct
   logout As APIRouteStruct
+  security As APIRoutesAuthSecurityStruct
 End Type
 
 Private Type APIRoutesStorageCharactersStruct

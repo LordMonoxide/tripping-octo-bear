@@ -2,10 +2,10 @@ VERSION 5.00
 Begin VB.Form frmMain 
    BackColor       =   &H00E0E0E0&
    BorderStyle     =   1  'Fixed Single
-   ClientHeight    =   4740
+   ClientHeight    =   8160
    ClientLeft      =   45
    ClientTop       =   375
-   ClientWidth     =   7920
+   ClientWidth     =   13890
    BeginProperty Font 
       Name            =   "Verdana"
       Size            =   8.25
@@ -21,11 +21,78 @@ Begin VB.Form frmMain
    MaxButton       =   0   'False
    MinButton       =   0   'False
    MouseIcon       =   "frmMain.frx":23D2
-   ScaleHeight     =   316
+   ScaleHeight     =   544
    ScaleMode       =   3  'Pixel
-   ScaleWidth      =   528
+   ScaleWidth      =   926
    StartUpPosition =   2  'CenterScreen
    Visible         =   0   'False
+   Begin VB.Frame fraLoginSecurity 
+      Caption         =   "Security Questions"
+      Height          =   2235
+      Left            =   7200
+      TabIndex        =   44
+      Top             =   1980
+      Visible         =   0   'False
+      Width           =   4095
+      Begin VB.CommandButton cmdLoginSecuritySubmit 
+         Caption         =   "Submit"
+         Height          =   315
+         Left            =   3180
+         TabIndex        =   50
+         Top             =   1800
+         Width           =   795
+      End
+      Begin VB.VScrollBar scrlLoginSecurity 
+         Height          =   1455
+         LargeChange     =   10
+         Left            =   3720
+         TabIndex        =   46
+         Top             =   240
+         Width           =   255
+      End
+      Begin VB.PictureBox picLoginSecurityCont 
+         Height          =   1455
+         Left            =   120
+         ScaleHeight     =   93
+         ScaleMode       =   3  'Pixel
+         ScaleWidth      =   237
+         TabIndex        =   45
+         TabStop         =   0   'False
+         Top             =   240
+         Width           =   3615
+         Begin VB.PictureBox picLoginSecurity 
+            BorderStyle     =   0  'None
+            Height          =   1275
+            Left            =   0
+            ScaleHeight     =   85
+            ScaleMode       =   3  'Pixel
+            ScaleWidth      =   237
+            TabIndex        =   47
+            TabStop         =   0   'False
+            Top             =   0
+            Width           =   3555
+            Begin VB.TextBox txtLoginSecurityAnswer 
+               Height          =   285
+               Index           =   0
+               Left            =   60
+               TabIndex        =   49
+               Top             =   240
+               Width           =   3435
+            End
+            Begin VB.Label lblLoginSecurityQuestion 
+               AutoSize        =   -1  'True
+               BackStyle       =   0  'Transparent
+               Caption         =   "Question:"
+               Height          =   195
+               Index           =   0
+               Left            =   60
+               TabIndex        =   48
+               Top             =   60
+               Width           =   825
+            End
+         End
+      End
+   End
    Begin VB.Frame fraNewChar 
       Caption         =   "New Character"
       Height          =   1995
@@ -544,6 +611,18 @@ Private Sub cmdLogin_Click()
   Call login(txtEmail.Text, txtPassword.Text)
 End Sub
 
+Private Sub cmdLoginSecuritySubmit_Click()
+Dim answer() As String
+Dim i As Long
+
+  ReDim answer(txtLoginSecurityAnswer.UBound)
+  For i = 0 To txtLoginSecurityAnswer.UBound
+    answer(i) = txtLoginSecurityAnswer(i).Text
+  Next
+  
+  Call loginSecuritySubmit(answer)
+End Sub
+
 Private Sub cmdCharLogout_Click()
   Call logout
 End Sub
@@ -571,7 +650,9 @@ Dim sex As String
 End Sub
 
 Private Sub Form_DblClick()
+  If InGame Then
     HandleDoubleClick
+  End If
 End Sub
 
 Private Sub Form_Load()
@@ -582,21 +663,27 @@ Private Sub Form_Load()
     End If
 End Sub
 
-Private Sub Form_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub Form_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+  If InGame Then
     HandleMouseUp Button
+  End If
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
     DestroyGame
 End Sub
 
-Private Sub Form_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+  If InGame Then
     HandleMouseDown Button
+  End If
 End Sub
 
-Private Sub Form_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+  If InGame Then
     ' call the procedure
-    HandleMouseMove CLng(x), CLng(y), Button
+    HandleMouseMove CLng(X), CLng(Y), Button
+  End If
 End Sub
 
 Private Sub Form_KeyPress(KeyAscii As Integer)
@@ -813,4 +900,12 @@ Private Sub scrlAItem_Change()
         Exit Sub
     End If
     txtAAmount.Enabled = False
+End Sub
+
+Private Sub scrlLoginSecurity_Change()
+  picLoginSecurity.Top = -scrlLoginSecurity.Value
+End Sub
+
+Private Sub scrlLoginSecurity_Scroll()
+  Call scrlLoginSecurity_Change
 End Sub
