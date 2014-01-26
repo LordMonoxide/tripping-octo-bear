@@ -46,7 +46,13 @@ Route::filter('auth.basic', function() {
 });
 
 Route::filter('user.security', function() {
-  if(Auth::guest() || !Auth::user()->logged_in) {
+  if(Auth::check()) {
+    if(!Auth::user()->logged_in) {
+      Auth::logout();
+    }
+  }
+  
+  if(Auth::guest()) {
     return Response::json([
       'error' => 'loginrequired',
       'show'  => 'login'
