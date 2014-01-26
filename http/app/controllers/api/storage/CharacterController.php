@@ -3,6 +3,7 @@
 use Auth;
 use Controller;
 use Input;
+use Request;
 use Response;
 use Validator;
 
@@ -48,6 +49,24 @@ class CharacterController extends Controller {
     if($validator->passes()) {
       Character::destroy(Input::get('id'));
       return Response::json(null, 200);
+    } else {
+      return Response::json($validator->messages(), 409);
+    }
+  }
+  
+  public function choose() {
+    $validator = Validator::make(Input::all(), [
+      'id' => ['required', 'integer', 'exists:characters,id,user_id,' . Auth::user()->id]
+    ]);
+    
+    if($validator->passes()) {
+      $ip = Auth::user()->ips()->where('ip', '=', ip2long(Request::getClientIp()))->first();
+      
+      $char = Character::find(Input::get('id'));
+      $char->auth()->associate($ip);
+      $char->save();
+      
+      return Response::json(['u_id' => Auth::user()->id, 'c_id' => $char->id], 200);
     } else {
       return Response::json($validator->messages(), 409);
     }
