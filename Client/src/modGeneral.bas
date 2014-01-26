@@ -39,6 +39,8 @@ Dim i As Long, n As Long
   API.routes.storage.characters.create.method = HTTP_METHOD_PUT
   API.routes.storage.characters.delete.route = "api/storage/characters"
   API.routes.storage.characters.delete.method = HTTP_METHOD_DELETE
+  API.routes.storage.characters.use.route = "api/storage/characters"
+  API.routes.storage.characters.use.method = HTTP_METHOD_POST
   
     'Set the high-resolution timer
     timeBeginPeriod 1
@@ -533,7 +535,27 @@ Dim json As Object
 End Sub
 
 Public Sub useChar(ByVal id As Long)
+Dim request As clsHTTPRequest
+Dim response As clsHTTPResponse
+
+  Set request = New clsHTTPRequest
+  request.method = API.routes.storage.characters.use.method
+  request.route = API.routes.storage.characters.use.route
+  Call request.addHeader("Accept", "application/json")
+  Call request.addData("id", str$(id))
+  Set response = request.dispatch
+  Call response.await
   
+  Select Case response.responseCode
+    Case 200
+      MsgBox response.responseBody
+    
+    Case 401
+      Call parse401(response.responseJSON)
+    
+    Case 409
+      Call MsgBox(response.responseBody)
+  End Select
 End Sub
 
 Public Sub InitialiseGUI()

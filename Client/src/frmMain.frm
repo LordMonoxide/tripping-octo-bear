@@ -636,6 +636,10 @@ Private Sub cmdCharNew_Click()
   Call showNewChar
 End Sub
 
+Private Sub cmdCharUse_Click()
+  Call useChar(lstChars.ItemData(lstChars.ListIndex))
+End Sub
+
 Private Sub cmdNewCharCancel_Click()
   Call hideNewChar
   Call showChars
@@ -663,7 +667,7 @@ Private Sub Form_Load()
     End If
 End Sub
 
-Private Sub Form_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub Form_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
   If InGame Then
     HandleMouseUp Button
   End If
@@ -673,16 +677,16 @@ Private Sub Form_Unload(Cancel As Integer)
     DestroyGame
 End Sub
 
-Private Sub Form_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub Form_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
   If InGame Then
     HandleMouseDown Button
   End If
 End Sub
 
-Private Sub Form_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+Private Sub Form_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
   If InGame Then
     ' call the procedure
-    HandleMouseMove CLng(X), CLng(Y), Button
+    HandleMouseMove CLng(x), CLng(y), Button
   End If
 End Sub
 

@@ -45,27 +45,28 @@ Private Type ChestRec
 End Type
 
 Private Type APIRouteStruct
-  route As String
+  route  As String
   method As HTTP_METHOD
 End Type
 
 Private Type APIRoutesAuthSecurityStruct
-  get As APIRouteStruct
+  get    As APIRouteStruct
   submit As APIRouteStruct
 End Type
 
 Private Type APIRoutesAuthStruct
-  check As APIRouteStruct
+  check    As APIRouteStruct
   register As APIRouteStruct
-  login As APIRouteStruct
-  logout As APIRouteStruct
+  login    As APIRouteStruct
+  logout   As APIRouteStruct
   security As APIRoutesAuthSecurityStruct
 End Type
 
 Private Type APIRoutesStorageCharactersStruct
-  all As APIRouteStruct
+  all    As APIRouteStruct
   create As APIRouteStruct
   delete As APIRouteStruct
+  use    As APIRouteStruct
 End Type
 
 Private Type APIRoutesStorageStruct
@@ -73,13 +74,13 @@ Private Type APIRoutesStorageStruct
 End Type
 
 Private Type APIRoutesStruct
-  auth As APIRoutesAuthStruct
+  auth    As APIRoutesAuthStruct
   storage As APIRoutesStorageStruct
 End Type
 
 Private Type APIStruct
-  host As String
-  port As Long
+  host   As String
+  port   As Long
   routes As APIRoutesStruct
 End Type
 
