@@ -10,6 +10,7 @@ class CreateTableUsers extends Migration {
       $table->string('password', 60);
       $table->string('name_first', 30);
       $table->string('name_last', 30)->nullable();
+      $table->boolean('logged_in')->default(false);
       $table->boolean('suspend_until_authorised')->default(false);
       
       $table->timestamps();
