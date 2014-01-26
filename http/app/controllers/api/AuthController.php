@@ -5,6 +5,7 @@ use Controller;
 use Hash;
 use Input;
 use Response;
+use Request;
 use Validator;
 
 use User;
@@ -62,6 +63,11 @@ class AuthController extends Controller {
       
       if(!Auth::attempt(['email' => Input::get('email'), 'password' => Input::get('password')], $remember)) {
         return Response::json(['password' => ['Invalid password']], 409);
+      }
+      
+      $ip = Auth::user()->ips()->where('ip', '=', ip2long(Request::getClientIp()))->first();
+      if(!$ip->authorised) {
+        return Response::json(['auth' => 'This IP has not been authorised for this account.  You\'ll need to answer your security questions to proceed.'], 401);
       }
       
       return Response::json(null, 200);
