@@ -15,6 +15,7 @@ Route::group(['prefix' => 'api'], function() {
       Route::get   ('/', ['as' => 'api.storage.characters', 'uses' => 'api\storage\CharacterController@all']);
       Route::put   ('/', ['as' => 'api.storage.characters', 'uses' => 'api\storage\CharacterController@create']);
       Route::delete('/', ['as' => 'api.storage.characters', 'uses' => 'api\storage\CharacterController@delete']);
+      Route::post  ('/', ['as' => 'api.storage.characters', 'uses' => 'api\storage\CharacterController@choose']);
     });
   });
 });
