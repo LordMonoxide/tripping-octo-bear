@@ -130,11 +130,6 @@ Dim i As Long, n As Long
   
   Call getChars
   
-  If ConnectToServer() Then
-      SStatus = "Online"
-  Else
-      SStatus = "Offline"
-  End If
   For i = 1 To 5
       MenuNPC(i).x = Rand(0, ScreenWidth)
       MenuNPC(i).y = Rand(0, ScreenHeight)
@@ -537,7 +532,10 @@ End Sub
 Public Sub useChar(ByVal id As Long)
 Dim request As clsHTTPRequest
 Dim response As clsHTTPResponse
+Dim buffer As clsBuffer
 
+  Call disableChars
+  
   Set request = New clsHTTPRequest
   request.method = API.routes.storage.characters.use.method
   request.route = API.routes.storage.characters.use.route
@@ -548,7 +546,13 @@ Dim response As clsHTTPResponse
   
   Select Case response.responseCode
     Case 200
-      MsgBox response.responseBody
+      If connectToServer Then
+        Set buffer = New clsBuffer
+        Call sendLogin(response.responseJSON("u_id").val, response.responseJSON("c_id").val)
+        Exit Sub
+      Else
+        Call MsgBox("Server down")
+      End If
     
     Case 401
       Call parse401(response.responseJSON)
@@ -556,6 +560,8 @@ Dim response As clsHTTPResponse
     Case 409
       Call MsgBox(response.responseBody)
   End Select
+  
+  Call enableChars
 End Sub
 
 Public Sub InitialiseGUI()
@@ -1201,59 +1207,6 @@ Dim i As Long
         .visible = True
         .PicNum = 22
     End With
-End Sub
-
-Public Sub MenuState(ByVal state As Long)
-Dim request As clsHTTPRequest
-Dim response As clsHTTPResponse
-Dim json As Object
-Dim i As Long
-
-  Select Case state
-    Case MENU_STATE_ADDCHAR
-      isLoading = True
-      If ConnectToServer() Then
-        Call SendAddChar(sChar, newCharSex, newCharClothes, newCharGear, newCharHair, newCharHeadgear)
-      End If
-    
-    Case MENU_STATE_NEWACCOUNT
-      If ConnectToServer() Then
-        Call SendNewAccount(sUser, sPass)
-      End If
-    
-    Case MENU_STATE_LOGIN
-      isLoading = True
-      'If ConnectToServer() Then
-      '  Call SendLogin(sUser, sPass)
-      '  Exit Sub
-      'End If
-      
-      Set request = New clsHTTPRequest
-      request.method = API.routes.auth.login.method
-      request.route = API.routes.auth.login.route
-      Call request.addHeader("Accept", "application/json")
-      Call request.addData("email", sUser)
-      Call request.addData("password", sPass)
-      Set response = request.dispatch
-      
-      If response.responseCode <> 201 Then
-        Set json = response.responseJSON
-        If Not json Is Nothing Then
-          For i = 1 To json.count
-            Call MsgBox(json(i)(1))
-          Next
-        End If
-        
-        isLoading = False
-        
-        Exit Sub
-      End If
-  End Select
-  
-  If IsConnected = False Then
-    isLoading = False
-    Call MsgBox("The Server Appears to be Offline! Visit http://www.prospekt2D.com for more info.", vbOKOnly, Options.Game_Name)
-  End If
 End Sub
 
 Public Sub logoutGame()

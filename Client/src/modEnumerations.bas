@@ -110,11 +110,7 @@ End Enum
 
 ' Packets sent by client to server
 Public Enum ClientPackets
-    CNewAccount = 1
-    CDelAccount
-    CLogin
-    CAddChar
-    CUseChar
+    CLogin = 1
     CSayMsg
     CEmoteMsg
     CBroadcastMsg

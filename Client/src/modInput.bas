@@ -308,7 +308,7 @@ Public Sub CheckInputKeys()
 End Sub
 
 Public Sub HandleKeyUp(ByVal keyCode As Long)
-Dim I As Long
+Dim i As Long
 
     If InGame Then
         ' admin pannel
@@ -357,9 +357,9 @@ Dim I As Long
         
         ' hotbar
         If Not chatOn Then
-            For I = 1 To 9
-                If keyCode = 48 + I Then
-                    SendHotbarUse I
+            For i = 1 To 9
+                If keyCode = 48 + i Then
+                    SendHotbarUse i
                 End If
             Next
         End If
@@ -389,7 +389,7 @@ Public Sub HandleMenuKeyPresses(ByVal KeyAscii As Integer)
                     If KeyAscii = vbKeyTab Then
                         curTextbox = 1
                     Else
-                        MenuState MENU_STATE_LOGIN
+                        '''MenuState MENU_STATE_LOGIN
                     End If
                 End If
             Case MENU_REGISTER
@@ -402,12 +402,12 @@ Public Sub HandleMenuKeyPresses(ByVal KeyAscii As Integer)
                     If KeyAscii = vbKeyTab Then
                         curTextbox = 1
                     Else
-                        MenuState MENU_STATE_NEWACCOUNT
+                        '''MenuState MENU_STATE_NEWACCOUNT
                     End If
                 End If
             Case MENU_NEWCHAR
                 If KeyAscii = vbKeyReturn Then
-                    MenuState MENU_STATE_ADDCHAR
+                    '''MenuState MENU_STATE_ADDCHAR
                 End If
         End Select
     End If
@@ -483,7 +483,7 @@ End Sub
 Public Sub HandleKeyPresses(ByVal KeyAscii As Integer)
 Dim chatText As String
 Dim name As String
-Dim I As Long
+Dim i As Long
 Dim n As Long
 ' Chat Room Commands
 Dim Command() As String
@@ -576,21 +576,21 @@ Dim buffer As clsBuffer
             name = vbNullString
 
             ' Get the desired player from the user text
-            For I = 1 To Len(chatText)
+            For i = 1 To Len(chatText)
 
-                If Mid$(chatText, I, 1) <> Space(1) Then
-                    name = name & Mid$(chatText, I, 1)
+                If Mid$(chatText, i, 1) <> Space(1) Then
+                    name = name & Mid$(chatText, i, 1)
                 Else
                     Exit For
                 End If
 
             Next
 
-            chatText = Mid$(chatText, I, Len(chatText) - 1)
+            chatText = Mid$(chatText, i, Len(chatText) - 1)
 
             ' Make sure they are actually sending something
-            If Len(chatText) - I > 0 Then
-                MyText = Mid$(chatText, I + 1, Len(chatText) - I)
+            If Len(chatText) - i > 0 Then
+                MyText = Mid$(chatText, i + 1, Len(chatText) - i)
                 ' Send the message to the player
                 Call PlayerMsg(chatText, name)
             Else
@@ -968,7 +968,7 @@ continue:
 End Sub
 
 Public Sub HandleMouseMove(ByVal x As Long, ByVal y As Long, ByVal Button As Long)
-Dim I As Long
+Dim i As Long
 
     ' Set the global cursor position
     GlobalX = (ScreenWidth / frmMain.ScaleWidth) * x
@@ -978,10 +978,10 @@ Dim I As Long
     
     ' GUI processing
     If Not InMapEditor And Not hideGUI Then
-        For I = 1 To GUI_Count - 1
-            If (x >= GUIWindow(I).x And x <= GUIWindow(I).x + GUIWindow(I).width) And (y >= GUIWindow(I).y And y <= GUIWindow(I).y + GUIWindow(I).height) Then
-                If GUIWindow(I).visible Then
-                    Select Case I
+        For i = 1 To GUI_Count - 1
+            If (x >= GUIWindow(i).x And x <= GUIWindow(i).x + GUIWindow(i).width) And (y >= GUIWindow(i).y And y <= GUIWindow(i).y + GUIWindow(i).height) Then
+                If GUIWindow(i).visible Then
+                    Select Case i
                         Case GUI_CHAT, GUI_BARS, GUI_QUESTS
                             ' Put nothing here and we can click through them!
                         Case Else
@@ -1001,22 +1001,22 @@ Dim I As Long
             Call MapEditorMouseDown(Button, x, y)
         End If
     End If
-    If I = GUI_QUESTS Then
+    If i = GUI_QUESTS Then
                     frmMain.lstQuestLog.Left = (GUIWindow(GUI_QUESTS).x + (GUIWindow(GUI_QUESTS).width / 2)) - (frmMain.lstQuestLog.width / 2)
                     frmMain.lstQuestLog.Top = GUIWindow(GUI_QUESTS).y + 25
                 End If
 End Sub
 
 Public Sub HandleMouseDown(ByVal Button As Long)
-Dim I As Long
+Dim i As Long
     MouseState = 1
 
     ' GUI processing
     If Not InMapEditor And Not hideGUI Then
-        For I = 1 To GUI_Count - 1
-            If (GlobalX >= GUIWindow(I).x And GlobalX <= GUIWindow(I).x + GUIWindow(I).width) And (GlobalY >= GUIWindow(I).y And GlobalY <= GUIWindow(I).y + GUIWindow(I).height) Then
-                If GUIWindow(I).visible Then
-                    Select Case I
+        For i = 1 To GUI_Count - 1
+            If (GlobalX >= GUIWindow(i).x And GlobalX <= GUIWindow(i).x + GUIWindow(i).width) And (GlobalY >= GUIWindow(i).y And GlobalY <= GUIWindow(i).y + GUIWindow(i).height) Then
+                If GUIWindow(i).visible Then
+                    Select Case i
                         Case GUI_BARS, GUI_CHAT
                             ' nothing here so we can click through
                         Case GUI_RIGHTMENU
@@ -1080,9 +1080,9 @@ Dim I As Long
     
     If inMenu Then
         ' find out which button we're clicking
-        For I = 1 To Count_Socialicon
-            If (GlobalX >= 5 + ((I - 1) * 53) And GlobalX <= 5 + ((I - 1) * 53) + 48) And (GlobalY >= 5 And GlobalY <= 5 + 48) Then
-                SocialIconStatus(I) = 2
+        For i = 1 To Count_Socialicon
+            If (GlobalX >= 5 + ((i - 1) * 53) And GlobalX <= 5 + ((i - 1) * 53) + 48) And (GlobalY >= 5 And GlobalY <= 5 + 48) Then
+                SocialIconStatus(i) = 2
             End If
         Next
     End If
@@ -1112,15 +1112,15 @@ Dim I As Long
 End Sub
 
 Public Sub HandleMouseUp(ByVal Button As Long)
-Dim I As Long
+Dim i As Long
     MouseState = 0
 
     ' GUI processing
     If Not InMapEditor And Not hideGUI Then
-        For I = 1 To GUI_Count - 1
-            If (GlobalX >= GUIWindow(I).x And GlobalX <= GUIWindow(I).x + GUIWindow(I).width) And (GlobalY >= GUIWindow(I).y And GlobalY <= GUIWindow(I).y + GUIWindow(I).height) Then
-                If GUIWindow(I).visible Then
-                    Select Case I
+        For i = 1 To GUI_Count - 1
+            If (GlobalX >= GUIWindow(i).x And GlobalX <= GUIWindow(i).x + GUIWindow(i).width) And (GlobalY >= GUIWindow(i).y And GlobalY <= GUIWindow(i).y + GUIWindow(i).height) Then
+                If GUIWindow(i).visible Then
+                    Select Case i
                         Case GUI_RIGHTMENU
                             RightMenu_MouseUp
                         Case GUI_INVENTORY
@@ -1163,13 +1163,13 @@ Dim I As Long
     
     If inMenu Then
         ' find out which button we're clicking
-        For I = 1 To Count_Socialicon
-            If (GlobalX >= 5 + ((I - 1) * 53) And GlobalX <= 5 + ((I - 1) * 53) + 48) And (GlobalY >= 5 And GlobalY <= 5 + 48) Then
-                If SocialIconStatus(I) = 2 Then
-                    If Not Trim(SocialIcon(I)) = vbNullString Then Shell "explorer.exe " & Trim(SocialIcon(I))
+        For i = 1 To Count_Socialicon
+            If (GlobalX >= 5 + ((i - 1) * 53) And GlobalX <= 5 + ((i - 1) * 53) + 48) And (GlobalY >= 5 And GlobalY <= 5 + 48) Then
+                If SocialIconStatus(i) = 2 Then
+                    If Not Trim(SocialIcon(i)) = vbNullString Then Shell "explorer.exe " & Trim(SocialIcon(i))
                 End If
             End If
-            SocialIconStatus(I) = 0
+            SocialIconStatus(i) = 0
         Next
     End If
 
@@ -1202,14 +1202,14 @@ Public Sub Quests_MouseUp()
     'resetClickedButtons
 End Sub
 Public Sub HandleDoubleClick()
-Dim I As Long
+Dim i As Long
 
     ' GUI processing
     If Not InMapEditor And Not hideGUI Then
-        For I = 1 To GUI_Count - 1
-            If (GlobalX >= GUIWindow(I).x And GlobalX <= GUIWindow(I).x + GUIWindow(I).width) And (GlobalY >= GUIWindow(I).y And GlobalY <= GUIWindow(I).y + GUIWindow(I).height) Then
-                If GUIWindow(I).visible Then
-                    Select Case I
+        For i = 1 To GUI_Count - 1
+            If (GlobalX >= GUIWindow(i).x And GlobalX <= GUIWindow(i).x + GUIWindow(i).width) And (GlobalY >= GUIWindow(i).y And GlobalY <= GUIWindow(i).y + GUIWindow(i).height) Then
+                If GUIWindow(i).visible Then
+                    Select Case i
                         Case GUI_INVENTORY
                             Inventory_DoubleClick
                             Exit Sub
@@ -1234,44 +1234,44 @@ Dim I As Long
     End If
 End Sub
 
-Public Sub OpenGuiWindow(ByVal Index As Long)
-    If Index = 1 Then
+Public Sub OpenGuiWindow(ByVal index As Long)
+    If index = 1 Then
         GUIWindow(GUI_INVENTORY).visible = Not GUIWindow(GUI_INVENTORY).visible
     Else
         GUIWindow(GUI_INVENTORY).visible = False
     End If
     
-    If Index = 2 Then
+    If index = 2 Then
         GUIWindow(GUI_SPELLS).visible = Not GUIWindow(GUI_SPELLS).visible
     Else
         GUIWindow(GUI_SPELLS).visible = False
     End If
     
-    If Index = 3 Then
+    If index = 3 Then
         GUIWindow(GUI_CHARACTER).visible = Not GUIWindow(GUI_CHARACTER).visible
     Else
         GUIWindow(GUI_CHARACTER).visible = False
     End If
     
-    If Index = 4 Then
+    If index = 4 Then
         GUIWindow(GUI_PARTY).visible = Not GUIWindow(GUI_PARTY).visible
     Else
         GUIWindow(GUI_PARTY).visible = False
     End If
     
-    If Index = 5 Then
+    If index = 5 Then
         GUIWindow(GUI_GUILD).visible = Not GUIWindow(GUI_GUILD).visible
     Else
         GUIWindow(GUI_GUILD).visible = False
     End If
     
-    If Index = 7 Then
+    If index = 7 Then
         GUIWindow(GUI_OPTIONS).visible = Not GUIWindow(GUI_OPTIONS).visible
     Else
         GUIWindow(GUI_OPTIONS).visible = False
     End If
     
-     If Index = 8 Then
+     If index = 8 Then
         GUIWindow(GUI_QUESTS).visible = Not GUIWindow(GUI_QUESTS).visible
         frmMain.lstQuestLog.visible = Not frmMain.lstQuestLog.visible
         'frmMain.Timer1.Enabled = True
@@ -1283,31 +1283,31 @@ End Sub
 
 ' Tutorial
 Public Sub Tutorial_MouseDown()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim i As Long, x As Long, y As Long, width As Long
     
-    For I = 1 To 4
-        If Len(Trim$(tutOpt(I))) > 0 Then
-            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(tutOpt(I)) & "]")
+    For i = 1 To 4
+        If Len(Trim$(tutOpt(i))) > 0 Then
+            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(tutOpt(i)) & "]")
             x = GUIWindow(GUI_CHAT).x + (GUIWindow(GUI_CHAT).width / 2) - (width / 2)
-            y = GUIWindow(GUI_CHAT).y + 115 - ((I - 1) * 15)
+            y = GUIWindow(GUI_CHAT).y + 115 - ((i - 1) * 15)
             If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
-                tutOptState(I) = 2 ' clicked
+                tutOptState(i) = 2 ' clicked
             End If
         End If
     Next
 End Sub
 
 Public Sub Tutorial_MouseUp()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim i As Long, x As Long, y As Long, width As Long
     
-    For I = 1 To 4
-        If Len(Trim$(tutOpt(I))) > 0 Then
-            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(tutOpt(I)) & "]")
+    For i = 1 To 4
+        If Len(Trim$(tutOpt(i))) > 0 Then
+            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(tutOpt(i)) & "]")
             x = GUIWindow(GUI_CHAT).x + (GUIWindow(GUI_CHAT).width / 2) - (width / 2)
-            y = GUIWindow(GUI_CHAT).y + 115 - ((I - 1) * 15)
+            y = GUIWindow(GUI_CHAT).y + 115 - ((i - 1) * 15)
             If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
                 ' are we clicked?
-                If tutOptState(I) = 2 Then
+                If tutOptState(i) = 2 Then
                     SetTutorialState tutorialState + 1
                     ' play sound
                     FMOD.Sound_Play Sound_ButtonClick
@@ -1316,24 +1316,24 @@ Dim I As Long, x As Long, y As Long, width As Long
         End If
     Next
     
-    For I = 1 To 4
-        tutOptState(I) = 0 ' normal
+    For i = 1 To 4
+        tutOptState(i) = 0 ' normal
     Next
 End Sub
 
 ' Npc Chat
 Public Sub Chat_MouseDown()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim i As Long, x As Long, y As Long, width As Long
 
 Select Case CurrentEvent.Type
     Case Evt_Menu
-    For I = 1 To UBound(CurrentEvent.Text) - 1
-        If Len(Trim$(CurrentEvent.Text(I + 1))) > 0 Then
-            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(I + 1)) & "]")
+    For i = 1 To UBound(CurrentEvent.Text) - 1
+        If Len(Trim$(CurrentEvent.Text(i + 1))) > 0 Then
+            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(i + 1)) & "]")
             x = GUIWindow(GUI_EVENTCHAT).x + ((GUIWindow(GUI_EVENTCHAT).width / 2) - width / 2)
-            y = GUIWindow(GUI_EVENTCHAT).y + 115 - ((I - 1) * 15)
+            y = GUIWindow(GUI_EVENTCHAT).y + 115 - ((i - 1) * 15)
             If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
-                chatOptState(I) = 2 ' clicked
+                chatOptState(i) = 2 ' clicked
             End If
         End If
     Next
@@ -1348,19 +1348,19 @@ End Select
 
 End Sub
 Public Sub Chat_MouseUp()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim i As Long, x As Long, y As Long, width As Long
 
 Select Case CurrentEvent.Type
     Case Evt_Menu
-        For I = 1 To UBound(CurrentEvent.Text) - 1
-            If Len(Trim$(CurrentEvent.Text(I + 1))) > 0 Then
-                width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(I + 1)) & "]")
+        For i = 1 To UBound(CurrentEvent.Text) - 1
+            If Len(Trim$(CurrentEvent.Text(i + 1))) > 0 Then
+                width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(i + 1)) & "]")
                 x = GUIWindow(GUI_EVENTCHAT).x + ((GUIWindow(GUI_EVENTCHAT).width / 2) - width / 2)
-                y = GUIWindow(GUI_EVENTCHAT).y + 115 - ((I - 1) * 15)
+                y = GUIWindow(GUI_EVENTCHAT).y + 115 - ((i - 1) * 15)
                 If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
                     ' are we clicked?
-                    If chatOptState(I) = 2 Then
-                        Events_SendChooseEventOption CurrentEvent.data(I)
+                    If chatOptState(i) = 2 Then
+                        Events_SendChooseEventOption CurrentEvent.data(i)
                         ' play sound
                         FMOD.Sound_Play Sound_ButtonClick
                     End If
@@ -1368,8 +1368,8 @@ Select Case CurrentEvent.Type
             End If
         Next
         
-        For I = 1 To UBound(CurrentEvent.Text) - 1
-            chatOptState(I) = 0 ' normal
+        For i = 1 To UBound(CurrentEvent.Text) - 1
+            chatOptState(i) = 0 ' normal
         Next
     Case Evt_Message
         width = EngineGetTextWidth(Font_GeorgiaShadow, "[Continue]")
@@ -1390,17 +1390,17 @@ End Sub
 
 ' scroll bar
 Public Sub ChatScroll_MouseDown()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
     
     ' find out which button we're clicking
-    For I = 34 To 35
-        x = GUIWindow(GUI_CHAT).x + Buttons(I).x
-        y = GUIWindow(GUI_CHAT).y + Buttons(I).y
+    For i = 34 To 35
+        x = GUIWindow(GUI_CHAT).x + Buttons(i).x
+        y = GUIWindow(GUI_CHAT).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            Buttons(I).state = 2 ' clicked
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            Buttons(i).state = 2 ' clicked
             ' scroll the actual chat
-            Select Case I
+            Select Case i
                 Case 34 ' up
                     'ChatScroll = ChatScroll + 1
                     ChatButtonUp = True
@@ -1415,17 +1415,17 @@ End Sub
 
 ' Shop
 Public Sub Shop_MouseUp()
-Dim I As Long, x As Long, y As Long, buffer As clsBuffer
+Dim i As Long, x As Long, y As Long, buffer As clsBuffer
 
     ' find out which button we're clicking
-    For I = 23 To 23
-        x = GUIWindow(GUI_SHOP).x + Buttons(I).x
-        y = GUIWindow(GUI_SHOP).y + Buttons(I).y
+    For i = 23 To 23
+        x = GUIWindow(GUI_SHOP).x + Buttons(i).x
+        y = GUIWindow(GUI_SHOP).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            If Buttons(I).state = 2 Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            If Buttons(i).state = 2 Then
                 ' do stuffs
-                Select Case I
+                Select Case i
                     Case 23
                         ' exit
                         Set buffer = New clsBuffer
@@ -1446,15 +1446,15 @@ Dim I As Long, x As Long, y As Long, buffer As clsBuffer
 End Sub
 
 Public Sub Shop_MouseDown()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
 
     ' find out which button we're clicking
-    For I = 23 To 23
-        x = GUIWindow(GUI_SHOP).x + Buttons(I).x
-        y = GUIWindow(GUI_SHOP).y + Buttons(I).y
+    For i = 23 To 23
+        x = GUIWindow(GUI_SHOP).x + Buttons(i).x
+        y = GUIWindow(GUI_SHOP).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            Buttons(I).state = 2 ' clicked
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            Buttons(i).state = 2 ' clicked
         End If
     Next
 End Sub
@@ -1472,17 +1472,17 @@ End Sub
 
 ' Party
 Public Sub Party_MouseUp()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
 
     ' find out which button we're clicking
-    For I = 24 To 25
-        x = GUIWindow(GUI_PARTY).x + Buttons(I).x
-        y = GUIWindow(GUI_PARTY).y + Buttons(I).y
+    For i = 24 To 25
+        x = GUIWindow(GUI_PARTY).x + Buttons(i).x
+        y = GUIWindow(GUI_PARTY).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            If Buttons(I).state = 2 Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            If Buttons(i).state = 2 Then
                 ' do stuffs
-                Select Case I
+                Select Case i
                     Case 24 ' invite
                         If myTargetType = TARGET_TYPE_PLAYER And myTarget <> MyIndex Then
                             SendPartyRequest
@@ -1507,31 +1507,31 @@ Dim I As Long, x As Long, y As Long
 End Sub
 
 Public Sub Party_MouseDown()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
     ' find out which button we're clicking
-    For I = 24 To 25
-        x = GUIWindow(GUI_PARTY).x + Buttons(I).x
-        y = GUIWindow(GUI_PARTY).y + Buttons(I).y
+    For i = 24 To 25
+        x = GUIWindow(GUI_PARTY).x + Buttons(i).x
+        y = GUIWindow(GUI_PARTY).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            Buttons(I).state = 2 ' clicked
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            Buttons(i).state = 2 ' clicked
         End If
     Next
 End Sub
 
 'Options
 Public Sub Options_MouseUp()
-Dim I As Long, x As Long, y As Long, layerNum As Long
+Dim i As Long, x As Long, y As Long, layerNum As Long
 
     ' find out which button we're clicking
-    For I = 26 To 33
-        x = GUIWindow(GUI_OPTIONS).x + Buttons(I).x
-        y = GUIWindow(GUI_OPTIONS).y + Buttons(I).y
+    For i = 26 To 33
+        x = GUIWindow(GUI_OPTIONS).x + Buttons(i).x
+        y = GUIWindow(GUI_OPTIONS).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            If Buttons(I).state = 3 Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            If Buttons(i).state = 3 Then
                 ' do stuffs
-                Select Case I
+                Select Case i
                     Case 26 ' music on
                         Options.Music = 1
                         FMOD.Music_Play Trim$(map.Music)
@@ -1600,13 +1600,13 @@ Dim I As Long, x As Long, y As Long, layerNum As Long
             End If
         End If
     Next
-    For I = 38 To 41
+    For i = 38 To 41
     ' set co-ordinate
-        x = GUIWindow(GUI_OPTIONS).x + Buttons(I).x
-        y = GUIWindow(GUI_OPTIONS).y + Buttons(I).y
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            If Buttons(I).state = 2 Then
-                Select Case I
+        x = GUIWindow(GUI_OPTIONS).x + Buttons(i).x
+        y = GUIWindow(GUI_OPTIONS).y + Buttons(i).y
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            If Buttons(i).state = 2 Then
+                Select Case i
                     Case 38
                         If Options.FPS = 15 Then Options.FPS = 20
                         SaveOptions
@@ -1643,41 +1643,41 @@ Dim I As Long, x As Long, y As Long, layerNum As Long
 End Sub
 
 Public Sub Options_MouseDown()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
     ' find out which button we're clicking
-    For I = 26 To 33
-        x = GUIWindow(GUI_OPTIONS).x + Buttons(I).x
-        y = GUIWindow(GUI_OPTIONS).y + Buttons(I).y
+    For i = 26 To 33
+        x = GUIWindow(GUI_OPTIONS).x + Buttons(i).x
+        y = GUIWindow(GUI_OPTIONS).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            If Buttons(I).state = 0 Then
-                Buttons(I).state = 3 ' clicked
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            If Buttons(i).state = 0 Then
+                Buttons(i).state = 3 ' clicked
             End If
         End If
     Next
-    For I = 38 To 41
+    For i = 38 To 41
     ' set co-ordinate
-        x = GUIWindow(GUI_OPTIONS).x + Buttons(I).x
-        y = GUIWindow(GUI_OPTIONS).y + Buttons(I).y
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            Buttons(I).state = 2 ' clicked
+        x = GUIWindow(GUI_OPTIONS).x + Buttons(i).x
+        y = GUIWindow(GUI_OPTIONS).y + Buttons(i).y
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            Buttons(i).state = 2 ' clicked
         End If
     Next
 End Sub
 
 ' Menu
 Public Sub Menu_MouseUp()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
 
     ' find out which button we're clicking
-    For I = 1 To 6
-        x = GUIWindow(GUI_MENU).x + Buttons(I).x
-        y = GUIWindow(GUI_MENU).y + Buttons(I).y
+    For i = 1 To 6
+        x = GUIWindow(GUI_MENU).x + Buttons(i).x
+        y = GUIWindow(GUI_MENU).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            If Buttons(I).state = 2 Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            If Buttons(i).state = 2 Then
                 ' do stuffs
-                Select Case I
+                Select Case i
                     Case 1
                         ' open window
                         OpenGuiWindow 1
@@ -1708,33 +1708,33 @@ Dim I As Long, x As Long, y As Long
 End Sub
 
 Public Sub Menu_MouseDown(ByVal Button As Long)
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
     ' find out which button we're clicking
-    For I = 1 To 6
-        x = GUIWindow(GUI_MENU).x + Buttons(I).x
-        y = GUIWindow(GUI_MENU).y + Buttons(I).y
+    For i = 1 To 6
+        x = GUIWindow(GUI_MENU).x + Buttons(i).x
+        y = GUIWindow(GUI_MENU).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            Buttons(I).state = 2 ' clicked
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            Buttons(i).state = 2 ' clicked
         End If
     Next
 End Sub
 
 ' Main Menu
 Public Sub MainMenu_MouseUp()
-Dim I As Long, x As Long, y As Long, width As Long
+Dim i As Long, x As Long, y As Long, width As Long
 
     If faderAlpha > 0 Then Exit Sub
 
     ' find out which button we're clicking
-    For I = 7 To 15
-        x = GUIWindow(GUI_MAINMENU).x + Buttons(I).x
-        y = GUIWindow(GUI_MAINMENU).y + Buttons(I).y
+    For i = 7 To 15
+        x = GUIWindow(GUI_MAINMENU).x + Buttons(i).x
+        y = GUIWindow(GUI_MAINMENU).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            If Buttons(I).state = 2 Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            If Buttons(i).state = 2 Then
                 ' do stuffs
-                Select Case I
+                Select Case i
                     Case 7
                         ' login
                         DestroyTCP
@@ -1742,7 +1742,7 @@ Dim I As Long, x As Long, y As Long, width As Long
                         ' Load the username + pass
                         sUser = Trim$(Options.Username)
                         If Options.savePass = 1 Then
-                            sPass = Trim$(Options.Password)
+                            sPass = Trim$(Options.password)
                         End If
                         curTextbox = 1
                     Case 8
@@ -1765,17 +1765,17 @@ Dim I As Long, x As Long, y As Long, width As Long
                     Case 11
                         If curMenu = MENU_LOGIN Then
                             ' login accept
-                            MenuState MENU_STATE_LOGIN
+                            '''MenuState MENU_STATE_LOGIN
                         End If
                     Case 12
                         If curMenu = MENU_REGISTER Then
                             ' register accept
-                            MenuState MENU_STATE_NEWACCOUNT
+                            '''MenuState MENU_STATE_NEWACCOUNT
                         End If
                     Case 15
                         If curMenu = MENU_NEWCHAR Then
                             ' do eet
-                            MenuState MENU_STATE_ADDCHAR
+                            '''MenuState MENU_STATE_ADDCHAR
                             Unload frmCharEdit
                             frmCharEdit.visible = False
                         End If
@@ -1807,17 +1807,17 @@ Dim I As Long, x As Long, y As Long, width As Long
 End Sub
 
 Public Sub MainMenu_MouseDown(ByVal Button As Long)
-Dim I As Long, x As Long, y As Long, width As Long
+Dim i As Long, x As Long, y As Long, width As Long
 
     If faderAlpha > 0 Then Exit Sub
 
     ' find out which button we're clicking
-    For I = 7 To 15
-        x = GUIWindow(GUI_MAINMENU).x + Buttons(I).x
-        y = GUIWindow(GUI_MAINMENU).y + Buttons(I).y
+    For i = 7 To 15
+        x = GUIWindow(GUI_MAINMENU).x + Buttons(i).x
+        y = GUIWindow(GUI_MAINMENU).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            Buttons(I).state = 2 ' clicked
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            Buttons(i).state = 2 ' clicked
         End If
     Next
     
@@ -1863,7 +1863,7 @@ Dim invNum As Long
     ElseIf Button = 2 Then
         If Not InBank And Not InShop And Not InTrade > 0 Then
             If invNum <> 0 Then
-                If Item(GetPlayerInvItemNum(MyIndex, invNum)).Type = ITEM_TYPE_CURRENCY Or Item(GetPlayerInvItemNum(MyIndex, invNum)).Stackable = YES Then
+                If item(GetPlayerInvItemNum(MyIndex, invNum)).Type = ITEM_TYPE_CURRENCY Or item(GetPlayerInvItemNum(MyIndex, invNum)).Stackable = YES Then
                     If GetPlayerInvItemValue(MyIndex, invNum) > 0 Then
                         CurrencyMenu = 1 ' drop
                         CurrencyText = "How many do you want to drop?"
@@ -1882,7 +1882,7 @@ Dim invNum As Long
 End Sub
 
 Public Sub Inventory_DoubleClick()
-    Dim invNum As Long, I As Long
+    Dim invNum As Long, i As Long
 
     DragInvSlotNum = 0
     invNum = IsInvItem(GlobalX, GlobalY)
@@ -1896,7 +1896,7 @@ Public Sub Inventory_DoubleClick()
         
         ' in bank?
         If InBank Then
-            If Item(GetPlayerInvItemNum(MyIndex, invNum)).Type = ITEM_TYPE_CURRENCY Or Item(GetPlayerInvItemNum(MyIndex, invNum)).Stackable = YES Then
+            If item(GetPlayerInvItemNum(MyIndex, invNum)).Type = ITEM_TYPE_CURRENCY Or item(GetPlayerInvItemNum(MyIndex, invNum)).Stackable = YES Then
                 CurrencyMenu = 2 ' deposit
                 CurrencyText = "How many do you want to deposit?"
                 tmpCurrencyItem = invNum
@@ -1914,12 +1914,12 @@ Public Sub Inventory_DoubleClick()
         ' in trade?
         If InTrade > 0 Then
             ' exit out if we're offering that item
-            For I = 1 To MAX_INV
-                If TradeYourOffer(I).Num = invNum Then
+            For i = 1 To MAX_INV
+                If TradeYourOffer(i).Num = invNum Then
                     ' is currency?
-                    If Item(GetPlayerInvItemNum(MyIndex, TradeYourOffer(I).Num)).Type = ITEM_TYPE_CURRENCY Or Item(GetPlayerInvItemNum(MyIndex, invNum)).Stackable = YES Then
+                    If item(GetPlayerInvItemNum(MyIndex, TradeYourOffer(i).Num)).Type = ITEM_TYPE_CURRENCY Or item(GetPlayerInvItemNum(MyIndex, invNum)).Stackable = YES Then
                         ' only exit out if we're offering all of it
-                        If TradeYourOffer(I).Value = GetPlayerInvItemValue(MyIndex, TradeYourOffer(I).Num) Then
+                        If TradeYourOffer(i).Value = GetPlayerInvItemValue(MyIndex, TradeYourOffer(i).Num) Then
                             Exit Sub
                         End If
                     Else
@@ -1928,7 +1928,7 @@ Public Sub Inventory_DoubleClick()
                 End If
             Next
             
-            If Item(GetPlayerInvItemNum(MyIndex, invNum)).Type = ITEM_TYPE_CURRENCY Or Item(GetPlayerInvItemNum(MyIndex, invNum)).Stackable = YES Then
+            If item(GetPlayerInvItemNum(MyIndex, invNum)).Type = ITEM_TYPE_CURRENCY Or item(GetPlayerInvItemNum(MyIndex, invNum)).Stackable = YES Then
                 CurrencyMenu = 4 ' offer in trade
                 CurrencyText = "How many do you want to trade?"
                 tmpCurrencyItem = invNum
@@ -1944,7 +1944,7 @@ Public Sub Inventory_DoubleClick()
         End If
         
         ' use item if not doing anything else
-        If Item(GetPlayerInvItemNum(MyIndex, invNum)).Type = ITEM_TYPE_NONE Then Exit Sub
+        If item(GetPlayerInvItemNum(MyIndex, invNum)).Type = ITEM_TYPE_NONE Then Exit Sub
         Call SendUseItem(invNum)
         Exit Sub
     End If
@@ -2006,29 +2006,29 @@ Dim eqNum As Long
 End Sub
 
 Public Sub Character_MouseDown()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
     ' find out which button we're clicking
-    For I = 16 To 20
-        x = GUIWindow(GUI_CHARACTER).x + Buttons(I).x
-        y = GUIWindow(GUI_CHARACTER).y + Buttons(I).y
+    For i = 16 To 20
+        x = GUIWindow(GUI_CHARACTER).x + Buttons(i).x
+        y = GUIWindow(GUI_CHARACTER).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            Buttons(I).state = 2 ' clicked
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            Buttons(i).state = 2 ' clicked
         End If
     Next
 End Sub
 
 Public Sub Character_MouseUp()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
     ' find out which button we're clicking
-    For I = 16 To 20
-        x = GUIWindow(GUI_CHARACTER).x + Buttons(I).x
-        y = GUIWindow(GUI_CHARACTER).y + Buttons(I).y
+    For i = 16 To 20
+        x = GUIWindow(GUI_CHARACTER).x + Buttons(i).x
+        y = GUIWindow(GUI_CHARACTER).y + Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
             ' send the level up
             If GetPlayerPOINTS(MyIndex) = 0 Then Exit Sub
-            SendTrainStat (I - 15)
+            SendTrainStat (i - 15)
             ' play sound
             FMOD.Sound_Play Sound_ButtonClick
         End If
@@ -2080,8 +2080,8 @@ Public Sub Bank_DoubleClick()
 Dim bankNum As Long
     bankNum = IsBankItem(GlobalX, GlobalY)
     If bankNum <> 0 Then
-        If Item(GetBankItemNum(bankNum)).Type = ITEM_TYPE_NONE Then Exit Sub
-        If Item(GetBankItemNum(bankNum)).Type = ITEM_TYPE_CURRENCY Or Item(GetBankItemNum(bankNum)).Stackable = YES Then
+        If item(GetBankItemNum(bankNum)).Type = ITEM_TYPE_NONE Then Exit Sub
+        If item(GetBankItemNum(bankNum)).Type = ITEM_TYPE_CURRENCY Or item(GetBankItemNum(bankNum)).Stackable = YES Then
             CurrencyMenu = 3 ' withdraw
             CurrencyText = "How many do you want withdraw?"
             tmpCurrencyItem = bankNum
@@ -2096,30 +2096,30 @@ Dim bankNum As Long
     End If
 End Sub
 Public Sub Trade_MouseDown()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
 
     ' find out which button we're clicking
-    For I = 36 To 37
-        x = Buttons(I).x
-        y = Buttons(I).y
+    For i = 36 To 37
+        x = Buttons(i).x
+        y = Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            Buttons(I).state = 2 ' clicked
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            Buttons(i).state = 2 ' clicked
         End If
     Next
 End Sub
 Public Sub Trade_MouseUp()
-Dim I As Long, x As Long, y As Long
+Dim i As Long, x As Long, y As Long
 
     ' find out which button we're clicking
-    For I = 36 To 37
-        x = Buttons(I).x
-        y = Buttons(I).y
+    For i = 36 To 37
+        x = Buttons(i).x
+        y = Buttons(i).y
         ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(I).width) And (GlobalY >= y And GlobalY <= y + Buttons(I).height) Then
-            If Buttons(I).state = 2 Then
+        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
+            If Buttons(i).state = 2 Then
                 ' do stuffs
-                Select Case I
+                Select Case i
                     Case 36
                         AcceptTrade
                     Case 37
@@ -2162,17 +2162,17 @@ Dim x As Long, y As Long, width As Long
             If IsNumeric(sDialogue) Then
                 Select Case CurrencyMenu
                     Case 1 ' drop item
-                        If Val(sDialogue) > GetPlayerInvItemValue(MyIndex, tmpCurrencyItem) Then sDialogue = GetPlayerInvItemValue(MyIndex, tmpCurrencyItem)
-                        SendDropItem tmpCurrencyItem, Val(sDialogue)
+                        If val(sDialogue) > GetPlayerInvItemValue(MyIndex, tmpCurrencyItem) Then sDialogue = GetPlayerInvItemValue(MyIndex, tmpCurrencyItem)
+                        SendDropItem tmpCurrencyItem, val(sDialogue)
                     Case 2 ' deposit item
-                        If Val(sDialogue) > GetPlayerInvItemValue(MyIndex, tmpCurrencyItem) Then sDialogue = GetPlayerInvItemValue(MyIndex, tmpCurrencyItem)
-                        DepositItem tmpCurrencyItem, Val(sDialogue)
+                        If val(sDialogue) > GetPlayerInvItemValue(MyIndex, tmpCurrencyItem) Then sDialogue = GetPlayerInvItemValue(MyIndex, tmpCurrencyItem)
+                        DepositItem tmpCurrencyItem, val(sDialogue)
                     Case 3 ' withdraw item
-                        If Val(sDialogue) > GetBankItemValue(tmpCurrencyItem) Then sDialogue = GetBankItemValue(tmpCurrencyItem)
-                        WithdrawItem tmpCurrencyItem, Val(sDialogue)
+                        If val(sDialogue) > GetBankItemValue(tmpCurrencyItem) Then sDialogue = GetBankItemValue(tmpCurrencyItem)
+                        WithdrawItem tmpCurrencyItem, val(sDialogue)
                     Case 4 ' offer trade item
-                        If Val(sDialogue) > GetPlayerInvItemValue(MyIndex, tmpCurrencyItem) Then sDialogue = GetPlayerInvItemValue(MyIndex, tmpCurrencyItem)
-                        TradeItem tmpCurrencyItem, Val(sDialogue)
+                        If val(sDialogue) > GetPlayerInvItemValue(MyIndex, tmpCurrencyItem) Then sDialogue = GetPlayerInvItemValue(MyIndex, tmpCurrencyItem)
+                        TradeItem tmpCurrencyItem, val(sDialogue)
                 End Select
             Else
                 AddText "Please enter a valid amount.", BrightRed
@@ -2276,9 +2276,9 @@ Dim x As Long, y As Long, width As Long
     End If
 End Sub
 
-Public Sub Dialogue_Button_MouseDown(Index As Integer)
+Public Sub Dialogue_Button_MouseDown(index As Integer)
     ' call the handler
-    dialogueHandler Index
+    dialogueHandler index
     GUIWindow(GUI_DIALOGUE).visible = False
     GUIWindow(GUI_CHAT).visible = True
     dialogueIndex = 0

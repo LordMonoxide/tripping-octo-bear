@@ -40,25 +40,24 @@ Dim pLength As Long
     DoEvents
 End Sub
 
-Public Function ConnectToServer() As Boolean
-Dim Wait As Long
+Public Function connectToServer() As Boolean
+Dim wait As Long
 
-    ' Check to see if we are already connected, if so just exit
-    If IsConnected Then
-        ConnectToServer = True
-        Exit Function
-    End If
-    
-    Wait = timeGetTime
-    Socket.Close
-    Socket.Connect
-    
-    ' Wait until connected or 3 seconds have passed and report the server being down
-    Do While (Not IsConnected) And (timeGetTime <= Wait + 3000)
-        DoEvents
-    Loop
-    
-    ConnectToServer = IsConnected
+  If IsConnected Then
+    connectToServer = True
+    Exit Function
+  End If
+  
+  wait = timeGetTime
+  Call Socket.Close
+  Call Socket.Connect
+  
+  ' Wait until connected or 3 seconds have passed and report the server being down
+  Do While IsConnected = False And (timeGetTime <= wait + 3000)
+    DoEvents
+  Loop
+  
+  connectToServer = IsConnected
 End Function
 
 Function IsConnected() As Boolean
@@ -67,9 +66,9 @@ Function IsConnected() As Boolean
     End If
 End Function
 
-Function IsPlaying(ByVal Index As Long) As Boolean
+Function IsPlaying(ByVal index As Long) As Boolean
     ' if the player doesn't exist, the name will equal 0
-    If LenB(GetPlayerName(Index)) > 0 Then
+    If LenB(GetPlayerName(index)) > 0 Then
         IsPlaying = True
     End If
 End Function
@@ -86,60 +85,14 @@ Dim buffer As clsBuffer
     End If
 End Sub
 
-' *****************************
-' ** Outgoing Client Packets **
-' *****************************
-Public Sub SendNewAccount(ByVal name As String, ByVal Password As String)
-Dim buffer As clsBuffer
-    
-    Set buffer = New clsBuffer
-    buffer.WriteLong CNewAccount
-    buffer.WriteString name
-    buffer.WriteString Password
-    buffer.WriteLong App.Major
-    buffer.WriteLong App.Minor
-    buffer.WriteLong App.Revision
-    SendData buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
-Public Sub SendLogin(ByVal name As String, ByVal Password As String)
+Public Sub sendLogin(ByVal userID As Long, ByVal charID As Long)
 Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
-    buffer.WriteLong CLogin
-    buffer.WriteString name
-    buffer.WriteString Password
-    buffer.WriteLong App.Major
-    buffer.WriteLong App.Minor
-    buffer.WriteLong App.Revision
-    SendData buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
-Public Sub SendAddChar(ByVal name As String, ByVal Sex As Long, ByVal Clothes As Long, ByVal Gear As Long, ByVal Hair As Long, ByVal Headgear As Long)
-Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong CAddChar
-    buffer.WriteString name
-    buffer.WriteLong Sex
-    buffer.WriteLong Clothes
-    buffer.WriteLong Gear
-    buffer.WriteLong Hair
-    buffer.WriteLong Headgear
-    SendData buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
-Public Sub SendUseChar(ByVal CharSlot As Long)
-Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong CUseChar
-    buffer.WriteLong CharSlot
-    SendData buffer.ToArray()
-    Set buffer = Nothing
+    Call buffer.WriteLong(CLogin)
+    Call buffer.WriteLong(userID)
+    Call buffer.WriteLong(charID)
+    Call SendData(buffer.ToArray)
 End Sub
 
 Public Sub SayMsg(ByVal Text As String)
@@ -369,9 +322,9 @@ Dim ItemSize As Long
 Dim ItemData() As Byte
 
     Set buffer = New clsBuffer
-    ItemSize = LenB(Item(itemnum))
+    ItemSize = LenB(item(itemnum))
     ReDim ItemData(ItemSize - 1)
-    CopyMemory ItemData(0), ByVal VarPtr(Item(itemnum)), ItemSize
+    CopyMemory ItemData(0), ByVal VarPtr(item(itemnum)), ItemSize
     buffer.WriteLong CSaveItem
     buffer.WriteLong itemnum
     buffer.WriteBytes ItemData
@@ -481,7 +434,7 @@ Dim buffer As clsBuffer
     ' do basic checks
     If invNum < 1 Or invNum > MAX_INV Then Exit Sub
     If PlayerInv(invNum).Num < 1 Or PlayerInv(invNum).Num > MAX_ITEMS Then Exit Sub
-    If Item(GetPlayerInvItemNum(MyIndex, invNum)).Type = ITEM_TYPE_CURRENCY Or Item(GetPlayerInvItemNum(MyIndex, invNum)).Stackable = YES Then
+    If item(GetPlayerInvItemNum(MyIndex, invNum)).Type = ITEM_TYPE_CURRENCY Or item(GetPlayerInvItemNum(MyIndex, invNum)).Stackable = YES Then
         If Amount < 1 Or Amount > PlayerInv(invNum).Value Then Exit Sub
     End If
     
@@ -1066,19 +1019,19 @@ Public Sub SendPartyChatMsg(ByVal Text As String)
     SendData buffer.ToArray()
     Set buffer = Nothing
 End Sub
-Public Sub SendChest(ByVal Index As Long)
+Public Sub SendChest(ByVal index As Long)
 Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     
     buffer.WriteLong CSendChest
-    buffer.WriteLong Index
-    buffer.WriteLong Chest(Index).Type
-    buffer.WriteLong Chest(Index).Data1
-    buffer.WriteLong Chest(Index).Data2
-    buffer.WriteLong Chest(Index).map
-    buffer.WriteByte Chest(Index).x
-    buffer.WriteByte Chest(Index).y
+    buffer.WriteLong index
+    buffer.WriteLong Chest(index).Type
+    buffer.WriteLong Chest(index).Data1
+    buffer.WriteLong Chest(index).Data2
+    buffer.WriteLong Chest(index).map
+    buffer.WriteByte Chest(index).x
+    buffer.WriteByte Chest(index).y
     
     SendData buffer.ToArray()
     Set buffer = Nothing
