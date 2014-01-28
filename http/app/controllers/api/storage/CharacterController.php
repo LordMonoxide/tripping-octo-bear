@@ -29,7 +29,7 @@ class CharacterController extends Controller {
       $char->user()->associate(Auth::user());
       $char->name = Input::get('name');
       $char->sex  = Input::get('sex');
-      $char->map  = 0;
+      $char->map  = 1;
       $char->x    = 0;
       $char->y    = 0;
       $char->dir  = 'down';
