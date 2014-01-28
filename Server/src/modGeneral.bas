@@ -1,16 +1,16 @@
 Attribute VB_Name = "modGeneral"
 Option Explicit
+
 'Used for the 64-bit timer
 Private GetSystemTimeOffset As Currency
 Private Declare Sub GetSystemTime Lib "Kernel32.dll" Alias "GetSystemTimeAsFileTime" (ByRef lpSystemTimeAsFileTime As Currency)
 Public Declare Function timeBeginPeriod Lib "winmm.dll" (ByVal uPeriod As Long) As Long
-Public Sub Main()
-    Call InitServer
-End Sub
 
-Public Sub InitServer()
+Public SQL As clsSQL
+
+Public Sub Main()
     Dim i As Long
-    Dim F As Long
+    Dim f As Long
     Dim time1 As Long
     Dim time2 As Long
     
@@ -29,6 +29,8 @@ Public Sub InitServer()
     If FileExist(App.Path & "\data\eclipse.jpg", True) Then frmServer.Picture = LoadPicture(App.Path & "\data\eclipse.jpg")
     frmServer.Show
     
+    Set SQL = New clsSQL
+    
     ' Initialize the random-number generator
     Randomize ', seed
 
@@ -45,14 +47,13 @@ Public Sub InitServer()
     ChkDir App.Path & "\Data\", "spells"
     ChkDir App.Path & "\Data\", "events"
     ChkDir App.Path & "\Data\", "guilds"
-    ChkDir App.Path & "\Data\", "pets"
     ChkDir App.Path & "\Data\", "quests"
     ChkDir App.Path & "\Data\", "chests"
     
     ' load options, set if they dont exist
     If Not FileExist(App.Path & "\data\options.ini", True) Then
         Options.Game_Name = "Eclipse Origins"
-        Options.Port = 7001
+        Options.port = 7001
         Options.MOTD = "Welcome to Eclipse Origins."
         Options.Tray = 0
         Options.Logs = 1
@@ -66,20 +67,9 @@ Public Sub InitServer()
         Player_HighIndex = MAX_PLAYERS
     End If
     
-    ' Get the listening socket ready to go
-    frmServer.Socket(0).RemoteHost = frmServer.Socket(0).LocalIP
-    frmServer.Socket(0).LocalPort = Options.Port
+    Call initServer
     
-    ' Init all the player sockets
-    Call SetStatus("Initializing player array...")
-
-    For i = 1 To MAX_PLAYERS
-        Call ClearPlayer(i)
-        Load frmServer.Socket(i)
-    Next
-
     ' Serves as a constructor
-    Call ClearGameData
     Call LoadGameData
     Call SetStatus("Loading swear filter...")
     Call LoadSwearFilter
@@ -96,15 +86,14 @@ Public Sub InitServer()
 
     ' Check if the master charlist file exists for checking duplicate names, and if it doesnt make it
     If Not FileExist("data\accounts\_charlist.txt") Then
-        F = FreeFile
-        Open App.Path & "\data\accounts\_charlist.txt" For Output As #F
-        Close #F
+        f = FreeFile
+        Open App.Path & "\data\accounts\_charlist.txt" For Output As #f
+        Close #f
     End If
     
     Call Set_Default_Guild_Ranks
 
-    ' Start listening
-    frmServer.Socket(0).Listen
+    Call openServer
     
     Call SetStatus("Updating options...")
     Call UpdateCaption
@@ -133,14 +122,6 @@ Public Sub DestroyServer()
     Call SaveTime
     Call SetStatus("Saving players online...")
     Call SaveAllPlayersOnline
-    Call ClearGameData
-    Call SetStatus("Unloading sockets...")
-
-    For i = 1 To MAX_PLAYERS
-        Unload frmServer.Socket(i)
-    Next
-
-    End
 End Sub
 
 Public Sub SetStatus(ByVal Status As String)
@@ -148,64 +129,35 @@ Public Sub SetStatus(ByVal Status As String)
     DoEvents
 End Sub
 
-Public Sub ClearGameData()
-    Call SetStatus("Clearing maps...")
-    Call ClearMaps
-    Call SetStatus("Clearing map items...")
-    Call ClearMapItems
-    Call SetStatus("Clearing map npcs...")
-    Call ClearMapNpcs
-    Call SetStatus("Clearing npcs...")
-    Call ClearNpcs
-    Call SetStatus("Clearing resources...")
-    Call ClearResources
-    Call SetStatus("Clearing items...")
-    Call ClearItems
-    Call SetStatus("Clearing shops...")
-    Call ClearShops
-    Call SetStatus("Clearing spells...")
-    Call ClearSpells
-    Call SetStatus("Clearing animations...")
-    Call ClearAnimations
-    Call SetStatus("Clearing events...")
-    Call ClearEvents
-    Call SetStatus("Clearing guilds...")
-    Call ClearGuilds
-    Call SetStatus("Clearing pets...")
-    Call Clearpets
-    Call SetStatus("Clearing quests...")
-    Call ClearQuests
-    Call SetStatus("Clearing chests...")
-    Call ClearChests
-End Sub
-
 Private Sub LoadGameData()
-    Call SetStatus("Loading maps...")
-    Call LoadMaps
-    Call SetStatus("Loading items...")
-    Call LoadItems
-    Call SetStatus("Loading npcs...")
-    Call LoadNpcs
-    Call SetStatus("Loading resources...")
-    Call LoadResources
-    Call SetStatus("Loading shops...")
-    Call LoadShops
-    Call SetStatus("Loading spells...")
-    Call LoadSpells
-    Call SetStatus("Loading animations...")
-    Call LoadAnimations
-    Call SetStatus("Loading events...")
-    Call LoadEvents
-    Call SetStatus("Loading pets...")
-    Call Loadpets
-    Call SetStatus("Loading switches...")
-    Call LoadSwitches
-    Call SetStatus("Loading variables...")
-    Call LoadVariables
-    Call SetStatus("Loading quests...")
-    Call LoadQuests
-    Call SetStatus("Loading chests...")
-    Call LoadChests
+  Set characters = New clsCharacters
+  Set items = New clsItems
+  Set npcs = New clsNPCs
+  
+  Call SetStatus("Loading maps...")
+  Call LoadMaps
+  Call SetStatus("Loading items...")
+  Call items.load
+  Call SetStatus("Loading npcs...")
+  Call npcs.load
+  Call SetStatus("Loading resources...")
+  Call LoadResources
+  Call SetStatus("Loading shops...")
+  'Call LoadShops
+  Call SetStatus("Loading spells...")
+  'Call LoadSpells
+  Call SetStatus("Loading animations...")
+  Call LoadAnimations
+  Call SetStatus("Loading events...")
+  Call LoadEvents
+  Call SetStatus("Loading switches...")
+  Call LoadSwitches
+  Call SetStatus("Loading variables...")
+  Call LoadVariables
+  Call SetStatus("Loading quests...")
+  Call LoadQuests
+  Call SetStatus("Loading chests...")
+  Call LoadChests
 End Sub
 
 Public Sub TextAdd(Msg As String)
@@ -227,11 +179,11 @@ Function isNameLegal(ByVal sInput As Integer) As Boolean
     End If
 End Function
 
-Public Function KeepTwoDigit(Num As Byte)
-    If (Num < 10) Then
-        KeepTwoDigit = "0" & Num
+Public Function KeepTwoDigit(num As Byte)
+    If (num < 10) Then
+        KeepTwoDigit = "0" & num
     Else
-        KeepTwoDigit = Num
+        KeepTwoDigit = num
     End If
 End Function
 

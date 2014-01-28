@@ -1,6 +1,12 @@
 Attribute VB_Name = "modEnumerations"
 Option Explicit
 
+Public Enum TargetTypeEnum
+  TARGET_TYPE_NONE
+  TARGET_TYPE_PLAYER
+  TARGET_TYPE_NPC
+End Enum
+
 ' The order of the packets must match with the client's packet enumeration
 
 ' Packets sent by server to client
@@ -101,12 +107,6 @@ Public Enum ServerPackets
     SAdminGuild
     SGuildAdminSwitchTab
     SGuildInvite
-    SPetEditor
-    SUpdatePet
-    SPetMove
-    SPetDir
-    SPetVital
-    SClearPetSpellBuffer
     SSwearFilter
     SPlayerOpenChest
     SUpdateChest
@@ -116,11 +116,7 @@ End Enum
 
 ' Packets sent by client to server
 Public Enum ClientPackets
-    CNewAccount = 1
-    CDelAccount
-    CLogin
-    CAddChar
-    CUseChar
+    CLogin = 1
     CSayMsg
     CEmoteMsg
     CBroadcastMsg
@@ -220,30 +216,12 @@ Public Enum ClientPackets
     CSayGuild
     CSaveGuild
     CRequestGuildAdminTabSwitch
-    CRequestEditPet
-    CSavePet
-    CRequestPets
-    CPetMove
-    csetbehaviour
-    CReleasePet
-    CPetSpell
     CSendChest
     ' Make sure CMSG_COUNT is below everything else
     CMSG_COUNT
 End Enum
 
 Public HandleDataSub(CMSG_COUNT) As Long
-
-' Stats used by Players, Npcs and Classes
-Public Enum Stats
-    Strength = 1
-    Endurance
-    Intelligence
-    Agility
-    Willpower
-    ' Make sure Stat_Count is below everything else
-    Stat_Count
-End Enum
 
 Public Enum Skills
     Woodcutting = 1
@@ -256,24 +234,6 @@ Public Enum Skills
     Crafting
     ' Make sure Skill_Count is below everything else
     Skill_Count
-End Enum
-
-' Vitals used by Players, Npcs and Classes
-Public Enum Vitals
-    HP = 1
-    MP
-    ' Make sure Vital_Count is below everything else
-    Vital_Count
-End Enum
-
-' Equipment used by Players
-Public Enum Equipment
-    Weapon = 1
-    Armor
-    Aura
-    Shield
-    ' Make sure Equipment_Count is below everything else
-    Equipment_Count
 End Enum
 
 ' Layers in a map

@@ -135,8 +135,8 @@ Public InBank As Long
 Public CurrencyMenu As Byte
 
 ' Player variables
-Public MyIndex As Long ' Index of actual player
-Public PlayerInv(1 To MAX_INV) As PlayerInvRec   ' Inventory
+Public myID As Long
+Public PlayerInv(1 To MAX_INV) As PlayerInvRec
 Public PlayerSpells(1 To MAX_PLAYER_SPELLS) As Long
 Public InventoryItemSelected As Long
 Public SpellBuffer As Long
@@ -263,7 +263,6 @@ Public newCharHair As Long
 Public newCharHeadgear As Long
 
 ' looping saves
-Public Player_HighIndex As Long
 Public Npc_HighIndex As Long
 Public Action_HighIndex As Long
 

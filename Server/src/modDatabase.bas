@@ -18,21 +18,21 @@ End Sub
 ' Outputs string to text file
 Sub AddLog(ByVal text As String, ByVal FN As String)
     Dim filename As String
-    Dim F As Long
+    Dim f As Long
 
     If Options.Logs = 1 Then
         filename = App.Path & "\data\logs\" & FN
 
         If Not FileExist(filename, True) Then
-            F = FreeFile
-            Open filename For Output As #F
-            Close #F
+            f = FreeFile
+            Open filename For Output As #f
+            Close #f
         End If
 
-        F = FreeFile
-        Open filename For Append As #F
-        Print #F, Time & ": " & text
-        Close #F
+        f = FreeFile
+        Open filename For Append As #f
+        Print #f, Time & ": " & text
+        Close #f
     End If
 End Sub
 
@@ -69,7 +69,7 @@ End Function
 
 Public Sub SaveOptions()
     PutVar App.Path & "\data\options.ini", "OPTIONS", "Game_Name", Options.Game_Name
-    PutVar App.Path & "\data\options.ini", "OPTIONS", "Port", str(Options.Port)
+    PutVar App.Path & "\data\options.ini", "OPTIONS", "Port", str(Options.port)
     PutVar App.Path & "\data\options.ini", "OPTIONS", "MOTD", Options.MOTD
     PutVar App.Path & "\data\options.ini", "OPTIONS", "Tray", str(Options.Tray)
     PutVar App.Path & "\data\options.ini", "OPTIONS", "Logs", str(Options.Logs)
@@ -78,468 +78,18 @@ End Sub
 
 Public Sub LoadOptions()
     Options.Game_Name = GetVar(App.Path & "\data\options.ini", "OPTIONS", "Game_Name")
-    Options.Port = GetVar(App.Path & "\data\options.ini", "OPTIONS", "Port")
+    Options.port = GetVar(App.Path & "\data\options.ini", "OPTIONS", "Port")
     Options.MOTD = GetVar(App.Path & "\data\options.ini", "OPTIONS", "MOTD")
     Options.Tray = GetVar(App.Path & "\data\options.ini", "OPTIONS", "Tray")
     Options.Logs = GetVar(App.Path & "\data\options.ini", "OPTIONS", "Logs")
     Options.HighIndexing = GetVar(App.Path & "\data\options.ini", "OPTIONS", "Highindexing")
 End Sub
 
-Public Sub ToggleMute(ByVal Index As Long)
-    ' toggle the player's mute
-    If Player(Index).isMuted = 1 Then
-        Player(Index).isMuted = 0
-        ' Let them know
-        PlayerMsg Index, "You have been unmuted and can now talk in global.", BrightGreen
-        TextAdd GetPlayerName(Index) & " has been unmuted."
-    Else
-        Player(Index).isMuted = 1
-        ' Let them know
-        PlayerMsg Index, "You have been muted and can no longer talk in global.", BrightRed
-        TextAdd GetPlayerName(Index) & " has been muted."
-    End If
-    
-    ' save the player
-    SavePlayer Index
-End Sub
-
-Public Sub BanIndex(ByVal BanPlayerIndex As Long)
-Dim filename As String, IP As String, F As Long
-
-    Player(BanPlayerIndex).isBanned = 1
-    SavePlayer BanPlayerIndex
-
-    ' IP banning
-    filename = App.Path & "\data\banlist_ip.txt"
-
-    ' Make sure the file exists
-    If Not FileExist(filename, True) Then
-        F = FreeFile
-        Open filename For Output As #F
-        Close #F
-    End If
-
-    ' Print the IP in the ip ban list
-    IP = GetPlayerIP(BanPlayerIndex)
-    F = FreeFile
-    
-    Open filename For Append As #F
-        Print #F, IP
-    Close #F
-    
-    ' Tell them they're banned
-    Call GlobalMsg(GetPlayerName(BanPlayerIndex) & " has been banned from " & Options.Game_Name & ".", White)
-    Call AddLog(GetPlayerName(BanPlayerIndex) & " has been banned.", ADMIN_LOG)
-    Call AlertMsg(BanPlayerIndex, "You have been banned.")
-End Sub
-
-Public Function isBanned_IP(ByVal IP As String) As Boolean
-Dim filename As String, fIP As String, F As Long
-    
-    filename = App.Path & "\data\banlist_ip.txt"
-
-    ' Check if file exists
-    If Not FileExist(filename, True) Then
-        F = FreeFile
-        Open filename For Output As #F
-        Close #F
-    End If
-
-    F = FreeFile
-    Open filename For Input As #F
-
-    Do While Not EOF(F)
-        Input #F, fIP
-
-        ' Is banned?
-        If Trim$(LCase$(fIP)) = Trim$(LCase$(Mid$(IP, 1, Len(fIP)))) Then
-            isBanned_IP = True
-            Close #F
-            Exit Function
-        End If
-    Loop
-
-    Close #F
-End Function
-
-Public Function isBanned_Account(ByVal Index As Long) As Boolean
-    If Player(Index).isBanned = 1 Then
-        isBanned_Account = True
-    Else
-        isBanned_Account = False
-    End If
-End Function
-
-' **************
-' ** Accounts **
-' **************
-Function AccountExist(ByVal Name As String) As Boolean
-    Dim filename As String
-
-    filename = "data\accounts\" & Trim(Name) & ".bin"
-
-    If FileExist(filename) Then
-        AccountExist = True
-    End If
-End Function
-
-Function PasswordOK(ByVal Name As String, ByVal Password As String) As Boolean
-    Dim filename As String
-    Dim RightPassword As String * PASS_LEN
-    Dim nFileNum As Long
-
-    If AccountExist(Name) Then
-        filename = App.Path & "\data\accounts\" & Trim$(Name) & ".bin"
-        nFileNum = FreeFile
-        Open filename For Binary As #nFileNum
-        Get #nFileNum, ACCOUNT_LENGTH, RightPassword
-        Close #nFileNum
-
-        If UCase$(Trim$(Password)) = UCase$(Trim$(RightPassword)) Then
-            PasswordOK = True
-        End If
-    End If
-End Function
-
-Sub AddAccount(ByVal Index As Long, ByVal Name As String, ByVal Password As String)
-    ClearPlayer Index
-    
-    Player(Index).Login = Name
-    Player(Index).Password = Password
-
-    Call SavePlayer(Index)
-End Sub
-
-Sub DeleteName(ByVal Name As String)
-    Dim f1 As Long
-    Dim f2 As Long
-    Dim s As String
-
-    Call FileCopy(App.Path & "\data\accounts\_charlist.txt", App.Path & "\data\accounts\_chartemp.txt")
-    ' Destroy name from charlist
-    f1 = FreeFile
-    Open App.Path & "\data\accounts\_chartemp.txt" For Input As #f1
-    f2 = FreeFile
-    Open App.Path & "\data\accounts\_charlist.txt" For Output As #f2
-
-    Do While Not EOF(f1)
-        Input #f1, s
-
-        If Trim$(LCase$(s)) <> Trim$(LCase$(Name)) Then
-            Print #f2, s
-        End If
-
-    Loop
-
-    Close #f1
-    Close #f2
-    Call Kill(App.Path & "\data\accounts\_chartemp.txt")
-End Sub
-
-' ****************
-' ** Characters **
-' ****************
-Function CharExist(ByVal Index As Long) As Boolean
-    If LenB(Trim$(Player(Index).Name)) > 0 Then
-        CharExist = True
-    End If
-End Function
-
-Sub AddChar(ByVal Index As Long, ByVal Name As String, ByVal Sex As Byte, ByVal Clothes As Long, ByVal Gear As Long, ByVal Hair As Long, ByVal Headgear As Long)
-    Dim F As Long
-    Dim n As Long
-
-    If LenB(Trim$(Player(Index).Name)) = 0 Then
-        Player(Index).Name = Name
-        Player(Index).Sex = Sex
-        Player(Index).Clothes = Clothes
-        Player(Index).Gear = Gear
-        Player(Index).Hair = Hair
-        Player(Index).Headgear = Headgear
-
-        Player(Index).Level = 1
-
-        For n = 1 To Stats.Stat_Count - 1
-            Player(Index).Stat(n) = 1
-        Next
-        
-        For n = 1 To Skills.Skill_Count - 1
-            Player(Index).Skill(n) = 1
-        Next
-
-        Player(Index).dir = DIR_DOWN
-        Player(Index).Map = START_MAP
-        Player(Index).x = START_X
-        Player(Index).y = START_Y
-        Player(Index).dir = DIR_DOWN
-        Player(Index).Vital(Vitals.HP) = GetPlayerMaxVital(Index, Vitals.HP)
-        Player(Index).Vital(Vitals.MP) = GetPlayerMaxVital(Index, Vitals.MP)
-        
-        ' Append name to file
-        F = FreeFile
-        Open App.Path & "\data\accounts\_charlist.txt" For Append As #F
-        Print #F, Name
-        Close #F
-        Call SavePlayer(Index)
-        Exit Sub
-    End If
-End Sub
-
-Function FindChar(ByVal Name As String) As Boolean
-    Dim F As Long
-    Dim s As String
-
-    F = FreeFile
-    Open App.Path & "\data\accounts\_charlist.txt" For Input As #F
-
-    Do While Not EOF(F)
-        Input #F, s
-
-        If Trim$(LCase$(s)) = Trim$(LCase$(Name)) Then
-            FindChar = True
-            Close #F
-            Exit Function
-        End If
-
-    Loop
-
-    Close #F
-End Function
-
-' *************
-' ** Players **
-' *************
 Sub SaveAllPlayersOnline()
-    Dim i As Long
-
-    For i = 1 To Player_HighIndex
-
-        If IsPlaying(i) Then
-            Call SavePlayer(i)
-            Call SaveBank(i)
-        End If
-
-    Next
-End Sub
-
-Sub SavePlayer(ByVal Index As Long)
-    Dim filename As String
-    Dim F As Long
-
-    filename = App.Path & "\data\accounts\" & Trim$(Player(Index).Login) & ".bin"
-    
-    F = FreeFile
-    
-    Open filename For Binary As #F
-    Put #F, , Player(Index)
-    Close #F
-End Sub
-
-Sub LoadPlayer(ByVal Index As Long, ByVal Name As String)
-    Dim filename As String
-    Dim F As Long
-
-    Call ClearPlayer(Index)
-    filename = App.Path & "\data\accounts\" & Trim(Name) & ".bin"
-    F = FreeFile
-    Open filename For Binary As #F
-    Get #F, , Player(Index)
-    Close #F
-End Sub
-
-Sub ClearPlayer(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(TempPlayer(Index)), LenB(TempPlayer(Index)))
-    Set TempPlayer(Index).Buffer = New clsBuffer
-    
-    Call ZeroMemory(ByVal VarPtr(Player(Index)), LenB(Player(Index)))
-    Player(Index).Login = vbNullString
-    Player(Index).Password = vbNullString
-    Player(Index).Name = vbNullString
-
-    frmServer.lvwInfo.ListItems(Index).SubItems(1) = vbNullString
-    frmServer.lvwInfo.ListItems(Index).SubItems(2) = vbNullString
-    frmServer.lvwInfo.ListItems(Index).SubItems(3) = vbNullString
-End Sub
-' ***********
-' ** Items **
-' ***********
-
-Sub SaveItem(ByVal itemnum As Long)
-    Dim filename As String
-    Dim F  As Long
-
-    filename = App.Path & "\data\items\item" & itemnum & ".dat"
-    F = FreeFile
-    Open filename For Binary As #F
-    Put #F, , Item(itemnum)
-    Close #F
-End Sub
-
-Sub LoadItems()
-    Dim filename As String
-    Dim i As Long
-    Dim F As Long
-
-    For i = 1 To MAX_ITEMS
-        filename = App.Path & "\data\Items\Item" & i & ".dat"
-        If FileExist(filename, True) Then
-            F = FreeFile
-            Open filename For Binary As #F
-                Get #F, , Item(i)
-            Close #F
-        End If
-    Next
-End Sub
-
-Sub ClearItem(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Item(Index)), LenB(Item(Index)))
-    Item(Index).Name = vbNullString
-    Item(Index).Desc = vbNullString
-    Item(Index).Sound = "None."
-End Sub
-
-Sub ClearItems()
-    Dim i As Long
-
-    For i = 1 To MAX_ITEMS
-        Call ClearItem(i)
-    Next
-End Sub
-
-' ***********
-' ** Shops **
-' ***********
-
-Sub SaveShop(ByVal shopNum As Long)
-    Dim filename As String
-    Dim F As Long
-
-    filename = App.Path & "\data\shops\shop" & shopNum & ".dat"
-    F = FreeFile
-    Open filename For Binary As #F
-    Put #F, , Shop(shopNum)
-    Close #F
-End Sub
-
-Sub LoadShops()
-    Dim filename As String
-    Dim i As Long
-    Dim F As Long
-
-    For i = 1 To MAX_SHOPS
-        filename = App.Path & "\data\shops\shop" & i & ".dat"
-        If FileExist(filename, True) Then
-            F = FreeFile
-            Open filename For Binary As #F
-                Get #F, , Shop(i)
-            Close #F
-        End If
-    Next
-End Sub
-
-Sub ClearShop(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Shop(Index)), LenB(Shop(Index)))
-    Shop(Index).Name = vbNullString
-End Sub
-
-Sub ClearShops()
-    Dim i As Long
-
-    For i = 1 To MAX_SHOPS
-        Call ClearShop(i)
-    Next
-End Sub
-
-' ************
-' ** Spells **
-' ************
-Sub SaveSpell(ByVal spellnum As Long)
-    Dim filename As String
-    Dim F As Long
-
-    filename = App.Path & "\data\spells\spells" & spellnum & ".dat"
-    F = FreeFile
-    Open filename For Binary As #F
-    Put #F, , spell(spellnum)
-    Close #F
-End Sub
-
-Sub LoadSpells()
-    Dim filename As String
-    Dim i As Long
-    Dim F As Long
-
-    For i = 1 To MAX_SPELLS
-        filename = App.Path & "\data\spells\spells" & i & ".dat"
-        If FileExist(filename, True) Then
-            F = FreeFile
-            Open filename For Binary As #F
-                Get #F, , spell(i)
-            Close #F
-        End If
-    Next
-End Sub
-
-Sub ClearSpell(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(spell(Index)), LenB(spell(Index)))
-    spell(Index).Name = vbNullString
-    spell(Index).LevelReq = 1 'Needs to be 1 for the spell editor
-    spell(Index).Desc = vbNullString
-    spell(Index).Sound = "None."
-End Sub
-
-Sub ClearSpells()
-    Dim i As Long
-
-    For i = 1 To MAX_SPELLS
-        Call ClearSpell(i)
-    Next
-End Sub
-
-' **********
-' ** NPCs **
-' **********
-
-Sub SaveNpc(ByVal npcNum As Long)
-    Dim filename As String
-    Dim F As Long
-
-    filename = App.Path & "\data\npcs\npc" & npcNum & ".dat"
-    F = FreeFile
-    Open filename For Binary As #F
-    Put #F, , NPC(npcNum)
-    Close #F
-End Sub
-
-Sub LoadNpcs()
-    Dim filename As String
-    Dim i As Long
-    Dim F As Long
-
-    For i = 1 To MAX_NPCS
-        filename = App.Path & "\data\npcs\npc" & i & ".dat"
-        If FileExist(filename, True) Then
-            F = FreeFile
-            Open filename For Binary As #F
-                Get #F, , NPC(i)
-            Close #F
-        End If
-    Next
-End Sub
-
-Sub ClearNpc(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(NPC(Index)), LenB(NPC(Index)))
-    NPC(Index).Name = vbNullString
-    NPC(Index).AttackSay = vbNullString
-    NPC(Index).Sound = "None."
-End Sub
-
-Sub ClearNpcs()
-    Dim i As Long
-
-    For i = 1 To MAX_NPCS
-        Call ClearNpc(i)
-    Next
+  Dim u As clsUser
+  For Each u In users
+    Call u.save
+  Next
 End Sub
 
 ' **********
@@ -548,37 +98,37 @@ End Sub
 
 Sub SaveResource(ByVal ResourceNum As Long)
     Dim filename As String
-    Dim F As Long
+    Dim f As Long
 
     filename = App.Path & "\data\resources\resource" & ResourceNum & ".dat"
-    F = FreeFile
-    Open filename For Binary As #F
-        Put #F, , Resource(ResourceNum)
-    Close #F
+    f = FreeFile
+    Open filename For Binary As #f
+        Put #f, , Resource(ResourceNum)
+    Close #f
 End Sub
 
 Sub LoadResources()
     Dim filename As String
     Dim i As Long
-    Dim F As Long
+    Dim f As Long
     
     For i = 1 To MAX_RESOURCES
         filename = App.Path & "\data\resources\resource" & i & ".dat"
         If FileExist(filename, True) Then
-            F = FreeFile
-            Open filename For Binary As #F
-                Get #F, , Resource(i)
-            Close #F
+            f = FreeFile
+            Open filename For Binary As #f
+                Get #f, , Resource(i)
+            Close #f
         End If
     Next
 End Sub
 
-Sub ClearResource(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Resource(Index)), LenB(Resource(Index)))
-    Resource(Index).Name = vbNullString
-    Resource(Index).SuccessMessage = vbNullString
-    Resource(Index).EmptyMessage = vbNullString
-    Resource(Index).Sound = "None."
+Sub ClearResource(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(Resource(index)), LenB(Resource(index)))
+    Resource(index).name = vbNullString
+    Resource(index).SuccessMessage = vbNullString
+    Resource(index).EmptyMessage = vbNullString
+    Resource(index).sound = "None."
 End Sub
 
 Sub ClearResources()
@@ -595,35 +145,35 @@ End Sub
 
 Sub SaveAnimation(ByVal AnimationNum As Long)
     Dim filename As String
-    Dim F As Long
+    Dim f As Long
 
     filename = App.Path & "\data\animations\animation" & AnimationNum & ".dat"
-    F = FreeFile
-    Open filename For Binary As #F
-        Put #F, , Animation(AnimationNum)
-    Close #F
+    f = FreeFile
+    Open filename For Binary As #f
+        Put #f, , animation(AnimationNum)
+    Close #f
 End Sub
 
 Sub LoadAnimations()
     Dim filename As String
     Dim i As Long
-    Dim F As Long
+    Dim f As Long
     
     For i = 1 To MAX_ANIMATIONS
         filename = App.Path & "\data\animations\animation" & i & ".dat"
         If FileExist(filename, True) Then
-            F = FreeFile
-            Open filename For Binary As #F
-                Get #F, , Animation(i)
-            Close #F
+            f = FreeFile
+            Open filename For Binary As #f
+                Get #f, , animation(i)
+            Close #f
         End If
     Next
 End Sub
 
-Sub ClearAnimation(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Animation(Index)), LenB(Animation(Index)))
-    Animation(Index).Name = vbNullString
-    Animation(Index).Sound = "None."
+Sub ClearAnimation(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(animation(index)), LenB(animation(index)))
+    animation(index).name = vbNullString
+    animation(index).sound = "None."
 End Sub
 
 Sub ClearAnimations()
@@ -639,115 +189,119 @@ End Sub
 ' **********
 Sub SaveMap(ByVal mapNum As Long)
     Dim filename As String
-    Dim F As Long
+    Dim f As Long
     Dim x As Long
     Dim y As Long
 
     filename = App.Path & "\data\maps\map" & mapNum & ".dat"
-    F = FreeFile
+    f = FreeFile
     
-    Open filename For Binary As #F
-    Put #F, , Map(mapNum).Name
-    Put #F, , Map(mapNum).Music
-    Put #F, , Map(mapNum).Revision
-    Put #F, , Map(mapNum).Moral
-    Put #F, , Map(mapNum).Up
-    Put #F, , Map(mapNum).Down
-    Put #F, , Map(mapNum).Left
-    Put #F, , Map(mapNum).Right
-    Put #F, , Map(mapNum).BootMap
-    Put #F, , Map(mapNum).BootX
-    Put #F, , Map(mapNum).BootY
-    Put #F, , Map(mapNum).MaxX
-    Put #F, , Map(mapNum).MaxY
+    Open filename For Binary As #f
+    Put #f, , map(mapNum).name
+    Put #f, , map(mapNum).Music
+    Put #f, , map(mapNum).Revision
+    Put #f, , map(mapNum).moral
+    Put #f, , map(mapNum).Up
+    Put #f, , map(mapNum).Down
+    Put #f, , map(mapNum).Left
+    Put #f, , map(mapNum).Right
+    Put #f, , map(mapNum).BootMap
+    Put #f, , map(mapNum).BootX
+    Put #f, , map(mapNum).BootY
+    Put #f, , map(mapNum).MaxX
+    Put #f, , map(mapNum).MaxY
 
-    For x = 0 To Map(mapNum).MaxX
-        For y = 0 To Map(mapNum).MaxY
-            Put #F, , Map(mapNum).Tile(x, y)
+    For x = 0 To map(mapNum).MaxX
+        For y = 0 To map(mapNum).MaxY
+            Put #f, , map(mapNum).Tile(x, y)
         Next
     Next
 
     For x = 1 To MAX_MAP_NPCS
-        Put #F, , Map(mapNum).NPC(x)
+        Put #f, , map(mapNum).NPC(x)
     Next
     
-    Put #F, , Map(mapNum).BossNpc
+    Put #f, , map(mapNum).BossNpc
     
-    Put #F, , Map(mapNum).Fog
-    Put #F, , Map(mapNum).FogSpeed
-    Put #F, , Map(mapNum).FogOpacity
+    Put #f, , map(mapNum).Fog
+    Put #f, , map(mapNum).FogSpeed
+    Put #f, , map(mapNum).FogOpacity
     
-    Put #F, , Map(mapNum).Red
-    Put #F, , Map(mapNum).Green
-    Put #F, , Map(mapNum).Blue
-    Put #F, , Map(mapNum).Alpha
+    Put #f, , map(mapNum).Red
+    Put #f, , map(mapNum).Green
+    Put #f, , map(mapNum).Blue
+    Put #f, , map(mapNum).Alpha
     
-    Put #F, , Map(mapNum).Panorama
-    Put #F, , Map(mapNum).DayNight
+    Put #f, , map(mapNum).Panorama
+    Put #f, , map(mapNum).DayNight
     
     For x = 1 To MAX_MAP_NPCS
-        Put #F, , Map(mapNum).NpcSpawnType(x)
+        Put #f, , map(mapNum).NpcSpawnType(x)
     Next
     
-    Close #F
+    Close #f
 End Sub
 
 Sub LoadMaps()
     Dim filename As String
     Dim i As Long
-    Dim F As Long
+    Dim f As Long
     Dim x As Long
     Dim y As Long
 
     For i = 1 To MAX_MAPS
+        ReDim map(i).Tile(0 To map(i).MaxX, 0 To map(i).MaxY)
+        
         filename = App.Path & "\data\maps\map" & i & ".dat"
         If FileExist(filename, True) Then
-            F = FreeFile
-            Open filename For Binary As #F
-                Get #F, , Map(i).Name
-                Get #F, , Map(i).Music
-                Get #F, , Map(i).Revision
-                Get #F, , Map(i).Moral
-                Get #F, , Map(i).Up
-                Get #F, , Map(i).Down
-                Get #F, , Map(i).Left
-                Get #F, , Map(i).Right
-                Get #F, , Map(i).BootMap
-                Get #F, , Map(i).BootX
-                Get #F, , Map(i).BootY
-                Get #F, , Map(i).MaxX
-                Get #F, , Map(i).MaxY
-                ' have to set the tile()
-                ReDim Map(i).Tile(0 To Map(i).MaxX, 0 To Map(i).MaxY)
+            f = FreeFile
+            Open filename For Binary As #f
+                Get #f, , map(i).name
+                Get #f, , map(i).Music
+                Get #f, , map(i).Revision
+                Get #f, , map(i).moral
+                Get #f, , map(i).Up
+                Get #f, , map(i).Down
+                Get #f, , map(i).Left
+                Get #f, , map(i).Right
+                Get #f, , map(i).BootMap
+                Get #f, , map(i).BootX
+                Get #f, , map(i).BootY
+                Get #f, , map(i).MaxX
+                Get #f, , map(i).MaxY
                 
-                For x = 0 To Map(i).MaxX
-                    For y = 0 To Map(i).MaxY
-                        Get #F, , Map(i).Tile(x, y)
+                For x = 0 To map(i).MaxX
+                    For y = 0 To map(i).MaxY
+                        Get #f, , map(i).Tile(x, y)
                     Next
                 Next
                 
                 For x = 1 To MAX_MAP_NPCS
-                    Get #F, , Map(i).NPC(x)
-                    Map(i).MapNpc(x).Num = Map(i).NPC(x)
+                    Get #f, , map(i).NPC(x)
+                    If map(i).NPC(x) <> 0 Then
+                      Set map(i).mapNPC(x).NPC = npcs(map(i).NPC(x))
+                    Else
+                      Set map(i).mapNPC(x).NPC = Nothing
+                    End If
                 Next
                 
-                Get #F, , Map(i).BossNpc
-                Get #F, , Map(i).Fog
-                Get #F, , Map(i).FogSpeed
-                Get #F, , Map(i).FogOpacity
+                Get #f, , map(i).BossNpc
+                Get #f, , map(i).Fog
+                Get #f, , map(i).FogSpeed
+                Get #f, , map(i).FogOpacity
                 
-                Get #F, , Map(i).Red
-                Get #F, , Map(i).Green
-                Get #F, , Map(i).Blue
-                Get #F, , Map(i).Alpha
+                Get #f, , map(i).Red
+                Get #f, , map(i).Green
+                Get #f, , map(i).Blue
+                Get #f, , map(i).Alpha
                 
-                Get #F, , Map(i).Panorama
-                Get #F, , Map(i).DayNight
+                Get #f, , map(i).Panorama
+                Get #f, , map(i).DayNight
                 
                 For x = 1 To MAX_MAP_NPCS
-                    Get #F, , Map(i).NpcSpawnType(x)
+                    Get #f, , map(i).NpcSpawnType(x)
                 Next
-            Close #F
+            Close #f
 
             CacheResources i
             DoEvents
@@ -755,9 +309,9 @@ Sub LoadMaps()
     Next
 End Sub
 
-Sub ClearMapItem(ByVal Index As Long, ByVal mapNum As Long)
-    Call ZeroMemory(ByVal VarPtr(Map(mapNum).MapItem(Index)), LenB(Map(mapNum).MapItem(Index)))
-    Map(mapNum).MapItem(Index).playerName = vbNullString
+Sub ClearMapItem(ByVal index As Long, ByVal mapNum As Long)
+    Call ZeroMemory(ByVal VarPtr(map(mapNum).mapItem(index)), LenB(map(mapNum).mapItem(index)))
+    map(mapNum).mapItem(index).playerName = vbNullString
 End Sub
 
 Sub ClearMapItems()
@@ -771,8 +325,8 @@ Sub ClearMapItems()
     Next
 End Sub
 
-Sub ClearMapNpc(ByVal Index As Long, ByVal mapNum As Long)
-    Call ZeroMemory(ByVal VarPtr(Map(mapNum).MapNpc(Index)), LenB(Map(mapNum).MapNpc(Index)))
+Sub ClearMapNpc(ByVal index As Long, ByVal mapNum As Long)
+    Call ZeroMemory(ByVal VarPtr(map(mapNum).mapNPC(index)), LenB(map(mapNum).mapNPC(index)))
 End Sub
 
 Sub ClearMapNpcs()
@@ -787,62 +341,15 @@ Sub ClearMapNpcs()
 End Sub
 
 Sub ClearMap(ByVal mapNum As Long)
-    Call ZeroMemory(ByVal VarPtr(Map(mapNum)), LenB(Map(mapNum)))
-    Map(mapNum).Name = vbNullString
-    Map(mapNum).MaxX = MAX_MAPX
-    Map(mapNum).MaxY = MAX_MAPY
-    ReDim Map(mapNum).Tile(0 To Map(mapNum).MaxX, 0 To Map(mapNum).MaxY)
+    Call ZeroMemory(ByVal VarPtr(map(mapNum)), LenB(map(mapNum)))
+    map(mapNum).name = vbNullString
+    map(mapNum).MaxX = MAX_MAPX
+    map(mapNum).MaxY = MAX_MAPY
+    ReDim map(mapNum).Tile(0 To map(mapNum).MaxX, 0 To map(mapNum).MaxY)
     ' Reset the values for if a player is on the map or not
     PlayersOnMap(mapNum) = NO
     ' Reset the map cache array for this map.
-    MapCache(mapNum).Data = vbNullString
-End Sub
-
-Sub ClearMaps()
-    Dim i As Long
-
-    For i = 1 To MAX_MAPS
-        Call ClearMap(i)
-    Next
-End Sub
-
-Sub SaveBank(ByVal Index As Long)
-    Dim filename As String
-    Dim F As Long
-    
-    filename = App.Path & "\data\banks\" & Trim$(Player(Index).Login) & ".bin"
-    
-    F = FreeFile
-    Open filename For Binary As #F
-    Put #F, , Bank(Index)
-    Close #F
-End Sub
-
-Public Sub LoadBank(ByVal Index As Long, ByVal Name As String)
-    Dim filename As String
-    Dim F As Long
-
-    Call ClearBank(Index)
-
-    filename = App.Path & "\data\banks\" & Trim$(Name) & ".bin"
-    
-    If Not FileExist(filename, True) Then
-        Call SaveBank(Index)
-        Exit Sub
-    End If
-
-    F = FreeFile
-    Open filename For Binary As #F
-        Get #F, , Bank(Index)
-    Close #F
-End Sub
-
-Sub ClearBank(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Bank(Index)), LenB(Bank(Index)))
-End Sub
-
-Sub ClearParty(ByVal partyNum As Long)
-    Call ZeroMemory(ByVal VarPtr(Party(partyNum)), LenB(Party(partyNum)))
+    MapCache(mapNum).data = vbNullString
 End Sub
 
 Public Sub ClearEvents()
@@ -853,9 +360,9 @@ Public Sub ClearEvents()
     Next
 End Sub
 
-Public Sub ClearEvent(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Events(Index)), LenB(Events(Index)))
-    Events(Index).Name = vbNullString
+Public Sub ClearEvent(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(Events(index)), LenB(Events(index)))
+    Events(index).name = vbNullString
 End Sub
 
 Public Sub LoadEvents()
@@ -866,34 +373,34 @@ Public Sub LoadEvents()
     Next
 End Sub
 
-Public Sub LoadEvent(ByVal Index As Long)
-    Dim F As Long, SCount As Long, s As Long, DCount As Long, D As Long
+Public Sub LoadEvent(ByVal index As Long)
+    Dim f As Long, SCount As Long, s As Long, DCount As Long, D As Long
     Dim filename As String
-    filename = App.Path & "\data\events\event" & Index & ".dat"
+    filename = App.Path & "\data\events\event" & index & ".dat"
     If FileExist(filename, True) Then
-        F = FreeFile
-        Open filename For Binary As #F
-            Get #F, , Events(Index).Name
-            Get #F, , Events(Index).chkSwitch
-            Get #F, , Events(Index).chkVariable
-            Get #F, , Events(Index).chkHasItem
-            Get #F, , Events(Index).SwitchIndex
-            Get #F, , Events(Index).SwitchCompare
-            Get #F, , Events(Index).VariableIndex
-            Get #F, , Events(Index).VariableCompare
-            Get #F, , Events(Index).VariableCondition
-            Get #F, , Events(Index).HasItemIndex
-            Get #F, , SCount
+        f = FreeFile
+        Open filename For Binary As #f
+            Get #f, , Events(index).name
+            Get #f, , Events(index).chkSwitch
+            Get #f, , Events(index).chkVariable
+            Get #f, , Events(index).chkHasItem
+            Get #f, , Events(index).SwitchIndex
+            Get #f, , Events(index).SwitchCompare
+            Get #f, , Events(index).VariableIndex
+            Get #f, , Events(index).VariableCompare
+            Get #f, , Events(index).VariableCondition
+            Get #f, , Events(index).HasItemIndex
+            Get #f, , SCount
             If SCount <= 0 Then
-                Events(Index).HasSubEvents = False
-                Erase Events(Index).SubEvents
+                Events(index).HasSubEvents = False
+                Erase Events(index).SubEvents
             Else
-                Events(Index).HasSubEvents = True
-                ReDim Events(Index).SubEvents(1 To SCount)
+                Events(index).HasSubEvents = True
+                ReDim Events(index).SubEvents(1 To SCount)
                 For s = 1 To SCount
-                    With Events(Index).SubEvents(s)
-                        Get #F, , .Type
-                        Get #F, , DCount
+                    With Events(index).SubEvents(s)
+                        Get #f, , .type
+                        Get #f, , DCount
                         If DCount <= 0 Then
                             .HasText = False
                             Erase .text
@@ -901,89 +408,89 @@ Public Sub LoadEvent(ByVal Index As Long)
                             .HasText = True
                             ReDim .text(1 To DCount)
                             For D = 1 To DCount
-                                Get #F, , .text(D)
+                                Get #f, , .text(D)
                             Next
                         End If
-                        Get #F, , DCount
+                        Get #f, , DCount
                         If DCount <= 0 Then
                             .HasData = False
-                            Erase .Data
+                            Erase .data
                         Else
                             .HasData = True
-                            ReDim .Data(1 To DCount)
+                            ReDim .data(1 To DCount)
                             For D = 1 To DCount
-                                Get #F, , .Data(D)
+                                Get #f, , .data(D)
                             Next
                         End If
                     End With
                 Next
             End If
-            Get #F, , Events(Index).Trigger
-            Get #F, , Events(Index).WalkThrought
-            Get #F, , Events(Index).Animated
+            Get #f, , Events(index).Trigger
+            Get #f, , Events(index).WalkThrought
+            Get #f, , Events(index).Animated
             For s = 0 To 2
-                Get #F, , Events(Index).Graphic(s)
+                Get #f, , Events(index).Graphic(s)
             Next
-        Close #F
+        Close #f
     End If
 End Sub
 
-Public Sub SaveEvent(ByVal Index As Long)
-    Dim F As Long, SCount As Long, s As Long, DCount As Long, D As Long
+Public Sub SaveEvent(ByVal index As Long)
+    Dim f As Long, SCount As Long, s As Long, DCount As Long, D As Long
     Dim filename As String
 
-    filename = App.Path & "\data\events\event" & Index & ".dat"
-    F = FreeFile
-    Open filename For Binary As #F
-        Put #F, , Events(Index).Name
-        Put #F, , Events(Index).chkSwitch
-        Put #F, , Events(Index).chkVariable
-        Put #F, , Events(Index).chkHasItem
-        Put #F, , Events(Index).SwitchIndex
-        Put #F, , Events(Index).SwitchCompare
-        Put #F, , Events(Index).VariableIndex
-        Put #F, , Events(Index).VariableCompare
-        Put #F, , Events(Index).VariableCondition
-        Put #F, , Events(Index).HasItemIndex
-        If Not (Events(Index).HasSubEvents) Then
+    filename = App.Path & "\data\events\event" & index & ".dat"
+    f = FreeFile
+    Open filename For Binary As #f
+        Put #f, , Events(index).name
+        Put #f, , Events(index).chkSwitch
+        Put #f, , Events(index).chkVariable
+        Put #f, , Events(index).chkHasItem
+        Put #f, , Events(index).SwitchIndex
+        Put #f, , Events(index).SwitchCompare
+        Put #f, , Events(index).VariableIndex
+        Put #f, , Events(index).VariableCompare
+        Put #f, , Events(index).VariableCondition
+        Put #f, , Events(index).HasItemIndex
+        If Not (Events(index).HasSubEvents) Then
             SCount = 0
-            Put #F, , SCount
+            Put #f, , SCount
         Else
-            SCount = UBound(Events(Index).SubEvents)
-            Put #F, , SCount
+            SCount = UBound(Events(index).SubEvents)
+            Put #f, , SCount
             For s = 1 To SCount
-                With Events(Index).SubEvents(s)
-                    Put #F, , .Type
+                With Events(index).SubEvents(s)
+                    Put #f, , .type
                     If Not (.HasText) Then
                         DCount = 0
-                        Put #F, , DCount
+                        Put #f, , DCount
                     Else
                         DCount = UBound(.text)
-                        Put #F, , DCount
+                        Put #f, , DCount
                         For D = 1 To DCount
-                            Put #F, , .text(D)
+                            Put #f, , .text(D)
                         Next
                     End If
                     If Not (.HasData) Then
                         DCount = 0
-                        Put #F, , DCount
+                        Put #f, , DCount
                     Else
-                        DCount = UBound(.Data)
-                        Put #F, , DCount
+                        DCount = UBound(.data)
+                        Put #f, , DCount
                         For D = 1 To DCount
-                            Put #F, , .Data(D)
+                            Put #f, , .data(D)
                         Next
                     End If
                 End With
             Next
         End If
-        Put #F, , Events(Index).Trigger
-        Put #F, , Events(Index).WalkThrought
-        Put #F, , Events(Index).Animated
+        Put #f, , Events(index).Trigger
+        Put #f, , Events(index).WalkThrought
+        Put #f, , Events(index).Animated
         For s = 0 To 2
-            Put #F, , Events(Index).Graphic(s)
+            Put #f, , Events(index).Graphic(s)
         Next
-    Close #F
+    Close #f
 End Sub
 
 Sub SaveSwitches()
@@ -992,7 +499,7 @@ Dim i As Long, filename As String
 filename = App.Path & "\data\switches.ini"
 
 For i = 1 To MAX_SWITCHES
-    Call PutVar(filename, "Switches", "Switch" & CStr(i) & "Name", Switches(i))
+    Call PutVar(filename, "Switches", "Switch" & CStr(i) & "Name", switches(i))
 Next
 End Sub
 
@@ -1002,7 +509,7 @@ Dim i As Long, filename As String
 filename = App.Path & "\data\variables.ini"
 
 For i = 1 To MAX_VARIABLES
-    Call PutVar(filename, "Variables", "Variable" & CStr(i) & "Name", Variables(i))
+    Call PutVar(filename, "Variables", "Variable" & CStr(i) & "Name", variables(i))
 Next
 End Sub
 
@@ -1012,7 +519,7 @@ Dim i As Long, filename As String
     filename = App.Path & "\data\switches.ini"
     
     For i = 1 To MAX_SWITCHES
-        Switches(i) = GetVar(filename, "Switches", "Switch" & CStr(i) & "Name")
+        switches(i) = GetVar(filename, "Switches", "Switch" & CStr(i) & "Name")
     Next
 End Sub
 
@@ -1022,7 +529,7 @@ Dim i As Long, filename As String
     filename = App.Path & "\data\variables.ini"
     
     For i = 1 To MAX_VARIABLES
-        Variables(i) = GetVar(filename, "Variables", "Variable" & CStr(i) & "Name")
+        variables(i) = GetVar(filename, "Variables", "Variable" & CStr(i) & "Name")
     Next
 End Sub
 
@@ -1031,7 +538,7 @@ Dim strload As String
 Dim i As Long
 Dim TotalCount As Long
 
-    frmServer.lstAccounts.Clear
+    frmServer.lstAccounts.clear
     strload = dir(App.Path & "\data\accounts\" & "*.bin")
     i = 1
     
@@ -1047,11 +554,11 @@ Dim TotalCount As Long
 End Sub
 
 Public Sub LoadSwearFilter()
-Dim i As Long, filename As String, Data As String, Parse() As String
+Dim i As Long, filename As String, data As String, Parse() As String
     
     filename = App.Path & "\data\swearfilter.ini"
     ' Get the maximum amount of possible words.
-    MaxSwearWords = GetVar(filename, "SWEAR_CONFIG", "MaxWords")
+    MaxSwearWords = Val(GetVar(filename, "SWEAR_CONFIG", "MaxWords"))
 
     ' Check to make sure there are swear words in memory.
     If MaxSwearWords = 0 Then Exit Sub
@@ -1062,12 +569,12 @@ Dim i As Long, filename As String, Data As String, Parse() As String
     ' Loop through all of the words.
     For i = 1 To MaxSwearWords
         ' Get the bad word from the INI file.
-        Data = GetVar(filename, "SWEAR_FILTER", "Word_" & CStr(i))
+        data = GetVar(filename, "SWEAR_FILTER", "Word_" & CStr(i))
 
         ' If the data isn't blank, then load it.
-        If LenB(Data) <> 0 Then
+        If LenB(data) <> 0 Then
             ' Split the words to be set in the database.
-            Parse = Split(Data, ";")
+            Parse = Split(data, ";")
 
             ' Set the values in the database.
             SwearFilter(i).BadWord = Parse(0)
@@ -1118,33 +625,33 @@ End Sub
 
 Sub SaveChest(ByVal ChestNum As Long)
     Dim filename As String
-    Dim F As Long
+    Dim f As Long
     filename = App.Path & "\data\Chests\Chest" & ChestNum & ".dat"
-    F = FreeFile
-    Open filename For Binary As #F
-    Put #F, , Chest(ChestNum)
-    Close #F
+    f = FreeFile
+    Open filename For Binary As #f
+    Put #f, , Chest(ChestNum)
+    Close #f
 End Sub
 
 Sub LoadChests()
     Dim filename As String
     Dim i As Long
-    Dim F As Long
+    Dim f As Long
 
     For i = 1 To MAX_CHESTS
         filename = App.Path & "\data\chests\chest" & i & ".dat"
         If FileExist(filename, True) Then
-            F = FreeFile
-            Open filename For Binary As #F
-                Get #F, , Chest(i)
-            Close #F
+            f = FreeFile
+            Open filename For Binary As #f
+                Get #f, , Chest(i)
+            Close #f
         End If
     Next
 
 End Sub
 
-Sub ClearChest(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Chest(Index)), LenB(Chest(Index)))
+Sub ClearChest(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(Chest(index)), LenB(Chest(index)))
 End Sub
 
 Sub ClearChests()

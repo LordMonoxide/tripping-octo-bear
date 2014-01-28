@@ -1,5 +1,4 @@
 VERSION 5.00
-Object = "{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0"; "MSWINSCK.OCX"
 Object = "{BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0"; "TABCTL32.OCX"
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.Form frmServer 
@@ -24,14 +23,6 @@ Begin VB.Form frmServer
    ScaleHeight     =   5250
    ScaleWidth      =   6720
    StartUpPosition =   2  'CenterScreen
-   Begin MSWinsockLib.Winsock Socket 
-      Index           =   0
-      Left            =   0
-      Top             =   0
-      _ExtentX        =   741
-      _ExtentY        =   741
-      _Version        =   393216
-   End
    Begin TabDlg.SSTab SSTab1 
       Height          =   3495
       Left            =   120
@@ -70,29 +61,29 @@ Begin VB.Form frmServer
       TabCaption(2)   =   "Control "
       TabPicture(2)   =   "frmServer.frx":170C2
       Tab(2).ControlEnabled=   0   'False
-      Tab(2).Control(0)=   "fraDatabase"
+      Tab(2).Control(0)=   "Frame2"
       Tab(2).Control(1)=   "fraServer"
-      Tab(2).Control(2)=   "Frame2"
+      Tab(2).Control(2)=   "fraDatabase"
       Tab(2).ControlCount=   3
       TabCaption(3)   =   "Accounts"
       TabPicture(3)   =   "frmServer.frx":170DE
       Tab(3).ControlEnabled=   0   'False
-      Tab(3).Control(0)=   "lblAcctCount"
-      Tab(3).Control(1)=   "lblAccs"
-      Tab(3).Control(2)=   "lblAccess"
-      Tab(3).Control(3)=   "lstAccounts"
+      Tab(3).Control(0)=   "cmdSave"
+      Tab(3).Control(1)=   "scrlAccess"
+      Tab(3).Control(2)=   "cmdReloadAccs"
+      Tab(3).Control(3)=   "chkDonator"
       Tab(3).Control(4)=   "cmdDeleteAcc"
-      Tab(3).Control(5)=   "chkDonator"
-      Tab(3).Control(6)=   "cmdReloadAccs"
-      Tab(3).Control(7)=   "scrlAccess"
-      Tab(3).Control(8)=   "cmdSave"
+      Tab(3).Control(5)=   "lstAccounts"
+      Tab(3).Control(6)=   "lblAccess"
+      Tab(3).Control(7)=   "lblAccs"
+      Tab(3).Control(8)=   "lblAcctCount"
       Tab(3).ControlCount=   9
       TabCaption(4)   =   "Debug"
       TabPicture(4)   =   "frmServer.frx":170FA
       Tab(4).ControlEnabled=   0   'False
-      Tab(4).Control(0)=   "Frame1"
+      Tab(4).Control(0)=   "Frame4"
       Tab(4).Control(1)=   "Frame3"
-      Tab(4).Control(2)=   "Frame4"
+      Tab(4).Control(2)=   "Frame1"
       Tab(4).ControlCount=   3
       Begin VB.CommandButton cmdSave 
          Caption         =   "Save"
@@ -609,16 +600,16 @@ Option Explicit
 
 Private Sub cmdDeleteAcc_Click()
 Dim filename As String
-Dim F As Long
+Dim f As Long
     If Len(Trim$(lstAccounts.text)) > 0 Then
         filename = App.Path & "\data\accounts\" & Trim$(lstAccounts.text) & ".bin"
-        F = FreeFile
-        Open filename For Binary As #F
-        Get #F, , AEditor
-        Close #F
+        f = FreeFile
+        Open filename For Binary As #f
+        Get #f, , AEditor
+        Close #f
 
-        If LenB(Trim$(AEditor.Name)) > 0 Then
-            Call DeleteName(AEditor.Name)
+        If LenB(Trim$(AEditor.name)) > 0 Then
+            Call DeleteName(AEditor.name)
         End If
         
         ' Everything went ok
@@ -639,32 +630,32 @@ End Sub
 
 Private Sub cmdSave_Click()
 Dim filename As String
-Dim F As Long
-Dim Index As Long
+Dim f As Long
+Dim index As Long
     If Len(Trim$(lstAccounts.text)) > 0 Then
         filename = App.Path & "\data\accounts\" & Trim$(lstAccounts.text) & ".bin"
-        F = FreeFile
-        Open filename For Binary As #F
-        Get #F, , AEditor
-        Close #F
+        f = FreeFile
+        Open filename For Binary As #f
+        Get #f, , AEditor
+        Close #f
         
         AEditorPlayer = Trim$(lstAccounts.text)
-        AEditor.Donator = chkDonator.Value
-        AEditor.Access = scrlAccess.Value
-        Index = FindPlayer(Trim$(AEditor.Name))
-        If Index > 0 And Index <= MAX_PLAYERS Then
-            If IsPlaying(Index) Then
-                Player(Index).Donator = AEditor.Donator
-                Player(Index).Access = AEditor.Access
-                SavePlayer Index
-                SendPlayerData Index
+        AEditor.donator = chkDonator.Value
+        AEditor.access = scrlAccess.Value
+        index = FindPlayer(Trim$(AEditor.name))
+        If index > 0 And index <= MAX_PLAYERS Then
+            If IsPlaying(index) Then
+                Player(index).donator = AEditor.donator
+                Player(index).access = AEditor.access
+                SavePlayer index
+                SendPlayerData index
             End If
         Else
             filename = App.Path & "\data\accounts\" & Trim$(AEditorPlayer) & ".bin"
-            F = FreeFile
-            Open filename For Binary As #F
-            Put #F, , AEditor
-            Close #F
+            f = FreeFile
+            Open filename For Binary As #f
+            Put #f, , AEditor
+            Close #f
         End If
     End If
 End Sub
@@ -705,25 +696,6 @@ Private Sub lblCPSLock_Click()
         CPSUnlock = True
         lblCpsLock.Caption = "[Lock]"
     End If
-End Sub
-
-' ********************
-' ** Winsock object **
-' ********************
-Private Sub Socket_ConnectionRequest(Index As Integer, ByVal requestID As Long)
-    Call AcceptConnection(requestID)
-End Sub
-
-Private Sub Socket_DataArrival(Index As Integer, ByVal bytesTotal As Long)
-
-    If IsConnected(Index) Then
-        Call IncomingData(Index, bytesTotal)
-    End If
-
-End Sub
-
-Private Sub Socket_Close(Index As Integer)
-    Call CloseSocket(Index)
 End Sub
 
 ' ********************
@@ -821,8 +793,8 @@ Private Sub cmdReloadEvents_Click()
         If IsPlaying(i) Then
             For n = 1 To MAX_EVENTS
                 Call Events_SendEventData(i, n)
-                Call SendEventOpen(i, Player(i).EventOpen(n), n)
-                Call SendEventGraphic(i, Player(i).EventGraphic(n), n)
+                Call SendEventOpen(i, Player(i).eventOpen(n), n)
+                Call SendEventGraphic(i, Player(i).eventGraphic(n), n)
             Next
         End If
     Next
@@ -837,10 +809,6 @@ Private Sub cmdShutDown_Click()
         isShuttingDown = True
         cmdShutDown.Caption = "Cancel"
     End If
-End Sub
-
-Private Sub Form_Load()
-    Call UsersOnline_Start
 End Sub
 
 Private Sub Form_Resize()
@@ -865,7 +833,7 @@ Private Sub lvwInfo_ColumnClick(ByVal ColumnHeader As MSComctlLib.ColumnHeader)
         lvwInfo.SortOrder = lvwAscending
     End If
 
-    lvwInfo.SortKey = ColumnHeader.Index - 1
+    lvwInfo.SortKey = ColumnHeader.index - 1
     lvwInfo.Sorted = True
 End Sub
 
@@ -887,27 +855,6 @@ Private Sub txtChat_KeyPress(KeyAscii As Integer)
 
 End Sub
 
-Sub UsersOnline_Start()
-    Dim i As Long
-
-    For i = 1 To MAX_PLAYERS
-        frmServer.lvwInfo.ListItems.Add (i)
-
-        If i < 10 Then
-            frmServer.lvwInfo.ListItems(i).text = "00" & i
-        ElseIf i < 100 Then
-            frmServer.lvwInfo.ListItems(i).text = "0" & i
-        Else
-            frmServer.lvwInfo.ListItems(i).text = i
-        End If
-
-        frmServer.lvwInfo.ListItems(i).SubItems(1) = vbNullString
-        frmServer.lvwInfo.ListItems(i).SubItems(2) = vbNullString
-        frmServer.lvwInfo.ListItems(i).SubItems(3) = vbNullString
-    Next
-
-End Sub
-
 Private Sub lvwInfo_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
 
     If Button = vbRightButton Then
@@ -917,63 +864,63 @@ Private Sub lvwInfo_MouseDown(Button As Integer, Shift As Integer, x As Single, 
 End Sub
 
 Private Sub mnuKickPlayer_Click()
-    Dim Name As String
-    Name = frmServer.lvwInfo.SelectedItem.SubItems(3)
+    Dim name As String
+    name = frmServer.lvwInfo.SelectedItem.SubItems(3)
 
-    If Not Name = "Not Playing" Then
-        Call AlertMsg(FindPlayer(Name), "You have been kicked by the server owner!")
+    If Not name = "Not Playing" Then
+        Call AlertMsg(FindPlayer(name), "You have been kicked by the server owner!")
     End If
 
 End Sub
 
 Sub mnuDisconnectPlayer_Click()
-    Dim Name As String
-    Name = frmServer.lvwInfo.SelectedItem.SubItems(3)
+    Dim name As String
+    name = frmServer.lvwInfo.SelectedItem.SubItems(3)
 
-    If Not Name = "Not Playing" Then
-        CloseSocket (FindPlayer(Name))
+    If Not name = "Not Playing" Then
+        closeSocket (FindPlayer(name))
     End If
 End Sub
 
 Sub mnuMute_Click()
-    Dim Name As String
-    Name = frmServer.lvwInfo.SelectedItem.SubItems(3)
+    Dim name As String
+    name = frmServer.lvwInfo.SelectedItem.SubItems(3)
     
-    If Not Name = "Not Playing" Then
-        Call ToggleMute(FindPlayer(Name))
+    If Not name = "Not Playing" Then
+        Call ToggleMute(FindPlayer(name))
     End If
 End Sub
 
 Sub mnuBanPlayer_click()
-    Dim Name As String
-    Name = frmServer.lvwInfo.SelectedItem.SubItems(3)
+    Dim name As String
+    name = frmServer.lvwInfo.SelectedItem.SubItems(3)
 
-    If Not Name = "Not Playing" Then
-        Call BanIndex(FindPlayer(Name))
+    If Not name = "Not Playing" Then
+        Call BanIndex(FindPlayer(name))
     End If
 
 End Sub
 
 Sub mnuAdminPlayer_click()
-    Dim Name As String
-    Name = frmServer.lvwInfo.SelectedItem.SubItems(3)
+    Dim name As String
+    name = frmServer.lvwInfo.SelectedItem.SubItems(3)
 
-    If Not Name = "Not Playing" Then
-        Call SetPlayerAccess(FindPlayer(Name), 4)
-        Call SendPlayerData(FindPlayer(Name))
-        Call PlayerMsg(FindPlayer(Name), "You have been granted administrator access.", BrightCyan)
+    If Not name = "Not Playing" Then
+        Call SetPlayerAccess(FindPlayer(name), 4)
+        Call SendPlayerData(FindPlayer(name))
+        Call PlayerMsg(FindPlayer(name), "You have been granted administrator access.", BrightCyan)
     End If
 
 End Sub
 
 Sub mnuRemoveAdmin_click()
-    Dim Name As String
-    Name = frmServer.lvwInfo.SelectedItem.SubItems(3)
+    Dim name As String
+    name = frmServer.lvwInfo.SelectedItem.SubItems(3)
 
-    If Not Name = "Not Playing" Then
-        Call SetPlayerAccess(FindPlayer(Name), 0)
-        Call SendPlayerData(FindPlayer(Name))
-        Call PlayerMsg(FindPlayer(Name), "You have had your administrator access revoked.", BrightRed)
+    If Not name = "Not Playing" Then
+        Call SetPlayerAccess(FindPlayer(name), 0)
+        Call SendPlayerData(FindPlayer(name))
+        Call PlayerMsg(FindPlayer(name), "You have had your administrator access revoked.", BrightRed)
     End If
 
 End Sub
@@ -992,17 +939,17 @@ Private Sub Form_MouseMove(Button As Integer, Shift As Integer, x As Single, y A
 End Sub
 Private Sub lstAccounts_Click()
 Dim filename As String
-Dim F As Long
+Dim f As Long
     If Len(Trim$(lstAccounts.text)) > 0 Then
         filename = App.Path & "\data\accounts\" & Trim$(lstAccounts.text) & ".bin"
-        F = FreeFile
-        Open filename For Binary As #F
-        Get #F, , AEditor
-        Close #F
+        f = FreeFile
+        Open filename For Binary As #f
+        Get #f, , AEditor
+        Close #f
         
         AEditorPlayer = Trim$(lstAccounts.text)
-        chkDonator.Value = AEditor.Donator
-        scrlAccess.Value = AEditor.Access
+        chkDonator.Value = AEditor.donator
+        scrlAccess.Value = AEditor.access
     End If
 End Sub
 Private Sub scrlAccess_Change()

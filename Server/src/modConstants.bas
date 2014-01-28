@@ -3,7 +3,8 @@ Option Explicit
 
 ' API
 Public Declare Sub CopyMemory Lib "Kernel32.dll" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
-Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByRef Msg() As Byte, ByVal wParam As Long, ByVal lParam As Long) As Long
+'Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByRef Msg() As Byte, ByVal wParam As Long, ByVal lParam As Long) As Long
+Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal socket As clsSocket, ByVal data As clsBuffer, ByVal wParam As Long, ByVal lParam As Long) As Long
 
 ' path constants
 Public Const ADMIN_LOG As String = "admin.log"
@@ -132,10 +133,8 @@ Public Const ITEM_TYPE_CONSUME As Byte = 5
 Public Const ITEM_TYPE_CURRENCY As Byte = 6
 Public Const ITEM_TYPE_SPELL As Byte = 7
 Public Const ITEM_TYPE_UNIQUE As Byte = 8
-Public Const ITEM_TYPE_PET As Byte = 9
-Public Const ITEM_TYPE_PET_STATS As Byte = 10
-Public Const ITEM_TYPE_LOGO_GUILD As Byte = 11
-Public Const ITEM_TYPE_CONTAINER As Byte = 12
+Public Const ITEM_TYPE_LOGO_GUILD As Byte = 9
+Public Const ITEM_TYPE_CONTAINER As Byte = 10
 
 ' Direction constants
 Public Const DIR_UP As Byte = 0
@@ -165,7 +164,7 @@ Public Const NPC_BEHAVIOUR_SHOPKEEPER As Byte = 3
 Public Const NPC_BEHAVIOUR_GUARD As Byte = 4
 
 ' Spell constants
-Public Const SPELL_TYPE_VITALCHANGE As Byte = 0
+Public Const SPELL_TYPE_VITAL As Byte = 0
 Public Const SPELL_TYPE_WARP As Byte = 1
 Public Const SPELL_TYPE_BUFF As Byte = 2
 
@@ -175,18 +174,18 @@ Public Const BUFF_ADD_HP As Byte = 1
 Public Const BUFF_ADD_MP As Byte = 2
 Public Const BUFF_ADD_STR As Byte = 3
 Public Const BUFF_ADD_END As Byte = 4
-Public Const BUFF_ADD_AGI As Byte = 5
+Public Const BUFF_ADD_AGL As Byte = 5
 Public Const BUFF_ADD_INT As Byte = 6
-Public Const BUFF_ADD_WILL As Byte = 7
+Public Const BUFF_ADD_WIL As Byte = 7
 Public Const BUFF_ADD_ATK As Byte = 8
 Public Const BUFF_ADD_DEF As Byte = 9
 Public Const BUFF_SUB_HP As Byte = 10
 Public Const BUFF_SUB_MP As Byte = 11
 Public Const BUFF_SUB_STR As Byte = 12
 Public Const BUFF_SUB_END As Byte = 13
-Public Const BUFF_SUB_AGI As Byte = 14
+Public Const BUFF_SUB_AGL As Byte = 14
 Public Const BUFF_SUB_INT As Byte = 15
-Public Const BUFF_SUB_WILL As Byte = 16
+Public Const BUFF_SUB_WIL As Byte = 16
 Public Const BUFF_SUB_ATK As Byte = 17
 Public Const BUFF_SUB_DEF As Byte = 18
 
@@ -195,11 +194,6 @@ Public Const EDITOR_ITEM As Byte = 1
 Public Const EDITOR_NPC As Byte = 2
 Public Const EDITOR_SPELL As Byte = 3
 Public Const EDITOR_SHOP As Byte = 4
-
-' Target type constants
-Public Const TARGET_TYPE_NONE As Byte = 0
-Public Const TARGET_TYPE_PLAYER As Byte = 1
-Public Const TARGET_TYPE_NPC As Byte = 2
 
 ' ********************************************
 ' Default starting location [Server Only]

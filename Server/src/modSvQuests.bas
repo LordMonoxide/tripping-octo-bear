@@ -25,32 +25,32 @@ Public Const QUEST_COMPLETED As Byte = 2
 Public Const QUEST_COMPLETED_BUT As Byte = 3
 
 'Types
-Public Quest(1 To MAX_QUESTS) As QuestRec
+Public quest(1 To MAX_QUESTS) As QuestRec
 
-Public Type PlayerQuestRec
-    Status As Long
-    ActualTask As Long
-    CurrentCount As Long 'Used to handle the Amount property
+Public Type CharacterQuestStruct
+    status As Long
+    actualTask As Long
+    currentCount As Long 'Used to handle the Amount property
 End Type
 
 'Alatar v1.2
 Private Type QuestRequiredItemRec
-    Item As Long
+    item As Long
     Value As Long
 End Type
 
 Private Type QuestGiveItemRec
-    Item As Long
+    item As Long
     Value As Long
 End Type
 
 Private Type QuestTakeItemRec
-    Item As Long
+    item As Long
     Value As Long
 End Type
 
 Private Type QuestRewardItemRec
-    Item As Long
+    item As Long
     Value As Long
 End Type
 '/Alatar v1.2
@@ -58,8 +58,8 @@ End Type
 Public Type TaskRec
     Order As Long
     NPC As Long
-    Item As Long
-    Map As Long
+    item As Long
+    map As Long
     Resource As Long
     Amount As Long
     Speech As String * 200
@@ -69,7 +69,7 @@ End Type
 
 Public Type QuestRec
     'Alatar v1.2
-    Name As String * 30
+    name As String * 30
     Repeat As Long
     QuestLog As String * 100
     Speech(1 To 3) As String * 200
@@ -93,86 +93,86 @@ End Type
 ' // DATABASE //
 ' //////////////
 
-Sub SaveQuest(ByVal QuestNum As Long)
+Sub SaveQuest(ByVal questNum As Long)
     Dim filename As String
-    Dim F As Long, i As Long
-    filename = App.Path & "\data\quests\quest" & QuestNum & ".dat"
-    F = FreeFile
-    Open filename For Binary As #F
+    Dim f As Long, i As Long
+    filename = App.Path & "\data\quests\quest" & questNum & ".dat"
+    f = FreeFile
+    Open filename For Binary As #f
         'Alatar v1.2
-        Put #F, , Quest(QuestNum).Name
-        Put #F, , Quest(QuestNum).Repeat
-        Put #F, , Quest(QuestNum).QuestLog
+        Put #f, , quest(questNum).name
+        Put #f, , quest(questNum).Repeat
+        Put #f, , quest(questNum).QuestLog
         For i = 1 To 3
-            Put #F, , Quest(QuestNum).Speech(i)
+            Put #f, , quest(questNum).Speech(i)
         Next
         For i = 1 To MAX_QUESTS_ITEMS
-            Put #F, , Quest(QuestNum).GiveItem(i)
+            Put #f, , quest(questNum).GiveItem(i)
         Next
         For i = 1 To MAX_QUESTS_ITEMS
-            Put #F, , Quest(QuestNum).TakeItem(i)
+            Put #f, , quest(questNum).TakeItem(i)
         Next
-        Put #F, , Quest(QuestNum).RequiredLevel
-        Put #F, , Quest(QuestNum).RequiredQuest
+        Put #f, , quest(questNum).RequiredLevel
+        Put #f, , quest(questNum).RequiredQuest
         For i = 1 To 5
-            Put #F, , Quest(QuestNum).RequiredClass(i)
+            Put #f, , quest(questNum).RequiredClass(i)
         Next
         For i = 1 To MAX_QUESTS_ITEMS
-            Put #F, , Quest(QuestNum).RequiredItem(i)
+            Put #f, , quest(questNum).RequiredItem(i)
         Next
-        Put #F, , Quest(QuestNum).RewardExp
+        Put #f, , quest(questNum).RewardExp
         For i = 1 To MAX_QUESTS_ITEMS
-            Put #F, , Quest(QuestNum).RewardItem(i)
+            Put #f, , quest(questNum).RewardItem(i)
         Next
         For i = 1 To MAX_TASKS
-            Put #F, , Quest(QuestNum).Task(i)
+            Put #f, , quest(questNum).Task(i)
         Next
         '/Alatar v1.2
-    Close #F
+    Close #f
 End Sub
 
 Sub LoadQuests()
     Dim filename As String
     Dim i As Integer
-    Dim F As Long, n As Long
+    Dim f As Long, n As Long
     
     Call CheckQuests
 
     For i = 1 To MAX_QUESTS
         filename = App.Path & "\data\quests\quest" & i & ".dat"
-        F = FreeFile
-        Open filename For Binary As #F
+        f = FreeFile
+        Open filename For Binary As #f
         
         'Alatar v1.2
-        Get #F, , Quest(i).Name
-        Get #F, , Quest(i).Repeat
-        Get #F, , Quest(i).QuestLog
+        Get #f, , quest(i).name
+        Get #f, , quest(i).Repeat
+        Get #f, , quest(i).QuestLog
         For n = 1 To 3
-            Get #F, , Quest(i).Speech(n)
+            Get #f, , quest(i).Speech(n)
         Next
         For n = 1 To MAX_QUESTS_ITEMS
-            Get #F, , Quest(i).GiveItem(n)
+            Get #f, , quest(i).GiveItem(n)
         Next
         For n = 1 To MAX_QUESTS_ITEMS
-            Get #F, , Quest(i).TakeItem(n)
+            Get #f, , quest(i).TakeItem(n)
         Next
-        Get #F, , Quest(i).RequiredLevel
-        Get #F, , Quest(i).RequiredQuest
+        Get #f, , quest(i).RequiredLevel
+        Get #f, , quest(i).RequiredQuest
         For n = 1 To 5
-            Get #F, , Quest(i).RequiredClass(n)
+            Get #f, , quest(i).RequiredClass(n)
         Next
         For n = 1 To MAX_QUESTS_ITEMS
-            Get #F, , Quest(i).RequiredItem(n)
+            Get #f, , quest(i).RequiredItem(n)
         Next
-        Get #F, , Quest(i).RewardExp
+        Get #f, , quest(i).RewardExp
         For n = 1 To MAX_QUESTS_ITEMS
-            Get #F, , Quest(i).RewardItem(n)
+            Get #f, , quest(i).RewardItem(n)
         Next
         For n = 1 To MAX_TASKS
-            Get #F, , Quest(i).Task(n)
+            Get #f, , quest(i).Task(n)
         Next
         '/Alatar v1.2
-        Close #F
+        Close #f
     Next
 End Sub
 
@@ -185,10 +185,10 @@ Sub CheckQuests()
     Next
 End Sub
 
-Sub ClearQuest(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Quest(Index)), LenB(Quest(Index)))
-    Quest(Index).Name = vbNullString
-    Quest(Index).QuestLog = vbNullString
+Sub ClearQuest(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(quest(index)), LenB(quest(index)))
+    quest(index).name = vbNullString
+    quest(index).QuestLog = vbNullString
 End Sub
 
 Sub ClearQuests()
@@ -203,85 +203,85 @@ End Sub
 ' // C&S PROCEDURES //
 ' ////////////////////
 
-Sub SendQuests(ByVal Index As Long)
+Sub SendQuests(ByVal index As Long)
     Dim i As Long
 
     For i = 1 To MAX_QUESTS
-        If LenB(Trim$(Quest(i).Name)) > 0 Then
-            Call SendUpdateQuestTo(Index, i)
+        If LenB(Trim$(quest(i).name)) > 0 Then
+            Call SendUpdateQuestTo(index, i)
         End If
     Next
 End Sub
 
-Sub SendUpdateQuestToAll(ByVal QuestNum As Long)
-    Dim Buffer As clsBuffer
+Sub SendUpdateQuestToAll(ByVal questNum As Long)
+    Dim buffer As clsBuffer
     Dim QuestSize As Long
     Dim QuestData() As Byte
-    Set Buffer = New clsBuffer
-    QuestSize = LenB(Quest(QuestNum))
+    Set buffer = New clsBuffer
+    QuestSize = LenB(quest(questNum))
     ReDim QuestData(QuestSize - 1)
-    CopyMemory QuestData(0), ByVal VarPtr(Quest(QuestNum)), QuestSize
-    Buffer.WriteLong SUpdateQuest
-    Buffer.WriteLong QuestNum
-    Buffer.WriteBytes QuestData
-    SendDataToAll Buffer.ToArray()
-    Set Buffer = Nothing
+    CopyMemory QuestData(0), ByVal VarPtr(quest(questNum)), QuestSize
+    buffer.WriteLong SUpdateQuest
+    buffer.WriteLong questNum
+    buffer.WriteBytes QuestData
+    SendDataToAll buffer.ToArray()
+    Set buffer = Nothing
 End Sub
 
-Sub SendUpdateQuestTo(ByVal Index As Long, ByVal QuestNum As Long)
-    Dim Buffer As clsBuffer
+Sub SendUpdateQuestTo(ByVal index As Long, ByVal questNum As Long)
+    Dim buffer As clsBuffer
     Dim QuestSize As Long
     Dim QuestData() As Byte
-    Set Buffer = New clsBuffer
-    QuestSize = LenB(Quest(QuestNum))
+    Set buffer = New clsBuffer
+    QuestSize = LenB(quest(questNum))
     ReDim QuestData(QuestSize - 1)
-    CopyMemory QuestData(0), ByVal VarPtr(Quest(QuestNum)), QuestSize
-    Buffer.WriteLong SUpdateQuest
-    Buffer.WriteLong QuestNum
-    Buffer.WriteBytes QuestData
-    SendDataTo Index, Buffer.ToArray()
-    Set Buffer = Nothing
+    CopyMemory QuestData(0), ByVal VarPtr(quest(questNum)), QuestSize
+    buffer.WriteLong SUpdateQuest
+    buffer.WriteLong questNum
+    buffer.WriteBytes QuestData
+    SendDataTo index, buffer.ToArray()
+    Set buffer = Nothing
 End Sub
 
-Public Sub SendPlayerQuests(ByVal Index As Long)
+Public Sub SendPlayerQuests(ByVal index As Long)
     Dim i As Long
-    Dim Buffer As clsBuffer
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong SPlayerQuest
+    Set buffer = New clsBuffer
+    buffer.WriteLong SPlayerQuest
         For i = 1 To MAX_QUESTS
-            Buffer.WriteLong Player(Index).PlayerQuest(i).Status
-            Buffer.WriteLong Player(Index).PlayerQuest(i).ActualTask
-            Buffer.WriteLong Player(Index).PlayerQuest(i).CurrentCount
+            buffer.WriteLong Player(index).playerQuest(i).status
+            buffer.WriteLong Player(index).playerQuest(i).actualTask
+            buffer.WriteLong Player(index).playerQuest(i).currentCount
         Next
-    SendDataTo Index, Buffer.ToArray()
-    Set Buffer = Nothing
+    SendDataTo index, buffer.ToArray()
+    Set buffer = Nothing
 
 End Sub
 
-Public Sub SendPlayerQuest(ByVal Index As Long, ByVal QuestNum As Long)
-    Dim Buffer As clsBuffer
+Public Sub SendPlayerQuest(ByVal index As Long, ByVal questNum As Long)
+    Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong SPlayerQuest
-    Buffer.WriteLong Player(Index).PlayerQuest(QuestNum).Status
-    Buffer.WriteLong Player(Index).PlayerQuest(QuestNum).ActualTask
-    Buffer.WriteLong Player(Index).PlayerQuest(QuestNum).CurrentCount
-    SendDataTo Index, Buffer.ToArray()
-    Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong SPlayerQuest
+    buffer.WriteLong Player(index).playerQuest(questNum).status
+    buffer.WriteLong Player(index).playerQuest(questNum).actualTask
+    buffer.WriteLong Player(index).playerQuest(questNum).currentCount
+    SendDataTo index, buffer.ToArray()
+    Set buffer = Nothing
 End Sub
 
 'sends a message to the client that is shown on the screen
-Public Sub QuestMessage(ByVal Index As Long, ByVal QuestNum As Long, ByVal message As String, ByVal QuestNumForStart As Long)
-    Dim Buffer As clsBuffer
-    Set Buffer = New clsBuffer
+Public Sub QuestMessage(ByVal index As Long, ByVal questNum As Long, ByVal message As String, ByVal QuestNumForStart As Long)
+    Dim buffer As clsBuffer
+    Set buffer = New clsBuffer
     
-    Buffer.WriteLong SQuestMessage
-    Buffer.WriteLong QuestNum
-    Buffer.WriteString Trim$(message)
-    Buffer.WriteLong QuestNumForStart
-    SendDataTo Index, Buffer.ToArray()
-    Set Buffer = Nothing
+    buffer.WriteLong SQuestMessage
+    buffer.WriteLong questNum
+    buffer.WriteString Trim$(message)
+    buffer.WriteLong QuestNumForStart
+    SendDataTo index, buffer.ToArray()
+    Set buffer = Nothing
     
 End Sub
 
@@ -289,75 +289,70 @@ End Sub
 ' // Functions //
 ' ///////////////
 
-Public Function CanStartQuest(ByVal Index As Long, ByVal QuestNum As Long) As Boolean
+Public Function CanStartQuest(ByVal index As Long, ByVal questNum As Long) As Boolean
     Dim i As Long
     CanStartQuest = False
-    If QuestNum < 1 Or QuestNum > MAX_QUESTS Then Exit Function
-    If QuestInProgress(Index, QuestNum) Then Exit Function
+    If questNum < 1 Or questNum > MAX_QUESTS Then Exit Function
+    If QuestInProgress(index, questNum) Then Exit Function
     
     'check if now a completed quest can be repeated
-    If Player(Index).PlayerQuest(QuestNum).Status = QUEST_COMPLETED Then
-        If Quest(QuestNum).Repeat = YES Then
-            Player(Index).PlayerQuest(QuestNum).Status = QUEST_COMPLETED_BUT
+    If Player(index).playerQuest(questNum).status = QUEST_COMPLETED Then
+        If quest(questNum).Repeat = YES Then
+            Player(index).playerQuest(questNum).status = QUEST_COMPLETED_BUT
             Exit Function
         End If
     End If
     
     'Check if player has the quest 0 (not started) or 3 (completed but it can be started again)
-    If Player(Index).PlayerQuest(QuestNum).Status = QUEST_NOT_STARTED Or Player(Index).PlayerQuest(QuestNum).Status = QUEST_COMPLETED_BUT Then
+    If Player(index).playerQuest(questNum).status = QUEST_NOT_STARTED Or Player(index).playerQuest(questNum).status = QUEST_COMPLETED_BUT Then
         'Check if player's level is right
-        If Quest(QuestNum).RequiredLevel <= Player(Index).Level Then
+        If quest(questNum).RequiredLevel <= Player(index).level Then
             
             'Check if item is needed
             For i = 1 To MAX_QUESTS_ITEMS
-                If Quest(QuestNum).RequiredItem(i).Item > 0 Then
+                If quest(questNum).RequiredItem(i).item > 0 Then
                     'if we don't have it at all then
-                    If HasItem(Index, Quest(QuestNum).RequiredItem(i).Item) = 0 Then
-                        PlayerMsg Index, "You need " & Trim$(Item(Quest(QuestNum).RequiredItem(i).Item).Name) & " to take this quest!", BrightRed
+                    If HasItem(index, quest(questNum).RequiredItem(i).item) = 0 Then
+                        PlayerMsg index, "You need " & Trim$(item(quest(questNum).RequiredItem(i).item).name) & " to take this quest!", BrightRed
                         Exit Function
                     End If
                 End If
             Next
             
             'Check if previous quest is needed
-            If Quest(QuestNum).RequiredQuest > 0 And Quest(QuestNum).RequiredQuest <= MAX_QUESTS Then
-                If Player(Index).PlayerQuest(Quest(QuestNum).RequiredQuest).Status = QUEST_NOT_STARTED Or Player(Index).PlayerQuest(Quest(QuestNum).RequiredQuest).Status = QUEST_STARTED Then
-                    PlayerMsg Index, "You need to complete the " & Trim$(Quest(Quest(QuestNum).RequiredQuest).Name) & " quest in order to take this quest!", BrightRed
+            If quest(questNum).RequiredQuest > 0 And quest(questNum).RequiredQuest <= MAX_QUESTS Then
+                If Player(index).playerQuest(quest(questNum).RequiredQuest).status = QUEST_NOT_STARTED Or Player(index).playerQuest(quest(questNum).RequiredQuest).status = QUEST_STARTED Then
+                    PlayerMsg index, "You need to complete the " & Trim$(quest(quest(questNum).RequiredQuest).name) & " quest in order to take this quest!", BrightRed
                     Exit Function
                 End If
             End If
             'Go on :)
             CanStartQuest = True
         Else
-            PlayerMsg Index, "You need to be a higher level to take this quest!", BrightRed
+            PlayerMsg index, "You need to be a higher level to take this quest!", BrightRed
         End If
     Else
-        PlayerMsg Index, "You can't start that quest again!", BrightRed
+        PlayerMsg index, "You can't start that quest again!", BrightRed
     End If
 End Function
 
-Public Function CanEndQuest(ByVal Index As Long, QuestNum As Long) As Boolean
+Public Function CanEndQuest(ByVal index As Long, questNum As Long) As Boolean
     CanEndQuest = False
-    If Quest(QuestNum).Task(Player(Index).PlayerQuest(QuestNum).ActualTask).QuestEnd = True Then
+    If quest(questNum).Task(Player(index).playerQuest(questNum).actualTask).QuestEnd = True Then
         CanEndQuest = True
     End If
 End Function
 
 'Tells if the quest is in progress or not
-Public Function QuestInProgress(ByVal Index As Long, ByVal QuestNum As Long) As Boolean
-    QuestInProgress = False
-    If QuestNum < 1 Or QuestNum > MAX_QUESTS Then Exit Function
-    
-    If Player(Index).PlayerQuest(QuestNum).Status = QUEST_STARTED Then
-        QuestInProgress = True
-    End If
+Public Function QuestInProgress(ByVal char As clsCharacter, ByVal questNum As Long) As Boolean
+    QuestInProgress = char.quest(questNum).status = QUEST_STARTED
 End Function
 
-Public Function QuestCompleted(ByVal Index As Long, ByVal QuestNum As Long) As Boolean
+Public Function QuestCompleted(ByVal index As Long, ByVal questNum As Long) As Boolean
     QuestCompleted = False
-    If QuestNum < 1 Or QuestNum > MAX_QUESTS Then Exit Function
+    If questNum < 1 Or questNum > MAX_QUESTS Then Exit Function
     
-    If Player(Index).PlayerQuest(QuestNum).Status = QUEST_COMPLETED Or Player(Index).PlayerQuest(QuestNum).Status = QUEST_COMPLETED_BUT Then
+    If Player(index).playerQuest(questNum).status = QUEST_COMPLETED Or Player(index).playerQuest(questNum).status = QUEST_COMPLETED_BUT Then
         QuestCompleted = True
     End If
 End Function
@@ -368,7 +363,7 @@ Public Function GetQuestNum(ByVal QuestName As String) As Long
     GetQuestNum = 0
     
     For i = 1 To MAX_QUESTS
-        If Trim$(Quest(i).Name) = Trim$(QuestName) Then
+        If Trim$(quest(i).name) = Trim$(QuestName) Then
             GetQuestNum = i
             Exit For
         End If
@@ -380,7 +375,7 @@ Public Function GetItemNum(ByVal ItemName As String) As Long
     GetItemNum = 0
     
     For i = 1 To MAX_ITEMS
-        If Trim$(Item(i).Name) = Trim$(ItemName) Then
+        If Trim$(item(i).name) = Trim$(ItemName) Then
             GetItemNum = i
             Exit For
         End If
@@ -391,232 +386,231 @@ End Function
 ' // General Purpose //
 ' /////////////////////
 
-Public Sub CheckTasks(ByVal Index As Long, ByVal TaskType As Long, ByVal TargetIndex As Long)
+Public Sub CheckTasks(ByVal char As clsCharacter, ByVal TaskType As Long, ByVal TargetIndex As Long)
     Dim i As Long
     
     For i = 1 To MAX_QUESTS
-        If QuestInProgress(Index, i) Then
-            If TaskType = Quest(i).Task(Player(Index).PlayerQuest(i).ActualTask).Order Then
-                Call CheckTask(Index, i, TaskType, TargetIndex)
+        If QuestInProgress(char, i) Then
+            If TaskType = quest(i).Task(char.quest(i).actualTask).Order Then
+                Call CheckTask(char, i, TaskType, TargetIndex)
             End If
         End If
     Next
 End Sub
 
-Public Sub CheckTask(ByVal Index As Long, ByVal QuestNum As Long, ByVal TaskType As Long, ByVal TargetIndex As Long)
-    Dim ActualTask As Long, i As Long
-    ActualTask = Player(Index).PlayerQuest(QuestNum).ActualTask
+Public Sub CheckTask(ByVal char As clsCharacter, ByVal questNum As Long, ByVal TaskType As Long, ByVal TargetIndex As Long)
+Dim actualTask As Long, i As Long
+
+    actualTask = char.playerQuest(questNum).actualTask
     
     Select Case TaskType
         Case QUEST_TYPE_GOSLAY 'Kill X amount of X npc's.
-        
             'is npc's defeated id is the same as the npc i have to kill?
-            If TargetIndex = Quest(QuestNum).Task(ActualTask).NPC Then
+            If TargetIndex = quest(questNum).Task(actualTask).NPC Then
                 'Count +1
-                Player(Index).PlayerQuest(QuestNum).CurrentCount = Player(Index).PlayerQuest(QuestNum).CurrentCount + 1
+                char.playerQuest(questNum).currentCount = char.playerQuest(questNum).currentCount + 1
                 'show msg
-                PlayerMsg Index, "Quest: " + Trim$(Quest(QuestNum).Name) + " - " + Trim$(Player(Index).PlayerQuest(QuestNum).CurrentCount) + "/" + Trim$(Quest(QuestNum).Task(ActualTask).Amount) + " " + Trim$(NPC(TargetIndex).Name) + " killed.", Yellow
+                PlayerMsg index, "Quest: " + Trim$(quest(questNum).name) + " - " + Trim$(char.playerQuest(questNum).currentCount) + "/" + Trim$(quest(questNum).Task(actualTask).Amount) + " " + Trim$(NPC(TargetIndex).name) + " killed.", Yellow
                 'did i finish the work?
-                If Player(Index).PlayerQuest(QuestNum).CurrentCount >= Quest(QuestNum).Task(ActualTask).Amount Then
-                    QuestMessage Index, QuestNum, "Task completed", 0
+                If char.playerQuest(questNum).currentCount >= quest(questNum).Task(actualTask).Amount Then
+                    QuestMessage index, questNum, "Task completed", 0
                     'is the quest's end?
-                    If CanEndQuest(Index, QuestNum) Then
-                        EndQuest Index, QuestNum
+                    If CanEndQuest(index, questNum) Then
+                        EndQuest index, questNum
                     Else
                         'otherwise continue to the next task
-                        Player(Index).PlayerQuest(QuestNum).CurrentCount = 0
-                        Player(Index).PlayerQuest(QuestNum).ActualTask = ActualTask + 1
+                        char.playerQuest(questNum).currentCount = 0
+                        char.playerQuest(questNum).actualTask = actualTask + 1
                     End If
                 End If
             End If
                         
         Case QUEST_TYPE_GOGATHER 'Gather X amount of X item.
-            If TargetIndex = Quest(QuestNum).Task(ActualTask).Item Then
+            If TargetIndex = quest(questNum).Task(actualTask).item Then
                 
                 'reset the count first
-                Player(Index).PlayerQuest(QuestNum).CurrentCount = 0
+                char.playerQuest(questNum).currentCount = 0
                 
                 'Check inventory for the items
                 For i = 1 To MAX_INV
-                    If GetPlayerInvItemNum(Index, i) = TargetIndex Then
-                        If Item(i).Type = ITEM_TYPE_CURRENCY Then
-                            Player(Index).PlayerQuest(QuestNum).CurrentCount = GetPlayerInvItemValue(Index, i)
+                    If GetPlayerInvItemNum(index, i) = TargetIndex Then
+                        If item(i).type = ITEM_TYPE_CURRENCY Then
+                            char.playerQuest(questNum).currentCount = GetPlayerInvItemValue(index, i)
                         Else
                             'If is the correct item add it to the count
-                            Player(Index).PlayerQuest(QuestNum).CurrentCount = Player(Index).PlayerQuest(QuestNum).CurrentCount + 1
+                            char.playerQuest(questNum).currentCount = char.playerQuest(questNum).currentCount + 1
                         End If
                     End If
                 Next
                 
-                PlayerMsg Index, "Quest: " + Trim$(Quest(QuestNum).Name) + " - You have " + Trim$(Player(Index).PlayerQuest(QuestNum).CurrentCount) + "/" + Trim$(Quest(QuestNum).Task(ActualTask).Amount) + " " + Trim$(Item(TargetIndex).Name), Yellow
+                PlayerMsg index, "Quest: " + Trim$(quest(questNum).name) + " - You have " + Trim$(char.playerQuest(questNum).currentCount) + "/" + Trim$(quest(questNum).Task(actualTask).Amount) + " " + Trim$(item(TargetIndex).name), Yellow
                 
-                If Player(Index).PlayerQuest(QuestNum).CurrentCount >= Quest(QuestNum).Task(ActualTask).Amount Then
-                    QuestMessage Index, QuestNum, "Task completed", 0
-                    If CanEndQuest(Index, QuestNum) Then
-                        EndQuest Index, QuestNum
+                If char.playerQuest(questNum).currentCount >= quest(questNum).Task(actualTask).Amount Then
+                    QuestMessage index, questNum, "Task completed", 0
+                    If CanEndQuest(index, questNum) Then
+                        EndQuest index, questNum
                     Else
-                        Player(Index).PlayerQuest(QuestNum).CurrentCount = 0
-                        Player(Index).PlayerQuest(QuestNum).ActualTask = ActualTask + 1
+                        char.playerQuest(questNum).currentCount = 0
+                        char.playerQuest(questNum).actualTask = actualTask + 1
                     End If
                 End If
             End If
             
         Case QUEST_TYPE_GOTALK 'Interact with X npc.
-            If TargetIndex = Quest(QuestNum).Task(ActualTask).NPC Then
-                QuestMessage Index, QuestNum, Quest(QuestNum).Task(ActualTask).Speech, 0
-                If CanEndQuest(Index, QuestNum) Then
-                    EndQuest Index, QuestNum
+            If TargetIndex = quest(questNum).Task(actualTask).NPC Then
+                QuestMessage index, questNum, quest(questNum).Task(actualTask).Speech, 0
+                If CanEndQuest(index, questNum) Then
+                    EndQuest index, questNum
                 Else
-                    Player(Index).PlayerQuest(QuestNum).ActualTask = ActualTask + 1
+                    char.playerQuest(questNum).actualTask = actualTask + 1
                 End If
             End If
         
         Case QUEST_TYPE_GOREACH 'Reach X map.
-            If TargetIndex = Quest(QuestNum).Task(ActualTask).Map Then
-                QuestMessage Index, QuestNum, "Task completed", 0
-                If CanEndQuest(Index, QuestNum) Then
-                    EndQuest Index, QuestNum
+            If TargetIndex = quest(questNum).Task(actualTask).map Then
+                QuestMessage index, questNum, "Task completed", 0
+                If CanEndQuest(index, questNum) Then
+                    EndQuest index, questNum
                 Else
-                    Player(Index).PlayerQuest(QuestNum).ActualTask = ActualTask + 1
+                    char.playerQuest(questNum).actualTask = actualTask + 1
                 End If
             End If
         
         Case QUEST_TYPE_GOGIVE 'Give X amount of X item to X npc.
-            If TargetIndex = Quest(QuestNum).Task(ActualTask).NPC Then
-                
-                Player(Index).PlayerQuest(QuestNum).CurrentCount = 0
+            If TargetIndex = quest(questNum).Task(actualTask).NPC Then
+                char.playerQuest(questNum).currentCount = 0
                 
                 For i = 1 To MAX_INV
-                    If GetPlayerInvItemNum(Index, i) = Quest(QuestNum).Task(ActualTask).Item Then
-                        If Item(i).Type = ITEM_TYPE_CURRENCY Then
-                            If GetPlayerInvItemValue(Index, i) >= Quest(QuestNum).Task(ActualTask).Amount Then
-                                Player(Index).PlayerQuest(QuestNum).CurrentCount = GetPlayerInvItemValue(Index, i)
+                    If GetPlayerInvItemNum(index, i) = quest(questNum).Task(actualTask).item Then
+                        If item(i).type = ITEM_TYPE_CURRENCY Then
+                            If GetPlayerInvItemValue(index, i) >= quest(questNum).Task(actualTask).Amount Then
+                                char.playerQuest(questNum).currentCount = GetPlayerInvItemValue(index, i)
                             End If
                         Else
                             'If is the correct item add it to the count
-                            Player(Index).PlayerQuest(QuestNum).CurrentCount = Player(Index).PlayerQuest(QuestNum).CurrentCount + 1
+                            char.playerQuest(questNum).currentCount = char.playerQuest(questNum).currentCount + 1
                         End If
                     End If
                 Next
                 
-                If Player(Index).PlayerQuest(QuestNum).CurrentCount >= Quest(QuestNum).Task(ActualTask).Amount Then
+                If char.playerQuest(questNum).currentCount >= quest(questNum).Task(actualTask).Amount Then
                     'if we have enough items, then remove them and finish the task
-                    If Item(Quest(QuestNum).Task(ActualTask).Item).Type = ITEM_TYPE_CURRENCY Then
-                        TakeInvItem Index, Quest(QuestNum).Task(ActualTask).Item, Quest(QuestNum).Task(ActualTask).Amount
+                    If item(quest(questNum).Task(actualTask).item).type = ITEM_TYPE_CURRENCY Then
+                        TakeInvItem index, quest(questNum).Task(actualTask).item, quest(questNum).Task(actualTask).Amount
                     Else
                         'If it's not a currency then remove all the items
-                        For i = 1 To Quest(QuestNum).Task(ActualTask).Amount
-                            TakeInvItem Index, Quest(QuestNum).Task(ActualTask).Item, 1
+                        For i = 1 To quest(questNum).Task(actualTask).Amount
+                            TakeInvItem index, quest(questNum).Task(actualTask).item, 1
                         Next
                     End If
                     
-                    PlayerMsg Index, "Quest: " + Trim$(Quest(QuestNum).Name) + " - You gave " + Trim$(Quest(QuestNum).Task(ActualTask).Amount) + " " + Trim$(Item(TargetIndex).Name), Yellow
-                    QuestMessage Index, QuestNum, Quest(QuestNum).Task(ActualTask).Speech, 0
+                    PlayerMsg index, "Quest: " + Trim$(quest(questNum).name) + " - You gave " + Trim$(quest(questNum).Task(actualTask).Amount) + " " + Trim$(item(TargetIndex).name), Yellow
+                    QuestMessage index, questNum, quest(questNum).Task(actualTask).Speech, 0
                     
-                    If CanEndQuest(Index, QuestNum) Then
-                        EndQuest Index, QuestNum
+                    If CanEndQuest(index, questNum) Then
+                        EndQuest index, questNum
                     Else
-                        Player(Index).PlayerQuest(QuestNum).CurrentCount = 0
-                        Player(Index).PlayerQuest(QuestNum).ActualTask = ActualTask + 1
+                        char.playerQuest(questNum).currentCount = 0
+                        char.playerQuest(questNum).actualTask = actualTask + 1
                     End If
                 End If
             End If
                     
         Case QUEST_TYPE_GOKILL 'Kill X amount of players.
-            Player(Index).PlayerQuest(QuestNum).CurrentCount = Player(Index).PlayerQuest(QuestNum).CurrentCount + 1
-            PlayerMsg Index, "Quest: " + Trim$(Quest(QuestNum).Name) + " - " + Trim$(Player(Index).PlayerQuest(QuestNum).CurrentCount) + "/" + Trim$(Quest(QuestNum).Task(ActualTask).Amount) + " players killed.", Yellow
-            If Player(Index).PlayerQuest(QuestNum).CurrentCount >= Quest(QuestNum).Task(ActualTask).Amount Then
-                QuestMessage Index, QuestNum, "Task completed", 0
-                If CanEndQuest(Index, QuestNum) Then
-                    EndQuest Index, QuestNum
+            char.playerQuest(questNum).currentCount = char.playerQuest(questNum).currentCount + 1
+            PlayerMsg index, "Quest: " + Trim$(quest(questNum).name) + " - " + Trim$(char.playerQuest(questNum).currentCount) + "/" + Trim$(quest(questNum).Task(actualTask).Amount) + " players killed.", Yellow
+            If Player(index).playerQuest(questNum).currentCount >= quest(questNum).Task(actualTask).Amount Then
+                QuestMessage index, questNum, "Task completed", 0
+                If CanEndQuest(index, questNum) Then
+                    EndQuest index, questNum
                 Else
-                    Player(Index).PlayerQuest(QuestNum).CurrentCount = 0
-                    Player(Index).PlayerQuest(QuestNum).ActualTask = ActualTask + 1
+                    Player(index).playerQuest(questNum).currentCount = 0
+                    Player(index).playerQuest(questNum).actualTask = actualTask + 1
                 End If
             End If
             
         Case QUEST_TYPE_GOTRAIN 'Hit X amount of times X resource.
-            If TargetIndex = Quest(QuestNum).Task(ActualTask).Resource Then
-                Player(Index).PlayerQuest(QuestNum).CurrentCount = Player(Index).PlayerQuest(QuestNum).CurrentCount + 1
-                PlayerMsg Index, "Quest: " + Trim$(Quest(QuestNum).Name) + " - " + Trim$(Player(Index).PlayerQuest(QuestNum).CurrentCount) + "/" + Trim$(Quest(QuestNum).Task(ActualTask).Amount) + " hits.", Yellow
-                If Player(Index).PlayerQuest(QuestNum).CurrentCount >= Quest(QuestNum).Task(ActualTask).Amount Then
-                    QuestMessage Index, QuestNum, "Task completed", 0
-                    If CanEndQuest(Index, QuestNum) Then
-                        EndQuest Index, QuestNum
+            If TargetIndex = quest(questNum).Task(actualTask).Resource Then
+                char.playerQuest(questNum).currentCount = char.playerQuest(questNum).currentCount + 1
+                PlayerMsg index, "Quest: " + Trim$(quest(questNum).name) + " - " + Trim$(char.playerQuest(questNum).currentCount) + "/" + Trim$(quest(questNum).Task(actualTask).Amount) + " hits.", Yellow
+                If char.playerQuest(questNum).currentCount >= quest(questNum).Task(actualTask).Amount Then
+                    QuestMessage index, questNum, "Task completed", 0
+                    If CanEndQuest(index, questNum) Then
+                        EndQuest index, questNum
                     Else
-                        Player(Index).PlayerQuest(QuestNum).CurrentCount = 0
-                        Player(Index).PlayerQuest(QuestNum).ActualTask = ActualTask + 1
+                        char.playerQuest(questNum).currentCount = 0
+                        char.playerQuest(questNum).actualTask = actualTask + 1
                     End If
                 End If
             End If
                       
         Case QUEST_TYPE_GOGET 'Get X amount of X item from X npc.
-            If TargetIndex = Quest(QuestNum).Task(ActualTask).NPC Then
-                GiveInvItem Index, Quest(QuestNum).Task(ActualTask).Item, Quest(QuestNum).Task(ActualTask).Amount
-                QuestMessage Index, QuestNum, Quest(QuestNum).Task(ActualTask).Speech, 0
-                If CanEndQuest(Index, QuestNum) Then
-                    EndQuest Index, QuestNum
+            If TargetIndex = quest(questNum).Task(actualTask).NPC Then
+                GiveInvItem index, quest(questNum).Task(actualTask).item, quest(questNum).Task(actualTask).Amount
+                QuestMessage index, questNum, quest(questNum).Task(actualTask).Speech, 0
+                If CanEndQuest(index, questNum) Then
+                    EndQuest index, questNum
                 Else
-                    Player(Index).PlayerQuest(QuestNum).ActualTask = ActualTask + 1
+                    char.playerQuest(questNum).actualTask = actualTask + 1
                 End If
             End If
         
     End Select
-    SavePlayer Index
-    SendPlayerData Index
-    SendPlayerQuests Index
+    SavePlayer index
+    SendPlayerData index
+    SendPlayerQuests index
 End Sub
 
-Public Sub EndQuest(ByVal Index As Long, ByVal QuestNum As Long)
+Public Sub EndQuest(ByVal index As Long, ByVal questNum As Long)
     Dim i As Long, n As Long
     
-    Player(Index).PlayerQuest(QuestNum).Status = QUEST_COMPLETED
+    Player(index).playerQuest(questNum).status = QUEST_COMPLETED
     
     'reset counters to 0
-    Player(Index).PlayerQuest(QuestNum).ActualTask = 0
-    Player(Index).PlayerQuest(QuestNum).CurrentCount = 0
+    Player(index).playerQuest(questNum).actualTask = 0
+    Player(index).playerQuest(questNum).currentCount = 0
     
     'give experience
-    GivePlayerEXP Index, Quest(QuestNum).RewardExp
+    GivePlayerEXP index, quest(questNum).RewardExp
     
     'remove items on the end
     For i = 1 To MAX_QUESTS_ITEMS
-        If Quest(QuestNum).TakeItem(i).Item > 0 Then
-            If HasItem(Index, Quest(QuestNum).TakeItem(i).Item) > 0 Then
-                If Item(Quest(QuestNum).TakeItem(i).Item).Type = ITEM_TYPE_CURRENCY Then
-                    TakeInvItem Index, Quest(QuestNum).TakeItem(i).Item, Quest(QuestNum).TakeItem(i).Value
+        If quest(questNum).TakeItem(i).item > 0 Then
+            If HasItem(index, quest(questNum).TakeItem(i).item) > 0 Then
+                If item(quest(questNum).TakeItem(i).item).type = ITEM_TYPE_CURRENCY Then
+                    TakeInvItem index, quest(questNum).TakeItem(i).item, quest(questNum).TakeItem(i).Value
                 Else
-                    For n = 1 To Quest(QuestNum).TakeItem(i).Value
-                        TakeInvItem Index, Quest(QuestNum).TakeItem(i).Item, 1
+                    For n = 1 To quest(questNum).TakeItem(i).Value
+                        TakeInvItem index, quest(questNum).TakeItem(i).item, 1
                     Next
                 End If
             End If
         End If
     Next
         
-    SavePlayer Index
-    Call SendStats(Index)
-    SendPlayerData Index
+    SavePlayer index
+    Call SendStats(index)
+    SendPlayerData index
     
     'give rewards
     For i = 1 To MAX_QUESTS_ITEMS
-        If Quest(QuestNum).RewardItem(i).Item <> 0 Then
+        If quest(questNum).RewardItem(i).item <> 0 Then
             'check if we have space
-            If FindOpenInvSlot(Index, Quest(QuestNum).RewardItem(i).Item) = 0 Then
-                PlayerMsg Index, "You have no inventory space.", BrightRed
+            If FindOpenInvSlot(index, quest(questNum).RewardItem(i).item) = 0 Then
+                PlayerMsg index, "You have no inventory space.", BrightRed
                 Exit For
             Else
                 'if so, check if it's a currency stack the item in one slot
-                If Item(Quest(QuestNum).RewardItem(i).Item).Type = ITEM_TYPE_CURRENCY Then
-                    GiveInvItem Index, Quest(QuestNum).RewardItem(i).Item, Quest(QuestNum).RewardItem(i).Value
+                If item(quest(questNum).RewardItem(i).item).type = ITEM_TYPE_CURRENCY Then
+                    GiveInvItem index, quest(questNum).RewardItem(i).item, quest(questNum).RewardItem(i).Value
                 Else
                 'if not, create a new loop and store the item in a new slot if is possible
-                    For n = 1 To Quest(QuestNum).RewardItem(i).Value
-                        If FindOpenInvSlot(Index, Quest(QuestNum).RewardItem(i).Item) = 0 Then
-                            PlayerMsg Index, "You have no inventory space.", BrightRed
+                    For n = 1 To quest(questNum).RewardItem(i).Value
+                        If FindOpenInvSlot(index, quest(questNum).RewardItem(i).item) = 0 Then
+                            PlayerMsg index, "You have no inventory space.", BrightRed
                             Exit For
                         Else
-                            GiveInvItem Index, Quest(QuestNum).RewardItem(i).Item, 1
+                            GiveInvItem index, quest(questNum).RewardItem(i).item, 1
                         End If
                     Next
                 End If
@@ -625,14 +619,14 @@ Public Sub EndQuest(ByVal Index As Long, ByVal QuestNum As Long)
     Next
     
     'show ending message
-    QuestMessage Index, QuestNum, Trim$(Quest(QuestNum).Speech(3)), 0
+    QuestMessage index, questNum, Trim$(quest(questNum).Speech(3)), 0
     
     'mark quest as completed in chat
-    PlayerMsg Index, Trim$(Quest(QuestNum).Name) & ": quest completed", Green
+    PlayerMsg index, Trim$(quest(questNum).name) & ": quest completed", Green
     
-    SavePlayer Index
-    SendEXP Index
-    Call SendStats(Index)
-    SendPlayerData Index
-    SendPlayerQuests Index
+    SavePlayer index
+    SendEXP index
+    Call SendStats(index)
+    SendPlayerData index
+    SendPlayerQuests index
 End Sub
