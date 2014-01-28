@@ -321,7 +321,7 @@ Dim tmpX As Long, tmpY As Long
     Call Events_SendEventQuit(char)
   End If
   
-  Call PlayerMove(index, dir, Movement)
+  Call PlayerMove(char, dir, Movement)
 End Sub
 
 ' :::::::::::::::::::::::::::::

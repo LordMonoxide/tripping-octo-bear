@@ -276,7 +276,7 @@ Dim vitalType As Long, colour As Long, Amount As Long
   Select Case dir
     Case DIR_UP_LEFT
       ' Check to make sure not outside of boundries
-      If char.x <> 0 Or char.y <> 0 Then
+      If char.x <> 0 And char.y <> 0 Then
         ' Check to make sure that the tile is walkable
         If Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_UP + 1) And Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_LEFT + 1) Then
           If map(char.map).Tile(char.x - 1, char.y - 1).type <> TILE_TYPE_BLOCKED Then
@@ -288,52 +288,53 @@ Dim vitalType As Long, colour As Long, Amount As Long
                 Call SendPlayerMove(index, Movement, sendToSelf)
                 Moved = YES
               Else
-                                If map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index) - 1).data1 > 0 Then
-                                    If Events(map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index) - 1).data1).WalkThrought = YES Or (Player(index).eventOpen(map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index) - 1).data1) = YES) Then
-                                        Call SetPlayerX(index, GetPlayerX(index) - 1)
-                                        Call SetPlayerY(index, GetPlayerY(index) - 1)
-                                        SendPlayerMove index, Movement, sendToSelf
-                                        Moved = YES
-                                    End If
-                                End If
-                            End If
-                        End If
-                    End If
+                If map(char.map).Tile(char.x - 1, char.y - 1).data1 > 0 Then
+                  If Events(map(char.map).Tile(char.x - 1, char.y - 1).data1).WalkThrought = YES Or (Player(index).eventOpen(map(char.map).Tile(char.x - 1, char.y - 1).data1) = YES) Then
+                    char.x = char.x - 1
+                    char.y = char.y - 1
+                    Call SendPlayerMove(index, Movement, sendToSelf)
+                    Moved = YES
+                  End If
                 End If
+              End If
             End If
-        Case DIR_UP_RIGHT
-            ' Check to make sure not outside of boundries
-            If GetPlayerY(index) > 0 Or GetPlayerX(index) < map(mapNum).MaxX Then
-
-                ' Check to make sure that the tile is walkable
-                If Not isDirBlocked(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index)).DirBlock, DIR_UP + 1) And Not isDirBlocked(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index)).DirBlock, DIR_RIGHT + 1) Then
-                    If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) - 1).type <> TILE_TYPE_BLOCKED Then
-                        If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) - 1).type <> TILE_TYPE_RESOURCE Then
-                            ' Check to see if the tile is a event and if it is check if its opened
-                            If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) - 1).type <> TILE_TYPE_EVENT Then
-                                Call SetPlayerX(index, GetPlayerX(index) + 1)
-                                Call SetPlayerY(index, GetPlayerY(index) - 1)
-                                SendPlayerMove index, Movement, sendToSelf
-                                Moved = YES
-                            Else
-                                If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) - 1).data1 > 0 Then
-                                    If Events(map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) - 1).data1).WalkThrought = YES Or (Player(index).eventOpen(map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) - 1).data1) = YES) Then
-                                        Call SetPlayerX(index, GetPlayerX(index) + 1)
-                                        Call SetPlayerY(index, GetPlayerY(index) - 1)
-                                        SendPlayerMove index, Movement, sendToSelf
-                                        Moved = YES
-                                    End If
-                                End If
-                            End If
-                        End If
-                    End If
+          End If
+        End If
+      End If
+    
+    Case DIR_UP_RIGHT
+      ' Check to make sure not outside of boundries
+      If char.x < map(mapNum).MaxX And char.y <> 0 Then
+        ' Check to make sure that the tile is walkable
+        If Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_UP + 1) And Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_RIGHT + 1) Then
+          If map(char.map).Tile(char.x + 1, char.y - 1).type <> TILE_TYPE_BLOCKED Then
+            If map(char.map).Tile(char.x + 1, char.y - 1).type <> TILE_TYPE_RESOURCE Then
+              ' Check to see if the tile is a event and if it is check if its opened
+              If map(char.map).Tile(char.x + 1, char.y - 1).type <> TILE_TYPE_EVENT Then
+                char.x = char.x + 1
+                char.y = char.y - 1
+                Call SendPlayerMove(index, Movement, sendToSelf)
+                Moved = YES
+              Else
+                If map(char.map).Tile(char.x + 1, char.y - 1).data1 > 0 Then
+                  If Events(map(char.map).Tile(char.x + 1, char.y - 1).data1).WalkThrought = YES Or (Player(index).eventOpen(map(char.map).Tile(char.x + 1, char.y - 1).data1) = YES) Then
+                    char.x = char.x + 1
+                    char.y = char.y - 1
+                    Call SendPlayerMove(index, Movement, sendToSelf)
+                    Moved = YES
+                  End If
                 End If
+              End If
             End If
-        Case DIR_DOWN_LEFT
-            ' Check to make sure not outside of boundries
-            If GetPlayerY(index) < map(mapNum).MaxY Or GetPlayerX(index) > 0 Then
-                ' Check to make sure that the tile is walkable
-                If Not isDirBlocked(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index)).DirBlock, DIR_DOWN + 1) And Not isDirBlocked(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index)).DirBlock, DIR_DOWN + 1) Then
+          End If
+        End If
+      End If
+    
+    Case DIR_DOWN_LEFT
+      ' Check to make sure not outside of boundries
+      If char.x <> 0 And char.y < map(mapNum).MaxY Then
+        ' Check to make sure that the tile is walkable
+        If Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_DOWN + 1) And Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_DOWN + 1) Then
                     If map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index) + 1).type <> TILE_TYPE_BLOCKED Then
                         If map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index) + 1).type <> TILE_TYPE_RESOURCE Then
                             ' Check to see if the tile is a event and if it is check if its opened
