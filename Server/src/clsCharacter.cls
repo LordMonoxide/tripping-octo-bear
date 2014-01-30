@@ -25,6 +25,8 @@ Private mSpellBuffer As clsCharacterSpellBuffer
 Private mGettingMap As Boolean
 Private mInBank As Boolean
 Private mInShop As Boolean
+Private mInParty As Long
+Private mPartyInvite As Long
 
 Private mTargetType As TargetTypeEnum
 Private mTarget As Long
@@ -38,14 +40,19 @@ Private mStunDuration As Long
 Private mInEventWith As Long
 Private mCurrentEvent As Long
 
+Private mBuffs(1 To 10) As Long
+Private mBuffTimer(1 To 10) As Long
+Private mBuffValue(1 To 10) As Long
+
 Private Sub Class_Initialize()
 Dim i As Long
 
   For i = 1 To MAX_QUESTS
     Set mQuest(i) = New clsCharacterQuest
+    Call mQuest(i).init(i, Me)
   Next
   
-  mSpellBuffer = New clsCharacterQuest
+  Set mSpellBuffer = New clsCharacterSpellBuffer
 End Sub
 
 Public Sub init(ByVal socket As clsSocket)
@@ -94,8 +101,8 @@ Dim i As Long
   hpMax = (mData.lvl / 2 + mData.end / 2) * 13 + 120
   
   For i = 1 To 10
-    If TempPlayer(index).Buffs(i) = BUFF_ADD_HP Then hpMax = hpMax + TempPlayer(index).BuffValue(i)
-    If TempPlayer(index).Buffs(i) = BUFF_SUB_HP Then hpMax = hpMax - TempPlayer(index).BuffValue(i)
+    If mBuffs(i) = BUFF_ADD_HP Then hpMax = hpMax + mBuffValue(i)
+    If mBuffs(i) = BUFF_SUB_HP Then hpMax = hpMax - mBuffValue(i)
   Next
 End Property
 
@@ -112,9 +119,10 @@ Public Property Get mpMax() As Long
 Dim i As Long
 
   mpMax = (mData.lvl / 2 + mData.int / 2) * 15 + 45
+  
   For i = 1 To 10
-    If TempPlayer(index).Buffs(i) = BUFF_ADD_MP Then mpMax = mpMax + TempPlayer(index).BuffValue(i)
-    If TempPlayer(index).Buffs(i) = BUFF_SUB_MP Then mpMax = mpMax - TempPlayer(index).BuffValue(i)
+    If mBuffs(i) = BUFF_ADD_MP Then mpMax = mpMax + mBuffValue(i)
+    If mBuffs(i) = BUFF_SUB_MP Then mpMax = mpMax - mBuffValue(i)
   Next
 End Property
 
@@ -129,14 +137,14 @@ Dim i As Long
   strength = mData.str
   
   If base = False Then
-    If Not mData.weapon Is Nothing Then strength = strength + mData.weapon.strAdd
-    If Not mData.armour Is Nothing Then strength = strength + mData.armour.strAdd
-    If Not mData.shield Is Nothing Then strength = strength + mData.shield.strAdd
-    If Not mData.aura Is Nothing Then strength = strength + mData.aura.strAdd
+    If Not mData.weapon Is Nothing Then strength = strength + mData.weapon.addSTR
+    If Not mData.armour Is Nothing Then strength = strength + mData.armour.addSTR
+    If Not mData.shield Is Nothing Then strength = strength + mData.shield.addSTR
+    If Not mData.aura Is Nothing Then strength = strength + mData.aura.addSTR
     
     For i = 1 To 10
-      If TempPlayer(index).Buffs(i) = BUFF_ADD_STR Then strength = strength + TempPlayer(index).BuffValue(i)
-      If TempPlayer(index).Buffs(i) = BUFF_SUB_STR Then strength = strength - TempPlayer(index).BuffValue(i)
+      If mBuffs(i) = BUFF_ADD_STR Then strength = strength + mBuffValue(i)
+      If mBuffs(i) = BUFF_SUB_STR Then strength = strength - mBuffValue(i)
     Next
   End If
 End Property
@@ -147,14 +155,14 @@ Dim i As Long
   endurance = mData.end
   
   If base = False Then
-    If Not mData.weapon Is Nothing Then endurance = endurance + mData.weapon.endAdd
-    If Not mData.armour Is Nothing Then endurance = endurance + mData.armour.endAdd
-    If Not mData.shield Is Nothing Then endurance = endurance + mData.shield.endAdd
-    If Not mData.aura Is Nothing Then endurance = endurance + mData.aura.endAdd
+    If Not mData.weapon Is Nothing Then endurance = endurance + mData.weapon.addEND
+    If Not mData.armour Is Nothing Then endurance = endurance + mData.armour.addEND
+    If Not mData.shield Is Nothing Then endurance = endurance + mData.shield.addEND
+    If Not mData.aura Is Nothing Then endurance = endurance + mData.aura.addEND
     
     For i = 1 To 10
-      If TempPlayer(index).Buffs(i) = BUFF_ADD_END Then endurance = endurance + TempPlayer(index).BuffValue(i)
-      If TempPlayer(index).Buffs(i) = BUFF_SUB_END Then endurance = endurance - TempPlayer(index).BuffValue(i)
+      If mBuffs(i) = BUFF_ADD_END Then endurance = endurance + mBuffValue(i)
+      If mBuffs(i) = BUFF_SUB_END Then endurance = endurance - mBuffValue(i)
     Next
   End If
 End Property
@@ -165,14 +173,14 @@ Dim i As Long
   intelligence = mData.int
   
   If base = False Then
-    If Not mData.weapon Is Nothing Then intelligence = intelligence + mData.weapon.intAdd
-    If Not mData.armour Is Nothing Then intelligence = intelligence + mData.armour.intAdd
-    If Not mData.shield Is Nothing Then intelligence = intelligence + mData.shield.intAdd
-    If Not mData.aura Is Nothing Then intelligence = intelligence + mData.aura.intAdd
+    If Not mData.weapon Is Nothing Then intelligence = intelligence + mData.weapon.addINT
+    If Not mData.armour Is Nothing Then intelligence = intelligence + mData.armour.addINT
+    If Not mData.shield Is Nothing Then intelligence = intelligence + mData.shield.addINT
+    If Not mData.aura Is Nothing Then intelligence = intelligence + mData.aura.addINT
     
     For i = 1 To 10
-      If TempPlayer(index).Buffs(i) = BUFF_ADD_INT Then intelligence = intelligence + TempPlayer(index).BuffValue(i)
-      If TempPlayer(index).Buffs(i) = BUFF_SUB_INT Then intelligence = intelligence - TempPlayer(index).BuffValue(i)
+      If mBuffs(i) = BUFF_ADD_INT Then intelligence = intelligence + mBuffValue(i)
+      If mBuffs(i) = BUFF_SUB_INT Then intelligence = intelligence - mBuffValue(i)
     Next
   End If
 End Property
@@ -183,14 +191,14 @@ Dim i As Long
   agility = mData.agl
   
   If base = False Then
-    If Not mData.weapon Is Nothing Then agility = agility + mData.weapon.aglAdd
-    If Not mData.armour Is Nothing Then agility = agility + mData.armour.aglAdd
-    If Not mData.shield Is Nothing Then agility = agility + mData.shield.aglAdd
-    If Not mData.aura Is Nothing Then agility = agility + mData.aura.aglAdd
+    If Not mData.weapon Is Nothing Then agility = agility + mData.weapon.addAGL
+    If Not mData.armour Is Nothing Then agility = agility + mData.armour.addAGL
+    If Not mData.shield Is Nothing Then agility = agility + mData.shield.addAGL
+    If Not mData.aura Is Nothing Then agility = agility + mData.aura.addAGL
     
     For i = 1 To 10
-      If TempPlayer(index).Buffs(i) = BUFF_ADD_AGL Then agility = agility + TempPlayer(index).BuffValue(i)
-      If TempPlayer(index).Buffs(i) = BUFF_SUB_AGL Then agility = agility - TempPlayer(index).BuffValue(i)
+      If mBuffs(i) = BUFF_ADD_AGL Then agility = agility + mBuffValue(i)
+      If mBuffs(i) = BUFF_SUB_AGL Then agility = agility - mBuffValue(i)
     Next
   End If
 End Property
@@ -201,14 +209,14 @@ Dim i As Long
   will = mData.int
   
   If base = False Then
-    If Not mData.weapon Is Nothing Then will = will + mData.weapon.wilAdd
-    If Not mData.armour Is Nothing Then will = will + mData.armour.wilAdd
-    If Not mData.shield Is Nothing Then will = will + mData.shield.wilAdd
-    If Not mData.aura Is Nothing Then will = will + mData.aura.wilAdd
+    If Not mData.weapon Is Nothing Then will = will + mData.weapon.addWIL
+    If Not mData.armour Is Nothing Then will = will + mData.armour.addWIL
+    If Not mData.shield Is Nothing Then will = will + mData.shield.addWIL
+    If Not mData.aura Is Nothing Then will = will + mData.aura.addWIL
     
     For i = 1 To 10
-      If TempPlayer(index).Buffs(i) = BUFF_ADD_WIL Then will = will + TempPlayer(index).BuffValue(i)
-      If TempPlayer(index).Buffs(i) = BUFF_SUB_WIL Then will = will - TempPlayer(index).BuffValue(i)
+      If mBuffs(i) = BUFF_ADD_WIL Then will = will + mBuffValue(i)
+      If mBuffs(i) = BUFF_SUB_WIL Then will = will - mBuffValue(i)
     Next
   End If
 End Property
@@ -297,6 +305,10 @@ Public Property Get inShop() As Boolean
   inShop = mInShop
 End Property
 
+Public Property Get inParty() As Long
+  inParty = mInParty
+End Property
+
 Public Property Let target(ByVal target As Long)
   mTarget = target
 End Property
@@ -359,6 +371,30 @@ End Property
 
 Public Property Get currentEvent() As Long
   currentEvent = mCurrentEvent
+End Property
+
+Public Property Let buffs(ByVal index As Long, ByVal buffs As Long)
+  mBuffs(index) = buffs
+End Property
+
+Public Property Get buffs(ByVal index As Long) As Long
+  buffs = mBuffs(index)
+End Property
+
+Public Property Let buffTimer(ByVal index As Long, ByVal buffTimer As Long)
+  mBuffTimer(index) = buffTimer
+End Property
+
+Public Property Get buffTimer(ByVal index As Long) As Long
+  buffTimer = mBuffTimer(index)
+End Property
+
+Public Property Let buffValue(ByVal index As Long, ByVal buffValue As Long)
+  mBuffValue(index) = buffValue
+End Property
+
+Public Property Get buffValue(ByVal index As Long) As Long
+  buffValue = mBuffValue(index)
 End Property
 
 Public Property Get item(ByVal index As Long) As clsCharacterItem
@@ -457,33 +493,31 @@ Public Sub updateVitals()
     If mData.hp <> hpMax Then
       mData.hp = mData.hp + hpRegen
       Call sendHP
-      
-      ' send vitals to party if in one
-      If TempPlayer(i).inParty <> 0 Then
-        Call SendPartyVitals(TempPlayer(i).inParty, i)
-      End If
     End If
     
     If mData.mp <> mpMax Then
       mData.mp = mData.mp + mpRegen
       Call sendMP
-      
-      ' send vitals to party if in one
-      If TempPlayer(i).inParty <> 0 Then
-        Call SendPartyVitals(TempPlayer(i).inParty, i)
-      End If
     End If
   End If
 End Sub
 
-Public Sub send(ByRef data() As Byte)
+Public Sub kick(ByVal reason As String)
+  Call mSocket.kick(reason)
+End Sub
+
+Public Sub hack(ByVal reason As String)
+  Call mSocket.hack(reason)
+End Sub
+
+Public Sub send(ByVal data As clsBuffer)
 Dim buffer As clsBuffer
 Dim tempData() As Byte
 Dim size As Long
 
   Set buffer = New clsBuffer
-  tempData = data
-  size = aryLenB(data)
+  tempData = data.ToArray
+  size = aryLenB(tempData)
   
   Call buffer.PreAllocate(size + 4)
   Call buffer.WriteLong(size)
@@ -492,7 +526,6 @@ Dim size As Long
   PacketsOut = PacketsOut + 1
   
   Call mSocket.send(buffer.ToArray)
-  DoEvents
 End Sub
 
 Public Sub sendLogin()
@@ -501,7 +534,11 @@ Dim buffer As clsBuffer
   Set buffer = New clsBuffer
   Call buffer.WriteLong(SLoginOk)
   Call buffer.WriteLong(mData.id)
-  Call send(buffer.ToArray)
+  Call send(buffer)
+End Sub
+
+Public Sub sendData()
+  Call sendToMap(mData.map, serialize)
 End Sub
 
 Public Sub sendLoc()
@@ -512,7 +549,7 @@ Dim buffer As clsBuffer
   Call buffer.WriteLong(mData.x)
   Call buffer.WriteLong(mData.y)
   Call buffer.WriteLong(mData.dir)
-  Call send(buffer.ToArray)
+  Call send(buffer)
 End Sub
 
 Public Sub sendLocToMap()
@@ -524,7 +561,7 @@ Dim buffer As clsBuffer
   Call buffer.WriteLong(mData.x)
   Call buffer.WriteLong(mData.y)
   Call buffer.WriteLong(mData.dir)
-  Call SendDataToMap(mData.map, buffer.ToArray)
+  Call sendToMap(mData.map, buffer)
 End Sub
 
 Public Sub sendLeaveMapToMap()
@@ -533,27 +570,51 @@ Dim buffer As clsBuffer
   Set buffer = New clsBuffer
   Call buffer.WriteLong(SLeft)
   Call buffer.WriteLong(mData.id)
-  Call SendDataToMapBut(mData.id, mData.map, buffer.ToArray)
+  Call sendToMapBut(Me, mData.map, buffer)
 End Sub
 
 Public Sub sendHP()
 Dim buffer As clsBuffer
+Dim i As Long
 
   Set buffer = New clsBuffer
   Call buffer.WriteLong(SPlayerHp)
   Call buffer.WriteLong(hpMax)
   Call buffer.WriteLong(mData.hp)
-  Call send(buffer.ToArray)
+  Call send(buffer)
+  
+  If mInParty <> 0 Then
+    Call buffer.Flush
+    Call buffer.WriteLong(SPartyVitals)
+    Call buffer.WriteLong(mData.id)
+    Call buffer.WriteLong(hpMax)
+    Call buffer.WriteLong(mData.hp)
+    Call buffer.WriteLong(mpMax)
+    Call buffer.WriteLong(mData.mp)
+    Call sendToParty(mInParty, buffer)
+  End If
 End Sub
 
 Public Sub sendMP()
 Dim buffer As clsBuffer
+Dim i As Long
 
   Set buffer = New clsBuffer
   Call buffer.WriteLong(SPlayerMp)
   Call buffer.WriteLong(mpMax)
   Call buffer.WriteLong(mData.mp)
-  Call send(buffer.ToArray)
+  Call send(buffer)
+  
+  If mInParty <> 0 Then
+    Call buffer.Flush
+    Call buffer.WriteLong(SPartyVitals)
+    Call buffer.WriteLong(mData.id)
+    Call buffer.WriteLong(hpMax)
+    Call buffer.WriteLong(mData.hp)
+    Call buffer.WriteLong(mpMax)
+    Call buffer.WriteLong(mData.mp)
+    Call sendToParty(mInParty, buffer)
+  End If
 End Sub
 
 Public Sub sendEquipmentToMap()
@@ -587,7 +648,7 @@ Dim buffer As clsBuffer
     Call buffer.WriteLong(mData.aura.id)
   End If
   
-  Call SendDataToMap(mData.map, buffer.ToArray)
+  Call sendToMap(mData.map, buffer)
 End Sub
 
 Public Sub sendEquipmentTo(ByVal char As clsCharacter)
@@ -621,7 +682,7 @@ Dim buffer As clsBuffer
     Call buffer.WriteLong(mData.aura.id)
   End If
   
-  Call char.send(buffer.ToArray)
+  Call char.send(buffer)
 End Sub
 
 Public Sub sendTarget()
@@ -631,7 +692,29 @@ Dim buffer As clsBuffer
   Call buffer.WriteLong(STarget)
   Call buffer.WriteLong(mTarget)
   Call buffer.WriteLong(mTargetType)
-  Call send(buffer.ToArray)
+  Call send(buffer)
+End Sub
+
+Public Sub sendWhosOnline()
+Dim s As String
+Dim n As Long
+Dim c As clsCharacter
+
+  For Each c In characters
+    If Not c Is Me Then
+      s = s & c.name & ", "
+      n = n + 1
+    End If
+  Next
+  
+  If n = 0 Then
+    s = "There are no other players online."
+  Else
+    s = Mid$(s, 1, Len(s) - 2)
+    s = "There are " & n & " other players online: " & s & "."
+  End If
+  
+  Call sendMessage(s, WhoColor)
 End Sub
 
 Public Sub sendMessage(ByRef msg As String, ByVal colour As Byte)
@@ -641,5 +724,99 @@ Dim buffer As clsBuffer
   Call buffer.WriteLong(SPlayerMsg)
   Call buffer.WriteString(msg)
   Call buffer.WriteLong(colour)
-  Call send(buffer.ToArray)
+  Call send(buffer)
 End Sub
+
+Public Sub sendQuestMessage(ByVal questNum As Long, ByVal message As String, ByVal questNumForStart As Long)
+Dim buffer As clsBuffer
+
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SQuestMessage)
+  Call buffer.WriteLong(questNum)
+  Call buffer.WriteString(message)
+  Call buffer.WriteLong(questNumForStart)
+  Call send(buffer)
+End Sub
+
+Public Sub sendQuests()
+Dim buffer As clsBuffer
+Dim i As Long
+
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SPlayerQuest)
+  
+  For i = 1 To MAX_QUESTS
+    Call buffer.WriteLong(mQuest(i).status)
+    Call buffer.WriteLong(mQuest(i).actualTask)
+    Call buffer.WriteLong(mQuest(i).currentCount)
+  Next
+  
+  Call send(buffer)
+End Sub
+
+Public Sub sendQuest(ByVal questNum As Long)
+Dim buffer As clsBuffer
+
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SPlayerQuest)
+  Call buffer.WriteLong(mQuest(questNum).status)
+  Call buffer.WriteLong(mQuest(questNum).actualTask)
+  Call buffer.WriteLong(mQuest(questNum).currentCount)
+  Call send(buffer)
+End Sub
+
+Public Sub checkTasks(ByVal taskType As Long, ByVal targetIndex As Long)
+Dim i As Long
+
+  For i = 1 To MAX_QUESTS
+    If mQuest(i).isInProgress() Then
+      If taskType = modSvQuests.quest(i).Task(mQuest(i).actualTask).Order Then
+        Call mQuest(i).checkTask(taskType, targetIndex)
+      End If
+    End If
+  Next
+End Sub
+
+Public Function serialize() As clsBuffer
+Dim i As Long
+
+  Set serialize = New clsBuffer
+  Call serialize.WriteLong(SPlayerData)
+  Call serialize.WriteLong(mData.id)
+  Call serialize.WriteString(mData.name)
+  Call serialize.WriteLong(mData.lvl)
+  Call serialize.WriteByte(mData.sex)
+  Call serialize.WriteLong(mData.clothes)
+  Call serialize.WriteLong(mData.gear)
+  Call serialize.WriteLong(mData.hair)
+  Call serialize.WriteLong(mData.head)
+  Call serialize.WriteLong(mData.map)
+  Call serialize.WriteLong(mData.x)
+  Call serialize.WriteLong(mData.y)
+  Call serialize.WriteLong(mData.dir)
+  Call serialize.WriteLong(mUser.access)
+  Call serialize.WriteByte(mData.threshold)
+  Call serialize.WriteByte(mUser.donator)
+  
+  Call serialize.WriteLong(mData.str)
+  Call serialize.WriteLong(mData.end)
+  Call serialize.WriteLong(mData.int)
+  Call serialize.WriteLong(mData.agl)
+  Call serialize.WriteLong(mData.wil)
+  
+  For i = 1 To Skills.Skill_Count - 1
+      '''Call serialize.WriteLong(GetPlayerSkillLevel(index, i))
+  Next
+  
+  '''If Player(index).GuildFileId > 0 Then
+  '    If TempPlayer(index).tmpGuildSlot > 0 Then
+  '        Call serialize.WriteByte 1
+  '        Call serialize.WriteString GuildData(TempPlayer(index).tmpGuildSlot).Guild_Name
+  '        Call serialize.WriteString GuildData(TempPlayer(index).tmpGuildSlot).Guild_Tag
+  '        Call serialize.WriteLong GuildData(TempPlayer(index).tmpGuildSlot).Guild_Color
+  '        Call serialize.WriteLong GuildData(TempPlayer(index).tmpGuildSlot).Guild_Logo
+  '    End If
+  'Else
+  '    Call serialize.WriteByte 0
+  'End If
+End Function

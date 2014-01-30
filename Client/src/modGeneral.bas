@@ -42,6 +42,8 @@ Dim i As Long, n As Long
   API.routes.storage.characters.use.route = "api/storage/characters"
   API.routes.storage.characters.use.method = HTTP_METHOD_POST
   
+  Set characters = New clsCharacters
+  
     'Set the high-resolution timer
     timeBeginPeriod 1
     

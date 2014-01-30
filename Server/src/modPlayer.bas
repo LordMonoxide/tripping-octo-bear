@@ -95,7 +95,7 @@ Dim char As clsCharacter
       ' clear out trade
       For i = 1 To MAX_INV
         TempPlayer(tradeTarget).TradeOffer(i).num = 0
-        TempPlayer(tradeTarget).TradeOffer(i).Value = 0
+        TempPlayer(tradeTarget).TradeOffer(i).value = 0
       Next
       TempPlayer(tradeTarget).InTrade = 0
       SendCloseTrade tradeTarget
@@ -117,9 +117,9 @@ Dim char As clsCharacter
     
     ' Send a global message that he/she left
     If GetPlayerAccess(index) <= ADMIN_MONITOR Then
-      Call GlobalMsg(GetPlayerName(index) & " has left " & Options.Game_Name & "!", JoinLeftColor)
+      Call globalMsg(GetPlayerName(index) & " has left " & Options.Game_Name & "!", JoinLeftColor)
     Else
-      Call GlobalMsg(GetPlayerName(index) & " has left " & Options.Game_Name & "!", White)
+      Call globalMsg(GetPlayerName(index) & " has left " & Options.Game_Name & "!", White)
     End If
     
     Call TextAdd(GetPlayerName(index) & " has disconnected from " & Options.Game_Name & ".")
@@ -201,7 +201,7 @@ Dim c As clsCharacter
   If x < 0 Then x = 0
   If y < 0 Then y = 0
   
-  Call CheckTasks(char, QUEST_TYPE_GOREACH, mapNum)
+  Call char.checkTasks(QUEST_TYPE_GOREACH, mapNum)
   
   ' if same map then just send their co-ordinates
   If mapNum = char.map Then
@@ -251,14 +251,14 @@ Dim c As clsCharacter
   ' Sets it so we know to process npcs on the map
   PlayersOnMap(mapNum) = YES
   char.gettingMap = YES
-  Call CheckTasks(char, QUEST_TYPE_GOREACH, mapNum)
+  Call char.checkTasks(QUEST_TYPE_GOREACH, mapNum)
   
   If oldMap <> mapNum Then
     Set buffer = New clsBuffer
     Call buffer.WriteLong(SCheckForMap)
     Call buffer.WriteLong(mapNum)
     Call buffer.WriteLong(map(mapNum).Revision)
-    Call char.send(buffer.ToArray)
+    Call char.send(buffer)
   End If
 End Sub
 
@@ -335,298 +335,316 @@ Dim vitalType As Long, colour As Long, Amount As Long
       If char.x <> 0 And char.y < map(mapNum).MaxY Then
         ' Check to make sure that the tile is walkable
         If Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_DOWN + 1) And Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_DOWN + 1) Then
-                    If map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index) + 1).type <> TILE_TYPE_BLOCKED Then
-                        If map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index) + 1).type <> TILE_TYPE_RESOURCE Then
-                            ' Check to see if the tile is a event and if it is check if its opened
-                            If map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index) + 1).type <> TILE_TYPE_EVENT Then
-                                Call SetPlayerX(index, GetPlayerX(index) - 1)
-                                Call SetPlayerY(index, GetPlayerY(index) + 1)
-                                SendPlayerMove index, Movement, sendToSelf
-                                Moved = YES
-                            Else
-                                If map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index) + 1).data1 > 0 Then
-                                    If Events(map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index) + 1).data1).WalkThrought = YES Or (Player(index).eventOpen(map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index) + 1).data1) = YES) Then
-                                        Call SetPlayerX(index, GetPlayerX(index) - 1)
-                                        Call SetPlayerY(index, GetPlayerY(index) + 1)
-                                        SendPlayerMove index, Movement, sendToSelf
-                                        Moved = YES
-                                    End If
-                                End If
-                            End If
-                        End If
-                    End If
-                End If
-            End If
-        Case DIR_DOWN_RIGHT
-            ' Check to make sure not outside of boundries
-            If GetPlayerY(index) < map(mapNum).MaxY Or GetPlayerX(index) < map(mapNum).MaxX Then
-
-                ' Check to make sure that the tile is walkable
-                If Not isDirBlocked(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index)).DirBlock, DIR_DOWN + 1) And Not isDirBlocked(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index)).DirBlock, DIR_RIGHT + 1) Then
-                    If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) + 1).type <> TILE_TYPE_BLOCKED Then
-                        If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) + 1).type <> TILE_TYPE_RESOURCE Then
-                            ' Check to see if the tile is a event and if it is check if its opened
-                            If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) + 1).type <> TILE_TYPE_EVENT Then
-                                Call SetPlayerX(index, GetPlayerX(index) + 1)
-                                Call SetPlayerY(index, GetPlayerY(index) + 1)
-                                SendPlayerMove index, Movement, sendToSelf
-                                Moved = YES
-                            Else
-                                If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) + 1).data1 > 0 Then
-                                    If Events(map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) + 1).data1).WalkThrought = YES Or (Player(index).eventOpen(map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) + 1).data1) = YES) Then
-                                        Call SetPlayerX(index, GetPlayerX(index) + 1)
-                                        Call SetPlayerY(index, GetPlayerY(index) + 1)
-                                        SendPlayerMove index, Movement, sendToSelf
-                                        Moved = YES
-                                    End If
-                                End If
-                            End If
-                        End If
-                    End If
-                End If
-            End If
-        Case DIR_UP
-            ' Check to make sure not outside of boundries
-            If GetPlayerY(index) > 0 Then
-                ' Check to make sure that the tile is walkable
-                If Not isDirBlocked(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index)).DirBlock, DIR_UP + 1) Then
-                    If map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index) - 1).type <> TILE_TYPE_BLOCKED Then
-                        If map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index) - 1).type <> TILE_TYPE_RESOURCE Then
-                            ' Check to see if the tile is a event and if it is check if its opened
-                            If map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index) - 1).type <> TILE_TYPE_EVENT Then
-                                Call SetPlayerY(index, GetPlayerY(index) - 1)
-                                SendPlayerMove index, Movement, sendToSelf
-                                Moved = YES
-                            Else
-                                If map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index) - 1).data1 > 0 Then
-                                    If Events(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index) - 1).data1).WalkThrought = YES Or (Player(index).eventOpen(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index) - 1).data1) = YES) Then
-                                        Call SetPlayerY(index, GetPlayerY(index) - 1)
-                                        SendPlayerMove index, Movement, sendToSelf
-                                        Moved = YES
-                                    End If
-                                End If
-                            End If
-                        End If
-                    End If
-                End If
-            Else
-                ' Check to see if we can move them to the another map
-                If map(GetPlayerMap(index)).Up > 0 Then
-                    NewMapY = map(map(GetPlayerMap(index)).Up).MaxY
-                    Call PlayerWarp(index, map(GetPlayerMap(index)).Up, GetPlayerX(index), NewMapY)
+          If map(char.map).Tile(char.x - 1, char.y + 1).type <> TILE_TYPE_BLOCKED Then
+            If map(char.map).Tile(char.x - 1, char.y + 1).type <> TILE_TYPE_RESOURCE Then
+              ' Check to see if the tile is a event and if it is check if its opened
+              If map(char.map).Tile(char.x - 1, char.y + 1).type <> TILE_TYPE_EVENT Then
+                char.x = char.x - 1
+                char.y = char.y + 1
+                Call SendPlayerMove(index, Movement, sendToSelf)
+                Moved = YES
+              Else
+                If map(char.map).Tile(char.x - 1, char.y + 1).data1 > 0 Then
+                  If Events(map(char.map).Tile(char.x - 1, char.y + 1).data1).WalkThrought = YES Or (Player(index).eventOpen(map(char.map).Tile(char.x - 1, char.y + 1).data1) = YES) Then
+                    char.x = char.x - 1
+                    char.y = char.y + 1
+                    Call SendPlayerMove(index, Movement, sendToSelf)
                     Moved = YES
-                    ' clear their target
-                    TempPlayer(index).target = 0
-                    TempPlayer(index).targetType = TARGET_TYPE_NONE
-                    sendTarget index
+                  End If
                 End If
+              End If
             End If
-        Case DIR_DOWN
-            ' Check to make sure not outside of boundries
-            If GetPlayerY(index) < map(mapNum).MaxY Then
-                ' Check to make sure that the tile is walkable
-                If Not isDirBlocked(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index)).DirBlock, DIR_DOWN + 1) Then
-                    If map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index) + 1).type <> TILE_TYPE_BLOCKED Then
-                        If map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index) + 1).type <> TILE_TYPE_RESOURCE Then
-                            ' Check to see if the tile is a key and if it is check if its opened
-                            If map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index) + 1).type <> TILE_TYPE_EVENT Then
-                                Call SetPlayerY(index, GetPlayerY(index) + 1)
-                                SendPlayerMove index, Movement, sendToSelf
-                                Moved = YES
-                            Else
-                                If map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index) + 1).data1 > 0 Then
-                                    If Events(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index) + 1).data1).WalkThrought = YES Or (Player(index).eventOpen(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index) + 1).data1) = YES) Then
-                                        Call SetPlayerY(index, GetPlayerY(index) + 1)
-                                        SendPlayerMove index, Movement, sendToSelf
-                                        Moved = YES
-                                    End If
-                                End If
-                            End If
-                        End If
-                    End If
-                End If
-            Else
-                ' Check to see if we can move them to the another map
-                If map(GetPlayerMap(index)).Down > 0 Then
-                    Call PlayerWarp(index, map(GetPlayerMap(index)).Down, GetPlayerX(index), 0)
-                    Moved = YES
-                    ' clear their target
-                    TempPlayer(index).target = 0
-                    TempPlayer(index).targetType = TARGET_TYPE_NONE
-                    sendTarget index
-                End If
-            End If
-        Case DIR_LEFT
-            ' Check to make sure not outside of boundries
-            If GetPlayerX(index) > 0 Then
-                ' Check to make sure that the tile is walkable
-                If Not isDirBlocked(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index)).DirBlock, DIR_LEFT + 1) Then
-                    If map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index)).type <> TILE_TYPE_BLOCKED Then
-                        If map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index)).type <> TILE_TYPE_RESOURCE Then
-                            ' Check to see if the tile is a key and if it is check if its opened
-                            If map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index)).type <> TILE_TYPE_EVENT Then
-                                Call SetPlayerX(index, GetPlayerX(index) - 1)
-                                SendPlayerMove index, Movement, sendToSelf
-                                Moved = YES
-                            Else
-                                If map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index)).data1 > 0 Then
-                                    If Events(map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index)).data1).WalkThrought = YES Or (Player(index).eventOpen(map(GetPlayerMap(index)).Tile(GetPlayerX(index) - 1, GetPlayerY(index)).data1) = YES) Then
-                                        Call SetPlayerX(index, GetPlayerX(index) - 1)
-                                        SendPlayerMove index, Movement, sendToSelf
-                                        Moved = YES
-                                    End If
-                                End If
-                            End If
-                        End If
-                    End If
-                End If
-            Else
-                ' Check to see if we can move them to the another map
-                If map(GetPlayerMap(index)).Left > 0 Then
-                    NewMapX = map(map(GetPlayerMap(index)).Left).MaxX
-                    Call PlayerWarp(index, map(GetPlayerMap(index)).Left, NewMapX, GetPlayerY(index))
-                    Moved = YES
-                    ' clear their target
-                    TempPlayer(index).target = 0
-                    TempPlayer(index).targetType = TARGET_TYPE_NONE
-                    sendTarget index
-                End If
-            End If
-        Case DIR_RIGHT
-            ' Check to make sure not outside of boundries
-            If GetPlayerX(index) < map(mapNum).MaxX Then
-                ' Check to make sure that the tile is walkable
-                If Not isDirBlocked(map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index)).DirBlock, DIR_RIGHT + 1) Then
-                    If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index)).type <> TILE_TYPE_BLOCKED Then
-                        If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index)).type <> TILE_TYPE_RESOURCE Then
-                            ' Check to see if the tile is a key and if it is check if its opened
-                            If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index)).type <> TILE_TYPE_EVENT Then
-                                Call SetPlayerX(index, GetPlayerX(index) + 1)
-                                SendPlayerMove index, Movement, sendToSelf
-                                Moved = YES
-                            Else
-                                If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index)).data1 > 0 Then
-                                    If Events(map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index)).data1).WalkThrought = YES Or (Player(index).eventOpen(map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index)).data1) = YES) Then
-                                        Call SetPlayerX(index, GetPlayerX(index) + 1)
-                                        SendPlayerMove index, Movement, sendToSelf
-                                        Moved = YES
-                                    End If
-                                End If
-                            End If
-                        End If
-                    End If
-                End If
-            Else
-                ' Check to see if we can move them to the another map
-                If map(GetPlayerMap(index)).Right > 0 Then
-                    Call PlayerWarp(index, map(GetPlayerMap(index)).Right, 0, GetPlayerY(index))
-                    Moved = YES
-                    ' clear their target
-                    TempPlayer(index).target = 0
-                    TempPlayer(index).targetType = TARGET_TYPE_NONE
-                    sendTarget index
-                End If
-            End If
-    End Select
+          End If
+        End If
+      End If
     
-    With map(GetPlayerMap(index)).Tile(GetPlayerX(index), GetPlayerY(index))
-        ' Check to see if the tile is a warp tile, and if so warp them
-        If .type = TILE_TYPE_WARP Then
-            mapNum = .data1
-            x = .data2
-            y = .data3
-            Call PlayerWarp(index, mapNum, x, y)
-            Moved = YES
-        End If
-        
-        ' Check for a shop, and if so open it
-        If .type = TILE_TYPE_SHOP Then
-            x = .data1
-            If x > 0 Then ' shop exists?
-                If Len(Trim$(Shop(x).name)) > 0 Then ' name exists?
-                    SendOpenShop index, x
-                    TempPlayer(index).inShop = x ' stops movement and the like
+    Case DIR_DOWN_RIGHT
+      ' Check to make sure not outside  of boundries
+      If char.x < map(mapNum).MaxX Or char.y < map(mapNum).MaxY Then
+        ' Check to make sure that the tile is walkable
+        If Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_DOWN + 1) And Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_RIGHT + 1) Then
+          If map(char.map).Tile(char.x + 1, char.y + 1).type <> TILE_TYPE_BLOCKED Then
+            If map(char.map).Tile(char.x + 1, char.y + 1).type <> TILE_TYPE_RESOURCE Then
+              ' Check to see if the tile is a event and if it is check if its opened
+              If map(GetPlayerMap(index)).Tile(GetPlayerX(index) + 1, GetPlayerY(index) + 1).type <> TILE_TYPE_EVENT Then
+                char.x = char.x + 1
+                char.y = char.y + 1
+                Call SendPlayerMove(index, Movement, sendToSelf)
+                Moved = YES
+              Else
+                If map(char.map).Tile(char.x + 1, char.y + 1).data1 > 0 Then
+                  If Events(map(char.map).Tile(char.x + 1, char.y + 1).data1).WalkThrought = YES Or (Player(index).eventOpen(map(char.map).Tile(char.x + 1, char.y + 1).data1) = YES) Then
+                    char.x = char.x + 1
+                    char.y = char.y + 1
+                    Call SendPlayerMove(index, Movement, sendToSelf)
+                    Moved = YES
+                  End If
                 End If
+              End If
             End If
+          End If
         End If
-        
-        ' Check to see if the tile is a bank, and if so send bank
-        If .type = TILE_TYPE_BANK Then
-            SendBank index
-            TempPlayer(index).inBank = True
-            Moved = YES
-        End If
-        
-        ' Check if it's a heal tile
-        If .type = TILE_TYPE_HEAL Then
-            vitalType = .data1
-            Amount = .data2
-            If Not GetPlayerVital(index, vitalType) = GetPlayerMaxVital(index, vitalType) Then
-                If vitalType = Vitals.hp Then
-                    colour = BrightGreen
-                Else
-                    colour = BrightBlue
+      End If
+    
+    Case DIR_UP
+      ' Check to make sure not outside of boundries
+      If char.y <> 0 Then
+        ' Check to make sure that the tile is walkable
+        If Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_UP + 1) Then
+          If map(char.map).Tile(char.x, char.y - 1).type <> TILE_TYPE_BLOCKED Then
+            If map(char.map).Tile(char.x, char.y - 1).type <> TILE_TYPE_RESOURCE Then
+              ' Check to see if the tile is a event and if it is check if its opened
+              If map(char.map).Tile(char.x, char.y - 1).type <> TILE_TYPE_EVENT Then
+                char.y = char.y - 1
+                Call SendPlayerMove(index, Movement, sendToSelf)
+                Moved = YES
+              Else
+                If map(char.map).Tile(char.x, char.y - 1).data1 > 0 Then
+                  If Events(map(char.map).Tile(char.x, char.y - 1).data1).WalkThrought = YES Or (Player(index).eventOpen(map(char.map).Tile(char.x, char.y - 1).data1) = YES) Then
+                    char.y = char.y - 1
+                    Call SendPlayerMove(index, Movement, sendToSelf)
+                    Moved = YES
+                  End If
                 End If
-                SendActionMsg GetPlayerMap(index), "+" & Amount, colour, ACTIONMSG_SCROLL, GetPlayerX(index) * 32, GetPlayerY(index) * 32, 1
-                SetPlayerVital index, vitalType, GetPlayerVital(index, vitalType) + Amount
-                PlayerMsg index, "You feel rejuvinating forces flowing through your boy.", BrightGreen
-                Call SendVital(index, vitalType)
-                ' send vitals to party if in one
-                If TempPlayer(index).inParty > 0 Then SendPartyVitals TempPlayer(index).inParty, index
+              End If
             End If
-            Moved = YES
+          End If
         End If
-        
-        ' Check if it's a trap tile
-        If .type = TILE_TYPE_TRAP Then
-            Amount = .data1
-            SendActionMsg GetPlayerMap(index), "-" & Amount, BrightRed, ACTIONMSG_SCROLL, GetPlayerX(index) * 32, GetPlayerY(index) * 32, 1
-            If GetPlayerVital(index, hp) - Amount <= 0 Then
-                KillPlayer index
-                PlayerMsg index, "You're killed by a trap.", BrightRed
-            Else
-                SetPlayerVital index, hp, GetPlayerVital(index, hp) - Amount
-                PlayerMsg index, "You're injured by a trap.", BrightRed
-                Call SendVital(index, hp)
-                ' send vitals to party if in one
-                If TempPlayer(index).inParty > 0 Then SendPartyVitals TempPlayer(index).inParty, index
+      Else
+        ' Check to see if we can move them to the another map
+        If map(char.map).Up <> 0 Then
+          NewMapY = map(map(char.map).Up).MaxY
+          Call PlayerWarp(index, map(char.map).Up, char.x, NewMapY)
+          Moved = YES
+          ' clear their target
+          TempPlayer(index).target = 0
+          TempPlayer(index).targetType = TARGET_TYPE_NONE
+          Call char.sendTarget
+        End If
+      End If
+    
+    Case DIR_DOWN
+      ' Check to make sure not outside of boundries
+      If char.y < map(mapNum).MaxY Then
+        ' Check to make sure that the tile is walkable
+        If Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_DOWN + 1) Then
+          If map(char.map).Tile(char.x, char.y + 1).type <> TILE_TYPE_BLOCKED Then
+            If map(char.map).Tile(char.x, char.y + 1).type <> TILE_TYPE_RESOURCE Then
+              ' Check to see if the tile is a key and if it is check if its opened
+              If map(char.map).Tile(char.x, char.y + 1).type <> TILE_TYPE_EVENT Then
+                char.y = char.y + 1
+                Call SendPlayerMove(index, Movement, sendToSelf)
+                Moved = YES
+              Else
+                If map(char.map).Tile(char.x, char.y + 1).data1 > 0 Then
+                  If Events(map(char.map).Tile(char.x, char.y + 1).data1).WalkThrought = YES Or (Player(index).eventOpen(map(char.map).Tile(char.x, char.y + 1).data1) = YES) Then
+                    char.y = char.y + 1
+                    Call SendPlayerMove(index, Movement, sendToSelf)
+                    Moved = YES
+                  End If
+                End If
+              End If
             End If
-            Moved = YES
+          End If
         End If
-        
-                'Check to see if it's a chest
-        If .type = TILE_TYPE_CHEST Then
-            PlayerOpenChest index, .data1
+      Else
+        ' Check to see if we can move them to the another map
+        If map(char.map).Down > 0 Then
+          Call PlayerWarp(index, map(char.map).Down, char.x, 0)
+          Moved = YES
+          ' clear their target
+          TempPlayer(index).target = 0
+          TempPlayer(index).targetType = TARGET_TYPE_NONE
+          Call char.sendTarget
         End If
-        
-        ' Slide
-        If .type = TILE_TYPE_SLIDE Then
-            ForcePlayerMove index, MOVING_WALKING, .data1
-            Moved = YES
-        End If
-        
-        ' Event
-        If .type = TILE_TYPE_EVENT Then
-            If .data1 > 0 Then InitEvent index, .data1
-            Moved = YES
-        End If
-        
-        If .type = TILE_TYPE_THRESHOLD Then
-            If Player(index).threshold = 1 Then
-                Player(index).threshold = 0
-            Else
-                Player(index).threshold = 1
+      End If
+    
+    Case DIR_LEFT
+      ' Check to make sure not outside of boundries
+      If char.x > 0 Then
+        ' Check to make sure that the tile is walkable
+        If Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_LEFT + 1) Then
+          If map(char.map).Tile(char.x - 1, char.y).type <> TILE_TYPE_BLOCKED Then
+            If map(char.map).Tile(char.x - 1, char.y).type <> TILE_TYPE_RESOURCE Then
+              ' Check to see if the tile is a key and if it is check if its opened
+              If map(char.map).Tile(char.x - 1, char.y).type <> TILE_TYPE_EVENT Then
+                char.x = char.x - 1
+                Call SendPlayerMove(index, Movement, sendToSelf)
+                Moved = YES
+              Else
+                If map(char.map).Tile(char.x - 1, char.y).data1 > 0 Then
+                  If Events(map(char.map).Tile(char.x - 1, char.y).data1).WalkThrought = YES Or (Player(index).eventOpen(map(char.map).Tile(char.x - 1, char.y).data1) = YES) Then
+                    char.x = char.x - 1
+                    Call SendPlayerMove(index, Movement, sendToSelf)
+                    Moved = YES
+                  End If
+                End If
+              End If
             End If
-            ForcePlayerMove index, MOVING_WALKING, GetPlayerDir(index)
-            SendThreshold index
-            Moved = YES
+          End If
         End If
-    End With
-
-    ' They tried to hack
-    If Moved = NO Then
-        PlayerWarp index, GetPlayerMap(index), GetPlayerX(index), GetPlayerY(index)
+      Else
+        ' Check to see if we can move them to the another map
+        If map(char.map).Left > 0 Then
+          NewMapX = map(map(char.map).Left).MaxX
+          Call PlayerWarp(index, map(char.map).Left, NewMapX, char.y)
+          Moved = YES
+          ' clear their target
+          TempPlayer(index).target = 0
+          TempPlayer(index).targetType = TARGET_TYPE_NONE
+          Call char.sendTarget
+        End If
+      End If
+    
+    Case DIR_RIGHT
+      ' Check to make sure not outside of boundries
+      If char.x < map(mapNum).MaxX Then
+        ' Check to make sure that the tile is walkable
+        If Not isDirBlocked(map(char.map).Tile(char.x, char.y).DirBlock, DIR_RIGHT + 1) Then
+          If map(char.map).Tile(char.x + 1, char.y).type <> TILE_TYPE_BLOCKED Then
+            If map(char.map).Tile(char.x + 1, char.y).type <> TILE_TYPE_RESOURCE Then
+              ' Check to see if the tile is a key and if it is check if its opened
+              If map(char.map).Tile(char.x + 1, char.y).type <> TILE_TYPE_EVENT Then
+                char.x = char.x + 1
+                Call SendPlayerMove(index, Movement, sendToSelf)
+                Moved = YES
+              Else
+                If map(char.map).Tile(char.x + 1, char.y).data1 > 0 Then
+                  If Events(map(char.map).Tile(char.x + 1, char.y).data1).WalkThrought = YES Or (Player(index).eventOpen(map(char.map).Tile(char.x + 1, char.y).data1) = YES) Then
+                    char.x = char.x + 1
+                    Call SendPlayerMove(index, Movement, sendToSelf)
+                    Moved = YES
+                  End If
+                End If
+              End If
+            End If
+          End If
+        End If
+      Else
+        ' Check to see if we can move them to the another map
+        If map(char.map).Right > 0 Then
+          Call PlayerWarp(index, map(char.map).Right, 0, char.y)
+          Moved = YES
+          ' clear their target
+          TempPlayer(index).target = 0
+          TempPlayer(index).targetType = TARGET_TYPE_NONE
+          Call char.sendTarget
+        End If
+      End If
+  End Select
+  
+  With map(char.map).Tile(char.x, char.y)
+    ' Check to see if the tile is a warp tile, and if so warp them
+    If .type = TILE_TYPE_WARP Then
+      mapNum = .data1
+      x = .data2
+      y = .data3
+      Call PlayerWarp(index, mapNum, x, y)
+      Moved = YES
     End If
+    
+    ' Check for a shop, and if so open it
+    If .type = TILE_TYPE_SHOP Then
+      x = .data1
+      If x > 0 Then ' shop exists?
+        If Len(Shop(x).name) > 0 Then ' name exists?
+          Call SendOpenShop(index, x)
+          TempPlayer(index).inShop = x ' stops movement and the like
+        End If
+      End If
+    End If
+    
+    ' Check to see if the tile is a bank, and if so send bank
+    If .type = TILE_TYPE_BANK Then
+      Call SendBank(index)
+      TempPlayer(index).inBank = True
+      Moved = YES
+    End If
+    
+    ' Check if it's a heal tile
+    If .type = TILE_TYPE_HEAL Then
+      vitalType = .data1
+      Amount = .data2
+      
+      If vitalType = Vitals.hp Then
+        If GetPlayerVital(index, vitalType) = GetPlayerMaxVital(index, vitalType) Then
+          char.hp = char.hp + Amount
+          
+          Call SendActionMsg(char.map, "+" & Amount, BrightGreen, ACTIONMSG_SCROLL, char.x * 32, char.y * 32, 1)
+          Call char.sendMessage("You feel rejuvinating forces flowing through your body.", BrightGreen)
+          Call char.sendHP
+          
+          ' send vitals to party if in one
+          If TempPlayer(index).inParty <> 0 Then Call SendPartyVitals(TempPlayer(index).inParty, index)
+        Else
+          char.mp = char.mp + Amount
+          
+          Call SendActionMsg(char.map, "+" & Amount, BrightBlue, ACTIONMSG_SCROLL, char.x * 32, char.y * 32, 1)
+          Call char.sendMessage("You feel rejuvinating forces flowing through your body.", BrightBlue)
+          Call char.sendHP
+          
+          ' send vitals to party if in one
+          If TempPlayer(index).inParty <> 0 Then Call SendPartyVitals(TempPlayer(index).inParty, index)
+        End If
+      End If
+      
+      Moved = YES
+    End If
+    
+    ' Check if it's a trap tile
+    If .type = TILE_TYPE_TRAP Then
+      Amount = .data1
+      Call SendActionMsg(char.map, "-" & Amount, BrightRed, ACTIONMSG_SCROLL, char.x * 32, char.y * 32, 1)
+      
+      If char.hp - Amount <= 0 Then
+        Call KillPlayer(index)
+        Call char.sendMessage("You're killed by a trap.", BrightRed)
+      Else
+        char.hp = char.hp - Amount
+        Call char.sendMessage("You're injured by a trap.", BrightRed)
+        Call char.sendHP
+        
+        ' send vitals to party if in one
+        If TempPlayer(index).inParty > 0 Then Call SendPartyVitals(TempPlayer(index).inParty, index)
+      End If
+      
+      Moved = YES
+    End If
+    
+    'Check to see if it's a chest
+    If .type = TILE_TYPE_CHEST Then
+      Call PlayerOpenChest(index, .data1)
+    End If
+    
+    ' Slide
+    If .type = TILE_TYPE_SLIDE Then
+      Call ForcePlayerMove(index, MOVING_WALKING, .data1)
+      Moved = YES
+    End If
+    
+    ' Event
+    If .type = TILE_TYPE_EVENT Then
+      If .data1 > 0 Then Call InitEvent(index, .data1)
+      Moved = YES
+    End If
+    
+    If .type = TILE_TYPE_THRESHOLD Then
+      If Player(index).threshold = 1 Then
+        Player(index).threshold = 0
+      Else
+        Player(index).threshold = 1
+      End If
+      
+      Call ForcePlayerMove(index, MOVING_WALKING, char.dir)
+      Call SendThreshold(index)
+      Moved = YES
+    End If
+  End With
+  
+  ' They tried to hack
+  If Moved = NO Then
+    Call PlayerWarp(index, char.map, char.x, char.y)
+  End If
 End Sub
 
 Sub ForcePlayerMove(ByVal index As Long, ByVal Movement As Long, ByVal Direction As Long)
@@ -956,8 +974,8 @@ Sub PlayerMapGetItem(ByVal index As Long)
                             Call SetPlayerInvItemNum(index, n, map(mapNum).mapItem(i).num)
     
                             If item(GetPlayerInvItemNum(index, n)).type = ITEM_TYPE_CURRENCY Or item(GetPlayerInvItemNum(index, n)).stackable = YES Then
-                                Call SetPlayerInvItemValue(index, n, GetPlayerInvItemValue(index, n) + map(mapNum).mapItem(i).Value)
-                                msg = map(mapNum).mapItem(i).Value & " " & Trim$(item(GetPlayerInvItemNum(index, n)).name)
+                                Call SetPlayerInvItemValue(index, n, GetPlayerInvItemValue(index, n) + map(mapNum).mapItem(i).value)
+                                msg = map(mapNum).mapItem(i).value & " " & Trim$(item(GetPlayerInvItemNum(index, n)).name)
                             Else
                                 Call SetPlayerInvItemValue(index, n, 0)
                                 msg = Trim$(item(GetPlayerInvItemNum(index, n)).name)
@@ -978,7 +996,7 @@ Sub PlayerMapGetItem(ByVal index As Long)
                             Call SendInventoryUpdate(index, n)
                             Call SpawnItemSlot(i, 0, 0, GetPlayerMap(index), 0, 0)
                             SendActionMsg GetPlayerMap(index), msg, White, 1, (GetPlayerX(index) * 32), (GetPlayerY(index) * 32)
-                            Call CheckTasks(index, QUEST_TYPE_GOGATHER, GetItemNum(Trim$(item(GetPlayerInvItemNum(index, n)).name)))
+                            Call checkTasks(index, QUEST_TYPE_GOGATHER, GetItemNum(Trim$(item(GetPlayerInvItemNum(index, n)).name)))
                             Exit For
                         Else
                             Call PlayerMsg(index, "Your inventory is full.", BrightRed)
@@ -1056,22 +1074,22 @@ Sub PlayerMapDropItem(ByVal index As Long, ByVal invNum As Long, ByVal Amount As
 
                     ' Check if its more then they have and if so drop it all
                     If Amount >= GetPlayerInvItemValue(index, invNum) Then
-                        map(GetPlayerMap(index)).mapItem(i).Value = GetPlayerInvItemValue(index, invNum)
-                        Call MapMsg(GetPlayerMap(index), GetPlayerName(index) & " drops " & GetPlayerInvItemValue(index, invNum) & " " & Trim$(item(GetPlayerInvItemNum(index, invNum)).name) & ".", Yellow)
+                        map(GetPlayerMap(index)).mapItem(i).value = GetPlayerInvItemValue(index, invNum)
+                        Call mapMsg(GetPlayerMap(index), GetPlayerName(index) & " drops " & GetPlayerInvItemValue(index, invNum) & " " & Trim$(item(GetPlayerInvItemNum(index, invNum)).name) & ".", Yellow)
                         Call SetPlayerInvItemNum(index, invNum, 0)
                         Call SetPlayerInvItemValue(index, invNum, 0)
                         Player(index).inv(invNum).bound = 0
                     Else
-                        map(GetPlayerMap(index)).mapItem(i).Value = Amount
-                        Call MapMsg(GetPlayerMap(index), GetPlayerName(index) & " drops " & Amount & " " & Trim$(item(GetPlayerInvItemNum(index, invNum)).name) & ".", Yellow)
+                        map(GetPlayerMap(index)).mapItem(i).value = Amount
+                        Call mapMsg(GetPlayerMap(index), GetPlayerName(index) & " drops " & Amount & " " & Trim$(item(GetPlayerInvItemNum(index, invNum)).name) & ".", Yellow)
                         Call SetPlayerInvItemValue(index, invNum, GetPlayerInvItemValue(index, invNum) - Amount)
                     End If
 
                 Else
                     ' Its not a currency object so this is easy
-                    map(GetPlayerMap(index)).mapItem(i).Value = 0
+                    map(GetPlayerMap(index)).mapItem(i).value = 0
                     ' send message
-                    Call MapMsg(GetPlayerMap(index), GetPlayerName(index) & " drops " & CheckGrammar(Trim$(item(GetPlayerInvItemNum(index, invNum)).name)) & ".", Yellow)
+                    Call mapMsg(GetPlayerMap(index), GetPlayerName(index) & " drops " & CheckGrammar(Trim$(item(GetPlayerInvItemNum(index, invNum)).name)) & ".", Yellow)
                     Call SetPlayerInvItemNum(index, invNum, 0)
                     Call SetPlayerInvItemValue(index, invNum, 0)
                     Player(index).inv(invNum).bound = 0
@@ -1110,10 +1128,10 @@ Sub CheckPlayerLevelUp(ByVal index As Long)
     If level_count > 0 Then
         If level_count = 1 Then
             'singular
-            GlobalMsg GetPlayerName(index) & " has gained " & level_count & " level!", Brown
+            globalMsg GetPlayerName(index) & " has gained " & level_count & " level!", Brown
         Else
             'plural
-            GlobalMsg GetPlayerName(index) & " has gained " & level_count & " levels!", Brown
+            globalMsg GetPlayerName(index) & " has gained " & level_count & " levels!", Brown
         End If
         SendEXP index
         SendPlayerData index
@@ -1141,10 +1159,10 @@ Sub CheckPlayerSkillLevelUp(ByVal index As Long, ByVal skill As Skills)
     If level_count > 0 Then
         If level_count = 1 Then
             'singular
-            GlobalMsg GetPlayerName(index) & " has gained " & level_count & " skill level!", Brown
+            globalMsg GetPlayerName(index) & " has gained " & level_count & " skill level!", Brown
         Else
             'plural
-            GlobalMsg GetPlayerName(index) & " has gained " & level_count & " skill levels!", Brown
+            globalMsg GetPlayerName(index) & " has gained " & level_count & " skill levels!", Brown
         End If
         SendEXP index
         SendPlayerData index
@@ -1255,11 +1273,11 @@ Sub SetPlayerInvItemNum(ByVal index As Long, ByVal invSlot As Long, ByVal itemnu
 End Sub
 
 Function GetPlayerInvItemValue(ByVal index As Long, ByVal invSlot As Long) As Long
-    GetPlayerInvItemValue = Player(index).inv(invSlot).Value
+    GetPlayerInvItemValue = Player(index).inv(invSlot).value
 End Function
 
 Sub SetPlayerInvItemValue(ByVal index As Long, ByVal invSlot As Long, ByVal ItemValue As Long)
-    Player(index).inv(invSlot).Value = ItemValue
+    Player(index).inv(invSlot).value = ItemValue
 End Sub
 
 Function GetPlayerSpell(ByVal index As Long, ByVal spellslot As Long) As Long
@@ -1331,9 +1349,9 @@ Sub OnDeath(ByVal index As Long)
     If TempPlayer(index).InTrade > 0 Then
         For i = 1 To MAX_INV
         TempPlayer(index).TradeOffer(i).num = 0
-        TempPlayer(index).TradeOffer(i).Value = 0
+        TempPlayer(index).TradeOffer(i).value = 0
         TempPlayer(TempPlayer(index).InTrade).TradeOffer(i).num = 0
-        TempPlayer(TempPlayer(index).InTrade).TradeOffer(i).Value = 0
+        TempPlayer(TempPlayer(index).InTrade).TradeOffer(i).value = 0
         Next
         
         TempPlayer(index).InTrade = 0
@@ -1421,7 +1439,7 @@ Sub CheckResource(ByVal index As Long, ByVal x As Long, ByVal y As Long)
                         SendAnimation GetPlayerMap(index), Resource(Resource_index).animation, rX, rY
                         ' send the sound
                         SendMapSound index, rX, rY, SoundEntity.seResource, Resource_index
-                        Call CheckTasks(index, QUEST_TYPE_GOTRAIN, Resource_index)
+                        Call checkTasks(index, QUEST_TYPE_GOTRAIN, Resource_index)
                         ' check if damage is more than health
                         If damage > 0 Then
                             ' cut it down!
@@ -1497,11 +1515,11 @@ Sub SetPlayerBankItemNum(ByVal index As Long, ByVal BankSlot As Long, ByVal item
 End Sub
 
 Function GetPlayerBankItemValue(ByVal index As Long, ByVal BankSlot As Long) As Long
-    GetPlayerBankItemValue = Bank(index).item(BankSlot).Value
+    GetPlayerBankItemValue = Bank(index).item(BankSlot).value
 End Function
 
 Sub SetPlayerBankItemValue(ByVal index As Long, ByVal BankSlot As Long, ByVal ItemValue As Long)
-    Bank(index).item(BankSlot).Value = ItemValue
+    Bank(index).item(BankSlot).value = ItemValue
 End Sub
 
 Sub GiveBankItem(ByVal index As Long, ByVal invSlot As Long, ByVal Amount As Long)
@@ -2180,8 +2198,8 @@ Dim x As Long, y As Long, i As Long
                 Case Evt_AddText
                     Select Case .data(2)
                         Case 0: PlayerMsg index, Trim$(.text(1)), .data(1)
-                        Case 1: MapMsg GetPlayerMap(index), Trim$(.text(1)), .data(1)
-                        Case 2: GlobalMsg Trim$(.text(1)), .data(1)
+                        Case 1: mapMsg GetPlayerMap(index), Trim$(.text(1)), .data(1)
+                        Case 2: globalMsg Trim$(.text(1)), .data(1)
                     End Select
                 Case Evt_Chatbubble
                     Select Case .data(1)
@@ -2383,10 +2401,10 @@ Public Sub ApplyBuff(ByVal index As Long, ByVal buffType As Long, ByVal duration
     Dim i As Long
     
     For i = 1 To 10
-        If TempPlayer(index).Buffs(i) = 0 Then
-            TempPlayer(index).Buffs(i) = buffType
-            TempPlayer(index).BuffTimer(i) = duration
-            TempPlayer(index).BuffValue(i) = Amount
+        If TempPlayer(index).buffs(i) = 0 Then
+            TempPlayer(index).buffs(i) = buffType
+            TempPlayer(index).buffTimer(i) = duration
+            TempPlayer(index).buffValue(i) = Amount
             Exit For
         End If
     Next

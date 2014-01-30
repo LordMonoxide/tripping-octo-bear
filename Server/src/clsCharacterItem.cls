@@ -14,3 +14,19 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private mData As CharacterItemStruct
+
+Public Property Get id() As Long
+  id = mData.id
+End Property
+
+Public Property Get item() As clsItem
+  Set item = mData.item
+End Property
+
+Public Property Get value() As Long
+  value = mData.value
+End Property
+
+Public Property Get bound() As Boolean
+  bound = mData.bound
+End Property

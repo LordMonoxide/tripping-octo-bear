@@ -1,7 +1,7 @@
 Type=Exe
 Reference=*\G{E1211242-8E94-11D1-8808-00C04FC2C603}#1.0#0#..\..\..\..\..\..\Windows\SysWow64\dx8vb.dll#DirectX 8 for Visual Basic Type Library
-Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\..\..\Windows\SysWOW64\stdole2.tlb#OLE Automation
 Reference=*\G{248DD890-BB45-11CF-9ABC-0080C7E7B78D}#1.0#0#..\..\..\..\..\..\Windows\SysWow64\MSWINSCK.OCX#Microsoft Winsock Control 6.0 (SP6)
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\..\..\Windows\SysWOW64\stdole2.tlb#OLE Automation
 Object={3B7C8863-D78F-101B-B9B5-04021C009402}#1.2#0; Richtx32.ocx
 Object={BDC217C8-ED16-11CD-956C-0000C04E4C0A}#1.1#0; TABCTL32.OCX
 Form=src\frmMain.frm
@@ -47,6 +47,8 @@ Class=clsStringBuilder; src\clsStringBuilder.cls
 Class=clsPair; src\clsPair.cls
 Class=clsHTTPCookie; src\clsHTTPCookie.cls
 Class=clsJSONPair; src\clsJSONPair.cls
+Class=clsCharacter; src\clsCharacter.cls
+Class=clsCharacters; src\clsCharacters.cls
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""

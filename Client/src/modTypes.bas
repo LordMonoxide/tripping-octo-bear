@@ -4,7 +4,7 @@ Option Explicit
 ' Public data structures
 Public map As MapRec
 Public Bank As BankRec
-Public Player(1 To MAX_PLAYERS) As PlayerRec
+Public characters As clsCharacters
 Public TempPlayer(1 To MAX_PLAYERS) As TempPlayerRec
 Public item(1 To MAX_ITEMS) As ItemRec
 Public NPC(1 To MAX_NPCS) As NpcRec
@@ -129,39 +129,53 @@ Private Type SpellAnim
     FramePointer As Long
 End Type
 
-Private Type PlayerRec
-    ' General
-    name As String
-    sex As Byte
-    Clothes As Long
-    Gear As Long
-    Hair As Long
-    Headgear As Long
-    Level As Byte
-    EXP As Long
-    Access As Byte
-    PK As Byte
-    ' Vitals
-    Vital(1 To Vitals.Vital_Count - 1) As Long
-    MaxVital(1 To Vitals.Vital_Count - 1) As Long
-    ' Stats
-    stat(1 To Stats.Stat_Count - 1) As Byte
-    POINTS As Long
-    ' Worn equipment
-    Equipment(1 To Equipment.Equipment_Count - 1) As Long
-    ' Position
-    map As Long
-    x As Byte
-    y As Byte
-    dir As Byte
-    EventOpen(1 To MAX_EVENTS) As Byte
-    Threshold As Byte
-    Skill(1 To Skills.Skill_Count - 1) As Byte
-    SkillExp(1 To Skills.Skill_Count - 1) As Long
-    Donator As Byte
-    EventGraphic(1 To MAX_EVENTS) As Byte
-    ChestOpen(1 To MAX_CHESTS) As Boolean 'Chests
-    End Type
+Public Type CharacterStruct
+  id As Long
+  
+  access As Byte
+  donator As Byte
+  
+  name As String
+  sex As Byte
+  
+  lvl As Byte
+  exp As Long
+  pts As Long
+  
+  hp As Long
+  mp As Long
+  
+  str As Long
+  end As Long
+  int As Long
+  agl As Long
+  wil As Long
+  
+  weapon As Long
+  armour As Long
+  shield As Long
+  aura As Long
+  
+  clothes As Long
+  gear As Long
+  hair As Long
+  head As Long
+  
+  map As Long
+  x As Byte
+  y As Byte
+  dir As Byte
+  
+  threshold As Byte
+  
+  skill(1 To Skills.Skill_Count - 1) As Byte
+  skillExp(1 To Skills.Skill_Count - 1) As Long
+  
+  eventOpen(1 To MAX_EVENTS) As Byte
+  eventGraphic(1 To MAX_EVENTS) As Byte
+  
+  chestOpen(1 To MAX_CHESTS) As Boolean
+End Type
 
 Private Type TempPlayerRec
     XOffset As Integer
@@ -258,7 +272,7 @@ Private Type ItemRec
     AddHP As Long
     AddMP As Long
     AddEXP As Long
-    Aura As Long
+    aura As Long
     Projectile As Long
     Range As Byte
     Rotation As Integer
@@ -294,8 +308,8 @@ Private Type NpcRec
     Behaviour As Byte
     Range As Byte
     stat(1 To Stats.Stat_Count - 1) As Byte
-    HP As Long
-    EXP As Long
+    hp As Long
+    exp As Long
     EXP_max As Long
     Animation As Long
     Damage As Long
@@ -408,7 +422,7 @@ Private Type ResourceRec
     Health As Long
     RespawnTime As Long
     Animation As Long
-    EXP As Long
+    exp As Long
     Chance As Byte
     Skill_Req(1 To Skills.Skill_Count - 1) As Byte
 End Type

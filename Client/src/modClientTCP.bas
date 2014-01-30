@@ -1,28 +1,26 @@
 Attribute VB_Name = "modClientTCP"
 Option Explicit
 
-Public Socket As MSWinsockLib.Winsock
-
 Private PlayerBuffer As clsBuffer
 
 Sub TcpInit()
-    Set Socket = New MSWinsockLib.Winsock
+    Set frmMain.Socket = New MSWinsockLib.Winsock
     Set PlayerBuffer = New clsBuffer
 
     ' connect
-    Socket.RemoteHost = Options.IP
-    Socket.RemotePort = Options.port
+    frmMain.Socket.RemoteHost = Options.IP
+    frmMain.Socket.RemotePort = Options.port
 End Sub
 
 Sub DestroyTCP()
-    Socket.Close
+    frmMain.Socket.Close
 End Sub
 
 Public Sub IncomingData(ByVal DataLength As Long)
 Dim buffer() As Byte
 Dim pLength As Long
 
-    Socket.GetData buffer, vbUnicode, DataLength
+    frmMain.Socket.GetData buffer, vbUnicode, DataLength
     
     PlayerBuffer.WriteBytes buffer()
     
@@ -48,12 +46,12 @@ Dim wait As Long
     Exit Function
   End If
   
-  wait = timeGetTime
-  Call Socket.Close
-  Call Socket.Connect
+  wait = timeGetTime + 3000
+  Call frmMain.Socket.Close
+  Call frmMain.Socket.Connect
   
   ' Wait until connected or 3 seconds have passed and report the server being down
-  Do While IsConnected = False And (timeGetTime <= wait + 3000)
+  Do While IsConnected = False And timeGetTime <= wait
     DoEvents
   Loop
   
@@ -61,7 +59,7 @@ Dim wait As Long
 End Function
 
 Function IsConnected() As Boolean
-    If Socket.state = sckConnected Then
+    If frmMain.Socket.state = sckConnected Then
         IsConnected = True
     End If
 End Function
@@ -81,18 +79,18 @@ Dim buffer As clsBuffer
                 
         buffer.WriteLong (UBound(data) - LBound(data)) + 1
         buffer.WriteBytes data()
-        Socket.SendData buffer.ToArray()
+        frmMain.Socket.SendData buffer.ToArray()
     End If
 End Sub
 
 Public Sub sendLogin(ByVal userID As Long, ByVal charID As Long)
 Dim buffer As clsBuffer
 
-    Set buffer = New clsBuffer
-    Call buffer.WriteLong(CLogin)
-    Call buffer.WriteLong(userID)
-    Call buffer.WriteLong(charID)
-    Call SendData(buffer.ToArray)
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(CLogin)
+  Call buffer.WriteLong(userID)
+  Call buffer.WriteLong(charID)
+  Call SendData(buffer.ToArray)
 End Sub
 
 Public Sub SayMsg(ByVal Text As String)
@@ -267,13 +265,13 @@ Dim buffer As clsBuffer
     Set buffer = Nothing
 End Sub
 
-Public Sub SendSetAccess(ByVal name As String, ByVal Access As Byte)
+Public Sub SendSetAccess(ByVal name As String, ByVal access As Byte)
 Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CSetAccess
     buffer.WriteString name
-    buffer.WriteLong Access
+    buffer.WriteLong access
     SendData buffer.ToArray()
     Set buffer = Nothing
 End Sub

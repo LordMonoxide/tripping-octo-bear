@@ -99,9 +99,9 @@ Public Sub Main()
     Call UpdateCaption
     time2 = timeGetTime
     frmServer.txtMOTD.text = Trim$(Options.MOTD)
-    frmServer.chkTray.Value = Options.Tray
-    frmServer.chkHighindexing.Value = Options.HighIndexing
-    frmServer.chkServerLog.Value = Options.Logs
+    frmServer.chkTray.value = Options.Tray
+    frmServer.chkHighindexing.value = Options.HighIndexing
+    frmServer.chkServerLog.value = Options.Logs
     
     Call SetStatus("Initialization complete. Server loaded in " & time2 - time1 & "ms.")
     
@@ -124,8 +124,8 @@ Public Sub DestroyServer()
     Call SaveAllPlayersOnline
 End Sub
 
-Public Sub SetStatus(ByVal Status As String)
-    Call TextAdd(Status)
+Public Sub SetStatus(ByVal status As String)
+    Call TextAdd(status)
     DoEvents
 End Sub
 
@@ -160,7 +160,7 @@ Private Sub LoadGameData()
   Call LoadChests
 End Sub
 
-Public Sub TextAdd(Msg As String)
+Public Sub TextAdd(msg As String)
     NumLines = NumLines + 1
 
     If NumLines >= MAX_LINES Then
@@ -168,7 +168,7 @@ Public Sub TextAdd(Msg As String)
         NumLines = 0
     End If
 
-    frmServer.txtText.text = frmServer.txtText.text & vbNewLine & Msg
+    frmServer.txtText.text = frmServer.txtText.text & vbNewLine & msg
     frmServer.txtText.SelStart = Len(frmServer.txtText.text)
 End Sub
 

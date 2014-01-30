@@ -49,8 +49,8 @@ Public Function GetVar(File As String, Header As String, Var As String) As Strin
 End Function
 
 ' writes a variable to a text file
-Public Sub PutVar(File As String, Header As String, Var As String, Value As String)
-    Call WritePrivateProfileString$(Header, Var, Value, File)
+Public Sub PutVar(File As String, Header As String, Var As String, value As String)
+    Call WritePrivateProfileString$(Header, Var, value, File)
 End Sub
 
 Public Function FileExist(ByVal filename As String, Optional RAW As Boolean = False) As Boolean
@@ -86,9 +86,10 @@ Public Sub LoadOptions()
 End Sub
 
 Sub SaveAllPlayersOnline()
-  Dim u As clsUser
-  For Each u In users
-    Call u.save
+Dim c As clsCharacter
+
+  For Each c In characters
+    Call c.save
   Next
 End Sub
 
@@ -538,7 +539,7 @@ Dim strload As String
 Dim i As Long
 Dim TotalCount As Long
 
-    frmServer.lstAccounts.clear
+    frmServer.lstAccounts.Clear
     strload = dir(App.Path & "\data\accounts\" & "*.bin")
     i = 1
     
@@ -550,7 +551,7 @@ Dim TotalCount As Long
         
     TotalCount = (i - 1)
     frmServer.lblAcctCount.Caption = TotalCount
-    frmServer.chkDonator.Value = 0
+    frmServer.chkDonator.value = 0
 End Sub
 
 Public Sub LoadSwearFilter()

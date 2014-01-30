@@ -14,15 +14,15 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private mData As UserStruct
-Private mCharacter As clsCharacter
+Private mChar As clsCharacter
 Private mItem(1 To MAX_BANK) As clsUserItem
 
 Public Property Get id() As Long
   id = mData.id
 End Property
 
-Public Property Get character() As clsCharacter
-  Set character = mCharacter
+Public Property Get char() As clsCharacter
+  Set char = mChar
 End Property
 
 Public Property Get email() As String
@@ -53,11 +53,10 @@ Public Sub load(ByVal id As Long)
 Dim r As ADODB.Recordset
 
   Set r = SQL.DoSelect("users", , "id=" & id)
-  
-  mData.id = r.fields("id")
-  mData.email = r.fields("email")
-  mData.nameFirst = r.fields("name_first")
-  mData.nameLast = r.fields("name_last")
+  mData.id = r.fields!id
+  mData.email = r.fields!email
+  mData.nameFirst = r.fields!name_first
+  mData.nameLast = r.fields!name_last
 End Sub
 
 Public Sub save()
@@ -67,21 +66,21 @@ End Sub
 Public Sub mute()
     mData.muted = 0
     Call save
-    Call PlayerMsg(mData.index, "You have been unmuted and can now talk in global.", BrightGreen)
-    Call TextAdd(mData.username & " has been unmuted.")
+    Call mChar.sendMessage("You have been unmuted and can now talk in global.", BrightGreen)
+    Call TextAdd(mData.email & " has been unmuted.")
 End Sub
 
 Public Sub unmute()
     mData.muted = 1
     Call save
-    Call PlayerMsg(mData.index, "You have been muted and can no longer talk in global.", BrightRed)
-    Call TextAdd(mData.username & " has been muted.")
+    Call mChar.sendMessage("You have been muted and can no longer talk in global.", BrightRed)
+    Call TextAdd(mData.email & " has been muted.")
 End Sub
 
 Public Sub ban()
     mData.banned = 1
     Call save
-    Call GlobalMsg(mData.username & " has been banned from " & Options.Game_Name & ".", White)
-    Call AddLog(mData.username & " has been banned.", ADMIN_LOG)
-    Call AlertMsg(mData.index, "You have been banned.")
+    Call globalMsg(mData.email & " has been banned from " & Options.Game_Name & ".", White)
+    Call AddLog(mData.email & " has been banned.", ADMIN_LOG)
+    Call mChar.kick("You have been banned.")
 End Sub

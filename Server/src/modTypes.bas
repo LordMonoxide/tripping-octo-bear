@@ -48,7 +48,7 @@ End Type
 
 Public Type PartyRec
     Leader As Long
-    Member(1 To MAX_PARTY_MEMBERS) As Long
+    Member(1 To MAX_PARTY_MEMBERS) As clsCharacter
     MemberCount As Long
 End Type
 
@@ -80,7 +80,7 @@ Public Type UserItemStruct
   id As Long
   
   item As clsItem
-  Value As Long
+  value As Long
   bound As Boolean
 End Type
 
@@ -140,7 +140,7 @@ Public Type CharacterItemStruct
   id As Long
   
   item As clsItem
-  Value As Long
+  value As Long
   bound As Boolean
 End Type
 
@@ -177,9 +177,6 @@ Public Type TempPlayerRec
     ' dot/hot
     DoT(1 To MAX_DOTS) As DoTRec
     HoT(1 To MAX_DOTS) As DoTRec
-    ' party
-    inParty As Long
-    partyInvite As Long
     e_mapNum As Long
     e_mapNpcNum As Long
     AFK As Byte
@@ -189,9 +186,6 @@ Public Type TempPlayerRec
     tmpGuildInviteId As Long
     GoToX As Long
     GoToY As Long
-    Buffs(1 To 10) As Long
-    BuffTimer(1 To 10) As Long
-    BuffValue(1 To 10) As Long
 End Type
 
 Private Type TileDataRec
@@ -213,7 +207,7 @@ End Type
 
 Private Type MapItemRec
     num As Long
-    Value As Long
+    value As Long
     x As Byte
     y As Byte
     ' ownership + despawn
@@ -245,7 +239,7 @@ Private Type MapNPCStruct
     DoT(1 To MAX_DOTS) As DoTRec
     HoT(1 To MAX_DOTS) As DoTRec
     ' spell casting
-    '''spellBuffer As SpellBufferRec
+    spellBuffer As SpellBufferStruct
     SpellCD(1 To MAX_NPC_SPELLS) As Long
     ' Event
     e_lastDir As Byte
@@ -349,7 +343,7 @@ Public Type NPCItemStruct
   id As Long
   
   item As clsItem
-  Value As Long
+  value As Long
   chance As Byte
 End Type
 

@@ -135,45 +135,45 @@ End Sub
 Private Sub handleLogin(ByVal socket As clsSocket, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim char As clsCharacter
 Dim r As ADODB.Recordset
-Dim uID As Long
+Dim uId As Long
 Dim cID As Long
 
   If isShuttingDown Then
-    Call AlertMsg(socket, "The server is restarting or shutting down.  Please try again soon.")
+    Call socket.kick("The server is restarting or shutting down.  Please try again soon.")
     Exit Sub
   End If
   
-  uID = buffer.ReadLong
+  uId = buffer.ReadLong
   cID = buffer.ReadLong
   
-  Set r = SQL.DoSelect("users", "logged_in", "id=" & uID)
+  Set r = SQL.DoSelect("users", "logged_in", "id=" & uId)
   
   If r.fields!logged_in = False Then
-    Call AlertMsg(socket, "not logged in")
+    Call socket.kick("not logged in")
     Exit Sub
   End If
   
   Set r = SQL.DoSelect("characters", "user_id,auth_id", "id=" & cID)
   
-  If r.fields!user_id <> uID Then
-    Call AlertMsg(socket, "wrong account")
+  If r.fields!user_id <> uId Then
+    Call socket.kick("wrong account")
     Exit Sub
   End If
   
   If r.fields!auth_id = 0 Then
-    Call AlertMsg(socket, "not authd")
+    Call socket.kick("not authd")
     Exit Sub
   End If
   
   Set r = SQL.DoSelect("user_ips", "ip,authorised", "id=" & r.fields!auth_id)
   
   If r.fields!IP <> ip2long(socket.IP) Then
-    Call AlertMsg(socket, "wrong ip")
+    Call socket.kick("wrong ip")
     Exit Sub
   End If
   
   If r.fields!authorised = False Then
-    Call AlertMsg(socket, "needs security")
+    Call socket.kick("needs security")
     Exit Sub
   End If
   
@@ -208,7 +208,7 @@ Dim msg As String
   msg = buffer.ReadString
   Call sanitise(msg)
   Call AddLog("Map #" & char.map & ": " & char.name & " " & msg, PLAYER_LOG)
-  Call MapMsg(char.map, char.name & " " & Right$(msg, Len(msg) - 1), EmoteColor)
+  Call mapMsg(char.map, char.name & " " & Right$(msg, Len(msg) - 1), EmoteColor)
 End Sub
 
 Private Sub HandleBroadcastMsg(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -914,7 +914,7 @@ Sub HandleKickPlayer(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr 
     If n <> index Then
         If n > 0 Then
             If GetPlayerAccess(n) < GetPlayerAccess(index) Then
-                Call GlobalMsg(GetPlayerName(n) & " has been kicked from " & Options.Game_Name & " by " & GetPlayerName(index) & "!", White)
+                Call globalMsg(GetPlayerName(n) & " has been kicked from " & Options.Game_Name & " by " & GetPlayerName(index) & "!", White)
                 Call AddLog(GetPlayerName(index) & " has kicked " & GetPlayerName(n) & ".", ADMIN_LOG)
                 Call AlertMsg(n, "You have been kicked by " & GetPlayerName(index) & "!")
             Else
@@ -1367,7 +1367,7 @@ Sub HandleSetAccess(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr A
             End If
 
             If GetPlayerAccess(n) <= 0 Then
-                Call GlobalMsg(GetPlayerName(n) & " has been blessed with administrative access.", BrightBlue)
+                Call globalMsg(GetPlayerName(n) & " has been blessed with administrative access.", BrightBlue)
             End If
 
             Call SetPlayerAccess(n, i)
@@ -1386,7 +1386,7 @@ End Sub
 ' :: Who online packet ::
 ' :::::::::::::::::::::::
 Sub HandleWhosOnline(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Call SendWhosOnline(index)
+    Call sendWhosOnline(index)
 End Sub
 
 ' :::::::::::::::::::::
@@ -1406,7 +1406,7 @@ Sub HandleSetMotd(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As 
     Options.MOTD = Trim$(buffer.ReadString) 'Parse(1))
     SaveOptions
     Set buffer = Nothing
-    Call GlobalMsg("MOTD changed to: " & Options.MOTD, BrightCyan)
+    Call globalMsg("MOTD changed to: " & Options.MOTD, BrightCyan)
     Call AddLog(GetPlayerName(index) & " changed MOTD to: " & Options.MOTD, ADMIN_LOG)
 End Sub
 
@@ -1892,9 +1892,9 @@ Dim i As Long
     ' clear out their trade offers
     For i = 1 To MAX_INV
         TempPlayer(index).TradeOffer(i).num = 0
-        TempPlayer(index).TradeOffer(i).Value = 0
+        TempPlayer(index).TradeOffer(i).value = 0
         TempPlayer(tradeTarget).TradeOffer(i).num = 0
-        TempPlayer(tradeTarget).TradeOffer(i).Value = 0
+        TempPlayer(tradeTarget).TradeOffer(i).value = 0
     Next
     ' Used to init the trade window clientside
     SendTrade index, tradeTarget
@@ -1939,9 +1939,9 @@ Sub HandleAcceptTrade(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr
             If itemnum > 0 Then
                 ' store temp
                 tmpTradeItem(i).num = itemnum
-                tmpTradeItem(i).Value = TempPlayer(index).TradeOffer(i).Value
+                tmpTradeItem(i).value = TempPlayer(index).TradeOffer(i).value
                 ' take item
-                TakeInvSlot index, TempPlayer(index).TradeOffer(i).num, tmpTradeItem(i).Value
+                TakeInvSlot index, TempPlayer(index).TradeOffer(i).num, tmpTradeItem(i).value
             End If
         End If
         ' target
@@ -1950,9 +1950,9 @@ Sub HandleAcceptTrade(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr
             If itemnum > 0 Then
                 ' store temp
                 tmpTradeItem2(i).num = itemnum
-                tmpTradeItem2(i).Value = TempPlayer(tradeTarget).TradeOffer(i).Value
+                tmpTradeItem2(i).value = TempPlayer(tradeTarget).TradeOffer(i).value
                 ' take item
-                TakeInvSlot tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).num, tmpTradeItem2(i).Value
+                TakeInvSlot tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).num, tmpTradeItem2(i).value
             End If
         End If
     Next
@@ -1962,12 +1962,12 @@ Sub HandleAcceptTrade(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr
         ' player
         If tmpTradeItem2(i).num > 0 Then
             ' give away!
-            GiveInvItem index, tmpTradeItem2(i).num, tmpTradeItem2(i).Value, False
+            GiveInvItem index, tmpTradeItem2(i).num, tmpTradeItem2(i).value, False
         End If
         ' target
         If tmpTradeItem(i).num > 0 Then
             ' give away!
-            GiveInvItem tradeTarget, tmpTradeItem(i).num, tmpTradeItem(i).Value, False
+            GiveInvItem tradeTarget, tmpTradeItem(i).num, tmpTradeItem(i).value, False
         End If
     Next
     
@@ -1977,9 +1977,9 @@ Sub HandleAcceptTrade(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr
     ' they now have all the items. Clear out values + let them out of the trade.
     For i = 1 To MAX_INV
         TempPlayer(index).TradeOffer(i).num = 0
-        TempPlayer(index).TradeOffer(i).Value = 0
+        TempPlayer(index).TradeOffer(i).value = 0
         TempPlayer(tradeTarget).TradeOffer(i).num = 0
-        TempPlayer(tradeTarget).TradeOffer(i).Value = 0
+        TempPlayer(tradeTarget).TradeOffer(i).value = 0
     Next
 
     TempPlayer(index).InTrade = 0
@@ -2000,9 +2000,9 @@ Dim tradeTarget As Long
 
     For i = 1 To MAX_INV
         TempPlayer(index).TradeOffer(i).num = 0
-        TempPlayer(index).TradeOffer(i).Value = 0
+        TempPlayer(index).TradeOffer(i).value = 0
         TempPlayer(tradeTarget).TradeOffer(i).num = 0
-        TempPlayer(tradeTarget).TradeOffer(i).Value = 0
+        TempPlayer(tradeTarget).TradeOffer(i).value = 0
     Next
 
     TempPlayer(index).InTrade = 0
@@ -2046,10 +2046,10 @@ Sub HandleTradeItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr A
         For i = 1 To MAX_INV
             If TempPlayer(index).TradeOffer(i).num = invSlot Then
                 ' add amount
-                TempPlayer(index).TradeOffer(i).Value = TempPlayer(index).TradeOffer(i).Value + Amount
+                TempPlayer(index).TradeOffer(i).value = TempPlayer(index).TradeOffer(i).value + Amount
                 ' clamp to limits
-                If TempPlayer(index).TradeOffer(i).Value > GetPlayerInvItemValue(index, invSlot) Then
-                    TempPlayer(index).TradeOffer(i).Value = GetPlayerInvItemValue(index, invSlot)
+                If TempPlayer(index).TradeOffer(i).value > GetPlayerInvItemValue(index, invSlot) Then
+                    TempPlayer(index).TradeOffer(i).value = GetPlayerInvItemValue(index, invSlot)
                 End If
                 ' cancel any trade agreement
                 TempPlayer(index).AcceptTrade = False
@@ -2082,7 +2082,7 @@ Sub HandleTradeItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr A
         End If
     Next
     TempPlayer(index).TradeOffer(EmptySlot).num = invSlot
-    TempPlayer(index).TradeOffer(EmptySlot).Value = Amount
+    TempPlayer(index).TradeOffer(EmptySlot).value = Amount
     
     ' cancel any trade agreement and send new data
     TempPlayer(index).AcceptTrade = False
@@ -2110,7 +2110,7 @@ Sub HandleUntradeItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr
     If TempPlayer(index).TradeOffer(tradeSlot).num <= 0 Then Exit Sub
     
     TempPlayer(index).TradeOffer(tradeSlot).num = 0
-    TempPlayer(index).TradeOffer(tradeSlot).Value = 0
+    TempPlayer(index).TradeOffer(tradeSlot).value = 0
     
     If TempPlayer(index).AcceptTrade Then TempPlayer(index).AcceptTrade = False
     If TempPlayer(TempPlayer(index).InTrade).AcceptTrade Then TempPlayer(TempPlayer(index).InTrade).AcceptTrade = False
@@ -2388,21 +2388,32 @@ Dim AFK As Byte
     Set buffer = Nothing
     
     If AFK = NO Then
-        GlobalMsg GetPlayerName(index) & " is no longer AFK.", BrightBlue
+        globalMsg GetPlayerName(index) & " is no longer AFK.", BrightBlue
     Else
-        GlobalMsg GetPlayerName(index) & " is now AFK.", BrightBlue
+        globalMsg GetPlayerName(index) & " is now AFK.", BrightBlue
     End If
     TempPlayer(index).AFK = AFK
     SendAfk index
 End Sub
-Sub HandlePartyChatMsg(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim buffer As clsBuffer
-    
-    Set buffer = New clsBuffer
-    buffer.WriteBytes data()
-    PartyChatMsg index, buffer.ReadString, Pink
-    Set buffer = Nothing
+
+Public Sub HandlePartyChatMsg(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Dim msg As String
+
+  msg = buffer.ReadString
+  partyNum = char.inParty
+  
+  If partyNum = 0 Then
+    Call char.sendMessage("You are not in a party.", BrightRed)
+    Exit Sub
+  End If
+  
+  For i = 1 To MAX_PARTY_MEMBERS
+    If Not Party(partyNum).Member(i) Is Nothing Then
+      Call Party(partyNum).Member(i).sendMessage("[Party] " & char.name & ": " & msg, color)
+    End If
+  Next
 End Sub
+
 Sub HandleRequestEditQuest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
 
@@ -2450,7 +2461,7 @@ Sub HandleSaveQuest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr A
 End Sub
 
 Sub HandleRequestQuests(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    SendQuests index
+    sendQuests index
 End Sub
 
 Sub HandlePlayerHandleQuest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
@@ -2474,9 +2485,9 @@ Sub HandlePlayerHandleQuest(ByVal index As Long, ByRef data() As Byte, ByVal Sta
                     Exit For
                 Else
                     If item(quest(questNum).GiveItem(i).item).type = ITEM_TYPE_CURRENCY Then
-                        GiveInvItem index, quest(questNum).GiveItem(i).item, quest(questNum).GiveItem(i).Value
+                        GiveInvItem index, quest(questNum).GiveItem(i).item, quest(questNum).GiveItem(i).value
                     Else
-                        For n = 1 To quest(questNum).GiveItem(i).Value
+                        For n = 1 To quest(questNum).GiveItem(i).value
                             If FindOpenInvSlot(index, quest(questNum).GiveItem(i).item) = 0 Then
                                 PlayerMsg index, "You have no inventory space. Please delete something to take the quest.", BrightRed
                                 RemoveStartItems = True
@@ -2511,9 +2522,9 @@ Sub HandlePlayerHandleQuest(ByVal index As Long, ByRef data() As Byte, ByVal Sta
             If quest(questNum).GiveItem(i).item > 0 Then
                 If HasItem(index, quest(questNum).GiveItem(i).item) > 0 Then
                     If item(quest(questNum).GiveItem(i).item).type = ITEM_TYPE_CURRENCY Then
-                        TakeInvItem index, quest(questNum).GiveItem(i).item, quest(questNum).GiveItem(i).Value
+                        TakeInvItem index, quest(questNum).GiveItem(i).item, quest(questNum).GiveItem(i).value
                     Else
-                        For n = 1 To quest(questNum).GiveItem(i).Value
+                        For n = 1 To quest(questNum).GiveItem(i).value
                             TakeInvItem index, quest(questNum).GiveItem(i).item, 1
                         Next
                     End If

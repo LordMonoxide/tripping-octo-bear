@@ -43,9 +43,29 @@ Public Sub accept(ByVal id As Long)
   Debug.Print "Accepted connection from " & mSocket.RemoteHostIP
 End Sub
 
+Public Sub kick(ByVal reason As String)
+Dim buffer As clsBuffer
+
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SAlertMsg)
+  Call buffer.WriteString(reason)
+  Call send(buffer.ToArray)
+  Call closeSocket
+End Sub
+
+Public Sub hack(ByVal reason As String)
+  If Not char Is Nothing Then
+    Call globalMsg(char.user.email & "/" & char.name & " has been booted for (" & reason & ")", White)
+  End If
+  
+  Call kick("You have lost your connection with " & Options.Game_Name & ".")
+End Sub
+
 Public Sub send(ByRef data() As Byte)
-  Call mSocket.SendData(data)
+  Call mSocket.sendData(data)
   DoEvents
+  
+  Call dumpArray(data)
 End Sub
 
 Public Sub closeSocket()
@@ -91,19 +111,19 @@ Dim pLength As Long
   Call mSocket.GetData(data, vbByte Or vbArray, bytesTotal)
   Call buffer.WriteBytes(data)
   
-  If buffer.Length >= 4 Then
+  If buffer.length >= 4 Then
     pLength = buffer.ReadLong(False)
     If pLength < 0 Then Exit Sub
     
-    Do While pLength > 0 And pLength <= buffer.Length - 4
-      If pLength <= buffer.Length - 4 Then
+    Do While pLength > 0 And pLength <= buffer.length - 4
+      If pLength <= buffer.length - 4 Then
         dataPackets = dataPackets + 1
         Call buffer.ReadLong
         Call HandleData(Me, buffer.ReadBytes(pLength))
       End If
       
       pLength = 0
-      If buffer.Length >= 4 Then
+      If buffer.length >= 4 Then
         pLength = buffer.ReadLong(False)
         If pLength < 0 Then Exit Sub
       End If

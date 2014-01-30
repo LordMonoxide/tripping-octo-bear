@@ -5,15 +5,15 @@ Option Explicit
 Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
 Sub ServerLoop()
-  Dim i As Long, x As Long
-  Dim Tick As Long, TickCPS As Long, CPS As Long
-  Dim tmr25 As Long, tmr500 As Long, tmr1000 As Long
-  Dim LastUpdateSavePlayers As Long, LastUpdateMapSpawnItems As Long
-  Dim LastUpdateVitals As Long, LastUpdatePlayerTime As Long
-  Dim BuffTimer As Long
-  
-  Dim c As clsCharacter
-  
+Dim i As Long, x As Long
+Dim Tick As Long, TickCPS As Long, CPS As Long
+Dim tmr25 As Long, tmr500 As Long, tmr1000 As Long
+Dim LastUpdateSavePlayers As Long, LastUpdateMapSpawnItems As Long
+Dim LastUpdateVitals As Long, LastUpdatePlayerTime As Long
+Dim buffTimer As Long
+
+Dim c As clsCharacter
+
   ServerOnline = True
   Do While ServerOnline
     Tick = timeGetTime
@@ -21,21 +21,21 @@ Sub ServerLoop()
     If Tick > tmr25 And False Then '''
       For Each c In characters
         ' check if they've completed casting, and if so set the actual spell going
-        If TempPlayer(i).spellBuffer.spell > 0 Then
-          If timeGetTime > TempPlayer(i).spellBuffer.Timer + c.spell(TempPlayer(i).spellBuffer.spell).spell.castTime * 1000 Then
-            CastSpell i, TempPlayer(i).spellBuffer.spell, TempPlayer(i).spellBuffer.target, TempPlayer(i).spellBuffer.tType
-            TempPlayer(i).spellBuffer.spell = 0
-            TempPlayer(i).spellBuffer.Timer = 0
-            TempPlayer(i).spellBuffer.target = 0
-            TempPlayer(i).spellBuffer.tType = 0
+        If Not c.spellBuffer.spell Is Nothing Then
+          If timeGetTime > c.spellBuffer.timer + c.spell(c.spellBuffer.spell).spell.castTime * 1000 Then
+            Call CastSpell(i, c.spellBuffer.spell, c.spellBuffer.target, c.spellBuffer.tType)
+            c.spellBuffer.spell = 0
+            c.spellBuffer.timer = 0
+            c.spellBuffer.target = 0
+            c.spellBuffer.tType = 0
           End If
         End If
         
         ' check if need to turn off stunned
-        If TempPlayer(i).stunDuration > 0 Then
-          If timeGetTime > TempPlayer(i).StunTimer + TempPlayer(i).stunDuration * 1000 Then
-            TempPlayer(i).stunDuration = 0
-            TempPlayer(i).StunTimer = 0
+        If c.stunDuration > 0 Then
+          If timeGetTime > c.stunTimer + c.stunDuration * 1000 Then
+            c.stunDuration = 0
+            c.stunTimer = 0
             SendStunned i
           End If
         End If
@@ -79,25 +79,25 @@ Sub ServerLoop()
     
     ' Checks to update player time every 5 minutes - Can be tweaked
     If Tick > LastUpdatePlayerTime Then
-      SendClientTime
+      sendClientTime
       LastUpdatePlayerTime = timeGetTime + 300000
     End If
     
-    If Tick > BuffTimer Then
-      For i = 1 To Player_HighIndex
+    If Tick > buffTimer Then
+      For Each c In characters
         For x = 1 To 10
-          If TempPlayer(i).BuffTimer(x) > 0 Then
-            TempPlayer(i).BuffTimer(x) = TempPlayer(i).BuffTimer(x) - 1
+          If c.buffTimer(x) > 0 Then
+            c.buffTimer(x) = c.buffTimer(x) - 1
             
-            If TempPlayer(i).BuffTimer(x) = 0 Then
-              TempPlayer(i).Buffs(x) = 0
+            If c.buffTimer(x) = 0 Then
+              c.buffs(x) = 0
               SendStats i
             End If
           End If
         Next
       Next
       
-      BuffTimer = Tick + 1000
+      buffTimer = Tick + 1000
     End If
     
     ' Check for disconnections every half second
@@ -133,14 +133,14 @@ Sub ServerLoop()
             If DayTime = True Then
                 If GameTime.Hour >= 18 Or GameTime.Hour < 6 Then
                     DayTime = False
-                    GlobalMsg "Nighttime has fallen upon this realm!", Yellow
-                    SendClientTime
+                    globalMsg "Nighttime has fallen upon this realm!", Yellow
+                    sendClientTime
                 End If
             ElseIf DayTime = False Then
                 If GameTime.Hour >= 6 And GameTime.Hour < 18 Then
                     DayTime = True
-                    GlobalMsg "Daytime has arrived in this realm!", Yellow
-                    SendClientTime
+                    globalMsg "Daytime has arrived in this realm!", Yellow
+                    sendClientTime
                 End If
             End If
             
@@ -329,19 +329,19 @@ Private Sub UpdateMapLogic()
           ' /////////////////////////////////////////////
           If map(mapNum).mapNPC(x).stunDuration <> 0 Then
             ' check if we can unstun them
-            If timeGetTime > map(mapNum).mapNPC(x).StunTimer + map(mapNum).mapNPC(x).stunDuration * 1000 Then
+            If timeGetTime > map(mapNum).mapNPC(x).stunTimer + map(mapNum).mapNPC(x).stunDuration * 1000 Then
               map(mapNum).mapNPC(x).stunDuration = 0
-              map(mapNum).mapNPC(x).StunTimer = 0
+              map(mapNum).mapNPC(x).stunTimer = 0
             End If
           Else
             ' check if in conversation
             If map(mapNum).mapNPC(x).inEventWith <> 0 Then
               ' check if we can stop having conversation
-              If TempPlayer(map(mapNum).mapNPC(x).inEventWith).inEventWith <> NPCNum Then
-                map(mapNum).mapNPC(x).inEventWith = 0
-                map(mapNum).mapNPC(x).dir = map(mapNum).mapNPC(x).e_lastDir
-                NpcDir mapNum, x, map(mapNum).mapNPC(x).dir
-              End If
+              '''If TempPlayer(map(mapNum).mapNPC(x).inEventWith).inEventWith <> NPCNum Then
+              '''  map(mapNum).mapNPC(x).inEventWith = 0
+              '''  map(mapNum).mapNPC(x).dir = map(mapNum).mapNPC(x).e_lastDir
+              '''  NpcDir mapNum, x, map(mapNum).mapNPC(x).dir
+              '''End If
             Else
               target = map(mapNum).mapNPC(x).target
               targetType = map(mapNum).mapNPC(x).targetType
@@ -758,13 +758,13 @@ Private Sub UpdateMapLogic()
             Next
           Else
             ' check the timer
-            If map(mapNum).mapNPC(x).spellBuffer.Timer + (spell(NPC(NPCNum).spell(map(mapNum).mapNPC(x).spellBuffer.spell)).castTime * 1000) < timeGetTime Then
+            If map(mapNum).mapNPC(x).spellBuffer.timer + (spell(NPC(NPCNum).spell(map(mapNum).mapNPC(x).spellBuffer.spell)).castTime * 1000) < timeGetTime Then
               ' cast the spell
               NpcCastSpell mapNum, x, map(mapNum).mapNPC(x).spellBuffer.spell, map(mapNum).mapNPC(x).spellBuffer.target, map(mapNum).mapNPC(x).spellBuffer.tType
               ' clear the buffer
               map(mapNum).mapNPC(x).spellBuffer.spell = 0
               map(mapNum).mapNPC(x).spellBuffer.target = 0
-              map(mapNum).mapNPC(x).spellBuffer.Timer = 0
+              map(mapNum).mapNPC(x).spellBuffer.timer = 0
               map(mapNum).mapNPC(x).spellBuffer.tType = 0
             End If
           End If
@@ -840,7 +840,7 @@ Private Sub UpdateMapLogic()
 End Sub
 
 Private Sub UpdateSavePlayers(ByVal i As Long)
-    If TotalOnlinePlayers > 0 Then
+    If TotalPlayersOnline > 0 Then
         Call TextAdd("Saving all online players...")
         Call SavePlayer(i)
         Call SaveBank(i)
@@ -850,14 +850,14 @@ End Sub
 Private Sub HandleShutdown()
     If Secs <= 0 Then Secs = 30
     If Secs Mod 5 = 0 Or Secs <= 5 Then
-        Call GlobalMsg("Server Shutdown in " & Secs & " seconds.", BrightBlue)
+        Call globalMsg("Server Shutdown in " & Secs & " seconds.", BrightBlue)
         Call TextAdd("Automated Server Shutdown in " & Secs & " seconds.")
     End If
 
     Secs = Secs - 1
 
     If Secs <= 0 Then
-        Call GlobalMsg("Server Shutdown.", BrightRed)
+        Call globalMsg("Server Shutdown.", BrightRed)
         Call DestroyServer
     End If
 End Sub

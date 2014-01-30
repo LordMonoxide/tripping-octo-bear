@@ -29,14 +29,9 @@ Public Sub listen(ByVal port As Integer)
 End Sub
 
 Private Sub mServer_ConnectionRequest(ByVal id As Long)
-  Dim s As clsSocket
-  Dim i As Long
-  
-  If isBanned(mServer.RemoteHostIP) Then
-    Call AlertMsg(mServer, "You have been banned from " & Options.Game_Name & ", and can no longer play.")
-    Return
-  End If
-  
+Dim s As clsSocket
+Dim i As Long
+
   If mSockets = mSocketsSize Then
     mSocketsSize = mSocketsSize + 10
     ReDim Preserve mSocket(mSocketsSize - 1)

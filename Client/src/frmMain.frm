@@ -584,6 +584,9 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+Public WithEvents Socket As MSWinsockLib.Winsock
+Attribute Socket.VB_VarHelpID = -1
+
 Private Sub cmdAKick_Click()
         If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then
                 Exit Sub
@@ -600,11 +603,8 @@ Private Sub picQuestLog_Click()
 
 End Sub
 
-' Winsock event
 Private Sub Socket_DataArrival(ByVal bytesTotal As Long)
-    If IsConnected Then
-        Call IncomingData(bytesTotal)
-    End If
+  Call IncomingData(bytesTotal)
 End Sub
 
 Private Sub cmdLogin_Click()

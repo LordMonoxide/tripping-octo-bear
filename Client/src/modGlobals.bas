@@ -136,6 +136,7 @@ Public CurrencyMenu As Byte
 
 ' Player variables
 Public myID As Long
+Public myChar As clsCharacter
 Public PlayerInv(1 To MAX_INV) As PlayerInvRec
 Public PlayerSpells(1 To MAX_PLAYER_SPELLS) As Long
 Public InventoryItemSelected As Long

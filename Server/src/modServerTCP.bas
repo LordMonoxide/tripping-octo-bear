@@ -28,196 +28,100 @@ Sub CreateFullMapCache()
     Next
 End Sub
 
-Function IsMultiAccounts(ByVal Login As String) As Boolean
-    Dim i As Long
+Public Sub sendToAll(ByVal buffer As clsBuffer)
+Dim c As clsCharacter
 
-    For i = 1 To Player_HighIndex
-
-        If IsConnected(i) Then
-            If LCase$(Trim$(Player(i).Login)) = LCase$(Login) Then
-                IsMultiAccounts = True
-                Exit Function
-            End If
-        End If
-
-    Next
-End Function
-
-Function IsMultiIPOnline(ByVal IP As String) As Boolean
-    Dim i As Long
-    Dim n As Long
-
-    For i = 1 To Player_HighIndex
-
-        If IsConnected(i) Then
-            If Trim$(GetPlayerIP(i)) = IP Then
-                n = n + 1
-
-                If (n > 1) Then
-                    IsMultiIPOnline = True
-                    Exit Function
-                End If
-            End If
-        End If
-
-    Next
-End Function
-
-Public Sub SendDataToAll(ByRef data() As Byte)
-  Dim c As clsCharacter
   For Each c In characters
-    Call c.send(data)
+    Call c.send(buffer)
   Next
 End Sub
 
-Sub SendDataToAllBut(ByVal index As Long, ByRef data() As Byte)
-    Dim i As Long
+Public Sub sendToAllBut(ByVal except As clsCharacter, ByVal buffer As clsBuffer)
+Dim c As clsCharacter
 
-    For i = 1 To Player_HighIndex
-
-        If IsPlaying(i) Then
-            If i <> index Then
-                Call SendDataTo(i, data)
-            End If
-        End If
-
-    Next
+  For Each c In characters
+    If c <> except Then
+      Call c.send(buffer)
+    End If
+  Next
 End Sub
 
-Public Sub SendDataToMap(ByVal mapNum As Long, ByRef data() As Byte)
-  Dim c As clsCharacter
+Public Sub sendToMap(ByVal mapNum As Long, ByVal buffer As clsBuffer)
+Dim c As clsCharacter
+
   For Each c In characters
     If c.map = mapNum Then
-      Call c.send(data)
+      Call c.send(buffer)
     End If
   Next
 End Sub
 
-Sub SendDataToMapBut(ByVal index As Long, ByVal mapNum As Long, ByRef data() As Byte)
-    Dim i As Long
+Public Sub sendToMapBut(ByVal except As clsCharacter, ByVal mapNum As Long, ByVal buffer As clsBuffer)
+Dim c As clsCharacter
 
-    For i = 1 To Player_HighIndex
-
-        If IsPlaying(i) Then
-            If GetPlayerMap(i) = mapNum Then
-                If i <> index Then
-                    Call SendDataTo(i, data)
-                End If
-            End If
-        End If
-
-    Next
-End Sub
-
-Sub SendDataToParty(ByVal partyNum As Long, ByRef data() As Byte)
-Dim i As Long
-
-    For i = 1 To Party(partyNum).MemberCount
-        If Party(partyNum).Member(i) > 0 Then
-            Call SendDataTo(Party(partyNum).Member(i), data)
-        End If
-    Next
-End Sub
-
-Public Sub GlobalMsg(ByVal msg As String, ByVal Color As Byte)
-    Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong SGlobalMsg
-    buffer.WriteString msg
-    buffer.WriteLong Color
-    SendDataToAll buffer.ToArray
-    
-    Set buffer = Nothing
-End Sub
-
-Public Sub AdminMsg(ByVal msg As String, ByVal Color As Byte)
-    Dim buffer As clsBuffer
-    Dim i As Long
-
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong SAdminMsg
-    buffer.WriteString msg
-    buffer.WriteLong Color
-
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) And GetPlayerAccess(i) > 0 Then
-            SendDataTo i, buffer.ToArray
-        End If
-    Next
-    
-    Set buffer = Nothing
-End Sub
-
-Public Sub PartyChatMsg(ByVal index As Long, ByVal msg As String, ByVal Color As Byte)
-Dim i As Long
-Dim Member As Integer
-Dim partyNum As Long
-
-partyNum = TempPlayer(index).inParty
-
-    ' not in a party?
-    If TempPlayer(index).inParty = 0 Then
-        Call PlayerMsg(index, "You are not in a party.", BrightRed)
-        Exit Sub
+  For Each c In characters
+    If c.map = mapNum Then
+      If c <> except Then
+        Call c.send(buffer)
+      End If
     End If
-
-    For i = 1 To MAX_PARTY_MEMBERS
-        Member = Party(partyNum).Member(i)
-        ' is online, does exist?
-        If IsConnected(Party(partyNum).Member(i)) And IsPlaying(Party(partyNum).Member(i)) Then
-        ' yep, send the message!
-            Call PlayerMsg(Member, "[Party] " & GetPlayerName(index) & ": " & msg, Color)
-        End If
-    Next
+  Next
 End Sub
 
-Public Sub MapMsg(ByVal mapNum As Long, ByVal msg As String, ByVal Color As Byte)
-    Dim buffer As clsBuffer
+Public Sub sendToParty(ByVal partyNum As Long, ByVal buffer As clsBuffer)
+Dim i As Long
 
-    Set buffer = New clsBuffer
-
-    buffer.WriteLong SMapMsg
-    buffer.WriteString msg
-    buffer.WriteLong Color
-    SendDataToMap mapNum, buffer.ToArray
-    
-    Set buffer = Nothing
+  For i = 1 To Party(partyNum).MemberCount
+    If Not Party(partyNum).Member(i) Is Nothing Then
+      Call Party(partyNum).Member(i).send(buffer)
+    End If
+  Next
 End Sub
 
-Public Sub AlertMsg(ByVal socket As clsSocket, ByVal msg As String)
+Public Sub globalMsg(ByVal msg As String, ByVal color As Byte)
 Dim buffer As clsBuffer
 
   Set buffer = New clsBuffer
-  Call buffer.WriteLong(SAlertMsg)
+  Call buffer.WriteLong(SGlobalMsg)
   Call buffer.WriteString(msg)
-  Call socket.send(buffer.ToArray)
-  Call socket.Close
+  Call buffer.WriteLong(color)
+  Call sendToAll(buffer)
 End Sub
 
-Public Sub PartyMsg(ByVal partyNum As Long, ByVal msg As String, ByVal Color As Byte)
-Dim i As Long
-    ' send message to all people
+Public Sub adminMsg(ByVal msg As String, ByVal color As Byte)
+Dim buffer As clsBuffer
+Dim c As clsCharacter
 
-    For i = 1 To MAX_PARTY_MEMBERS
-        ' exist?
-        If Party(partyNum).Member(i) > 0 Then
-            ' make sure they're logged on
-            If IsConnected(Party(partyNum).Member(i)) And IsPlaying(Party(partyNum).Member(i)) Then
-                PlayerMsg Party(partyNum).Member(i), msg, Color
-            End If
-        End If
-    Next
-End Sub
-
-Sub HackingAttempt(ByVal index As Long, ByVal Reason As String)
-    If IsPlaying(index) Then
-        Call GlobalMsg(GetPlayerLogin(index) & "/" & GetPlayerName(index) & " has been booted for (" & Reason & ")", White)
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SAdminMsg)
+  Call buffer.WriteString(msg)
+  Call buffer.WriteLong(color)
+  
+  For Each c In characters
+    If c.user.access > 0 Then
+      Call c.send(buffer)
     End If
+  Next
+End Sub
 
-    Call AlertMsg(index, "You have lost your connection with " & Options.Game_Name & ".")
+Public Sub mapMsg(ByVal mapNum As Long, ByVal msg As String, ByVal color As Byte)
+Dim buffer As clsBuffer
+
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SMapMsg)
+  Call buffer.WriteString(msg)
+  Call buffer.WriteLong(color)
+  Call sendToMap(mapNum, buffer)
+End Sub
+
+Public Sub PartyMsg(ByVal partyNum As Long, ByVal msg As String, ByVal color As Byte)
+Dim i As Long
+
+  For i = 1 To MAX_PARTY_MEMBERS
+    If Not Party(partyNum).Member(i) Is Nothing Then
+      Call Party(partyNum).Member(i).sendMessage(msg, color)
+    End If
+  Next
 End Sub
 
 Public Sub MapCache_Create(ByVal mapNum As Long)
@@ -292,105 +196,23 @@ End Sub
 ' *****************************
 ' ** Outgoing Server Packets **
 ' *****************************
-Sub SendWhosOnline(ByVal index As Long)
-    Dim s As String
-    Dim n As Long
-    Dim i As Long
+Public Sub SendJoinMap(ByVal char As clsCharacter)
+Dim buffer As clsBuffer
+Dim c As clsCharacter
 
-    For i = 1 To Player_HighIndex
-
-        If IsPlaying(i) Then
-            If i <> index Then
-                s = s & GetPlayerName(i) & ", "
-                n = n + 1
-            End If
-        End If
-
-    Next
-
-    If n = 0 Then
-        s = "There are no other players online."
-    Else
-        s = Mid$(s, 1, Len(s) - 2)
-        s = "There are " & n & " other players online: " & s & "."
+  Set buffer = New clsBuffer
+  
+  ' Send all players on current map to index
+  For Each c In characters
+    If Not c Is char Then
+      If c.map = char.map Then
+        Call char.send(c.serialize)
+      End If
     End If
-
-    Call PlayerMsg(index, s, WhoColor)
-End Sub
-
-Function PlayerData(ByVal index As Long) As Byte()
-    Dim buffer As clsBuffer, i As Long
-
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong SPlayerData
-    buffer.WriteLong index
-    buffer.WriteString GetPlayerName(index)
-    buffer.WriteLong GetPlayerLevel(index)
-    buffer.WriteLong GetPlayerPOINTS(index)
-    buffer.WriteByte Player(index).sex
-    buffer.WriteLong GetPlayerClothes(index)
-    buffer.WriteLong GetPlayerGear(index)
-    buffer.WriteLong GetPlayerHair(index)
-    buffer.WriteLong GetPlayerHeadgear(index)
-    buffer.WriteLong GetPlayerMap(index)
-    buffer.WriteLong GetPlayerX(index)
-    buffer.WriteLong GetPlayerY(index)
-    buffer.WriteLong GetPlayerDir(index)
-    buffer.WriteLong GetPlayerAccess(index)
-    buffer.WriteLong GetPlayerPK(index)
-    buffer.WriteByte Player(index).threshold
-    buffer.WriteByte Player(index).donator
-    
-    For i = 1 To Stats.Stat_Count - 1
-        buffer.WriteLong GetPlayerStat(index, i)
-    Next
-    
-    For i = 1 To Skills.Skill_Count - 1
-        buffer.WriteLong GetPlayerSkillLevel(index, i)
-    Next
-    
-    If Player(index).GuildFileId > 0 Then
-        If TempPlayer(index).tmpGuildSlot > 0 Then
-            buffer.WriteByte 1
-            buffer.WriteString GuildData(TempPlayer(index).tmpGuildSlot).Guild_Name
-            buffer.WriteString GuildData(TempPlayer(index).tmpGuildSlot).Guild_Tag
-            buffer.WriteLong GuildData(TempPlayer(index).tmpGuildSlot).Guild_Color
-            buffer.WriteLong GuildData(TempPlayer(index).tmpGuildSlot).Guild_Logo
-        End If
-    Else
-        buffer.WriteByte 0
-    End If
-    
-    PlayerData = buffer.ToArray()
-    Set buffer = Nothing
-End Function
-
-Sub SendJoinMap(ByVal index As Long)
-    Dim i As Long
-    Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-
-    ' Send all players on current map to index
-    For i = 1 To Player_HighIndex
-        If IsPlaying(i) Then
-            If i <> index Then
-                If GetPlayerMap(i) = GetPlayerMap(index) Then
-                    SendDataTo index, PlayerData(i)
-                End If
-            End If
-        End If
-    Next
-
-    ' Send index's player data to everyone on the map including himself
-    SendDataToMap GetPlayerMap(index), PlayerData(index)
-    
-    Set buffer = Nothing
-End Sub
-
-Sub SendPlayerData(ByVal index As Long)
-    SendDataToMap GetPlayerMap(index), PlayerData(index)
+  Next
+  
+  ' Send index's player data to everyone on the map including himself
+  Call sendToMap(char.map, char.serialize)
 End Sub
 
 Sub SendMap(ByVal index As Long, ByVal mapNum As Long)
@@ -417,7 +239,7 @@ Sub SendMapItemsTo(ByVal index As Long, ByVal mapNum As Long)
     For i = 1 To MAX_MAP_ITEMS
         buffer.WriteString map(mapNum).mapItem(i).playerName
         buffer.WriteLong map(mapNum).mapItem(i).num
-        buffer.WriteLong map(mapNum).mapItem(i).Value
+        buffer.WriteLong map(mapNum).mapItem(i).value
         buffer.WriteLong map(mapNum).mapItem(i).x
         buffer.WriteLong map(mapNum).mapItem(i).y
         If map(mapNum).mapItem(i).bound Then
@@ -433,28 +255,30 @@ Sub SendMapItemsTo(ByVal index As Long, ByVal mapNum As Long)
 End Sub
 
 Sub SendMapItemsToAll(ByVal mapNum As Long)
-    Dim i As Long
-    Dim buffer As clsBuffer
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong SMapItemData
+Dim buffer As clsBuffer
+Dim i As Long
 
-    For i = 1 To MAX_MAP_ITEMS
-        buffer.WriteString map(mapNum).mapItem(i).playerName
-        buffer.WriteLong map(mapNum).mapItem(i).num
-        buffer.WriteLong map(mapNum).mapItem(i).Value
-        buffer.WriteLong map(mapNum).mapItem(i).x
-        buffer.WriteLong map(mapNum).mapItem(i).y
-        If map(mapNum).mapItem(i).bound Then
-            buffer.WriteLong 1
-        Else
-            buffer.WriteLong 0
-        End If
-    Next
-
-    SendDataToMap mapNum, buffer.ToArray()
+  If PlayersOnMap(mapNum) = 0 Then Exit Sub
+  
+  Set buffer = New clsBuffer
+  
+  Call buffer.WriteLong(SMapItemData)
+  
+  For i = 1 To MAX_MAP_ITEMS
+    Call buffer.WriteString(map(mapNum).mapItem(i).playerName)
+    Call buffer.WriteLong(map(mapNum).mapItem(i).num)
+    Call buffer.WriteLong(map(mapNum).mapItem(i).value)
+    Call buffer.WriteLong(map(mapNum).mapItem(i).x)
+    Call buffer.WriteLong(map(mapNum).mapItem(i).y)
     
-    Set buffer = Nothing
+    If map(mapNum).mapItem(i).bound Then
+      Call buffer.WriteLong(1)
+    Else
+      Call buffer.WriteLong(0)
+    End If
+  Next
+  
+  Call sendToMap(mapNum, buffer)
 End Sub
 
 Sub SendMapNpcVitals(ByVal mapNum As Long, ByVal MapNPCNum As Long)
@@ -646,7 +470,7 @@ Sub SendWelcome(ByVal index As Long)
     End If
 
     ' Send whos online
-    Call SendWhosOnline(index)
+    Call sendWhosOnline(index)
 End Sub
 Sub SendNewChar(ByVal index As Long)
     Dim buffer As clsBuffer
@@ -978,13 +802,13 @@ Sub SendResourceCacheToMap(ByVal mapNum As Long, ByVal Resource_num As Long)
     Set buffer = Nothing
 End Sub
 
-Sub SendActionMsg(ByVal mapNum As Long, ByVal message As String, ByVal Color As Long, ByVal MsgType As Long, ByVal x As Long, ByVal y As Long, Optional PlayerOnlyNum As Long = 0)
+Sub SendActionMsg(ByVal mapNum As Long, ByVal message As String, ByVal color As Long, ByVal MsgType As Long, ByVal x As Long, ByVal y As Long, Optional PlayerOnlyNum As Long = 0)
     Dim buffer As clsBuffer
     
     Set buffer = New clsBuffer
     buffer.WriteLong SActionMsg
     buffer.WriteString message
-    buffer.WriteLong Color
+    buffer.WriteLong color
     buffer.WriteLong MsgType
     buffer.WriteLong x
     buffer.WriteLong y
@@ -1112,7 +936,7 @@ Sub SendBank(ByVal index As Long)
     
     For i = 1 To MAX_BANK
         buffer.WriteLong Bank(index).item(i).num
-        buffer.WriteLong Bank(index).item(i).Value
+        buffer.WriteLong Bank(index).item(i).value
     Next
     
     SendDataTo index, buffer.ToArray()
@@ -1188,12 +1012,12 @@ Dim totalWorth As Long
     If dataType = 0 Then ' own inventory
         For i = 1 To MAX_INV
             buffer.WriteLong TempPlayer(index).TradeOffer(i).num
-            buffer.WriteLong TempPlayer(index).TradeOffer(i).Value
+            buffer.WriteLong TempPlayer(index).TradeOffer(i).value
             ' add total worth
             If TempPlayer(index).TradeOffer(i).num > 0 Then
                 ' currency?
                 If item(TempPlayer(index).TradeOffer(i).num).type = ITEM_TYPE_CURRENCY Or item(TempPlayer(index).TradeOffer(i).num).stackable = YES Then
-                    totalWorth = totalWorth + (item(GetPlayerInvItemNum(index, TempPlayer(index).TradeOffer(i).num)).price * TempPlayer(index).TradeOffer(i).Value)
+                    totalWorth = totalWorth + (item(GetPlayerInvItemNum(index, TempPlayer(index).TradeOffer(i).num)).price * TempPlayer(index).TradeOffer(i).value)
                 Else
                     totalWorth = totalWorth + item(GetPlayerInvItemNum(index, TempPlayer(index).TradeOffer(i).num)).price
                 End If
@@ -1202,12 +1026,12 @@ Dim totalWorth As Long
     ElseIf dataType = 1 Then ' other inventory
         For i = 1 To MAX_INV
             buffer.WriteLong GetPlayerInvItemNum(tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).num)
-            buffer.WriteLong TempPlayer(tradeTarget).TradeOffer(i).Value
+            buffer.WriteLong TempPlayer(tradeTarget).TradeOffer(i).value
             ' add total worth
             If GetPlayerInvItemNum(tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).num) > 0 Then
                 ' currency?
                 If item(GetPlayerInvItemNum(tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).num)).type = ITEM_TYPE_CURRENCY Or item(GetPlayerInvItemNum(tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).num)).stackable = YES Then
-                    totalWorth = totalWorth + (item(GetPlayerInvItemNum(tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).num)).price * TempPlayer(tradeTarget).TradeOffer(i).Value)
+                    totalWorth = totalWorth + (item(GetPlayerInvItemNum(tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).num)).price * TempPlayer(tradeTarget).TradeOffer(i).value)
                 Else
                     totalWorth = totalWorth + item(GetPlayerInvItemNum(tradeTarget, TempPlayer(tradeTarget).TradeOffer(i).num)).price
                 End If
@@ -1353,20 +1177,6 @@ Dim buffer As clsBuffer, i As Long, partyNum As Long
     Set buffer = Nothing
 End Sub
 
-Sub SendPartyVitals(ByVal partyNum As Long, ByVal index As Long)
-Dim buffer As clsBuffer, i As Long
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPartyVitals
-    buffer.WriteLong index
-    For i = 1 To Vitals.Vital_Count - 1
-        buffer.WriteLong GetPlayerMaxVital(index, i)
-        buffer.WriteLong Player(index).vital(i)
-    Next
-    SendDataToParty partyNum, buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
 Sub SendSpawnItemToMap(ByVal mapNum As Long, ByVal index As Long)
 Dim buffer As clsBuffer
 
@@ -1375,7 +1185,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong index
     buffer.WriteString map(mapNum).mapItem(index).playerName
     buffer.WriteLong map(mapNum).mapItem(index).num
-    buffer.WriteLong map(mapNum).mapItem(index).Value
+    buffer.WriteLong map(mapNum).mapItem(index).value
     buffer.WriteLong map(mapNum).mapItem(index).x
     buffer.WriteLong map(mapNum).mapItem(index).y
     If map(mapNum).mapItem(index).bound Then
@@ -1532,12 +1342,12 @@ Dim buffer As clsBuffer
   char.send buffer.ToArray
 End Sub
 
-Sub SendEventOpen(ByVal index As Long, ByVal Value As Byte, ByVal EventNum As Long)
+Sub SendEventOpen(ByVal index As Long, ByVal value As Byte, ByVal EventNum As Long)
     Dim buffer As clsBuffer
     
     Set buffer = New clsBuffer
     buffer.WriteLong SEventOpen
-    buffer.WriteByte Value
+    buffer.WriteByte value
     buffer.WriteLong EventNum
     SendDataTo index, buffer.ToArray()
     
@@ -1566,20 +1376,21 @@ Dim buffer As clsBuffer, i As Long
     Set buffer = Nothing
 End Sub
 
-Sub SendClientTime()
+Public Sub sendClientTime()
 Dim buffer As clsBuffer
 
-    Set buffer = New clsBuffer
-    buffer.WriteLong SClientTime
-    buffer.WriteByte GameTime.Minute
-    buffer.WriteByte GameTime.Hour
-    buffer.WriteByte GameTime.Day
-    buffer.WriteByte GameTime.Month
-    buffer.WriteLong GameTime.Year
-    
-    SendDataToAll buffer.ToArray()
-    Set buffer = Nothing
+  If characters.count = 0 Then Exit Sub
+  
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SClientTime)
+  Call buffer.WriteByte(GameTime.Minute)
+  Call buffer.WriteByte(GameTime.Hour)
+  Call buffer.WriteByte(GameTime.Day)
+  Call buffer.WriteByte(GameTime.Month)
+  Call buffer.WriteLong(GameTime.Year)
+  Call sendToAll(buffer)
 End Sub
+
 Sub SendClientTimeTo(ByVal index As Long)
 Dim buffer As clsBuffer
 
@@ -1607,13 +1418,13 @@ Dim buffer As clsBuffer
     Set buffer = Nothing
 End Sub
 
-Sub SendBossMsg(ByVal message As String, ByVal Color As Long)
+Sub SendBossMsg(ByVal message As String, ByVal color As Long)
     Dim buffer As clsBuffer
     
     Set buffer = New clsBuffer
     buffer.WriteLong SBossMsg
     buffer.WriteString message
-    buffer.WriteLong Color
+    buffer.WriteLong color
         
     SendDataToAll buffer.ToArray()
     Set buffer = Nothing
@@ -1635,12 +1446,12 @@ Sub SendProjectile(ByVal mapNum As Long, ByVal Attacker As Long, ByVal AttackerT
     
     Set buffer = Nothing
 End Sub
-Sub SendEventGraphic(ByVal index As Long, ByVal Value As Byte, ByVal EventNum As Long)
+Sub SendEventGraphic(ByVal index As Long, ByVal value As Byte, ByVal EventNum As Long)
     Dim buffer As clsBuffer
     
     Set buffer = New clsBuffer
     buffer.WriteLong SEventGraphic
-    buffer.WriteByte Value
+    buffer.WriteByte value
     buffer.WriteLong EventNum
     SendDataTo index, buffer.ToArray()
     
