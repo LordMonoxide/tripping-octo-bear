@@ -314,7 +314,7 @@ Dim i As Long
         ' admin pannel
         Select Case keyCode
             Case vbKeyInsert
-                If Player(MyIndex).Access > 0 Then
+                If Player(MyIndex).access > 0 Then
                     frmMain.mnuEditors.visible = Not frmMain.mnuEditors.visible
                     frmMain.mnuMisc.visible = Not frmMain.mnuMisc.visible
                     frmMain.mnuClientTools.visible = Not frmMain.mnuClientTools.visible
@@ -718,7 +718,7 @@ Dim buffer As clsBuffer
                     Set buffer = New clsBuffer
                     buffer.WriteLong CPlayerInfoRequest
                     buffer.WriteString Command(1)
-                    SendData buffer.ToArray()
+                    send buffer.ToArray()
                     Set buffer = Nothing
                     ' Whos Online
                 Case "/who"
@@ -730,7 +730,7 @@ Dim buffer As clsBuffer
                 Case "/stats"
                     Set buffer = New clsBuffer
                     buffer.WriteLong CGetStats
-                    SendData buffer.ToArray()
+                    send buffer.ToArray()
                     Set buffer = Nothing
                     ' // Monitor Admin Commands //
                     ' Admin Help
@@ -1430,7 +1430,7 @@ Dim i As Long, x As Long, y As Long, buffer As clsBuffer
                         ' exit
                         Set buffer = New clsBuffer
                         buffer.WriteLong CCloseShop
-                        SendData buffer.ToArray()
+                        send buffer.ToArray()
                         Set buffer = Nothing
                         GUIWindow(GUI_SHOP).visible = False
                         InShop = 0

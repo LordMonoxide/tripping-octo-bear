@@ -588,19 +588,16 @@ Public WithEvents Socket As MSWinsockLib.Winsock
 Attribute Socket.VB_VarHelpID = -1
 
 Private Sub cmdAKick_Click()
-        If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then
-                Exit Sub
-        End If
+Dim name As String
 
-        If Len(Trim$(txtAName.Text)) < 1 Then
-                Exit Sub
-        End If
-
-        SendKick Trim$(txtAName.Text)
-End Sub
-
-Private Sub picQuestLog_Click()
-
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  
+  name = Trim$(txtAName.Text)
+  If Len(name) < 1 Then
+    Exit Sub
+  End If
+  
+  Call SendKick(name)
 End Sub
 
 Private Sub Socket_DataArrival(ByVal bytesTotal As Long)
@@ -655,255 +652,215 @@ End Sub
 
 Private Sub Form_DblClick()
   If InGame Then
-    HandleDoubleClick
+    Call HandleDoubleClick
   End If
 End Sub
 
 Private Sub Form_Load()
-    If App.LogMode = 0 Then Exit Sub
-    If App.PrevInstance Then
-        MsgBox "Running multiple instances of game is not allowed. Game will now exit"
-        Unload Me
-    End If
+  If App.LogMode = 0 Then Exit Sub
+  If App.PrevInstance Then
+    Call MsgBox("Running multiple instances of game is not allowed. Game will now exit")
+    Call Unload(Me)
+  End If
 End Sub
 
 Private Sub Form_MouseUp(Button As Integer, Shift As Integer, x As Single, y As Single)
   If InGame Then
-    HandleMouseUp Button
+    Call HandleMouseUp(Button)
   End If
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-    DestroyGame
+  Call DestroyGame
 End Sub
 
 Private Sub Form_MouseDown(Button As Integer, Shift As Integer, x As Single, y As Single)
   If InGame Then
-    HandleMouseDown Button
+    Call HandleMouseDown(Button)
   End If
 End Sub
 
 Private Sub Form_MouseMove(Button As Integer, Shift As Integer, x As Single, y As Single)
   If InGame Then
-    ' call the procedure
-    HandleMouseMove CLng(x), CLng(y), Button
+    Call HandleMouseMove(x, y, Button)
   End If
 End Sub
 
 Private Sub Form_KeyPress(KeyAscii As Integer)
-    If InGame Then
-        Call HandleKeyPresses(KeyAscii)
-        If faderState >= 4 And faderAlpha = 0 Then
-            If KeyAscii = vbKeyEscape Then OpenGuiWindow 7
-        End If
-        ' prevents textbox on error ding sound
-        If KeyAscii = vbKeyReturn Or KeyAscii = vbKeyEscape Then
-            KeyAscii = 0
-        End If
-    ElseIf inMenu Then
-        HandleMenuKeyPresses KeyAscii
-        If faderState >= 4 And faderAlpha = 0 Then
-            If KeyAscii = vbKeyEscape Then OpenGuiWindow 7
-        End If
-        ' prevents textbox on error ding sound
-        If KeyAscii = vbKeyReturn Or KeyAscii = vbKeyEscape Then
-            KeyAscii = 0
-        End If
+  If InGame Then
+    Call HandleKeyPresses(KeyAscii)
+    
+    If faderState >= 4 And faderAlpha = 0 Then
+      If KeyAscii = vbKeyEscape Then Call OpenGuiWindow(7)
     End If
+    
+    ' prevents textbox on error ding sound
+    If KeyAscii = vbKeyReturn Or KeyAscii = vbKeyEscape Then
+      KeyAscii = 0
+    End If
+  ElseIf inMenu Then
+    Call HandleMenuKeyPresses(KeyAscii)
+    
+    If faderState >= 4 And faderAlpha = 0 Then
+      If KeyAscii = vbKeyEscape Then Call OpenGuiWindow(7)
+    End If
+    
+    ' prevents textbox on error ding sound
+    If KeyAscii = vbKeyReturn Or KeyAscii = vbKeyEscape Then
+      KeyAscii = 0
+    End If
+  End If
 End Sub
 
 Private Sub Form_KeyUp(keyCode As Integer, Shift As Integer)
-    HandleKeyUp keyCode
+  Call HandleKeyUp(keyCode)
 End Sub
 
 ' ****************
 ' ** Admin Menu **
 ' ****************
 Private Sub mnuEditMap_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
-    SendRequestEditMap
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  Call SendRequestEditMap
 End Sub
 
 Private Sub mnuEditItem_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
-    SendRequestEditItem
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  Call SendRequestEditItem
 End Sub
 
 Private Sub mnuEditResource_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
-    SendRequestEditResource
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  Call SendRequestEditResource
 End Sub
 
 Private Sub mnuEditSpell_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
-    SendRequestEditSpell
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  Call SendRequestEditSpell
 End Sub
 
 Private Sub mnuEditNPC_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
-    SendRequestEditNpc
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  Call SendRequestEditNpc
 End Sub
 
 Private Sub mnuEditAnimation_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
-    SendRequestEditAnimation
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  Call SendRequestEditAnimation
 End Sub
 
 Private Sub mnuEditShop_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
-    SendRequestEditShop
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  Call SendRequestEditShop
 End Sub
 
 Private Sub mnuEditEvent_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
-    Call RequestSwitchesAndVariables
-    Call Events_SendRequestEventsData
-    Call Events_SendRequestEditEvents
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  Call RequestSwitchesAndVariables
+  Call Events_SendRequestEventsData
+  Call Events_SendRequestEditEvents
 End Sub
 
 Private Sub mnuLoc_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
-    BLoc = Not BLoc
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  BLoc = Not BLoc
 End Sub
 
 Private Sub mnuMapReport_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
-    SendMapReport
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  Call SendMapReport
 End Sub
 
 Private Sub mnuDelBans_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_CREATOR Then Exit Sub
-    SendBanDestroy
+  If myChar.access < ADMIN_CREATOR Then Exit Sub
+  Call SendBanDestroy
 End Sub
 
 Private Sub mnuMapRespawn_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then Exit Sub
-    SendMapRespawn
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  Call SendMapRespawn
 End Sub
 
 Private Sub mnuLevelUp_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_DEVELOPER Then Exit Sub
-    SendRequestLevelUp
+  If myChar.access < ADMIN_DEVELOPER Then Exit Sub
+  Call SendRequestLevelUp
 End Sub
 
 Private Sub mnuScreenshotMap_Click()
-    ' render the map temp
-    'ScreenshotMap
-    AddText "Doesn't work in DX8 I'm afraid. :(", Pink
+  Call AddText("Doesn't work in DX8 I'm afraid. :(", Pink)
 End Sub
 
 Private Sub mnuOther_Click()
-    picAdmin.visible = Not picAdmin.visible
+  picAdmin.visible = Not picAdmin.visible
 End Sub
 
 Private Sub mnuGUI_Click()
-    hideGUI = Not hideGUI
+  hideGUI = Not hideGUI
 End Sub
+
 Private Sub cmdAWarp2Me_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then
-        
-        Exit Sub
-    End If
+Dim name As String
 
-    If Len(Trim$(txtAName.Text)) < 1 Then
-        Exit Sub
-    End If
-
-    If IsNumeric(Trim$(txtAName.Text)) Then
-        Exit Sub
-    End If
-
-    WarpToMe Trim$(txtAName.Text)
+  name = Trim$(txtAName.Text)
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  If Len(name) < 1 Then Exit Sub
+  If IsNumeric(name) Then Exit Sub
+  Call WarpToMe(name)
 End Sub
 
 Private Sub cmdAWarpMe2_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then
-        
-        Exit Sub
-    End If
+Dim name As String
 
-    If Len(Trim$(txtAName.Text)) < 1 Then
-        Exit Sub
-    End If
-
-    If IsNumeric(Trim$(txtAName.Text)) Then
-        Exit Sub
-    End If
-
-    WarpMeTo Trim$(txtAName.Text)
+  name = Trim$(txtAName.Text)
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  If Len(name) < 1 Then Exit Sub
+  If IsNumeric(name) = False Then Exit Sub
+  Call WarpMeTo(name)
 End Sub
 
 Private Sub cmdAWarp_Click()
 Dim n As Long
 
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then
-        
-        Exit Sub
-    End If
-
-    If Len(Trim$(txtAMap.Text)) < 1 Then
-        Exit Sub
-    End If
-
-    If Not IsNumeric(Trim$(txtAMap.Text)) Then
-        Exit Sub
-    End If
-
-    n = CLng(Trim$(txtAMap.Text))
-
-    ' Check to make sure its a valid map #
-    If n > 0 And n <= MAX_MAPS Then
-        Call WarpTo(n)
-    Else
-        Call AddText("Invalid map number.", Red)
-    End If
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  If Len(Trim$(txtAMap.Text)) < 1 Then Exit Sub
+  If IsNumeric(Trim$(txtAMap.Text)) = False Then Exit Sub
+  
+  n = CLng(Trim$(txtAMap.Text))
+  
+  ' Check to make sure its a valid map #
+  If n > 0 And n <= MAX_MAPS Then
+    Call WarpTo(n)
+  Else
+    Call AddText("Invalid map number.", Red)
+  End If
 End Sub
 
 Private Sub cmdABan_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_MAPPER Then
-        
-        Exit Sub
-    End If
-
-    If Len(Trim$(txtAName.Text)) < 1 Then
-        Exit Sub
-    End If
-
-    SendBan Trim$(txtAName.Text)
+  If myChar.access < ADMIN_MAPPER Then Exit Sub
+  If Len(Trim$(txtAName.Text)) < 1 Then Exit Sub
+  Call SendBan(Trim$(txtAName.Text))
 End Sub
+
 Private Sub cmdAAccess_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_CREATOR Then
-        
-        Exit Sub
-    End If
-
-    If Len(Trim$(txtAName.Text)) < 2 Then
-        Exit Sub
-    End If
-
-    If IsNumeric(Trim$(txtAName.Text)) Or Not IsNumeric(Trim$(txtAAccess.Text)) Then
-        Exit Sub
-    End If
-
-    SendSetAccess Trim$(txtAName.Text), CLng(Trim$(txtAAccess.Text))
+  If myChar.access < ADMIN_CREATOR Then Exit Sub
+  If Len(Trim$(txtAName.Text)) < 2 Then Exit Sub
+  If IsNumeric(Trim$(txtAName.Text)) Or Not IsNumeric(Trim$(txtAAccess.Text)) Then Exit Sub
+  Call SendSetAccess(Trim$(txtAName.Text), CLng(Trim$(txtAAccess.Text)))
 End Sub
 
 Private Sub cmdASpawn_Click()
-    If GetPlayerAccess(MyIndex) < ADMIN_CREATOR Then
-        
-        Exit Sub
-    End If
-    
-    SendSpawnItem scrlAItem.Value, val(txtAAmount.Text)
+  If myChar.access < ADMIN_CREATOR Then Exit Sub
+  Call SendSpawnItem(scrlAItem.Value, val(txtAAmount.Text))
 End Sub
 
 Private Sub scrlAItem_Change()
-    lblAItem.Caption = "Item: " & Trim$(item(scrlAItem.Value).name)
-    If item(scrlAItem.Value).Type = ITEM_TYPE_CURRENCY Or item(scrlAItem.Value).Stackable = YES Then
-        txtAAmount.Enabled = True
-        Exit Sub
-    End If
-    txtAAmount.Enabled = False
+  lblAItem.Caption = "Item: " & item(scrlAItem.Value).name
+  If item(scrlAItem.Value).Type = ITEM_TYPE_CURRENCY Or item(scrlAItem.Value).Stackable = YES Then
+      txtAAmount.Enabled = True
+      Exit Sub
+  End If
+  
+  txtAAmount.Enabled = False
 End Sub
 
 Private Sub scrlLoginSecurity_Change()

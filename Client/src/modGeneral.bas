@@ -1226,7 +1226,6 @@ Dim i As Long
     
     ' destroy temp values
     DragInvSlotNum = 0
-    MyIndex = 0
     InventoryItemSelected = 0
     SpellBuffer = 0
     SpellBufferTimer = 0

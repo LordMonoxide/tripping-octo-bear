@@ -53,8 +53,7 @@ Public ChatTextBuffer(1 To ChatTextBufferSize) As ChatTextBuffer
 Public Font_Georgia As CustomFont
 Public Font_GeorgiaShadow As CustomFont
 
-
-Public Sub DrawPlayerName(ByVal Index As Long)
+Public Sub DrawPlayerName(ByVal char As clsCharacter)
 Dim textX As Long, textY As Long, Text As String, textSize As Long, Colour As Long
 Dim guildX As Long
 Dim Text2X As Long
@@ -62,148 +61,137 @@ Dim Text2Y As Long
 Dim GuildText As String
 Dim GuildTextSize As Long
 
-    Text = Trim$(GetPlayerName(Index))
-    textSize = EngineGetTextWidth(Font_GeorgiaShadow, Text)
-    'guild
-    GuildText = Trim$(TempPlayer(Index).GuildTag)
-    GuildTextSize = EngineGetTextWidth(Font_GeorgiaShadow, GuildText)
-    
-    ' get the colour
-    If GetPlayerAccess(Index) > 0 Then
-        Colour = Blue
-    Else
-        Colour = White
-    End If
-    
-    If Player(Index).Donator = YES Then
-        Colour = Yellow
-    End If
-    
-    textX = GetPlayerX(Index) * PIC_X + TempPlayer(Index).XOffset + (PIC_X \ 2) - (textSize \ 2)
-    textY = GetPlayerY(Index) * PIC_Y + TempPlayer(Index).YOffset - 32 + 12
-    Text2X = GetPlayerX(Index) * PIC_X + TempPlayer(Index).XOffset + (PIC_X \ 2) - (GuildTextSize / 2)
-    Text2Y = GetPlayerY(Index) * PIC_Y + TempPlayer(Index).YOffset - 32 - 2
-    
-    If TempPlayer(Index).AFK = YES Then
-        Call RenderText(Font_GeorgiaShadow, "[AFK] ", ConvertMapX(textX - (EngineGetTextWidth(Font_GeorgiaShadow, "[AFK] ") / 2)), ConvertMapY(textY), Blue)
-        Call RenderText(Font_GeorgiaShadow, Text, ConvertMapX(textX + (EngineGetTextWidth(Font_GeorgiaShadow, "[AFK] ") / 2)), ConvertMapY(textY), Colour)
-    Else
-        Call RenderText(Font_GeorgiaShadow, Text, ConvertMapX(textX), ConvertMapY(textY), Colour)
-    End If
-    
-    guildX = GetPlayerX(Index) * PIC_X + TempPlayer(Index).XOffset + (PIC_X \ 2) - (GuildTextSize / 2) - 18
-
-    If Not TempPlayer(Index).GuildName = vbNullString Then
-        RenderText Font_GeorgiaShadow, GuildText, ConvertMapX(Text2X), ConvertMapY(Text2Y), TempPlayer(Index).GuildColor
-        Directx8.RenderTexture Tex_Guildicon(TempPlayer(Index).GuildLogo), ConvertMapX(guildX), ConvertMapY(Text2Y), 0, 0, 16, 16, 16, 16, D3DColorRGBA(255, 255, 255, 200)
-    End If
+  Text = char.name
+  textSize = EngineGetTextWidth(Font_GeorgiaShadow, Text)
+  GuildText = char.guildTag
+  GuildTextSize = EngineGetTextWidth(Font_GeorgiaShadow, GuildText)
+  
+  If char.access > 0 Then
+    Colour = Blue
+  Else
+    Colour = White
+  End If
+  
+  If char.donator = YES Then
+    Colour = Yellow
+  End If
+  
+  textX = char.x * PIC_X + char.xOffset + PIC_X \ 2 - textSize \ 2
+  textY = char.y * PIC_Y + char.yOffset - 32 + 12
+  Text2X = char.x * PIC_X + char.xOffset + PIC_X \ 2 - GuildTextSize \ 2
+  Text2Y = char.y * PIC_Y + char.yOffset - 32 - 2
+  
+  If char.AFK = YES Then
+    Call RenderText(Font_GeorgiaShadow, "[AFK] ", ConvertMapX(textX - (EngineGetTextWidth(Font_GeorgiaShadow, "[AFK] ") \ 2)), ConvertMapY(textY), Blue)
+    Call RenderText(Font_GeorgiaShadow, Text, ConvertMapX(textX + (EngineGetTextWidth(Font_GeorgiaShadow, "[AFK] ") \ 2)), ConvertMapY(textY), Colour)
+  Else
+    Call RenderText(Font_GeorgiaShadow, Text, ConvertMapX(textX), ConvertMapY(textY), Colour)
+  End If
+  
+  guildX = char.x * PIC_X + char.xOffset + PIC_X \ 2 - GuildTextSize \ 2 - 18
+  
+  If char.guildName <> vbNullString Then
+    Call RenderText(Font_GeorgiaShadow, GuildText, ConvertMapX(Text2X), ConvertMapY(Text2Y), char.guildColour)
+    Call Directx8.RenderTexture(Tex_Guildicon(char.guildLogo), ConvertMapX(guildX), ConvertMapY(Text2Y), 0, 0, 16, 16, 16, 16, D3DColorRGBA(255, 255, 255, 200))
+  End If
 End Sub
 
-Public Sub DrawNpcName(ByVal Index As Long)
+Public Sub DrawNpcName(ByVal index As Long)
 Dim textX As Long, textY As Long, Text As String, textSize As Long, npcNum As Long, Colour As Long, Level As Long, LevelSize As Long, lvlx As Long, lvly As Long
-Dim I As Long, name As String
-    npcNum = MapNpc(Index).Num
-    
-    'If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_GUARD Then Exit Sub
-    'If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_INN Then Exit Sub
-    
-    Text = Trim$(NPC(npcNum).name)
-    textSize = EngineGetTextWidth(Font_GeorgiaShadow, Text)
-    Level = NPC(npcNum).Level
-    LevelSize = EngineGetTextWidth(Font_GeorgiaShadow, "Lvl " & Level)
-    
-If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_ATTACKONSIGHT Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_ATTACKWHENATTACKED Then
- If NPC(npcNum).Level <= GetPlayerLevel(MyIndex) - 3 Then
-            Colour = Grey
-        ElseIf NPC(npcNum).Level <= GetPlayerLevel(MyIndex) - 2 Then
-            Colour = Green
-        ElseIf NPC(npcNum).Level > GetPlayerLevel(MyIndex) Then
-            Colour = Red
-        Else
-            Colour = White
-        End If
-    Else
-        Colour = White
-    End If
-    
-    textX = MapNpc(Index).x * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (textSize \ 2)
-    textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
-    lvlx = MapNpc(Index).x * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (LevelSize \ 2)
-    lvly = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
-    
-    If NPC(npcNum).Sprite >= 1 And NPC(npcNum).Sprite <= Count_Char Then
-        textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
-        lvly = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
-    End If
-    
-    
-    If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_ATTACKONSIGHT Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_ATTACKWHENATTACKED Then
-        Call RenderText(Font_GeorgiaShadow, "Lvl " & Level, ConvertMapX(lvlx), ConvertMapY(lvly) - 9, BrightGreen)
-        Call RenderText(Font_GeorgiaShadow, Text, ConvertMapX(textX), ConvertMapY(textY), Colour)
-    
-    Else
-        Call RenderText(Font_Georgia, Text, ConvertMapX(textX), ConvertMapY(textY), Colour)
-    
-    End If
+Dim i As Long, name As String
+Dim TitleSize As Long, tx As Long, ty As Long
+Dim Title As String
 
-If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_GUARD Then
-        
-            Dim TitleSize As Long, tx As Long, ty As Long
-            Dim Title As String
-            
-            Title = Trim$(NPC(npcNum).AttackSay)
-            TitleSize = EngineGetTextWidth(Font_GeorgiaShadow, "<" & Title & ">")
-            If Title = vbNullString Then Exit Sub
-            
-            tx = MapNpc(Index).x * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (TitleSize \ 2)
-            ty = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
-            Call RenderText(Font_Georgia, "<" & Title & ">", ConvertMapX(tx), ConvertMapY(ty), Blue)
-
+  npcNum = MapNpc(index).Num
+  
+  'If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_GUARD Then Exit Sub
+  'If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_INN Then Exit Sub
+  
+  Text = NPC(npcNum).name
+  textSize = EngineGetTextWidth(Font_GeorgiaShadow, Text)
+  Level = NPC(npcNum).Level
+  LevelSize = EngineGetTextWidth(Font_GeorgiaShadow, "Lvl " & Level)
+  
+  If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_ATTACKONSIGHT Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_ATTACKWHENATTACKED Then
+    If NPC(npcNum).Level <= myChar.lvl - 3 Then
+      Colour = Grey
+    ElseIf NPC(npcNum).Level <= myChar.lvl - 2 Then
+      Colour = Green
+    ElseIf NPC(npcNum).Level > myChar.lvl Then
+      Colour = Red
+    Else
+      Colour = White
     End If
-    If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_FRIENDLY Then
-    For I = 1 To MAX_QUESTS
-        'check if the npc is the next task to any quest: [?] symbol
-        If Quest(I).name <> "" Then
-            If TempPlayer(MyIndex).PlayerQuest(I).Status = QUEST_STARTED Then
-                If Quest(I).Task(TempPlayer(MyIndex).PlayerQuest(I).ActualTask).NPC = npcNum Then
-                    name = "[?]"
-                    textX = MapNpc(Index).x * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (EngineGetTextWidth(Font_GeorgiaShadow, name) / 2)
-                    textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 16
-                    If NPC(npcNum).Sprite >= 1 And NPC(npcNum).Sprite <= Count_Char Then
-                        textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
-                    End If
-                    If Not NPC(npcNum).Behaviour = NPC_BEHAVIOUR_FRIENDLY Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Then
-                        Call RenderText(Font_GeorgiaShadow, name, ConvertMapX(textX), ConvertMapY(textY - 12), Yellow)
-                    Else
-                        Call RenderText(Font_GeorgiaShadow, name, ConvertMapX(textX), ConvertMapY(textY - 12), Yellow)
-                    End If
-                    Exit For
-                End If
+  Else
+    Colour = White
+  End If
+  
+  textX = MapNpc(index).x * PIC_X + MapNpc(index).xOffset + PIC_X \ 2 - textSize \ 2
+  textY = MapNpc(index).y * PIC_Y + MapNpc(index).yOffset - 32
+  lvlx = MapNpc(index).x * PIC_X + MapNpc(index).xOffset + PIC_X \ 2 - LevelSize \ 2
+  lvly = MapNpc(index).y * PIC_Y + MapNpc(index).yOffset - 32
+  
+  If NPC(npcNum).Sprite >= 1 And NPC(npcNum).Sprite <= Count_Char Then
+    textY = MapNpc(index).y * PIC_Y + MapNpc(index).yOffset - 32
+    lvly = MapNpc(index).y * PIC_Y + MapNpc(index).yOffset - 32
+  End If
+  
+  If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_ATTACKONSIGHT Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_ATTACKWHENATTACKED Then
+    Call RenderText(Font_GeorgiaShadow, "Lvl " & Level, ConvertMapX(lvlx), ConvertMapY(lvly) - 9, BrightGreen)
+    Call RenderText(Font_GeorgiaShadow, Text, ConvertMapX(textX), ConvertMapY(textY), Colour)
+  Else
+    Call RenderText(Font_Georgia, Text, ConvertMapX(textX), ConvertMapY(textY), Colour)
+  End If
+  
+  If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_GUARD Then
+    Title = NPC(npcNum).AttackSay
+    TitleSize = EngineGetTextWidth(Font_GeorgiaShadow, "<" & Title & ">")
+    If Title = vbNullString Then Exit Sub
+    
+    tx = MapNpc(index).x * PIC_X + MapNpc(index).xOffset + PIC_X \ 2 - TitleSize \ 2
+    ty = MapNpc(index).y * PIC_Y + MapNpc(index).yOffset - 32
+    Call RenderText(Font_Georgia, "<" & Title & ">", ConvertMapX(tx), ConvertMapY(ty), Blue)
+  End If
+  
+  If NPC(npcNum).Behaviour = NPC_BEHAVIOUR_FRIENDLY Then
+    For i = 1 To MAX_QUESTS
+      'check if the npc is the next task to any quest: [?] symbol
+      If Quest(i).name <> vbNullString Then
+        If TempPlayer(MyIndex).PlayerQuest(i).Status = QUEST_STARTED Then
+          If Quest(i).Task(TempPlayer(MyIndex).PlayerQuest(i).ActualTask).NPC = npcNum Then
+            name = "[?]"
+            textX = MapNpc(index).x * PIC_X + MapNpc(index).xOffset + PIC_X \ 2 - EngineGetTextWidth(Font_GeorgiaShadow, name) \ 2
+            textY = MapNpc(index).y * PIC_Y + MapNpc(index).yOffset - 16
+            
+            If NPC(npcNum).Sprite >= 1 And NPC(npcNum).Sprite <= Count_Char Then
+              textY = MapNpc(index).y * PIC_Y + MapNpc(index).yOffset - 32
             End If
             
-            'check if the npc is the starter to any quest: [!] symbol
-            'can accept the quest as a new one?
-            If TempPlayer(MyIndex).PlayerQuest(I).Status = QUEST_NOT_STARTED Or TempPlayer(MyIndex).PlayerQuest(I).Status = QUEST_COMPLETED_BUT Then
-                'the npc gives this quest?
-                If NPC(npcNum).Quest = 1 Then
-                    name = "[!]"
-                    textX = MapNpc(Index).x * PIC_X + MapNpc(Index).XOffset + (PIC_X \ 2) - (EngineGetTextWidth(Font_GeorgiaShadow, name) / 2)
-                    textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 16
-                    If NPC(npcNum).Sprite >= 1 And NPC(npcNum).Sprite <= Count_Char Then
-                        textY = MapNpc(Index).y * PIC_Y + MapNpc(Index).YOffset - 32
-                    End If
-                    If Not NPC(npcNum).Behaviour = NPC_BEHAVIOUR_FRIENDLY Or NPC(npcNum).Behaviour = NPC_BEHAVIOUR_SHOPKEEPER Then
-                        Call RenderText(Font_GeorgiaShadow, name, ConvertMapX(textX), ConvertMapY(textY - 12), Yellow)
-                    Else
-                        Call RenderText(Font_GeorgiaShadow, name, ConvertMapX(textX), ConvertMapY(textY - 12), Yellow)
-                    End If
-                    Exit For
-                End If
-            End If
+            Call RenderText(Font_GeorgiaShadow, name, ConvertMapX(textX), ConvertMapY(textY - 12), Yellow)
+            Exit For
+          End If
         End If
         
-        Next
+        'check if the npc is the starter to any quest: [!] symbol
+        'can accept the quest as a new one?
+        If TempPlayer(MyIndex).PlayerQuest(i).Status = QUEST_NOT_STARTED Or TempPlayer(MyIndex).PlayerQuest(i).Status = QUEST_COMPLETED_BUT Then
+          'the npc gives this quest?
+          If NPC(npcNum).Quest = 1 Then
+            name = "[!]"
+            textX = MapNpc(index).x * PIC_X + MapNpc(index).xOffset + PIC_X \ 2 - EngineGetTextWidth(Font_GeorgiaShadow, name) \ 2
+            textY = MapNpc(index).y * PIC_Y + MapNpc(index).yOffset - 16
+            
+            If NPC(npcNum).Sprite >= 1 And NPC(npcNum).Sprite <= Count_Char Then
+              textY = MapNpc(index).y * PIC_Y + MapNpc(index).yOffset - 32
+            End If
+            
+            Call RenderText(Font_GeorgiaShadow, name, ConvertMapX(textX), ConvertMapY(textY - 12), Yellow)
+            Exit For
+          End If
         End If
+      End If
+    Next
+  End If
 End Sub
 
 Sub DrawBossMsg()
@@ -229,13 +217,13 @@ End Sub
 Public Sub RenderText(ByRef UseFont As CustomFont, ByVal Text As String, ByVal x As Long, ByVal y As Long, ByVal color As Long, Optional ByVal Alpha As Long = 255, Optional Shadow As Boolean = True)
 Dim TempVA(0 To 3)  As TLVERTEX
 Dim TempStr() As String
-Dim Count As Integer
+Dim count As Integer
 Dim Ascii() As Byte
-Dim I As Long
+Dim i As Long
 Dim j As Long
 Dim TempColor As Long
 Dim ResetColor As Byte
-Dim YOffset As Single
+Dim yOffset As Single
 
     ' set the color
     color = dx8Colour(color, Alpha)
@@ -254,22 +242,22 @@ Dim YOffset As Single
     CurrentTexture = -1
     
     'Loop through each line if there are line breaks (vbCrLf)
-    For I = 0 To UBound(TempStr)
-        If Len(TempStr(I)) > 0 Then
-            YOffset = I * UseFont.CharHeight
-            Count = 0
+    For i = 0 To UBound(TempStr)
+        If Len(TempStr(i)) > 0 Then
+            yOffset = i * UseFont.CharHeight
+            count = 0
             'Convert the characters to the ascii value
-            Ascii() = StrConv(TempStr(I), vbFromUnicode)
+            Ascii() = StrConv(TempStr(i), vbFromUnicode)
             
             'Loop through the characters
-            For j = 1 To Len(TempStr(I))
+            For j = 1 To Len(TempStr(i))
                 'Copy from the cached vertex array to the temp vertex array
                 Call CopyMemory(TempVA(0), UseFont.HeaderInfo.CharVA(Ascii(j - 1)).Vertex(0), FVF_Size * 4)
                 
                 'Set up the verticies
-                TempVA(0).x = x + Count
-                TempVA(0).y = y + YOffset
-                TempVA(1).x = TempVA(1).x + x + Count
+                TempVA(0).x = x + count
+                TempVA(0).y = y + yOffset
+                TempVA(1).x = TempVA(1).x + x + count
                 TempVA(1).y = TempVA(0).y
                 TempVA(2).x = TempVA(0).x
                 TempVA(2).y = TempVA(2).y + TempVA(0).y
@@ -286,7 +274,7 @@ Dim YOffset As Single
                 Call D3DDevice8.DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, TempVA(0), FVF_Size)
                 
                 'Shift over the the position to render the next character
-                Count = Count + UseFont.HeaderInfo.CharWidth(Ascii(j - 1))
+                count = count + UseFont.HeaderInfo.CharWidth(Ascii(j - 1))
                 
                 'Check to reset the color
                 If ResetColor Then
@@ -295,7 +283,7 @@ Dim YOffset As Single
                 End If
             Next j
         End If
-    Next I
+    Next i
 End Sub
 
 Public Function dx8Colour(ByVal colourNum As Long, ByVal Alpha As Long) As Long
@@ -350,56 +338,56 @@ Dim LoopI As Integer
 
 End Function
 
-Sub DrawActionMsg(ByVal Index As Integer)
-Dim x As Long, y As Long, I As Long
+Sub DrawActionMsg(ByVal index As Integer)
+Dim x As Long, y As Long, i As Long
 Dim LenMsg As Long
 Dim time As Long
-    If ActionMsg(Index).Message = vbNullString Then Exit Sub
+    If ActionMsg(index).Message = vbNullString Then Exit Sub
 
     ' how long we want each message to appear
-    Select Case ActionMsg(Index).Type
+    Select Case ActionMsg(index).Type
         Case ACTIONMSG_STATIC
             
-            LenMsg = EngineGetTextWidth(Font_GeorgiaShadow, Trim$(ActionMsg(Index).Message))
+            LenMsg = EngineGetTextWidth(Font_GeorgiaShadow, Trim$(ActionMsg(index).Message))
 
-            If ActionMsg(Index).y > 0 Then
-                x = ActionMsg(Index).x + Int(PIC_X \ 2) - (LenMsg / 2)
-                y = ActionMsg(Index).y + PIC_Y
+            If ActionMsg(index).y > 0 Then
+                x = ActionMsg(index).x + Int(PIC_X \ 2) - (LenMsg / 2)
+                y = ActionMsg(index).y + PIC_Y
             Else
-                x = ActionMsg(Index).x + Int(PIC_X \ 2) - (LenMsg / 2)
-                y = ActionMsg(Index).y - Int(PIC_Y \ 2) + 18
+                x = ActionMsg(index).x + Int(PIC_X \ 2) - (LenMsg / 2)
+                y = ActionMsg(index).y - Int(PIC_Y \ 2) + 18
             End If
 
         Case ACTIONMSG_SCROLL
             time = 1500
         
-            If ActionMsg(Index).y > 0 Then
-                x = ActionMsg(Index).x + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).Message)) \ 2) * 8)
-                y = ActionMsg(Index).y - Int(PIC_Y \ 2) - 2 - (ActionMsg(Index).Scroll * 0.6)
-                ActionMsg(Index).Scroll = ActionMsg(Index).Scroll + 1
+            If ActionMsg(index).y > 0 Then
+                x = ActionMsg(index).x + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(index).Message)) \ 2) * 8)
+                y = ActionMsg(index).y - Int(PIC_Y \ 2) - 2 - (ActionMsg(index).Scroll * 0.6)
+                ActionMsg(index).Scroll = ActionMsg(index).Scroll + 1
             Else
-                x = ActionMsg(Index).x + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(Index).Message)) \ 2) * 8)
-                y = ActionMsg(Index).y - Int(PIC_Y \ 2) + 18 + (ActionMsg(Index).Scroll * 0.001)
-                ActionMsg(Index).Scroll = ActionMsg(Index).Scroll + 1
+                x = ActionMsg(index).x + Int(PIC_X \ 2) - ((Len(Trim$(ActionMsg(index).Message)) \ 2) * 8)
+                y = ActionMsg(index).y - Int(PIC_Y \ 2) + 18 + (ActionMsg(index).Scroll * 0.001)
+                ActionMsg(index).Scroll = ActionMsg(index).Scroll + 1
             End If
             
-            ActionMsg(Index).Alpha = ActionMsg(Index).Alpha - 5
-            If ActionMsg(Index).Alpha <= 0 Then ClearActionMsg Index: Exit Sub
+            ActionMsg(index).Alpha = ActionMsg(index).Alpha - 5
+            If ActionMsg(index).Alpha <= 0 Then ClearActionMsg index: Exit Sub
 
         Case ACTIONMSG_SCREEN
             time = 3000
 
             ' This will kill any action screen messages that there in the system
-            For I = MAX_BYTE To 1 Step -1
-                If ActionMsg(I).Type = ACTIONMSG_SCREEN Then
-                    If I <> Index Then
-                        ClearActionMsg Index
-                        Index = I
+            For i = MAX_BYTE To 1 Step -1
+                If ActionMsg(i).Type = ACTIONMSG_SCREEN Then
+                    If i <> index Then
+                        ClearActionMsg index
+                        index = i
                     End If
                 End If
             Next
     
-            x = (400) - ((EngineGetTextWidth(Font_GeorgiaShadow, Trim$(ActionMsg(Index).Message)) \ 2))
+            x = (400) - ((EngineGetTextWidth(Font_GeorgiaShadow, Trim$(ActionMsg(index).Message)) \ 2))
             y = 24
 
     End Select
@@ -407,8 +395,8 @@ Dim time As Long
     x = ConvertMapX(x)
     y = ConvertMapY(y)
 
-    If ActionMsg(Index).Created > 0 Then
-        RenderText Font_GeorgiaShadow, ActionMsg(Index).Message, x, y, ActionMsg(Index).color, ActionMsg(Index).Alpha
+    If ActionMsg(index).Created > 0 Then
+        RenderText Font_GeorgiaShadow, ActionMsg(index).Message, x, y, ActionMsg(index).color, ActionMsg(index).Alpha
     End If
 
 End Sub
@@ -474,8 +462,8 @@ Public Sub AddText(ByVal Text As String, ByVal tColor As Long, Optional ByVal Al
 Dim TempSplit() As String
 Dim TSLoop As Long
 Dim lastSpace As Long
-Dim Size As Long
-Dim I As Long
+Dim size As Long
+Dim i As Long
 Dim B As Long
 Dim color As Long
 
@@ -487,47 +475,47 @@ Dim color As Long
     For TSLoop = 0 To UBound(TempSplit)
     
         'Clear the values for the new line
-        Size = 0
+        size = 0
         B = 1
         lastSpace = 1
         
         'Loop through all the characters
-        For I = 1 To Len(TempSplit(TSLoop))
+        For i = 1 To Len(TempSplit(TSLoop))
         
             'If it is a space, store it so we can easily break at it
-            Select Case Mid$(TempSplit(TSLoop), I, 1)
-                Case " ": lastSpace = I
-                Case "_": lastSpace = I
-                Case "-": lastSpace = I
+            Select Case Mid$(TempSplit(TSLoop), i, 1)
+                Case " ": lastSpace = i
+                Case "_": lastSpace = i
+                Case "-": lastSpace = i
             End Select
             
             'Add up the size
-            Size = Size + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(TempSplit(TSLoop), I, 1)))
+            size = size + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(TempSplit(TSLoop), i, 1)))
             
             'Check for too large of a size
-            If Size > ChatWidth Then
+            If size > ChatWidth Then
                 
                 'Check if the last space was too far back
-                If I - lastSpace > 10 Then
+                If i - lastSpace > 10 Then
                 
                     'Too far away to the last space, so break at the last character
-                    AddToChatTextBuffer_Overflow Trim$(Mid$(TempSplit(TSLoop), B, (I - 1) - B)), color
-                    B = I - 1
-                    Size = 0
+                    AddToChatTextBuffer_Overflow Trim$(Mid$(TempSplit(TSLoop), B, (i - 1) - B)), color
+                    B = i - 1
+                    size = 0
                 Else
                     'Break at the last space to preserve the word
                     AddToChatTextBuffer_Overflow Trim$(Mid$(TempSplit(TSLoop), B, lastSpace - B)), color
                     B = lastSpace + 1
                     'Count all the words we ignored (the ones that weren't printed, but are before "i")
-                    Size = EngineGetTextWidth(Font_GeorgiaShadow, Mid$(TempSplit(TSLoop), lastSpace, I - lastSpace))
+                    size = EngineGetTextWidth(Font_GeorgiaShadow, Mid$(TempSplit(TSLoop), lastSpace, i - lastSpace))
                 End If
             End If
             
             'This handles the remainder
-            If I = Len(TempSplit(TSLoop)) Then
-                If B <> I Then AddToChatTextBuffer_Overflow Mid$(TempSplit(TSLoop), B, I), color
+            If i = Len(TempSplit(TSLoop)) Then
+                If B <> i Then AddToChatTextBuffer_Overflow Mid$(TempSplit(TSLoop), B, i), color
             End If
-        Next I
+        Next i
     Next TSLoop
     
     'Only update if we have set up the text (that way we can add to the buffer before it is even made)
@@ -557,7 +545,7 @@ Dim LoopC As Long
 End Sub
 
 Public Sub WordWrap_Array(ByVal Text As String, ByVal MaxLineLen As Long, ByRef theArray() As String)
-Dim lineCount As Long, I As Long, Size As Long, lastSpace As Long, B As Long
+Dim lineCount As Long, i As Long, size As Long, lastSpace As Long, B As Long
     
     'Too small of text
     If Len(Text) < 2 Then
@@ -569,29 +557,29 @@ Dim lineCount As Long, I As Long, Size As Long, lastSpace As Long, B As Long
     ' default values
     B = 1
     lastSpace = 1
-    Size = 0
+    size = 0
     
-    For I = 1 To Len(Text)
+    For i = 1 To Len(Text)
         ' if it's a space, store it
-        Select Case Mid$(Text, I, 1)
-            Case " ": lastSpace = I
-            Case "_": lastSpace = I
-            Case "-": lastSpace = I
+        Select Case Mid$(Text, i, 1)
+            Case " ": lastSpace = i
+            Case "_": lastSpace = i
+            Case "-": lastSpace = i
         End Select
         
         'Add up the size
-        Size = Size + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(Text, I, 1)))
+        size = size + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(Text, i, 1)))
         
         'Check for too large of a size
-        If Size > MaxLineLen Then
+        If size > MaxLineLen Then
             'Check if the last space was too far back
-            If I - lastSpace > 12 Then
+            If i - lastSpace > 12 Then
                 'Too far away to the last space, so break at the last character
                 lineCount = lineCount + 1
                 ReDim Preserve theArray(1 To lineCount) As String
-                theArray(lineCount) = Trim$(Mid$(Text, B, (I - 1) - B))
-                B = I - 1
-                Size = 0
+                theArray(lineCount) = Trim$(Mid$(Text, B, (i - 1) - B))
+                B = i - 1
+                size = 0
             Else
                 'Break at the last space to preserve the word
                 lineCount = lineCount + 1
@@ -600,16 +588,16 @@ Dim lineCount As Long, I As Long, Size As Long, lastSpace As Long, B As Long
                 B = lastSpace + 1
                 
                 'Count all the words we ignored (the ones that weren't printed, but are before "i")
-                Size = EngineGetTextWidth(Font_GeorgiaShadow, Mid$(Text, lastSpace, I - lastSpace))
+                size = EngineGetTextWidth(Font_GeorgiaShadow, Mid$(Text, lastSpace, i - lastSpace))
             End If
         End If
         
         ' Remainder
-        If I = Len(Text) Then
-            If B <> I Then
+        If i = Len(Text) Then
+            If B <> i Then
                 lineCount = lineCount + 1
                 ReDim Preserve theArray(1 To lineCount) As String
-                theArray(lineCount) = theArray(lineCount) & Mid$(Text, B, I)
+                theArray(lineCount) = theArray(lineCount) & Mid$(Text, B, i)
             End If
         End If
     Next
@@ -619,8 +607,8 @@ Public Function WordWrap(ByVal Text As String, ByVal MaxLineLen As Integer) As S
 Dim TempSplit() As String
 Dim TSLoop As Long
 Dim lastSpace As Long
-Dim Size As Long
-Dim I As Long
+Dim size As Long
+Dim i As Long
 Dim B As Long
 
     'Too small of text
@@ -635,7 +623,7 @@ Dim B As Long
     For TSLoop = 0 To UBound(TempSplit)
     
         'Clear the values for the new line
-        Size = 0
+        size = 0
         B = 1
         lastSpace = 1
         
@@ -646,43 +634,43 @@ Dim B As Long
         If InStr(1, TempSplit(TSLoop), " ") Or InStr(1, TempSplit(TSLoop), "-") Or InStr(1, TempSplit(TSLoop), "_") Then
             
             'Loop through all the characters
-            For I = 1 To Len(TempSplit(TSLoop))
+            For i = 1 To Len(TempSplit(TSLoop))
             
                 'If it is a space, store it so we can easily break at it
-                Select Case Mid$(TempSplit(TSLoop), I, 1)
-                    Case " ": lastSpace = I
-                    Case "_": lastSpace = I
-                    Case "-": lastSpace = I
+                Select Case Mid$(TempSplit(TSLoop), i, 1)
+                    Case " ": lastSpace = i
+                    Case "_": lastSpace = i
+                    Case "-": lastSpace = i
                 End Select
     
                 'Add up the size
-                Size = Size + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(TempSplit(TSLoop), I, 1)))
+                size = size + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(TempSplit(TSLoop), i, 1)))
  
                 'Check for too large of a size
-                If Size > MaxLineLen Then
+                If size > MaxLineLen Then
                     'Check if the last space was too far back
-                    If I - lastSpace > 12 Then
+                    If i - lastSpace > 12 Then
                         'Too far away to the last space, so break at the last character
-                        WordWrap = WordWrap & Trim$(Mid$(TempSplit(TSLoop), B, (I - 1) - B)) & vbNewLine
-                        B = I - 1
-                        Size = 0
+                        WordWrap = WordWrap & Trim$(Mid$(TempSplit(TSLoop), B, (i - 1) - B)) & vbNewLine
+                        B = i - 1
+                        size = 0
                     Else
                         'Break at the last space to preserve the word
                         WordWrap = WordWrap & Trim$(Mid$(TempSplit(TSLoop), B, lastSpace - B)) & vbNewLine
                         B = lastSpace + 1
                         
                         'Count all the words we ignored (the ones that weren't printed, but are before "i")
-                        Size = EngineGetTextWidth(Font_GeorgiaShadow, Mid$(TempSplit(TSLoop), lastSpace, I - lastSpace))
+                        size = EngineGetTextWidth(Font_GeorgiaShadow, Mid$(TempSplit(TSLoop), lastSpace, i - lastSpace))
                     End If
                 End If
                 
                 'This handles the remainder
-                If I = Len(TempSplit(TSLoop)) Then
-                    If B <> I Then
-                        WordWrap = WordWrap & Mid$(TempSplit(TSLoop), B, I)
+                If i = Len(TempSplit(TSLoop)) Then
+                    If B <> i Then
+                        WordWrap = WordWrap & Mid$(TempSplit(TSLoop), B, i)
                     End If
                 End If
-            Next I
+            Next i
         Else
             WordWrap = WordWrap & TempSplit(TSLoop)
         End If
@@ -690,15 +678,15 @@ Dim B As Long
 End Function
 
 Public Sub UpdateShowChatText()
-Dim CHATOFFSET As Long, I As Long, x As Long
+Dim CHATOFFSET As Long, i As Long, x As Long
 
     CHATOFFSET = 55
     
     If EngineGetTextWidth(Font_GeorgiaShadow, MyText) > GUIWindow(GUI_CHAT).width - CHATOFFSET Then
-        For I = Len(MyText) To 1 Step -1
-            x = x + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(MyText, I, 1)))
+        For i = Len(MyText) To 1 Step -1
+            x = x + Font_GeorgiaShadow.HeaderInfo.CharWidth(Asc(Mid$(MyText, i, 1)))
             If x > GUIWindow(GUI_CHAT).width - CHATOFFSET Then
-                RenderChatText = Right$(MyText, Len(MyText) - I + 1)
+                RenderChatText = Right$(MyText, Len(MyText) - i + 1)
                 Exit For
             End If
         Next
@@ -770,7 +758,7 @@ End Sub
 
 Public Sub UpdateChatArray()
 Dim Chunk As Integer
-Dim Count As Integer
+Dim count As Integer
 Dim LoopC As Byte
 Dim Ascii As Byte
 Dim Row As Long
@@ -781,13 +769,13 @@ Dim x As Single
 Dim y As Single
 Dim Y2 As Single
 Dim j As Long
-Dim Size As Integer
+Dim size As Integer
 Dim ResetColor As Byte
 Dim TempColor As Long
-Dim YOffset As Long
+Dim yOffset As Long
 
     ' set the offset of each line
-    YOffset = 14
+    yOffset = 14
 
     'Set the position
     If ChatBufferChunk <= 1 Then ChatBufferChunk = 1
@@ -795,15 +783,15 @@ Dim YOffset As Long
     Chunk = ChatScroll
     
     'Get the number of characters in all the visible buffer
-    Size = 0
+    size = 0
     
     For LoopC = (Chunk * ChatBufferChunk) - (8 - 1) To Chunk * ChatBufferChunk
         If LoopC > ChatTextBufferSize Then Exit For
-        Size = Size + Len(ChatTextBuffer(LoopC).Text)
+        size = size + Len(ChatTextBuffer(LoopC).Text)
     Next
     
-    Size = Size - j
-    ChatArrayUbound = Size * 6 - 1
+    size = size - j
+    ChatArrayUbound = size * 6 - 1
     If ChatArrayUbound < 0 Then Exit Sub
     ReDim ChatVA(0 To ChatArrayUbound) 'Size our array to fix the 6 verticies of each character
     ReDim ChatVAS(0 To ChatArrayUbound)
@@ -821,10 +809,10 @@ Dim YOffset As Long
         TempColor = ChatTextBuffer(LoopC).color
         
         'Set the Y position to be used
-        Y2 = y - (LoopC * YOffset) + (Chunk * ChatBufferChunk * YOffset) - 32
+        Y2 = y - (LoopC * yOffset) + (Chunk * ChatBufferChunk * yOffset) - 32
         
         'Loop through each line if there are line breaks (vbCrLf)
-        Count = 0   'Counts the offset value we are on
+        count = 0   'Counts the offset value we are on
         If LenB(ChatTextBuffer(LoopC).Text) <> 0 Then  'Dont bother with empty strings
             
             'Loop through the characters
@@ -841,7 +829,7 @@ Dim YOffset As Long
                 ' ****** Rectangle | Top Left ******
                 With ChatVA(0 + (6 * pos))
                     .color = TempColor
-                    .x = (x) + Count
+                    .x = (x) + count
                     .y = (Y2)
                     .tu = u
                     .tv = v
@@ -851,7 +839,7 @@ Dim YOffset As Long
                 ' ****** Rectangle | Bottom Left ******
                 With ChatVA(1 + (6 * pos))
                     .color = TempColor
-                    .x = (x) + Count
+                    .x = (x) + count
                     .y = (Y2) + Font_GeorgiaShadow.HeaderInfo.CellHeight
                     .tu = u
                     .tv = v + Font_GeorgiaShadow.RowFactor
@@ -861,7 +849,7 @@ Dim YOffset As Long
                 ' ****** Rectangle | Bottom Right ******
                 With ChatVA(2 + (6 * pos))
                     .color = TempColor
-                    .x = (x) + Count + Font_GeorgiaShadow.HeaderInfo.CellWidth
+                    .x = (x) + count + Font_GeorgiaShadow.HeaderInfo.CellWidth
                     .y = (Y2) + Font_GeorgiaShadow.HeaderInfo.CellHeight
                     .tu = u + Font_GeorgiaShadow.ColFactor
                     .tv = v + Font_GeorgiaShadow.RowFactor
@@ -875,7 +863,7 @@ Dim YOffset As Long
                 ' ****** Rectangle | Top Right ******
                 With ChatVA(4 + (6 * pos))
                     .color = TempColor
-                    .x = (x) + Count + Font_GeorgiaShadow.HeaderInfo.CellWidth
+                    .x = (x) + count + Font_GeorgiaShadow.HeaderInfo.CellWidth
                     .y = (Y2)
                     .tu = u + Font_GeorgiaShadow.ColFactor
                     .tv = v
@@ -888,7 +876,7 @@ Dim YOffset As Long
                 pos = pos + 1
 
                 'Shift over the the position to render the next character
-                Count = Count + Font_GeorgiaShadow.HeaderInfo.CharWidth(Ascii)
+                count = count + Font_GeorgiaShadow.HeaderInfo.CharWidth(Ascii)
                 
                 'Check to reset the color
                 If ResetColor Then
@@ -924,7 +912,7 @@ Public Sub RenderChatTextBuffer()
 End Sub
 
 Public Function SwearFilter_Replace(ByVal Message As String) As String
-    Dim I As Long
+    Dim i As Long
 
     ' Check to see if there are any swear words in memory.
     If MaxSwearWords = 0 Then
@@ -933,13 +921,13 @@ Public Function SwearFilter_Replace(ByVal Message As String) As String
     End If
 
     ' Loop through all of the words.
-    For I = 1 To MaxSwearWords
+    For i = 1 To MaxSwearWords
         ' Check if the word exists in the sentence.
-        If InStr(LCase(Message), LCase(SwearFilter(I).BadWord)) Then
+        If InStr(LCase(Message), LCase(SwearFilter(i).BadWord)) Then
             ' Replace the bad words with the replacement words.
-            Message = Replace$(LCase(Message), LCase(SwearFilter(I).BadWord), SwearFilter(I).NewWord, 1, -1, vbTextCompare)
+            Message = Replace$(LCase(Message), LCase(SwearFilter(i).BadWord), SwearFilter(i).NewWord, 1, -1, vbTextCompare)
         End If
-    Next I
+    Next i
 
     ' Return the filtered word message.
     SwearFilter_Replace = Message

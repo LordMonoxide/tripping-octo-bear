@@ -39,10 +39,10 @@ Dim FileName As String
     
     Call PutVar(FileName, "Options", "Game_Name", Trim$(Options.Game_Name))
     Call PutVar(FileName, "Options", "Username", Trim$(Options.Username))
-    Call PutVar(FileName, "Options", "Password", Trim$(Options.Password))
+    Call PutVar(FileName, "Options", "Password", Trim$(Options.password))
     Call PutVar(FileName, "Options", "SavePass", str(Options.savePass))
     Call PutVar(FileName, "Options", "IP", Options.IP)
-    Call PutVar(FileName, "Options", "Port", str(Options.Port))
+    Call PutVar(FileName, "Options", "Port", str(Options.port))
     Call PutVar(FileName, "Options", "MenuMusic", Trim$(Options.MenuMusic))
     Call PutVar(FileName, "Options", "Music", str(Options.Music))
     Call PutVar(FileName, "Options", "Sound", str(Options.Sound))
@@ -60,11 +60,11 @@ Dim FileName As String
     
     If Not FileExist(FileName) Then
         Options.Game_Name = "DOL"
-        Options.Password = vbNullString
+        Options.password = vbNullString
         Options.savePass = 0
         Options.Username = vbNullString
         Options.IP = "127.0.0.1"
-        Options.Port = 7001
+        Options.port = 7001
         Options.MenuMusic = vbNullString
         Options.Music = 1
         Options.Sound = 1
@@ -77,10 +77,10 @@ Dim FileName As String
     Else
         Options.Game_Name = GetVar(FileName, "Options", "Game_Name")
         Options.Username = GetVar(FileName, "Options", "Username")
-        Options.Password = GetVar(FileName, "Options", "Password")
-        Options.savePass = Val(GetVar(FileName, "Options", "SavePass"))
+        Options.password = GetVar(FileName, "Options", "Password")
+        Options.savePass = val(GetVar(FileName, "Options", "SavePass"))
         Options.IP = GetVar(FileName, "Options", "IP")
-        Options.Port = Val(GetVar(FileName, "Options", "Port"))
+        Options.port = val(GetVar(FileName, "Options", "Port"))
         Options.MenuMusic = GetVar(FileName, "Options", "MenuMusic")
         Options.Music = GetVar(FileName, "Options", "Music")
         Options.Sound = GetVar(FileName, "Options", "Sound")
@@ -232,16 +232,16 @@ Dim y As Long
     Close #f
 End Sub
 
-Sub ClearPlayer(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Player(Index)), LenB(Player(Index)))
-    Player(Index).name = vbNullString
+Sub ClearPlayer(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(Player(index)), LenB(Player(index)))
+    Player(index).name = vbNullString
 End Sub
 
-Sub ClearItem(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Item(Index)), LenB(Item(Index)))
-    Item(Index).name = vbNullString
-    Item(Index).Desc = vbNullString
-    Item(Index).Sound = "None."
+Sub ClearItem(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(item(index)), LenB(item(index)))
+    item(index).name = vbNullString
+    item(index).Desc = vbNullString
+    item(index).Sound = "None."
 End Sub
 
 Sub ClearItems()
@@ -252,14 +252,14 @@ Dim i As Long
     Next
 End Sub
 
-Sub ClearAnimInstance(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(AnimInstance(Index)), LenB(AnimInstance(Index)))
+Sub ClearAnimInstance(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(AnimInstance(index)), LenB(AnimInstance(index)))
 End Sub
 
-Sub ClearAnimation(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Animation(Index)), LenB(Animation(Index)))
-    Animation(Index).name = vbNullString
-    Animation(Index).Sound = "None."
+Sub ClearAnimation(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(Animation(index)), LenB(Animation(index)))
+    Animation(index).name = vbNullString
+    Animation(index).Sound = "None."
 End Sub
 
 Sub ClearAnimations()
@@ -270,10 +270,10 @@ Dim i As Long
     Next
 End Sub
 
-Sub ClearNPC(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(NPC(Index)), LenB(NPC(Index)))
-    NPC(Index).name = vbNullString
-    NPC(Index).Sound = "None."
+Sub ClearNPC(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(NPC(index)), LenB(NPC(index)))
+    NPC(index).name = vbNullString
+    NPC(index).Sound = "None."
 End Sub
 
 Sub ClearNpcs()
@@ -284,11 +284,11 @@ Dim i As Long
     Next
 End Sub
 
-Sub ClearSpell(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(spell(Index)), LenB(spell(Index)))
-    spell(Index).name = vbNullString
-    spell(Index).Desc = vbNullString
-    spell(Index).Sound = "None."
+Sub ClearSpell(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(spell(index)), LenB(spell(index)))
+    spell(index).name = vbNullString
+    spell(index).Desc = vbNullString
+    spell(index).Sound = "None."
 End Sub
 
 Sub ClearSpells()
@@ -299,9 +299,9 @@ Dim i As Long
     Next
 End Sub
 
-Sub ClearShop(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Shop(Index)), LenB(Shop(Index)))
-    Shop(Index).name = vbNullString
+Sub ClearShop(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(Shop(index)), LenB(Shop(index)))
+    Shop(index).name = vbNullString
 End Sub
 
 Sub ClearShops()
@@ -312,12 +312,12 @@ Dim i As Long
     Next
 End Sub
 
-Sub ClearResource(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Resource(Index)), LenB(Resource(Index)))
-    Resource(Index).name = vbNullString
-    Resource(Index).SuccessMessage = vbNullString
-    Resource(Index).EmptyMessage = vbNullString
-    Resource(Index).Sound = "None."
+Sub ClearResource(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(Resource(index)), LenB(Resource(index)))
+    Resource(index).name = vbNullString
+    Resource(index).SuccessMessage = vbNullString
+    Resource(index).EmptyMessage = vbNullString
+    Resource(index).Sound = "None."
 End Sub
 
 Sub ClearResources()
@@ -328,8 +328,8 @@ Dim i As Long
     Next
 End Sub
 
-Sub ClearMapItem(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(MapItem(Index)), LenB(MapItem(Index)))
+Sub ClearMapItem(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(MapItem(index)), LenB(MapItem(index)))
 End Sub
 
 Sub ClearMap()
@@ -349,8 +349,8 @@ Dim i As Long
     Next
 End Sub
 
-Sub ClearMapNpc(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(MapNpc(Index)), LenB(MapNpc(Index)))
+Sub ClearMapNpc(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(MapNpc(index)), LenB(MapNpc(index)))
 End Sub
 
 Sub ClearMapNpcs()
@@ -361,162 +361,6 @@ Dim i As Long
     Next
 End Sub
 
-Function GetPlayerName(ByVal Index As Long) As String
-    GetPlayerName = Trim$(Player(Index).name)
-End Function
-
-Sub SetPlayerName(ByVal Index As Long, ByVal name As String)
-    Player(Index).name = name
-End Sub
-
-Function GetPlayerClothes(ByVal Index As Long) As Long
-    GetPlayerClothes = Player(Index).Clothes
-End Function
-
-Function GetPlayerGear(ByVal Index As Long) As Long
-    GetPlayerGear = Player(Index).Gear
-End Function
-
-Function GetPlayerHair(ByVal Index As Long) As Long
-    GetPlayerHair = Player(Index).Hair
-End Function
-
-Function GetPlayerHeadgear(ByVal Index As Long) As Long
-    GetPlayerHeadgear = Player(Index).Headgear
-End Function
-
-Function GetPlayerLevel(ByVal Index As Long) As Long
-    GetPlayerLevel = Player(Index).Level
-End Function
-
-Sub SetPlayerLevel(ByVal Index As Long, ByVal Level As Long)
-    Player(Index).Level = Level
-End Sub
-
-Function GetPlayerExp(ByVal Index As Long) As Long
-    GetPlayerExp = Player(Index).EXP
-End Function
-
-Sub SetPlayerExp(ByVal Index As Long, ByVal EXP As Long)
-    Player(Index).EXP = EXP
-End Sub
-
-Sub SetPlayerSkillExp(ByVal Index As Long, ByVal EXP As Long, ByVal Skill As Skills)
-    Player(Index).SkillExp(Skill) = EXP
-End Sub
-
-Function GetPlayerAccess(ByVal Index As Long) As Long
-    GetPlayerAccess = Player(Index).Access
-End Function
-
-Sub SetPlayerAccess(ByVal Index As Long, ByVal Access As Long)
-    Player(Index).Access = Access
-End Sub
-
-Function GetPlayerPK(ByVal Index As Long) As Long
-    GetPlayerPK = Player(Index).PK
-End Function
-
-Sub SetPlayerPK(ByVal Index As Long, ByVal PK As Long)
-    Player(Index).PK = PK
-End Sub
-
-Function GetPlayerVital(ByVal Index As Long, ByVal Vital As Vitals) As Long
-    GetPlayerVital = Player(Index).Vital(Vital)
-End Function
-
-Sub SetPlayerVital(ByVal Index As Long, ByVal Vital As Vitals, ByVal Value As Long)
-    Player(Index).Vital(Vital) = Value
-
-    If GetPlayerVital(Index, Vital) > GetPlayerMaxVital(Index, Vital) Then
-        Player(Index).Vital(Vital) = GetPlayerMaxVital(Index, Vital)
-    End If
-End Sub
-
-Function GetPlayerMaxVital(ByVal Index As Long, ByVal Vital As Vitals) As Long
-    GetPlayerMaxVital = Player(Index).MaxVital(Vital)
-End Function
-
-Function GetPlayerStat(ByVal Index As Long, stat As Stats) As Long
-    GetPlayerStat = Player(Index).stat(stat)
-End Function
-
-Sub SetPlayerStat(ByVal Index As Long, stat As Stats, ByVal Value As Long)
-    Player(Index).stat(stat) = Value
-End Sub
-
-Function GetPlayerSkillLevel(ByVal Index As Long, Skill As Skills) As Long
-    GetPlayerSkillLevel = Player(Index).Skill(Skill)
-End Function
-
-Sub SetPlayerSkillLevel(ByVal Index As Long, Skill As Skills, ByVal Value As Long)
-    Player(Index).Skill(Skill) = Value
-End Sub
-
-Function GetPlayerPOINTS(ByVal Index As Long) As Long
-    GetPlayerPOINTS = Player(Index).POINTS
-End Function
-
-Sub SetPlayerPOINTS(ByVal Index As Long, ByVal POINTS As Long)
-    Player(Index).POINTS = POINTS
-End Sub
-
-Function GetPlayerMap(ByVal Index As Long) As Long
-    GetPlayerMap = Player(Index).map
-End Function
-
-Sub SetPlayerMap(ByVal Index As Long, ByVal mapnum As Long)
-    Player(Index).map = mapnum
-End Sub
-
-Function GetPlayerX(ByVal Index As Long) As Long
-    GetPlayerX = Player(Index).x
-End Function
-
-Sub SetPlayerX(ByVal Index As Long, ByVal x As Long)
-    Player(Index).x = x
-End Sub
-
-Function GetPlayerY(ByVal Index As Long) As Long
-    GetPlayerY = Player(Index).y
-End Function
-
-Sub SetPlayerY(ByVal Index As Long, ByVal y As Long)
-    Player(Index).y = y
-End Sub
-
-Function GetPlayerDir(ByVal Index As Long) As Long
-    GetPlayerDir = Player(Index).dir
-End Function
-
-Sub SetPlayerDir(ByVal Index As Long, ByVal dir As Long)
-    Player(Index).dir = dir
-End Sub
-
-Function GetPlayerInvItemNum(ByVal Index As Long, ByVal invSlot As Long) As Long
-    GetPlayerInvItemNum = PlayerInv(invSlot).Num
-End Function
-
-Sub SetPlayerInvItemNum(ByVal Index As Long, ByVal invSlot As Long, ByVal itemnum As Long)
-    PlayerInv(invSlot).Num = itemnum
-End Sub
-
-Function GetPlayerInvItemValue(ByVal Index As Long, ByVal invSlot As Long) As Long
-    GetPlayerInvItemValue = PlayerInv(invSlot).Value
-End Function
-
-Sub SetPlayerInvItemValue(ByVal Index As Long, ByVal invSlot As Long, ByVal ItemValue As Long)
-    PlayerInv(invSlot).Value = ItemValue
-End Sub
-
-Function GetPlayerEquipment(ByVal Index As Long, ByVal EquipmentSlot As Equipment) As Long
-    GetPlayerEquipment = Player(Index).Equipment(EquipmentSlot)
-End Function
-
-Sub SetPlayerEquipment(ByVal Index As Long, ByVal invNum As Long, ByVal EquipmentSlot As Equipment)
-    Player(Index).Equipment(EquipmentSlot) = invNum
-End Sub
-
 Public Sub ClearEvents()
     Dim i As Long
     For i = 1 To MAX_EVENTS
@@ -524,7 +368,7 @@ Public Sub ClearEvents()
     Next i
 End Sub
 
-Public Sub ClearEvent(ByVal Index As Long)
-    Call ZeroMemory(ByVal VarPtr(Events(Index)), LenB(Events(Index)))
-    Events(Index).name = vbNullString
+Public Sub ClearEvent(ByVal index As Long)
+    Call ZeroMemory(ByVal VarPtr(Events(index)), LenB(Events(index)))
+    Events(index).name = vbNullString
 End Sub

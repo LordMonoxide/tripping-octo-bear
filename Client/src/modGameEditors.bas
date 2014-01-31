@@ -2,7 +2,7 @@ Attribute VB_Name = "modGameEditors"
 Option Explicit
 
 Public Sub MapEditorInit()
-Dim I As Long
+Dim i As Long
 
     ' set the width
     frmEditor_Map.width = 7425
@@ -25,8 +25,8 @@ Dim I As Long
     
     ' set shops for the shop attribute
     frmEditor_Map.cmbShop.AddItem "None"
-    For I = 1 To MAX_SHOPS
-        frmEditor_Map.cmbShop.AddItem I & ": " & Shop(I).name
+    For i = 1 To MAX_SHOPS
+        frmEditor_Map.cmbShop.AddItem i & ": " & Shop(i).name
     Next
     
     ' we're not in a shop
@@ -34,14 +34,14 @@ Dim I As Long
     
         'set chest array
     frmEditor_Map.cmbChestindex.Clear
-    For I = 1 To MAX_CHESTS
-        frmEditor_Map.cmbChestindex.AddItem "Chest: " & I
+    For i = 1 To MAX_CHESTS
+        frmEditor_Map.cmbChestindex.AddItem "Chest: " & i
     Next
 End Sub
 
 Public Sub MapEditorProperties()
 Dim x As Long
-Dim I As Long
+Dim i As Long
     
     ' populate the cache if we need to
     If Not hasPopulated Then
@@ -50,8 +50,8 @@ Dim I As Long
     ' add the array to the combo
     frmEditor_MapProperties.lstMusic.Clear
     frmEditor_MapProperties.lstMusic.AddItem "None."
-    For I = 1 To UBound(musicCache)
-        frmEditor_MapProperties.lstMusic.AddItem musicCache(I)
+    For i = 1 To UBound(musicCache)
+        frmEditor_MapProperties.lstMusic.AddItem musicCache(i)
     Next
     ' finished populating
     
@@ -62,9 +62,9 @@ Dim I As Long
         ' find the music we have set
         If .lstMusic.ListCount >= 0 Then
             .lstMusic.ListIndex = 0
-            For I = 0 To .lstMusic.ListCount
-                If .lstMusic.List(I) = Trim$(map.Music) Then
-                    .lstMusic.ListIndex = I
+            For i = 0 To .lstMusic.ListCount
+                If .lstMusic.List(i) = Trim$(map.Music) Then
+                    .lstMusic.ListIndex = i
                 End If
             Next
         End If
@@ -172,13 +172,13 @@ Dim X2 As Long, Y2 As Long
 End Sub
 
 Public Sub MapEditorMouseDown(ByVal Button As Integer, ByVal x As Long, ByVal y As Long, Optional ByVal movedMouse As Boolean = True)
-Dim I As Long
+Dim i As Long
 Dim CurLayer As Long
 
     ' find which layer we're on
-    For I = 1 To MapLayer.Layer_Count - 1
-        If frmEditor_Map.optLayer(I).Value Then
-            CurLayer = I
+    For i = 1 To MapLayer.Layer_Count - 1
+        If frmEditor_Map.optLayer(i).Value Then
+            CurLayer = i
             Exit For
         End If
     Next
@@ -339,11 +339,11 @@ Dim CurLayer As Long
             x = x - ((x \ 32) * 32)
             y = y - ((y \ 32) * 32)
             ' see if it hits an arrow
-            For I = 1 To 4
-                If x >= DirArrowX(I) And x <= DirArrowX(I) + 8 Then
-                    If y >= DirArrowY(I) And y <= DirArrowY(I) + 8 Then
+            For i = 1 To 4
+                If x >= DirArrowX(i) And x <= DirArrowX(i) + 8 Then
+                    If y >= DirArrowY(i) And y <= DirArrowY(i) + 8 Then
                         ' flip the value.
-                        setDirBlock map.Tile(CurX, CurY).DirBlock, CByte(I), Not isDirBlocked(map.Tile(CurX, CurY).DirBlock, CByte(I))
+                        setDirBlock map.Tile(CurX, CurY).DirBlock, CByte(i), Not isDirBlocked(map.Tile(CurX, CurY).DirBlock, CByte(i))
                         Exit Sub
                     End If
                 End If
@@ -451,21 +451,21 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CNeedMap
     buffer.WriteLong 1
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     InMapEditor = False
     Unload frmEditor_Map
 End Sub
 
 Public Sub MapEditorClearLayer()
-Dim I As Long
+Dim i As Long
 Dim x As Long
 Dim y As Long
 Dim CurLayer As Long
 
     ' find which layer we're on
-    For I = 1 To MapLayer.Layer_Count - 1
-        If frmEditor_Map.optLayer(I).Value Then
-            CurLayer = I
+    For i = 1 To MapLayer.Layer_Count - 1
+        If frmEditor_Map.optLayer(i).Value Then
+            CurLayer = i
             Exit For
         End If
     Next
@@ -489,15 +489,15 @@ Dim CurLayer As Long
 End Sub
 
 Public Sub MapEditorFillLayer()
-Dim I As Long
+Dim i As Long
 Dim x As Long
 Dim y As Long
 Dim CurLayer As Long
 
     ' find which layer we're on
-    For I = 1 To MapLayer.Layer_Count - 1
-        If frmEditor_Map.optLayer(I).Value Then
-            CurLayer = I
+    For i = 1 To MapLayer.Layer_Count - 1
+        If frmEditor_Map.optLayer(i).Value Then
+            CurLayer = i
             Exit For
         End If
     Next
@@ -546,7 +546,7 @@ End Sub
 ' // Item Editor //
 ' /////////////////
 Public Sub ItemEditorInit()
-Dim I As Long
+Dim i As Long
 Dim SoundSet As Boolean
     
     If frmEditor_Item.visible = False Then Exit Sub
@@ -559,12 +559,12 @@ Dim SoundSet As Boolean
     ' add the array to the combo
     frmEditor_Item.cmbSound.Clear
     frmEditor_Item.cmbSound.AddItem "None."
-    For I = 1 To UBound(soundCache)
-        frmEditor_Item.cmbSound.AddItem soundCache(I)
+    For i = 1 To UBound(soundCache)
+        frmEditor_Item.cmbSound.AddItem soundCache(i)
     Next
     ' finished populating
 
-    With Item(EditorIndex)
+    With item(EditorIndex)
         frmEditor_Item.txtName.Text = Trim$(.name)
         If .Pic > frmEditor_Item.scrlPic.Max Then .Pic = 0
         frmEditor_Item.scrlPic.Value = .Pic
@@ -586,9 +586,9 @@ Dim SoundSet As Boolean
         
         ' find the sound we have set
         If frmEditor_Item.cmbSound.ListCount >= 0 Then
-            For I = 0 To frmEditor_Item.cmbSound.ListCount
-                If frmEditor_Item.cmbSound.List(I) = Trim$(.Sound) Then
-                    frmEditor_Item.cmbSound.ListIndex = I
+            For i = 0 To frmEditor_Item.cmbSound.ListCount
+                If frmEditor_Item.cmbSound.List(i) = Trim$(.Sound) Then
+                    frmEditor_Item.cmbSound.ListIndex = i
                     SoundSet = True
                 End If
             Next
@@ -625,8 +625,8 @@ Dim SoundSet As Boolean
             frmEditor_Item.scrlSpeed.Value = .Speed
             
             ' loop for stats
-            For I = 1 To Stats.Stat_Count - 1
-                frmEditor_Item.scrlStatBonus(I).Value = .Add_Stat(I)
+            For i = 1 To Stats.Stat_Count - 1
+                frmEditor_Item.scrlStatBonus(i).Value = .Add_Stat(i)
             Next
         Else
             frmEditor_Item.fraEquipment.visible = False
@@ -634,7 +634,7 @@ Dim SoundSet As Boolean
         
         If (frmEditor_Item.cmbType.ListIndex = ITEM_TYPE_Aura) Then
             frmEditor_Item.fraAura.visible = True
-            frmEditor_Item.scrlAura.Value = .Aura
+            frmEditor_Item.scrlAura.Value = .aura
         Else
             frmEditor_Item.fraAura.visible = False
         End If
@@ -682,8 +682,8 @@ Dim SoundSet As Boolean
         frmEditor_Item.scrlLevelReq.Value = .LevelReq
         
         ' loop for stats
-        For I = 1 To Stats.Stat_Count - 1
-            frmEditor_Item.scrlStatReq(I).Value = .Stat_Req(I)
+        For i = 1 To Stats.Stat_Count - 1
+            frmEditor_Item.scrlStatReq(i).Value = .Stat_Req(i)
         Next
         
         ' Info
@@ -698,11 +698,11 @@ Dim SoundSet As Boolean
 End Sub
 
 Public Sub ItemEditorOk()
-Dim I As Long
+Dim i As Long
 
-    For I = 1 To MAX_ITEMS
-        If Item_Changed(I) Then
-            Call SendSaveItem(I)
+    For i = 1 To MAX_ITEMS
+        If Item_Changed(i) Then
+            Call SendSaveItem(i)
         End If
     Next
     
@@ -725,7 +725,7 @@ End Sub
 ' // Animation Editor //
 ' /////////////////
 Public Sub AnimationEditorInit()
-Dim I As Long
+Dim i As Long
 Dim SoundSet As Boolean
     
     If frmEditor_Animation.visible = False Then Exit Sub
@@ -738,8 +738,8 @@ Dim SoundSet As Boolean
     ' add the array to the combo
     frmEditor_Animation.cmbSound.Clear
     frmEditor_Animation.cmbSound.AddItem "None."
-    For I = 1 To UBound(soundCache)
-        frmEditor_Animation.cmbSound.AddItem soundCache(I)
+    For i = 1 To UBound(soundCache)
+        frmEditor_Animation.cmbSound.AddItem soundCache(i)
     Next
     ' finished populating
 
@@ -748,24 +748,24 @@ Dim SoundSet As Boolean
         
         ' find the sound we have set
         If frmEditor_Animation.cmbSound.ListCount >= 0 Then
-            For I = 0 To frmEditor_Animation.cmbSound.ListCount
-                If frmEditor_Animation.cmbSound.List(I) = Trim$(.Sound) Then
-                    frmEditor_Animation.cmbSound.ListIndex = I
+            For i = 0 To frmEditor_Animation.cmbSound.ListCount
+                If frmEditor_Animation.cmbSound.List(i) = Trim$(.Sound) Then
+                    frmEditor_Animation.cmbSound.ListIndex = i
                     SoundSet = True
                 End If
             Next
             If Not SoundSet Or frmEditor_Animation.cmbSound.ListIndex = -1 Then frmEditor_Animation.cmbSound.ListIndex = 0
         End If
         
-        For I = 0 To 1
-            frmEditor_Animation.scrlSprite(I).Value = .Sprite(I)
-            frmEditor_Animation.scrlFrameCount(I).Value = .Frames(I)
-            frmEditor_Animation.scrlLoopCount(I).Value = .LoopCount(I)
+        For i = 0 To 1
+            frmEditor_Animation.scrlSprite(i).Value = .Sprite(i)
+            frmEditor_Animation.scrlFrameCount(i).Value = .Frames(i)
+            frmEditor_Animation.scrlLoopCount(i).Value = .LoopCount(i)
             
-            If .looptime(I) > 0 Then
-                frmEditor_Animation.scrlLoopTime(I).Value = .looptime(I)
+            If .looptime(i) > 0 Then
+                frmEditor_Animation.scrlLoopTime(i).Value = .looptime(i)
             Else
-                frmEditor_Animation.scrlLoopTime(I).Value = 45
+                frmEditor_Animation.scrlLoopTime(i).Value = 45
             End If
             
         Next
@@ -777,11 +777,11 @@ Dim SoundSet As Boolean
 End Sub
 
 Public Sub AnimationEditorOk()
-Dim I As Long
+Dim i As Long
 
-    For I = 1 To MAX_ANIMATIONS
-        If Animation_Changed(I) Then
-            Call SendSaveAnimation(I)
+    For i = 1 To MAX_ANIMATIONS
+        If Animation_Changed(i) Then
+            Call SendSaveAnimation(i)
         End If
     Next
     
@@ -804,7 +804,7 @@ End Sub
 ' // Npc Editor //
 ' ////////////////
 Public Sub NpcEditorInit()
-Dim I As Long
+Dim i As Long
 Dim SoundSet As Boolean
     
     If frmEditor_NPC.visible = False Then Exit Sub
@@ -817,8 +817,8 @@ Dim SoundSet As Boolean
     ' add the array to the combo
     frmEditor_NPC.cmbSound.Clear
     frmEditor_NPC.cmbSound.AddItem "None."
-    For I = 1 To UBound(soundCache)
-        frmEditor_NPC.cmbSound.AddItem soundCache(I)
+    For i = 1 To UBound(soundCache)
+        frmEditor_NPC.cmbSound.AddItem soundCache(i)
     Next
     ' finished populating
     
@@ -832,20 +832,20 @@ Dim SoundSet As Boolean
         .txtSpawnSecs.Text = CStr(NPC(EditorIndex).SpawnSecs)
         .cmbBehaviour.ListIndex = NPC(EditorIndex).Behaviour
         .scrlRange.Value = NPC(EditorIndex).Range
-        .txtHP.Text = NPC(EditorIndex).HP
-        .txtExp.Text = NPC(EditorIndex).EXP
+        .txtHP.Text = NPC(EditorIndex).hp
+        .txtExp.Text = NPC(EditorIndex).exp
         .txtEXP_max.Text = NPC(EditorIndex).EXP_max
         .txtLevel.Text = NPC(EditorIndex).Level
         .txtDamage.Text = NPC(EditorIndex).Damage
-        .chkQuest.Value = NPC(EditorIndex).Quest
+        .chkQuest.Value = NPC(EditorIndex).quest
         .scrlQuest.Value = NPC(EditorIndex).QuestNum
         .scrlEvent.Value = NPC(EditorIndex).Event
 '        .scrlProjectilePic.Value = NPC(EditorIndex).Projectile
         .scrlProjectileRange.Value = NPC(EditorIndex).ProjectileRange
         .scrlProjectileRotation.Value = NPC(EditorIndex).Rotation
         .cmbMoral.ListIndex = NPC(EditorIndex).Moral
-        .scrlA.Value = NPC(EditorIndex).A
-        .scrlR.Value = NPC(EditorIndex).R
+        .scrlA.Value = NPC(EditorIndex).a
+        .scrlR.Value = NPC(EditorIndex).r
         .scrlG.Value = NPC(EditorIndex).G
         .scrlB.Value = NPC(EditorIndex).B
         .chkDay.Value = NPC(EditorIndex).SpawnAtDay
@@ -853,17 +853,17 @@ Dim SoundSet As Boolean
         
         ' find the sound we have set
         If .cmbSound.ListCount >= 0 Then
-            For I = 0 To .cmbSound.ListCount
-                If .cmbSound.List(I) = Trim$(NPC(EditorIndex).Sound) Then
-                    .cmbSound.ListIndex = I
+            For i = 0 To .cmbSound.ListCount
+                If .cmbSound.List(i) = Trim$(NPC(EditorIndex).Sound) Then
+                    .cmbSound.ListIndex = i
                     SoundSet = True
                 End If
             Next
             If Not SoundSet Or .cmbSound.ListIndex = -1 Then .cmbSound.ListIndex = 0
         End If
         
-        For I = 1 To Stats.Stat_Count - 1
-            .scrlStat(I).Value = NPC(EditorIndex).stat(I)
+        For i = 1 To Stats.Stat_Count - 1
+            .scrlStat(i).Value = NPC(EditorIndex).stat(i)
         Next
         
         ' show 1 data
@@ -875,11 +875,11 @@ Dim SoundSet As Boolean
 End Sub
 
 Public Sub NpcEditorOk()
-Dim I As Long
+Dim i As Long
 
-    For I = 1 To MAX_NPCS
-        If NPC_Changed(I) Then
-            Call SendSaveNpc(I)
+    For i = 1 To MAX_NPCS
+        If NPC_Changed(i) Then
+            Call SendSaveNpc(i)
         End If
     Next
     
@@ -902,7 +902,7 @@ End Sub
 ' // Resource Editor //
 ' ////////////////
 Public Sub ResourceEditorInit()
-Dim I As Long
+Dim i As Long
 Dim SoundSet As Boolean
 
     If frmEditor_Resource.visible = False Then Exit Sub
@@ -915,8 +915,8 @@ Dim SoundSet As Boolean
     ' add the array to the combo
     frmEditor_Resource.cmbSound.Clear
     frmEditor_Resource.cmbSound.AddItem "None."
-    For I = 1 To UBound(soundCache)
-        frmEditor_Resource.cmbSound.AddItem soundCache(I)
+    For i = 1 To UBound(soundCache)
+        frmEditor_Resource.cmbSound.AddItem soundCache(i)
     Next
     ' finished populating
     
@@ -928,7 +928,7 @@ Dim SoundSet As Boolean
         .txtName.Text = Trim$(Resource(EditorIndex).name)
         .txtMessage.Text = Trim$(Resource(EditorIndex).SuccessMessage)
         .txtMessage2.Text = Trim$(Resource(EditorIndex).EmptyMessage)
-        .txtExp.Text = Trim$(Resource(EditorIndex).EXP)
+        .txtExp.Text = Trim$(Resource(EditorIndex).exp)
         .cmbType.ListIndex = Resource(EditorIndex).ResourceType
         .scrlNormalPic.Value = Resource(EditorIndex).ResourceImage
         .scrlExhaustedPic.Value = Resource(EditorIndex).ExhaustedImage
@@ -941,9 +941,9 @@ Dim SoundSet As Boolean
         
         ' find the sound we have set
         If .cmbSound.ListCount >= 0 Then
-            For I = 0 To .cmbSound.ListCount
-                If .cmbSound.List(I) = Trim$(Resource(EditorIndex).Sound) Then
-                    .cmbSound.ListIndex = I
+            For i = 0 To .cmbSound.ListCount
+                If .cmbSound.List(i) = Trim$(Resource(EditorIndex).Sound) Then
+                    .cmbSound.ListIndex = i
                     SoundSet = True
                 End If
             Next
@@ -955,11 +955,11 @@ Dim SoundSet As Boolean
 End Sub
 
 Public Sub ResourceEditorOk()
-Dim I As Long
+Dim i As Long
 
-    For I = 1 To MAX_RESOURCES
-        If Resource_Changed(I) Then
-            Call SendSaveResource(I)
+    For i = 1 To MAX_RESOURCES
+        If Resource_Changed(i) Then
+            Call SendSaveResource(i)
         End If
     Next
     
@@ -982,7 +982,7 @@ End Sub
 ' // Shop Editor //
 ' /////////////////
 Public Sub ShopEditorInit()
-Dim I As Long
+Dim i As Long
     
     If frmEditor_Shop.visible = False Then Exit Sub
     EditorIndex = frmEditor_Shop.lstIndex.ListIndex + 1
@@ -1001,10 +1001,10 @@ Dim I As Long
     frmEditor_Shop.cmbCostItem2.Clear
     frmEditor_Shop.cmbCostItem2.AddItem "None"
 
-    For I = 1 To MAX_ITEMS
-        frmEditor_Shop.cmbItem.AddItem I & ": " & Trim$(Item(I).name)
-        frmEditor_Shop.cmbCostItem.AddItem I & ": " & Trim$(Item(I).name)
-        frmEditor_Shop.cmbCostItem2.AddItem I & ": " & Trim$(Item(I).name)
+    For i = 1 To MAX_ITEMS
+        frmEditor_Shop.cmbItem.AddItem i & ": " & Trim$(item(i).name)
+        frmEditor_Shop.cmbCostItem.AddItem i & ": " & Trim$(item(i).name)
+        frmEditor_Shop.cmbCostItem2.AddItem i & ": " & Trim$(item(i).name)
     Next
 
     frmEditor_Shop.cmbItem.ListIndex = 0
@@ -1017,22 +1017,22 @@ Dim I As Long
 End Sub
 
 Public Sub UpdateShopTrade(Optional ByVal tmpPos As Long = 0)
-Dim I As Long
+Dim i As Long
 
     frmEditor_Shop.lstTradeItem.Clear
 
-    For I = 1 To MAX_TRADES
-        With Shop(EditorIndex).TradeItem(I)
+    For i = 1 To MAX_TRADES
+        With Shop(EditorIndex).TradeItem(i)
             ' if none, show as none
-            If .Item = 0 And .CostItem = 0 And .CostItem2 = 0 Then
+            If .item = 0 And .CostItem = 0 And .CostItem2 = 0 Then
                 frmEditor_Shop.lstTradeItem.AddItem "Empty Trade Slot"
             Else
                 If .CostItem And .CostItem2 > 0 Then
-                    frmEditor_Shop.lstTradeItem.AddItem I & ": " & .ItemValue & "x " & Trim$(Item(.Item).name) & " for " & .CostValue & "x " & Trim$(Item(.CostItem).name) & " and " & .CostValue2 & "x " & Trim$(Item(.CostItem2).name)
+                    frmEditor_Shop.lstTradeItem.AddItem i & ": " & .ItemValue & "x " & Trim$(item(.item).name) & " for " & .CostValue & "x " & Trim$(item(.CostItem).name) & " and " & .CostValue2 & "x " & Trim$(item(.CostItem2).name)
                 ElseIf .CostItem > 0 Then
-                    frmEditor_Shop.lstTradeItem.AddItem I & ": " & .ItemValue & "x " & Trim$(Item(.Item).name) & " for " & .CostValue & "x " & Trim$(Item(.CostItem).name)
+                    frmEditor_Shop.lstTradeItem.AddItem i & ": " & .ItemValue & "x " & Trim$(item(.item).name) & " for " & .CostValue & "x " & Trim$(item(.CostItem).name)
                 ElseIf .CostItem2 > 0 Then
-                    frmEditor_Shop.lstTradeItem.AddItem I & ": " & .ItemValue & "x " & Trim$(Item(.Item).name) & " for " & .CostValue2 & "x " & Trim$(Item(.CostItem2).name)
+                    frmEditor_Shop.lstTradeItem.AddItem i & ": " & .ItemValue & "x " & Trim$(item(.item).name) & " for " & .CostValue2 & "x " & Trim$(item(.CostItem2).name)
                 End If
             End If
         End With
@@ -1042,11 +1042,11 @@ Dim I As Long
 End Sub
 
 Public Sub ShopEditorOk()
-Dim I As Long
+Dim i As Long
 
-    For I = 1 To MAX_SHOPS
-        If Shop_Changed(I) Then
-            Call SendSaveShop(I)
+    For i = 1 To MAX_SHOPS
+        If Shop_Changed(i) Then
+            Call SendSaveShop(i)
         End If
     Next
     
@@ -1069,7 +1069,7 @@ End Sub
 ' // Spell Editor //
 ' //////////////////
 Public Sub SpellEditorInit()
-Dim I As Long
+Dim i As Long
 Dim SoundSet As Boolean
     
     If frmEditor_Spell.visible = False Then Exit Sub
@@ -1082,8 +1082,8 @@ Dim SoundSet As Boolean
     ' add the array to the combo
     frmEditor_Spell.cmbSound.Clear
     frmEditor_Spell.cmbSound.AddItem "None."
-    For I = 1 To UBound(soundCache)
-        frmEditor_Spell.cmbSound.AddItem soundCache(I)
+    For i = 1 To UBound(soundCache)
+        frmEditor_Spell.cmbSound.AddItem soundCache(i)
     Next
     ' finished populating
     
@@ -1110,10 +1110,10 @@ Dim SoundSet As Boolean
         .scrlX.Value = spell(EditorIndex).x
         .scrlY.Value = spell(EditorIndex).y
         .scrlDir.Value = spell(EditorIndex).dir
-        .txtHPVital.Text = spell(EditorIndex).Vital(Vitals.HP)
-        .txtMPVital.Text = spell(EditorIndex).Vital(Vitals.MP)
-        .optHPVital(spell(EditorIndex).VitalType(Vitals.HP)).Value = True
-        .optMPVital(spell(EditorIndex).VitalType(Vitals.MP)).Value = True
+        .txtHPVital.Text = spell(EditorIndex).Vital(Vitals.hp)
+        .txtMPVital.Text = spell(EditorIndex).Vital(Vitals.mp)
+        .optHPVital(spell(EditorIndex).VitalType(Vitals.hp)).Value = True
+        .optMPVital(spell(EditorIndex).VitalType(Vitals.mp)).Value = True
         .scrlDuration.Value = spell(EditorIndex).Duration
         .scrlInterval.Value = spell(EditorIndex).Interval
         .scrlRange.Value = spell(EditorIndex).Range
@@ -1129,9 +1129,9 @@ Dim SoundSet As Boolean
         .cmbBuffType.ListIndex = spell(EditorIndex).BuffType
         ' find the sound we have set
         If .cmbSound.ListCount >= 0 Then
-            For I = 0 To .cmbSound.ListCount
-                If .cmbSound.List(I) = Trim$(spell(EditorIndex).Sound) Then
-                    .cmbSound.ListIndex = I
+            For i = 0 To .cmbSound.ListCount
+                If .cmbSound.List(i) = Trim$(spell(EditorIndex).Sound) Then
+                    .cmbSound.ListIndex = i
                     SoundSet = True
                 End If
             Next
@@ -1143,11 +1143,11 @@ Dim SoundSet As Boolean
 End Sub
 
 Public Sub SpellEditorOk()
-Dim I As Long
+Dim i As Long
 
-    For I = 1 To MAX_SPELLS
-        If Spell_Changed(I) Then
-            Call SendSaveSpell(I)
+    For i = 1 To MAX_SPELLS
+        If Spell_Changed(i) Then
+            Call SendSaveSpell(i)
         End If
     Next
     
@@ -1166,10 +1166,10 @@ Public Sub ClearChanged_Spell()
     ZeroMemory Spell_Changed(1), MAX_SPELLS * 2 ' 2 = boolean length
 End Sub
 Public Sub Events_ClearChanged()
-    Dim I As Long
-    For I = 1 To MAX_EVENTS
-        Event_Changed(I) = False
-    Next I
+    Dim i As Long
+    For i = 1 To MAX_EVENTS
+        Event_Changed(i) = False
+    Next i
 End Sub
 
 Public Sub EventEditorInit()
@@ -1196,12 +1196,12 @@ Public Sub EventEditorInit()
 End Sub
 
 Public Sub EventEditorOk()
-Dim I As Long
-    For I = 1 To MAX_EVENTS
-        If Event_Changed(I) Then
-            Call Events_SendSaveEvent(I)
+Dim i As Long
+    For i = 1 To MAX_EVENTS
+        If Event_Changed(i) Then
+            Call Events_SendSaveEvent(i)
         End If
-    Next I
+    Next i
     
     Unload frmEditor_Events
     Events_ClearChanged
@@ -1217,11 +1217,11 @@ End Sub
 ' *********************
 ' ** Event Utilities **
 ' *********************
-Public Function GetSubEventCount(ByVal Index As Long)
+Public Function GetSubEventCount(ByVal index As Long)
     GetSubEventCount = 0
-    If Index <= 0 Or Index > MAX_EVENTS Then Exit Function
-    If Events(Index).HasSubEvents Then
-        GetSubEventCount = UBound(Events(Index).SubEvents)
+    If index <= 0 Or index > MAX_EVENTS Then Exit Function
+    If Events(index).HasSubEvents Then
+        GetSubEventCount = UBound(Events(index).SubEvents)
     End If
 End Function
 

@@ -49,6 +49,7 @@ Class=clsHTTPCookie; src\clsHTTPCookie.cls
 Class=clsJSONPair; src\clsJSONPair.cls
 Class=clsCharacter; src\clsCharacter.cls
 Class=clsCharacters; src\clsCharacters.cls
+Class=clsCharacterQuest; src\clsCharacterQuest.cls
 IconForm="frmMain"
 Startup="Sub Main"
 HelpFile=""

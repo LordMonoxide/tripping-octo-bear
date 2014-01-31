@@ -178,21 +178,13 @@ Public Type CharacterStruct
 End Type
 
 Private Type TempPlayerRec
-    XOffset As Integer
-    YOffset As Integer
     Moving As Byte
     Attacking As Byte
     AttackTimer As Long
     MapGetTimer As Long
     step As Byte
-    PlayerQuest(1 To MAX_QUESTS) As PlayerQuestRec
     Anim As Long
     AnimTimer As Long
-    AFK As Byte
-    GuildColor As Long
-    GuildName As String
-    GuildTag As String * 3
-    GuildLogo As Long
 End Type
 
 Private Type TileDataRec
@@ -347,8 +339,8 @@ Private Type MapNpcRec
     y As Byte
     dir As Byte
     ' Client use only
-    XOffset As Long
-    YOffset As Long
+    xOffset As Long
+    yOffset As Long
     Moving As Byte
     Attacking As Byte
     AttackTimer As Long

@@ -41,7 +41,7 @@ End Sub
 Public Function connectToServer() As Boolean
 Dim wait As Long
 
-  If IsConnected Then
+  If isConnected Then
     connectToServer = True
     Exit Function
   End If
@@ -51,36 +51,26 @@ Dim wait As Long
   Call frmMain.Socket.Connect
   
   ' Wait until connected or 3 seconds have passed and report the server being down
-  Do While IsConnected = False And timeGetTime <= wait
+  Do While isConnected = False And timeGetTime <= wait
     DoEvents
   Loop
   
-  connectToServer = IsConnected
+  connectToServer = isConnected
 End Function
 
-Function IsConnected() As Boolean
-    If frmMain.Socket.state = sckConnected Then
-        IsConnected = True
-    End If
+Public Function isConnected() As Boolean
+  isConnected = frmMain.Socket.state = sckConnected
 End Function
 
-Function IsPlaying(ByVal index As Long) As Boolean
-    ' if the player doesn't exist, the name will equal 0
-    If LenB(GetPlayerName(index)) > 0 Then
-        IsPlaying = True
-    End If
-End Function
-
-Sub SendData(ByRef data() As Byte)
+Public Sub send(ByRef data() As Byte)
 Dim buffer As clsBuffer
 
-    If IsConnected Then
-        Set buffer = New clsBuffer
-                
-        buffer.WriteLong (UBound(data) - LBound(data)) + 1
-        buffer.WriteBytes data()
-        frmMain.Socket.SendData buffer.ToArray()
-    End If
+  If isConnected Then
+    Set buffer = New clsBuffer
+    Call buffer.WriteLong(UBound(data) + 1)
+    Call buffer.WriteBytes(data)
+    Call frmMain.Socket.sendData(buffer.ToArray)
+  End If
 End Sub
 
 Public Sub sendLogin(ByVal userID As Long, ByVal charID As Long)
@@ -90,7 +80,7 @@ Dim buffer As clsBuffer
   Call buffer.WriteLong(CLogin)
   Call buffer.WriteLong(userID)
   Call buffer.WriteLong(charID)
-  Call SendData(buffer.ToArray)
+  Call sendData(buffer.ToArray)
 End Sub
 
 Public Sub SayMsg(ByVal Text As String)
@@ -99,7 +89,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CSayMsg
     buffer.WriteString Text
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -109,7 +99,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CBroadcastMsg
     buffer.WriteString Text
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -119,7 +109,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CEmoteMsg
     buffer.WriteString Text
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -130,7 +120,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong CSayMsg
     buffer.WriteString MsgTo
     buffer.WriteString Text
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -143,7 +133,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong TempPlayer(MyIndex).Moving
     buffer.WriteLong Player(MyIndex).x
     buffer.WriteLong Player(MyIndex).y
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -153,7 +143,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CPlayerDir
     buffer.WriteLong GetPlayerDir(MyIndex)
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -163,7 +153,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestNewMap
     buffer.WriteLong GetPlayerDir(MyIndex)
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -231,7 +221,7 @@ Dim buffer As clsBuffer
         Next
     End With
 
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -241,7 +231,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CWarpMeTo
     buffer.WriteString name
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -251,7 +241,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CWarpToMe
     buffer.WriteString name
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -261,7 +251,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CWarpTo
     buffer.WriteLong mapnum
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -272,7 +262,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong CSetAccess
     buffer.WriteString name
     buffer.WriteLong access
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -282,7 +272,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CKickPlayer
     buffer.WriteString name
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -292,7 +282,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CBanPlayer
     buffer.WriteString name
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -301,7 +291,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CBanList
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -310,7 +300,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestEditItem
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -326,7 +316,7 @@ Dim ItemData() As Byte
     buffer.WriteLong CSaveItem
     buffer.WriteLong itemnum
     buffer.WriteBytes ItemData
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -335,7 +325,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestEditAnimation
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -351,7 +341,7 @@ Dim AnimationData() As Byte
     buffer.WriteLong CSaveAnimation
     buffer.WriteLong Animationnum
     buffer.WriteBytes AnimationData
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -360,7 +350,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestEditNpc
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -376,7 +366,7 @@ Dim NpcData() As Byte
     buffer.WriteLong CSaveNpc
     buffer.WriteLong npcNum
     buffer.WriteBytes NpcData
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -385,7 +375,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestEditResource
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -401,7 +391,7 @@ Dim ResourceData() As Byte
     buffer.WriteLong CSaveResource
     buffer.WriteLong ResourceNum
     buffer.WriteBytes ResourceData
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -410,7 +400,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CMapRespawn
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -420,7 +410,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CUseItem
     buffer.WriteLong invNum
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -440,7 +430,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong CMapDropItem
     buffer.WriteLong invNum
     buffer.WriteLong Amount
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -449,7 +439,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CWhosOnline
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -459,7 +449,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CSetMotd
     buffer.WriteString MOTD
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -468,7 +458,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestEditShop
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -484,7 +474,7 @@ Dim ShopData() As Byte
     buffer.WriteLong CSaveShop
     buffer.WriteLong shopnum
     buffer.WriteBytes ShopData
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -493,7 +483,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestEditSpell
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -510,7 +500,7 @@ Dim SpellData() As Byte
     buffer.WriteLong CSaveSpell
     buffer.WriteLong spellnum
     buffer.WriteBytes SpellData
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     
     Set buffer = Nothing
 End Sub
@@ -520,7 +510,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestEditMap
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -529,7 +519,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CBanDestroy
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -540,7 +530,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong CSwapInvSlots
     buffer.WriteLong OldSlot
     buffer.WriteLong NewSlot
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -551,7 +541,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong CSwapSpellSlots
     buffer.WriteLong OldSlot
     buffer.WriteLong NewSlot
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -561,7 +551,7 @@ Dim buffer As clsBuffer
     PingStart = timeGetTime
     Set buffer = New clsBuffer
     buffer.WriteLong CCheckPing
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -571,7 +561,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CUnequip
     buffer.WriteLong eqNum
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -580,7 +570,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestPlayerData
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -589,7 +579,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestItems
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -598,7 +588,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestAnimations
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -607,7 +597,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestNPCS
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -616,7 +606,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestResources
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -625,7 +615,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestSpells
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -633,7 +623,7 @@ Sub SendRequestShops()
     Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestShops
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -644,7 +634,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong CSpawnItem
     buffer.WriteLong tmpItem
     buffer.WriteLong tmpAmount
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -654,7 +644,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CUseStatPoint
     buffer.WriteByte statNum
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -663,7 +653,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestLevelUp
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -673,7 +663,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CBuyItem
     buffer.WriteLong shopSlot
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -683,7 +673,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CSellItem
     buffer.WriteLong invSlot
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -694,7 +684,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong CDepositItem
     buffer.WriteLong invSlot
     buffer.WriteLong Amount
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -705,7 +695,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong CWithdrawItem
     buffer.WriteLong bankslot
     buffer.WriteLong Amount
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -716,7 +706,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong CAdminWarp
     buffer.WriteLong x
     buffer.WriteLong y
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -725,7 +715,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CAcceptTrade
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -734,7 +724,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CDeclineTrade
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -745,7 +735,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong CTradeItem
     buffer.WriteLong invSlot
     buffer.WriteLong Amount
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -755,7 +745,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CUntradeItem
     buffer.WriteLong invSlot
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -767,7 +757,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong sType
     buffer.WriteLong Slot
     buffer.WriteLong hotbarNum
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -792,7 +782,7 @@ Dim buffer As clsBuffer, x As Long
     Set buffer = New clsBuffer
     buffer.WriteLong CHotbarUse
     buffer.WriteLong Slot
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -801,7 +791,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CMapReport
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -820,7 +810,7 @@ Dim buffer As clsBuffer
     buffer.WriteLong CTarget
     buffer.WriteLong target
     buffer.WriteLong TargetType
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -829,7 +819,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CTradeRequest
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -838,7 +828,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CAcceptTradeRequest
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -847,7 +837,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CDeclineTradeRequest
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -856,7 +846,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CPartyLeave
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -865,7 +855,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CPartyRequest
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -874,7 +864,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CAcceptParty
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -883,7 +873,7 @@ Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CDeclineParty
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -891,7 +881,7 @@ Sub SendFinishTutorial()
     Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CFinishTutorial
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -948,7 +938,7 @@ Public Sub Events_SendSaveEvent(ByVal EIndex As Long)
         buffer.WriteLong Events(EIndex).Graphic(i)
     Next
     
-    SendData buffer.ToArray
+    send buffer.ToArray
 
     Set buffer = Nothing
 End Sub
@@ -957,14 +947,14 @@ Public Sub Events_SendRequestEditEvents()
     Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestEditEvents
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 Public Sub Events_SendRequestEventsData()
     Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CRequestEventsData
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 Public Sub Events_SendChooseEventOption(ByVal i As Long)
@@ -972,7 +962,7 @@ Public Sub Events_SendChooseEventOption(ByVal i As Long)
     Set buffer = New clsBuffer
     buffer.WriteLong CChooseEventOption
     buffer.WriteLong i
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
@@ -980,7 +970,7 @@ Sub RequestSwitchesAndVariables()
 Dim buffer As clsBuffer
 Set buffer = New clsBuffer
 buffer.WriteLong CRequestSwitchesAndVariables
-SendData buffer.ToArray
+send buffer.ToArray
 Set buffer = Nothing
 End Sub
 
@@ -994,7 +984,7 @@ Dim i As Long, buffer As clsBuffer
     For i = 1 To MAX_VARIABLES
         buffer.WriteString Variables(i)
     Next
-    SendData buffer.ToArray
+    send buffer.ToArray
 Set buffer = Nothing
 End Sub
 
@@ -1003,7 +993,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CAfk
     buffer.WriteByte TempPlayer(MyIndex).AFK
-    SendData buffer.ToArray
+    send buffer.ToArray
 Set buffer = Nothing
 End Sub
 
@@ -1014,7 +1004,7 @@ Public Sub SendPartyChatMsg(ByVal Text As String)
     buffer.WriteLong CPartyChatMsg
     buffer.WriteString Text
     
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 Public Sub SendChest(ByVal index As Long)
@@ -1031,6 +1021,6 @@ Dim buffer As clsBuffer
     buffer.WriteByte Chest(index).x
     buffer.WriteByte Chest(index).y
     
-    SendData buffer.ToArray()
+    send buffer.ToArray()
     Set buffer = Nothing
 End Sub

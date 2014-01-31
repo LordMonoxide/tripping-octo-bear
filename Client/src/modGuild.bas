@@ -53,15 +53,15 @@ Public Type GuildRec
     Guild_Color As Long
     Guild_Logo As Long
 End Type
-Public Sub HandleAdminGuild(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
-Dim Buffer As clsBuffer
+Public Sub HandleAdminGuild(ByVal index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
+Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
+    Set buffer = New clsBuffer
     
-    Buffer.WriteBytes data()
+    buffer.WriteBytes data()
     
-    If Buffer.ReadByte = 1 Then
-        If Player(MyIndex).Donator = YES Then
+    If buffer.ReadByte = 1 Then
+        If Player(MyIndex).donator = YES Then
             frmGuildAdmin.scrlGuildLogo.Enabled = True
         Else
             frmGuildAdmin.scrlGuildLogo.Enabled = False
@@ -72,38 +72,38 @@ Dim Buffer As clsBuffer
     End If
 
     
-    Set Buffer = Nothing
+    Set buffer = Nothing
 End Sub
-Public Sub HandleSendGuild(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
-Dim Buffer As clsBuffer
+Public Sub HandleSendGuild(ByVal index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
+Dim buffer As clsBuffer
 Dim i As Integer
 Dim B As Integer
 
-    Set Buffer = New clsBuffer
+    Set buffer = New clsBuffer
     
-    Buffer.WriteBytes data()
+    buffer.WriteBytes data()
     
-    GuildData.Guild_Name = Buffer.ReadString
-    GuildData.Guild_Tag = Buffer.ReadString
-    GuildData.Guild_Color = Buffer.ReadInteger
-    GuildData.Guild_MOTD = Buffer.ReadString
-    GuildData.Guild_RecruitRank = Buffer.ReadInteger
-    GuildData.Guild_Logo = Buffer.ReadLong
+    GuildData.Guild_Name = buffer.ReadString
+    GuildData.Guild_Tag = buffer.ReadString
+    GuildData.Guild_Color = buffer.ReadInteger
+    GuildData.Guild_MOTD = buffer.ReadString
+    GuildData.Guild_RecruitRank = buffer.ReadInteger
+    GuildData.Guild_Logo = buffer.ReadLong
     
     'Get Members
     For i = 1 To MAX_GUILD_MEMBERS
-        GuildData.Guild_Members(i).User_Name = Buffer.ReadString
-        GuildData.Guild_Members(i).Rank = Buffer.ReadInteger
-        GuildData.Guild_Members(i).Comment = Buffer.ReadString
-        GuildData.Guild_Members(i).Online = Buffer.ReadByte
+        GuildData.Guild_Members(i).User_Name = buffer.ReadString
+        GuildData.Guild_Members(i).Rank = buffer.ReadInteger
+        GuildData.Guild_Members(i).Comment = buffer.ReadString
+        GuildData.Guild_Members(i).Online = buffer.ReadByte
     Next i
     
     'Get Ranks
     For i = 1 To MAX_GUILD_RANKS
-        GuildData.Guild_Ranks(i).name = Buffer.ReadString
+        GuildData.Guild_Ranks(i).name = buffer.ReadString
         For B = 1 To MAX_GUILD_RANKS_PERMISSION
-            GuildData.Guild_Ranks(i).RankPermission(B) = Buffer.ReadByte
-            GuildData.Guild_Ranks(i).RankPermissionName(B) = Buffer.ReadString
+            GuildData.Guild_Ranks(i).RankPermission(B) = buffer.ReadByte
+            GuildData.Guild_Ranks(i).RankPermissionName(B) = buffer.ReadString
         Next B
     Next i
     
@@ -111,84 +111,84 @@ Dim B As Integer
     Call frmGuildAdmin.Load_Guild_Admin
     
     ' Reset Players Guild Tag/Name
-    TempPlayer(MyIndex).GuildName = GuildData.Guild_Name
-    TempPlayer(MyIndex).GuildTag = GuildData.Guild_Tag
+    TempPlayer(MyIndex).guildName = GuildData.Guild_Name
+    TempPlayer(MyIndex).guildTag = GuildData.Guild_Tag
     TempPlayer(MyIndex).GuildColor = GuildData.Guild_Color
     
     
-    Set Buffer = Nothing
+    Set buffer = Nothing
 End Sub
 Public Sub GuildMsg(ByVal Text As String)
-Dim Buffer As clsBuffer
+Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CSayGuild
-    Buffer.WriteString Text
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CSayGuild
+    buffer.WriteString Text
+    send buffer.ToArray()
+    Set buffer = Nothing
 End Sub
 
 Public Sub GuildCommand(ByVal Command As Integer, ByVal SendText As String, Optional ByVal SendText2 As String)
-Dim Buffer As clsBuffer
+Dim buffer As clsBuffer
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CGuildCommand
-    Buffer.WriteInteger Command
-    Buffer.WriteString SendText
-    Buffer.WriteString SendText2
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    Set buffer = New clsBuffer
+    buffer.WriteLong CGuildCommand
+    buffer.WriteInteger Command
+    buffer.WriteString SendText
+    buffer.WriteString SendText2
+    send buffer.ToArray()
+    Set buffer = Nothing
 End Sub
 
-Public Sub GuildSave(ByVal SaveType As Integer, ByVal Index As Integer)
-Dim Buffer As clsBuffer
+Public Sub GuildSave(ByVal SaveType As Integer, ByVal index As Integer)
+Dim buffer As clsBuffer
 Dim i As Integer
 'SaveType
 '1=options
 '2=users
 '3=ranks
 
-    Set Buffer = New clsBuffer
-    Buffer.WriteLong CSaveGuild
+    Set buffer = New clsBuffer
+    buffer.WriteLong CSaveGuild
     
-    Buffer.WriteInteger SaveType
-    Buffer.WriteInteger Index
+    buffer.WriteInteger SaveType
+    buffer.WriteInteger index
     
     Select Case SaveType
     Case 1
         'options
-        Buffer.WriteString GuildData.Guild_Name
-        Buffer.WriteString GuildData.Guild_Tag
-        Buffer.WriteInteger GuildData.Guild_Color
-        Buffer.WriteInteger GuildData.Guild_RecruitRank
-        Buffer.WriteString GuildData.Guild_MOTD
-        Buffer.WriteLong GuildData.Guild_Logo
+        buffer.WriteString GuildData.Guild_Name
+        buffer.WriteString GuildData.Guild_Tag
+        buffer.WriteInteger GuildData.Guild_Color
+        buffer.WriteInteger GuildData.Guild_RecruitRank
+        buffer.WriteString GuildData.Guild_MOTD
+        buffer.WriteLong GuildData.Guild_Logo
     Case 2
         'users
-        Buffer.WriteInteger GuildData.Guild_Members(Index).Rank
-        Buffer.WriteString GuildData.Guild_Members(Index).Comment
+        buffer.WriteInteger GuildData.Guild_Members(index).Rank
+        buffer.WriteString GuildData.Guild_Members(index).Comment
     Case 3
         'ranks
-        Buffer.WriteString GuildData.Guild_Ranks(Index).name
+        buffer.WriteString GuildData.Guild_Ranks(index).name
         For i = 1 To MAX_GUILD_RANKS_PERMISSION
-            Buffer.WriteByte GuildData.Guild_Ranks(Index).RankPermission(i)
+            buffer.WriteByte GuildData.Guild_Ranks(index).RankPermission(i)
         Next i
     End Select
 
-    SendData Buffer.ToArray()
-    Set Buffer = Nothing
+    send buffer.ToArray()
+    Set buffer = Nothing
 End Sub
 
-Public Sub HandleGuildInvite(ByVal Index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
-Dim Buffer As clsBuffer
+Public Sub HandleGuildInvite(ByVal index As Long, ByRef data() As Byte, ByVal StartAddR As Long, ByVal ExtraVar As Long)
+Dim buffer As clsBuffer
 Dim theName As String
-Dim GuildName As String
+Dim guildName As String
     
-    Set Buffer = New clsBuffer
-    Buffer.WriteBytes data()
+    Set buffer = New clsBuffer
+    buffer.WriteBytes data()
 
-    theName = Buffer.ReadString
-    GuildName = Buffer.ReadString
+    theName = buffer.ReadString
+    guildName = buffer.ReadString
     
-    Dialogue "Guild Invitation", theName & " has invited you to " & GuildName & ". Would you like to join?", DIALOGUE_TYPE_GUILD, True
+    Dialogue "Guild Invitation", theName & " has invited you to " & guildName & ". Would you like to join?", DIALOGUE_TYPE_GUILD, True
 End Sub

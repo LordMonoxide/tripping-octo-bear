@@ -215,43 +215,36 @@ Dim c As clsCharacter
   Call sendToMap(char.map, char.serialize)
 End Sub
 
-Sub SendMap(ByVal index As Long, ByVal mapNum As Long)
-    Dim buffer As clsBuffer
+Sub SendMap(ByVal char As clsCharacter, ByVal mapNum As Long)
+Dim buffer As clsBuffer
 
-    Set buffer = New clsBuffer
-    
-    'Buffer.PreAllocate (UBound(MapCache(mapNum).Data) - LBound(MapCache(mapNum).Data)) + 5
-    buffer.WriteLong SMapData
-    buffer.WriteBytes MapCache(mapNum).data()
-    SendDataTo index, buffer.ToArray()
-    
-    Set buffer = Nothing
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SMapData)
+  Call buffer.WriteBytes(MapCache(mapNum).data)
+  Call char.send(buffer)
 End Sub
 
-Sub SendMapItemsTo(ByVal index As Long, ByVal mapNum As Long)
-    Dim i As Long
-    Dim buffer As clsBuffer
+Sub SendMapItemsTo(ByVal char As clsCharacter, ByVal mapNum As Long)
+Dim buffer As clsBuffer
+Dim i As Long
 
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong SMapItemData
-
-    For i = 1 To MAX_MAP_ITEMS
-        buffer.WriteString map(mapNum).mapItem(i).playerName
-        buffer.WriteLong map(mapNum).mapItem(i).num
-        buffer.WriteLong map(mapNum).mapItem(i).value
-        buffer.WriteLong map(mapNum).mapItem(i).x
-        buffer.WriteLong map(mapNum).mapItem(i).y
-        If map(mapNum).mapItem(i).bound Then
-            buffer.WriteLong 1
-        Else
-            buffer.WriteLong 0
-        End If
-    Next
-
-    SendDataTo index, buffer.ToArray()
-    
-    Set buffer = Nothing
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SMapItemData)
+  
+  For i = 1 To MAX_MAP_ITEMS
+    Call buffer.WriteString(map(mapNum).mapItem(i).playerName)
+    Call buffer.WriteLong(map(mapNum).mapItem(i).num)
+    Call buffer.WriteLong(map(mapNum).mapItem(i).value)
+    Call buffer.WriteLong(map(mapNum).mapItem(i).x)
+    Call buffer.WriteLong(map(mapNum).mapItem(i).y)
+    If map(mapNum).mapItem(i).bound Then
+      Call buffer.WriteLong(1)
+    Else
+      Call buffer.WriteLong(0)
+    End If
+  Next
+  
+  Call char.send(buffer)
 End Sub
 
 Sub SendMapItemsToAll(ByVal mapNum As Long)
