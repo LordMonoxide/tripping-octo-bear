@@ -133,7 +133,7 @@ Public Type CharacterStruct
   id As Long
   
   access As Byte
-  donator As Byte
+  donator As Boolean
   
   name As String
   sex As Byte
@@ -141,6 +141,9 @@ Public Type CharacterStruct
   lvl As Byte
   exp As Long
   pts As Long
+  
+  hpMax As Long
+  mpMax As Long
   
   hp As Long
   mp As Long
@@ -306,7 +309,7 @@ Private Type NpcRec
     Animation As Long
     Damage As Long
     Level As Long
-    Quest As Byte
+    quest As Byte
     QuestNum As Long
     ' Npc drops
     DropChance(1 To MAX_NPC_DROPS) As Double
@@ -516,7 +519,7 @@ End Type
 Public Type SubEventRec
     Type As EventType
     HasText As Boolean
-    Text() As String
+    text() As String
     HasData As Boolean
     data() As Long
 End Type

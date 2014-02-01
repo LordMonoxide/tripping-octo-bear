@@ -159,14 +159,12 @@ Public Sub HandleInGame(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wPar
 End Sub
 
 Public Sub HandlePlayerInv(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
-Dim i As Long, n As Long
+Dim i As Long
 
-  n = 1
   For i = 1 To MAX_INV
-    Call SetPlayerInvItemNum(MyIndex, i, buffer.ReadLong)
-    Call SetPlayerInvItemValue(MyIndex, i, buffer.ReadLong)
-    PlayerInv(i).bound = buffer.ReadByte
-    n = n + 2
+    myInv(i).Num = buffer.ReadLong
+    myInv(i).Value = buffer.ReadLong
+    myInv(i).bound = buffer.ReadByte
   Next
   
   ' changes to inventory, need to clear any drop menu
@@ -180,10 +178,10 @@ End Sub
 Sub HandlePlayerInvUpdate(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
 Dim n As Long
 
-  n = buffer.ReadLong 'CLng(Parse(1))
-  Call SetPlayerInvItemNum(MyIndex, n, buffer.ReadLong) 'CLng(Parse(2)))
-  Call SetPlayerInvItemValue(MyIndex, n, buffer.ReadLong) 'CLng(Parse(3)))
-  PlayerInv(n).bound = buffer.ReadByte
+  n = buffer.ReadLong
+  myInv(n).Num = buffer.ReadLong
+  myInv(n).Value = buffer.ReadLong
+  myInv(n).bound = buffer.ReadByte
   
   ' changes, clear drop menu
   sDialogue = vbNullString
@@ -194,148 +192,115 @@ Dim n As Long
 End Sub
 
 Sub HandlePlayerWornEq(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
-Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteBytes data()
-    Call SetPlayerEquipment(MyIndex, buffer.ReadLong, Armor)
-    Call SetPlayerEquipment(MyIndex, buffer.ReadLong, weapon)
-    Call SetPlayerEquipment(MyIndex, buffer.ReadLong, aura)
-    Call SetPlayerEquipment(MyIndex, buffer.ReadLong, shield)
-    
-    ' changes to inventory, need to clear any drop menu
-    sDialogue = vbNullString
-    GUIWindow(GUI_CURRENCY).visible = False
-    GUIWindow(GUI_CHAT).visible = True
-    tmpCurrencyItem = 0
-    CurrencyMenu = 0 ' clear
-    
-    Set buffer = Nothing
+  myChar.armour = buffer.ReadLong
+  myChar.weapon = buffer.ReadLong
+  myChar.aura = buffer.ReadLong
+  myChar.shield = buffer.ReadLong
+  
+  ' changes to inventory, need to clear any drop menu
+  sDialogue = vbNullString
+  GUIWindow(GUI_CURRENCY).visible = False
+  GUIWindow(GUI_CHAT).visible = True
+  tmpCurrencyItem = 0
+  CurrencyMenu = 0 ' clear
 End Sub
 
 Sub HandleMapWornEq(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
-Dim buffer As clsBuffer
-Dim playerNum As Long
+Dim char As clsCharacter
 
-    Set buffer = New clsBuffer
-    
-    buffer.WriteBytes data()
-    
-    playerNum = buffer.ReadLong
-    Call SetPlayerEquipment(playerNum, buffer.ReadLong, Armor)
-    Call SetPlayerEquipment(playerNum, buffer.ReadLong, weapon)
-    Call SetPlayerEquipment(playerNum, buffer.ReadLong, aura)
-    Call SetPlayerEquipment(playerNum, buffer.ReadLong, shield)
-    
-    Set buffer = Nothing
+  Set char = characters(buffer.ReadLong)
+  char.armour = buffer.ReadLong
+  char.weapon = buffer.ReadLong
+  char.aura = buffer.ReadLong
+  char.shield = buffer.ReadLong
 End Sub
 
 Private Sub HandlePlayerHp(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
-Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteBytes data()
-    Player(MyIndex).MaxVital(Vitals.hp) = buffer.ReadLong
-    Call SetPlayerVital(MyIndex, Vitals.hp, buffer.ReadLong)
+  myChar.hpMax = buffer.ReadLong
+  myChar.hp = buffer.ReadLong
 End Sub
 
 Private Sub HandlePlayerMp(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
-Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteBytes data()
-    Player(MyIndex).MaxVital(Vitals.mp) = buffer.ReadLong
-    Call SetPlayerVital(MyIndex, Vitals.mp, buffer.ReadLong)
+  myChar.mpMax = buffer.ReadLong
+  myChar.mp = buffer.ReadLong
 End Sub
 
 Private Sub HandlePlayerStats(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
-Dim buffer As clsBuffer
-Dim i As Long
-
-    Set buffer = New clsBuffer
-    buffer.WriteBytes data()
-    
-    For i = 1 To Stats.Stat_Count - 1
-        SetPlayerStat index, i, buffer.ReadLong
-    Next
+  myChar.str = buffer.ReadLong
+  myChar.end_ = buffer.ReadLong
+  myChar.int_ = buffer.ReadLong
+  myChar.agl = buffer.ReadLong
+  myChar.wil = buffer.ReadLong
 End Sub
 
 Private Sub HandlePlayerExp(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
-Dim buffer As clsBuffer
 Dim i As Long
-    
-    Set buffer = New clsBuffer
-    buffer.WriteBytes data()
-    
-    SetPlayerExp MyIndex, buffer.ReadLong
-    TNL = buffer.ReadLong
-    For i = 1 To Skills.Skill_Count - 1
-        SetPlayerSkillExp MyIndex, buffer.ReadLong, i
-        TNSL(i) = buffer.ReadLong
-    Next
+
+  myChar.exp = buffer.ReadLong
+  TNL = buffer.ReadLong
+  For i = 1 To Skills.Skill_Count - 1
+    myChar.skillExp(i) = buffer.ReadLong
+    TNSL(i) = buffer.ReadLong
+  Next
 End Sub
 
 Private Sub HandlePlayerData(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
-Dim i As Long, x As Long
-Dim buffer As clsBuffer
+Dim char As clsCharacter, x As Long
 
-    Set buffer = New clsBuffer
-    buffer.WriteBytes data()
-    i = buffer.ReadLong
-    Call SetPlayerName(i, buffer.ReadString)
-    Call SetPlayerLevel(i, buffer.ReadLong)
-    Call SetPlayerPOINTS(i, buffer.ReadLong)
-    Player(i).sex = buffer.ReadByte
-    Player(i).clothes = buffer.ReadLong
-    Player(i).gear = buffer.ReadLong
-    Player(i).hair = buffer.ReadLong
-    Player(i).Headgear = buffer.ReadLong
-    Call SetPlayerMap(i, buffer.ReadLong)
-    Call SetPlayerX(i, buffer.ReadLong)
-    Call SetPlayerY(i, buffer.ReadLong)
-    Call SetPlayerDir(i, buffer.ReadLong)
-    Call SetPlayerAccess(i, buffer.ReadLong)
-    Call SetPlayerPK(i, buffer.ReadLong)
-    Player(i).threshold = buffer.ReadByte
-    Player(i).donator = buffer.ReadByte
-    
-    For x = 1 To Stats.Stat_Count - 1
-        SetPlayerStat i, x, buffer.ReadLong
-    Next
-    
-    For x = 1 To Skills.Skill_Count - 1
-        SetPlayerSkillLevel i, x, buffer.ReadLong
-    Next
-    
-    If buffer.ReadByte = 1 Then
-        TempPlayer(i).guildName = buffer.ReadString
-        TempPlayer(i).guildTag = buffer.ReadString
-        TempPlayer(i).GuildColor = buffer.ReadLong
-        TempPlayer(i).guildLogo = buffer.ReadLong 'guild logo
-    Else
-        TempPlayer(i).guildName = vbNullString
-        TempPlayer(i).guildTag = vbNullString
-        TempPlayer(i).GuildColor = 0
-        TempPlayer(i).guildLogo = 0
-    End If
+  Set char = characters(buffer.ReadLong)
+  char.name = buffer.ReadString
+  char.lvl = buffer.ReadLong
+  char.pts = buffer.ReadLong
+  char.sex = buffer.ReadByte
+  char.clothes = buffer.ReadLong
+  char.gear = buffer.ReadLong
+  char.hair = buffer.ReadLong
+  char.head = buffer.ReadLong
+  char.map = buffer.ReadLong
+  char.x = buffer.ReadLong
+  char.y = buffer.ReadLong
+  char.dir = buffer.ReadLong
+  char.access = buffer.ReadLong
+  char.threshold = buffer.ReadByte
+  char.donator = buffer.ReadByte
+  
+  For x = 1 To Stats.Stat_Count - 1
+      SetPlayerStat i, x, buffer.ReadLong
+  Next
+  
+  For x = 1 To Skills.Skill_Count - 1
+      SetPlayerSkillLevel i, x, buffer.ReadLong
+  Next
+  
+  If buffer.ReadByte = 1 Then
+      TempPlayer(i).guildName = buffer.ReadString
+      TempPlayer(i).guildTag = buffer.ReadString
+      TempPlayer(i).GuildColor = buffer.ReadLong
+      TempPlayer(i).guildLogo = buffer.ReadLong 'guild logo
+  Else
+      TempPlayer(i).guildName = vbNullString
+      TempPlayer(i).guildTag = vbNullString
+      TempPlayer(i).GuildColor = 0
+      TempPlayer(i).guildLogo = 0
+  End If
 
-    ' Check if the player is the client player
-    If i = MyIndex Then
-        ' Reset directions
-        DirUp = False
-        DirLeft = False
-        DirDown = False
-        DirRight = False
-        DirUpLeft = False
-        DirUpRight = False
-        DirDownLeft = False
-        DirDownRight = False
-    End If
+  ' Check if the player is the client player
+  If i = MyIndex Then
+      ' Reset directions
+      DirUp = False
+      DirLeft = False
+      DirDown = False
+      DirRight = False
+      DirUpLeft = False
+      DirUpRight = False
+      DirDownLeft = False
+      DirDownRight = False
+  End If
 
-    ' Make sure they aren't walking
-    TempPlayer(i).Moving = 0
-    TempPlayer(i).xOffset = 0
-    TempPlayer(i).yOffset = 0
+  ' Make sure they aren't walking
+  TempPlayer(i).Moving = 0
+  TempPlayer(i).xOffset = 0
+  TempPlayer(i).yOffset = 0
 End Sub
 
 Private Sub HandlePlayerMove(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
