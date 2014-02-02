@@ -181,9 +181,6 @@ Public Type CharacterStruct
 End Type
 
 Private Type TempPlayerRec
-    Moving As Byte
-    Attacking As Byte
-    AttackTimer As Long
     MapGetTimer As Long
     step As Byte
     Anim As Long
@@ -344,8 +341,8 @@ Private Type MapNpcRec
     ' Client use only
     xOffset As Long
     yOffset As Long
-    Moving As Byte
-    Attacking As Byte
+    moving As Byte
+    attacking As Byte
     AttackTimer As Long
     step As Byte
     Anim As Long

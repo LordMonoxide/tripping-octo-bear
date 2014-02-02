@@ -365,6 +365,7 @@ End Sub
 
 Public Sub Render_Graphics()
 Dim x As Long, y As Long, i As Long
+Dim c As clsCharacter
     
     'Check for device lost.
     If D3DDevice8.TestCooperativeLevel = D3DERR_DEVICELOST Or D3DDevice8.TestCooperativeLevel = D3DERR_DEVICENOTRESET Then Directx8.DeviceLost: Exit Sub
@@ -425,16 +426,16 @@ Dim x As Long, y As Long, i As Long
             ' Players
                             For x = 0 To map.MaxX
                     If map.Tile(x, y).Type = TILE_TYPE_CHEST Then
-                        If Player(MyIndex).ChestOpen(map.Tile(x, y).Data1) = False Then
+                        If myChar.chestOpen(map.Tile(x, y).Data1) = False Then
                             DrawChest x, y, False
                         Else
                             DrawChest x, y, True
                         End If
                     End If
                 Next
-            For i = 1 To MAX_PLAYERS
-                If IsPlaying(i) And GetPlayerMap(i) = GetPlayerMap(MyIndex) Then
-                    If GetPlayerY(i) = y Then
+            For Each c In characters
+                If c.map = myChar.map Then
+                    If c.y = y Then
                         Call DrawPlayer(i)
                     End If
                 End If
@@ -498,9 +499,9 @@ Dim x As Long, y As Long, i As Long
     ' render target
     If myTarget > 0 Then
         If myTargetType = TARGET_TYPE_PLAYER Then
-            DrawTarget (Player(myTarget).x * 32) + TempPlayer(myTarget).XOffset, (Player(myTarget).y * 32) + TempPlayer(myTarget).YOffset
+            DrawTarget (Player(myTarget).x * 32) + TempPlayer(myTarget).xOffset, (Player(myTarget).y * 32) + TempPlayer(myTarget).yOffset
         ElseIf myTargetType = TARGET_TYPE_NPC Then
-            DrawTarget (MapNpc(myTarget).x * 32) + MapNpc(myTarget).XOffset, (MapNpc(myTarget).y * 32) + MapNpc(myTarget).YOffset
+            DrawTarget (MapNpc(myTarget).x * 32) + MapNpc(myTarget).xOffset, (MapNpc(myTarget).y * 32) + MapNpc(myTarget).yOffset
         End If
     End If
     
@@ -1127,21 +1128,21 @@ Dim fogNum As Long, Colour As Long, x As Long, y As Long, renderState As Long
 End Sub
 
 Public Sub DrawAutoTile(ByVal layerNum As Long, ByVal destX As Long, ByVal destY As Long, ByVal quarterNum As Long, ByVal x As Long, ByVal y As Long)
-Dim YOffset As Long, XOffset As Long
+Dim yOffset As Long, xOffset As Long
 
     ' calculate the offset
     Select Case map.Tile(x, y).Autotile(layerNum)
         Case AUTOTILE_WATERFALL
-            YOffset = (waterfallFrame - 1) * 32
+            yOffset = (waterfallFrame - 1) * 32
         Case AUTOTILE_ANIM
-            XOffset = autoTileFrame * 64
+            xOffset = autoTileFrame * 64
         Case AUTOTILE_CLIFF
-            YOffset = -32
+            yOffset = -32
     End Select
     
     ' Draw the quarter
     'EngineRenderRectangle Tex_Tileset(Map.Tile(x, y).Layer(layerNum).Tileset), destX, destY, Autotile(x, y).Layer(layerNum).srcX(quarterNum) + xOffset, Autotile(x, y).Layer(layerNum).srcY(quarterNum) + yOffset, 16, 16, 16, 16, 16, 16
-    Directx8.RenderTexture Tex_Tileset(map.Tile(x, y).Layer(layerNum).Tileset), destX, destY, Autotile(x, y).Layer(layerNum).srcX(quarterNum) + XOffset, Autotile(x, y).Layer(layerNum).srcY(quarterNum) + YOffset, 16, 16, 16, 16
+    Directx8.RenderTexture Tex_Tileset(map.Tile(x, y).Layer(layerNum).Tileset), destX, destY, Autotile(x, y).Layer(layerNum).srcX(quarterNum) + xOffset, Autotile(x, y).Layer(layerNum).srcY(quarterNum) + yOffset, 16, 16, 16, 16
 End Sub
 
 ' Rendering Procedures
@@ -1194,7 +1195,7 @@ Dim i As Long
     With map.Tile(x, y)
         ' draw the map
         i = MapLayer.Roof
-            If Not Player(MyIndex).Threshold = YES Then
+            If Not Player(MyIndex).threshold = YES Then
                 ' skip tile if tileset isn't set
                 If Autotile(x, y).Layer(i).renderState = RENDER_STATE_NORMAL Then
                     ' Draw normally
@@ -1225,13 +1226,13 @@ Dim partyIndex As Long
         ' exists?
         If npcNum > 0 Then
             ' alive?
-            If MapNpc(i).Vital(Vitals.HP) > 0 And MapNpc(i).Vital(Vitals.HP) < NPC(npcNum).HP Then
+            If MapNpc(i).Vital(Vitals.hp) > 0 And MapNpc(i).Vital(Vitals.hp) < NPC(npcNum).hp Then
                 ' lock to npc
-                tmpX = MapNpc(i).x * PIC_X + MapNpc(i).XOffset + 16 - (width / 2)
-                tmpY = MapNpc(i).y * PIC_Y + MapNpc(i).YOffset + 35
+                tmpX = MapNpc(i).x * PIC_X + MapNpc(i).xOffset + 16 - (width / 2)
+                tmpY = MapNpc(i).y * PIC_Y + MapNpc(i).yOffset + 35
                 
                 ' calculate the width to fill
-                If width > 0 Then BarWidth_NpcHP_Max(i) = ((MapNpc(i).Vital(Vitals.HP) / width) / (NPC(npcNum).HP / width)) * width
+                If width > 0 Then BarWidth_NpcHP_Max(i) = ((MapNpc(i).Vital(Vitals.hp) / width) / (NPC(npcNum).hp / width)) * width
                 
                 ' draw bar background
                 Top = height * 1 ' HP bar background
@@ -1250,8 +1251,8 @@ Dim partyIndex As Long
     If SpellBuffer > 0 Then
         If spell(PlayerSpells(SpellBuffer)).CastTime > 0 Then
             ' lock to player
-            tmpX = GetPlayerX(MyIndex) * PIC_X + TempPlayer(MyIndex).XOffset + 16 - (width / 2)
-            tmpY = GetPlayerY(MyIndex) * PIC_Y + TempPlayer(MyIndex).YOffset + 35 + height + 1
+            tmpX = GetPlayerX(MyIndex) * PIC_X + TempPlayer(MyIndex).xOffset + 16 - (width / 2)
+            tmpY = GetPlayerY(MyIndex) * PIC_Y + TempPlayer(MyIndex).yOffset + 35 + height + 1
             
             ' calculate the width to fill
             If width > 0 Then barWidth = (timeGetTime - SpellBufferTimer) / ((spell(PlayerSpells(SpellBuffer)).CastTime * 1000)) * width
@@ -1269,13 +1270,13 @@ Dim partyIndex As Long
     End If
     
     ' draw own health bar
-    If GetPlayerVital(MyIndex, Vitals.HP) > 0 And GetPlayerVital(MyIndex, Vitals.HP) < GetPlayerMaxVital(MyIndex, Vitals.HP) Then
+    If GetPlayerVital(MyIndex, Vitals.hp) > 0 And GetPlayerVital(MyIndex, Vitals.hp) < GetPlayerMaxVital(MyIndex, Vitals.hp) Then
         ' lock to Player
-        tmpX = GetPlayerX(MyIndex) * PIC_X + TempPlayer(MyIndex).XOffset + 16 - (width / 2)
-        tmpY = GetPlayerY(MyIndex) * PIC_X + TempPlayer(MyIndex).YOffset + 35
+        tmpX = GetPlayerX(MyIndex) * PIC_X + TempPlayer(MyIndex).xOffset + 16 - (width / 2)
+        tmpY = GetPlayerY(MyIndex) * PIC_X + TempPlayer(MyIndex).yOffset + 35
        
         ' calculate the width to fill
-        If width > 0 Then BarWidth_PlayerHP_Max(MyIndex) = ((GetPlayerVital(MyIndex, Vitals.HP) / width) / (GetPlayerMaxVital(MyIndex, Vitals.HP) / width)) * width
+        If width > 0 Then BarWidth_PlayerHP_Max(MyIndex) = ((GetPlayerVital(MyIndex, Vitals.hp) / width) / (GetPlayerMaxVital(MyIndex, Vitals.hp) / width)) * width
        
         ' draw bar background
         Top = height * 1 ' HP bar background
@@ -1294,13 +1295,13 @@ Dim partyIndex As Long
             partyIndex = Party.Member(i)
             If (partyIndex > 0) And (partyIndex <> MyIndex) And (GetPlayerMap(partyIndex) = GetPlayerMap(MyIndex)) Then
                 ' player exists
-                If GetPlayerVital(partyIndex, Vitals.HP) > 0 And GetPlayerVital(partyIndex, Vitals.HP) < GetPlayerMaxVital(partyIndex, Vitals.HP) Then
+                If GetPlayerVital(partyIndex, Vitals.hp) > 0 And GetPlayerVital(partyIndex, Vitals.hp) < GetPlayerMaxVital(partyIndex, Vitals.hp) Then
                     ' lock to Player
-                    tmpX = GetPlayerX(partyIndex) * PIC_X + TempPlayer(partyIndex).XOffset + 16 - (width / 2)
-                    tmpY = GetPlayerY(partyIndex) * PIC_X + TempPlayer(partyIndex).YOffset + 35
+                    tmpX = GetPlayerX(partyIndex) * PIC_X + TempPlayer(partyIndex).xOffset + 16 - (width / 2)
+                    tmpY = GetPlayerY(partyIndex) * PIC_X + TempPlayer(partyIndex).yOffset + 35
                     
                     ' calculate the width to fill
-                    BarWidth_PlayerHP_Max(partyIndex) = ((GetPlayerVital(partyIndex, Vitals.HP) / width) / (GetPlayerMaxVital(partyIndex, Vitals.HP) / width)) * width
+                    BarWidth_PlayerHP_Max(partyIndex) = ((GetPlayerVital(partyIndex, Vitals.hp) / width) / (GetPlayerMaxVital(partyIndex, Vitals.hp) / width)) * width
                     
                     ' draw bar background
                     Top = height * 1 ' HP bar background
@@ -1324,13 +1325,13 @@ Dim theArray() As String, x As Long, y As Long, i As Long, MaxWidth As Long, X2 
             ' it's a player
             If GetPlayerMap(.target) = GetPlayerMap(MyIndex) Then
                 ' it's on our map - get co-ords
-                x = ConvertMapX((Player(.target).x * 32) + TempPlayer(.target).XOffset) + 16
-                y = ConvertMapY((Player(.target).y * 32) + TempPlayer(.target).YOffset) - 40
+                x = ConvertMapX((Player(.target).x * 32) + TempPlayer(.target).xOffset) + 16
+                y = ConvertMapY((Player(.target).y * 32) + TempPlayer(.target).yOffset) - 40
             End If
         ElseIf .TargetType = TARGET_TYPE_NPC Then
             ' it's on our map - get co-ords
-            x = ConvertMapX((MapNpc(.target).x * 32) + MapNpc(.target).XOffset) + 16
-            y = ConvertMapY((MapNpc(.target).y * 32) + MapNpc(.target).YOffset) - 40
+            x = ConvertMapX((MapNpc(.target).x * 32) + MapNpc(.target).xOffset) + 16
+            y = ConvertMapY((MapNpc(.target).y * 32) + MapNpc(.target).yOffset) - 40
         End If
         
         ' word wrap the text
@@ -1405,8 +1406,8 @@ Public Sub DrawPlayer(ByVal index As Long)
     Dim attackspeed As Long
 
     ' speed from weapon
-    If GetPlayerEquipment(index, Weapon) > 0 Then
-        attackspeed = item(GetPlayerEquipment(index, Weapon)).Speed
+    If GetPlayerEquipment(index, weapon) > 0 Then
+        attackspeed = item(GetPlayerEquipment(index, weapon)).Speed
     Else
         attackspeed = 1000
     End If
@@ -1414,37 +1415,37 @@ Public Sub DrawPlayer(ByVal index As Long)
     ' Reset frame
     Anim = 1
     ' Check for attacking animation
-    If TempPlayer(index).AttackTimer + (attackspeed / 2) > timeGetTime Then
-        If TempPlayer(index).Attacking = 1 Then
+    If TempPlayer(index).attackTimer + (attackspeed / 2) > timeGetTime Then
+        If TempPlayer(index).attacking = 1 Then
             Anim = 2
         End If
     Else
         ' If not attacking, walk normally
         Select Case GetPlayerDir(index)
             Case DIR_UP
-                If (TempPlayer(index).YOffset > 8) Then Anim = TempPlayer(index).step
+                If (TempPlayer(index).yOffset > 8) Then Anim = TempPlayer(index).step
             Case DIR_DOWN
-                If (TempPlayer(index).YOffset < -8) Then Anim = TempPlayer(index).step
+                If (TempPlayer(index).yOffset < -8) Then Anim = TempPlayer(index).step
             Case DIR_LEFT
-                If (TempPlayer(index).XOffset > 8) Then Anim = TempPlayer(index).step
+                If (TempPlayer(index).xOffset > 8) Then Anim = TempPlayer(index).step
             Case DIR_RIGHT
-                If (TempPlayer(index).XOffset < -8) Then Anim = TempPlayer(index).step
+                If (TempPlayer(index).xOffset < -8) Then Anim = TempPlayer(index).step
             Case DIR_UP_LEFT
-                If (TempPlayer(index).YOffset > 8) And (TempPlayer(index).XOffset > 8) Then Anim = TempPlayer(index).step
+                If (TempPlayer(index).yOffset > 8) And (TempPlayer(index).xOffset > 8) Then Anim = TempPlayer(index).step
             Case DIR_UP_RIGHT
-                If (TempPlayer(index).YOffset > 8) And (TempPlayer(index).XOffset < -8) Then Anim = TempPlayer(index).step
+                If (TempPlayer(index).yOffset > 8) And (TempPlayer(index).xOffset < -8) Then Anim = TempPlayer(index).step
             Case DIR_DOWN_LEFT
-                If (TempPlayer(index).YOffset < -8) And (TempPlayer(index).XOffset > 8) Then Anim = TempPlayer(index).step
+                If (TempPlayer(index).yOffset < -8) And (TempPlayer(index).xOffset > 8) Then Anim = TempPlayer(index).step
             Case DIR_DOWN_RIGHT
-                If (TempPlayer(index).YOffset < -8) And (TempPlayer(index).XOffset < -8) Then Anim = TempPlayer(index).step
+                If (TempPlayer(index).yOffset < -8) And (TempPlayer(index).xOffset < -8) Then Anim = TempPlayer(index).step
         End Select
     End If
 
     ' Check to see if we want to stop making him attack
     With TempPlayer(index)
-        If .AttackTimer + attackspeed < timeGetTime Then
-            .Attacking = 0
-            .AttackTimer = 0
+        If .attackTimer + attackspeed < timeGetTime Then
+            .attacking = 0
+            .attackTimer = 0
         End If
     End With
 
@@ -1476,12 +1477,12 @@ Public Sub DrawPlayer(ByVal index As Long)
     End With
 
     ' Calculate the X
-    x = GetPlayerX(index) * PIC_X + TempPlayer(index).XOffset
+    x = GetPlayerX(index) * PIC_X + TempPlayer(index).xOffset
 
     ' Proceed as normal
-    y = GetPlayerY(index) * PIC_Y + TempPlayer(index).YOffset - 4
+    y = GetPlayerY(index) * PIC_Y + TempPlayer(index).yOffset - 4
     
-    If Player(index).Sex = SEX_MALE Then
+    If Player(index).sex = SEX_MALE Then
         If Not map.DayNight = 1 Then
             If DayTime = True Then Directx8.RenderTexture Tex_Char(1), ConvertMapX(x + 12), ConvertMapY(y + 5), rec.Left, rec.Top, rec.width - 8, rec.height, rec.width, rec.height, D3DColorARGB(100, 0, 0, 0), 45
         End If
@@ -1501,15 +1502,15 @@ Public Sub DrawPlayer(ByVal index As Long)
         If GetPlayerHeadgear(index) > 0 Then Directx8.RenderTexture Tex_HeadgearF(GetPlayerHeadgear(index)), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
     End If
     
-    If GetPlayerEquipment(index, Aura) Then
-        If item(GetPlayerEquipment(index, Aura)).Aura > 0 Then
-            If gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth > gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight Then
+    If GetPlayerEquipment(index, aura) Then
+        If item(GetPlayerEquipment(index, aura)).aura > 0 Then
+            If gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth > gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight Then
                 Select Case GetPlayerDir(index)
                     Case DIR_UP, DIR_UP_LEFT, DIR_UP_RIGHT
-                        Directx8.RenderTexture Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura), ConvertMapX((x + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 6)), ConvertMapY((y + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight / 2)), 0, 0, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight
+                        Directx8.RenderTexture Tex_Aura(item(GetPlayerEquipment(index, aura)).aura), ConvertMapX((x + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 6)), ConvertMapY((y + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight / 2)), 0, 0, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight
                     Case DIR_LEFT
-                        Directx8.RenderTexture Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura), ConvertMapX((x + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 6)), ConvertMapY((y + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight / 2)), 2 * (gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 3), 0, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight
-                        If Player(index).Sex = SEX_MALE Then
+                        Directx8.RenderTexture Tex_Aura(item(GetPlayerEquipment(index, aura)).aura), ConvertMapX((x + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 6)), ConvertMapY((y + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight / 2)), 2 * (gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 3), 0, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight
+                        If Player(index).sex = SEX_MALE Then
                             Directx8.RenderTexture Tex_Char(1), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
                             If GetPlayerClothes(index) > 0 Then Directx8.RenderTexture Tex_ClothesM(GetPlayerClothes(index)), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
                             If GetPlayerGear(index) > 0 Then Directx8.RenderTexture Tex_GearM(GetPlayerGear(index)), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
@@ -1523,8 +1524,8 @@ Public Sub DrawPlayer(ByVal index As Long)
                             If GetPlayerHeadgear(index) > 0 Then Directx8.RenderTexture Tex_HeadgearF(GetPlayerHeadgear(index)), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
                         End If
                     Case DIR_RIGHT
-                        Directx8.RenderTexture Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura), ConvertMapX((x + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 6)), ConvertMapY((y + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight / 2)), gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 3, 0, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight
-                        If Player(index).Sex = SEX_MALE Then
+                        Directx8.RenderTexture Tex_Aura(item(GetPlayerEquipment(index, aura)).aura), ConvertMapX((x + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 6)), ConvertMapY((y + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight / 2)), gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 3, 0, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight
+                        If Player(index).sex = SEX_MALE Then
                             Directx8.RenderTexture Tex_Char(1), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
                             If GetPlayerClothes(index) > 0 Then Directx8.RenderTexture Tex_ClothesM(GetPlayerClothes(index)), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
                             If GetPlayerGear(index) > 0 Then Directx8.RenderTexture Tex_GearM(GetPlayerGear(index)), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
@@ -1538,8 +1539,8 @@ Public Sub DrawPlayer(ByVal index As Long)
                             If GetPlayerHeadgear(index) > 0 Then Directx8.RenderTexture Tex_HeadgearF(GetPlayerHeadgear(index)), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
                         End If
                     Case DIR_DOWN, DIR_DOWN_LEFT, DIR_DOWN_RIGHT
-                        Directx8.RenderTexture Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura), ConvertMapX((x + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 6)), ConvertMapY((y + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight / 2)), 0, 0, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight
-                        If Player(index).Sex = SEX_MALE Then
+                        Directx8.RenderTexture Tex_Aura(item(GetPlayerEquipment(index, aura)).aura), ConvertMapX((x + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 6)), ConvertMapY((y + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight / 2)), 0, 0, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 3, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight
+                        If Player(index).sex = SEX_MALE Then
                             Directx8.RenderTexture Tex_Char(1), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
                             If GetPlayerClothes(index) > 0 Then Directx8.RenderTexture Tex_ClothesM(GetPlayerClothes(index)), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
                             If GetPlayerGear(index) > 0 Then Directx8.RenderTexture Tex_GearM(GetPlayerGear(index)), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
@@ -1554,8 +1555,8 @@ Public Sub DrawPlayer(ByVal index As Long)
                         End If
                 End Select
             Else
-                Directx8.RenderTexture Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura), ConvertMapX((x + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth / 2)), ConvertMapY((y + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight / 2)), 0, 0, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RWidth, gTexture(Tex_Aura(item(GetPlayerEquipment(index, Aura)).Aura)).RHeight
-                If Player(index).Sex = SEX_MALE Then
+                Directx8.RenderTexture Tex_Aura(item(GetPlayerEquipment(index, aura)).aura), ConvertMapX((x + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth / 2)), ConvertMapY((y + ((32) / 2)) - (gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight / 2)), 0, 0, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RWidth, gTexture(Tex_Aura(item(GetPlayerEquipment(index, aura)).aura)).RHeight
+                If Player(index).sex = SEX_MALE Then
                     Directx8.RenderTexture Tex_Char(1), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
                     If GetPlayerClothes(index) > 0 Then Directx8.RenderTexture Tex_ClothesM(GetPlayerClothes(index)), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
                     If GetPlayerGear(index) > 0 Then Directx8.RenderTexture Tex_GearM(GetPlayerGear(index)), ConvertMapX(x), ConvertMapY(y), rec.Left, rec.Top, rec.width, rec.height, rec.width, rec.height
@@ -1572,17 +1573,17 @@ Public Sub DrawPlayer(ByVal index As Long)
         End If
     End If
     
-    If TempPlayer(index).Attacking = 1 Then
-        If GetPlayerEquipment(index, Weapon) Then
-            If item(GetPlayerEquipment(index, Weapon)).Pic > 0 Then
+    If TempPlayer(index).attacking = 1 Then
+        If GetPlayerEquipment(index, weapon) Then
+            If item(GetPlayerEquipment(index, weapon)).Pic > 0 Then
                 Select Case GetPlayerDir(index)
                     'Case DIR_UP
                         'Directx8.RenderTexture Tex_Item(Item(GetPlayerEquipment(Index, Weapon)).Pic), ConvertMapX(X), ConvertMapY(Y), 0, 0, PIC_X, PIC_Y, PIC_X, PIC_Y
                         'Directx8.RenderTexture Tex_Char(Sprite), ConvertMapX(X), ConvertMapY(Y), rec.Left, rec.Top, rec.Width, rec.Height, rec.Width, rec.Height
                     Case DIR_DOWN, DIR_DOWN_LEFT, DIR_DOWN_RIGHT
-                        Directx8.RenderTexture Tex_Item(item(GetPlayerEquipment(index, Weapon)).Pic), ConvertMapX(x), ConvertMapY(y), 0, 0, PIC_X, PIC_Y, PIC_X, PIC_Y
+                        Directx8.RenderTexture Tex_Item(item(GetPlayerEquipment(index, weapon)).Pic), ConvertMapX(x), ConvertMapY(y), 0, 0, PIC_X, PIC_Y, PIC_X, PIC_Y
                     Case DIR_LEFT
-                        Directx8.RenderTexture Tex_Item(item(GetPlayerEquipment(index, Weapon)).Pic), ConvertMapX(x - 5), ConvertMapY(y), 0, 0, PIC_X, PIC_Y, PIC_X, PIC_Y
+                        Directx8.RenderTexture Tex_Item(item(GetPlayerEquipment(index, weapon)).Pic), ConvertMapX(x - 5), ConvertMapY(y), 0, 0, PIC_X, PIC_Y, PIC_X, PIC_Y
                     'Case DIR_RIGHT
                          'Directx8.RenderTexture Tex_Item(Item(GetPlayerEquipment(Index, Weapon)).Pic), ConvertMapX(X + 5), ConvertMapY(Y), 0, 0, PIC_X, PIC_Y, PIC_X, PIC_Y, , 90
                          'Directx8.RenderTexture Tex_Char(Sprite), ConvertMapX(X), ConvertMapY(Y), rec.Left, rec.Top, rec.Width, rec.Height, rec.Width, rec.Height
@@ -1610,29 +1611,29 @@ Public Sub DrawNpc(ByVal MapNpcNum As Long)
         ' Reset frame
         Anim = 1
         ' Check for attacking animation
-        If MapNpc(MapNpcNum).AttackTimer + (attackspeed / 2) > timeGetTime Then
-            If MapNpc(MapNpcNum).Attacking = 1 Then
+        If MapNpc(MapNpcNum).attackTimer + (attackspeed / 2) > timeGetTime Then
+            If MapNpc(MapNpcNum).attacking = 1 Then
                 Anim = 2
             End If
         Else
             ' If not attacking, walk normally
             Select Case MapNpc(MapNpcNum).dir
                 Case DIR_UP
-                    If (MapNpc(MapNpcNum).YOffset > 8) Then Anim = MapNpc(MapNpcNum).step
+                    If (MapNpc(MapNpcNum).yOffset > 8) Then Anim = MapNpc(MapNpcNum).step
                 Case DIR_DOWN
-                    If (MapNpc(MapNpcNum).YOffset < -8) Then Anim = MapNpc(MapNpcNum).step
+                    If (MapNpc(MapNpcNum).yOffset < -8) Then Anim = MapNpc(MapNpcNum).step
                 Case DIR_LEFT
-                    If (MapNpc(MapNpcNum).XOffset > 8) Then Anim = MapNpc(MapNpcNum).step
+                    If (MapNpc(MapNpcNum).xOffset > 8) Then Anim = MapNpc(MapNpcNum).step
                 Case DIR_RIGHT
-                    If (MapNpc(MapNpcNum).XOffset < -8) Then Anim = MapNpc(MapNpcNum).step
+                    If (MapNpc(MapNpcNum).xOffset < -8) Then Anim = MapNpc(MapNpcNum).step
                 Case DIR_UP_LEFT
-                    If (MapNpc(MapNpcNum).YOffset > 8) And (MapNpc(MapNpcNum).XOffset > 8) Then Anim = MapNpc(MapNpcNum).step
+                    If (MapNpc(MapNpcNum).yOffset > 8) And (MapNpc(MapNpcNum).xOffset > 8) Then Anim = MapNpc(MapNpcNum).step
                 Case DIR_UP_RIGHT
-                    If (MapNpc(MapNpcNum).YOffset > 8) And (MapNpc(MapNpcNum).XOffset < -8) Then Anim = MapNpc(MapNpcNum).step
+                    If (MapNpc(MapNpcNum).yOffset > 8) And (MapNpc(MapNpcNum).xOffset < -8) Then Anim = MapNpc(MapNpcNum).step
                 Case DIR_DOWN_LEFT
-                    If (MapNpc(MapNpcNum).YOffset < -8) And (MapNpc(MapNpcNum).XOffset > 8) Then Anim = MapNpc(MapNpcNum).step
+                    If (MapNpc(MapNpcNum).yOffset < -8) And (MapNpc(MapNpcNum).xOffset > 8) Then Anim = MapNpc(MapNpcNum).step
                 Case DIR_DOWN_RIGHT
-                    If (MapNpc(MapNpcNum).YOffset < -8) And (MapNpc(MapNpcNum).XOffset < -8) Then Anim = MapNpc(MapNpcNum).step
+                    If (MapNpc(MapNpcNum).yOffset < -8) And (MapNpc(MapNpcNum).xOffset < -8) Then Anim = MapNpc(MapNpcNum).step
             End Select
         End If
     Else
@@ -1648,9 +1649,9 @@ Public Sub DrawNpc(ByVal MapNpcNum As Long)
 
     ' Check to see if we want to stop making him attack
     With MapNpc(MapNpcNum)
-        If .AttackTimer + attackspeed < timeGetTime Then
-            .Attacking = 0
-            .AttackTimer = 0
+        If .attackTimer + attackspeed < timeGetTime Then
+            .attacking = 0
+            .attackTimer = 0
         End If
     End With
 
@@ -1682,15 +1683,15 @@ Public Sub DrawNpc(ByVal MapNpcNum As Long)
     End With
 
     ' Calculate the X
-    x = MapNpc(MapNpcNum).x * PIC_X + MapNpc(MapNpcNum).XOffset - ((gTexture(Tex_Char(Sprite)).RWidth / 3 - 32) / 2)
+    x = MapNpc(MapNpcNum).x * PIC_X + MapNpc(MapNpcNum).xOffset - ((gTexture(Tex_Char(Sprite)).RWidth / 3 - 32) / 2)
 
     ' Is the player's height more than 32..?
     If (gTexture(Tex_Char(Sprite)).RHeight / 4) > 32 Then
         ' Create a 32 pixel offset for larger sprites
-        y = MapNpc(MapNpcNum).y * PIC_Y + MapNpc(MapNpcNum).YOffset - ((gTexture(Tex_Char(Sprite)).RHeight / 4) - 32) - 4
+        y = MapNpc(MapNpcNum).y * PIC_Y + MapNpc(MapNpcNum).yOffset - ((gTexture(Tex_Char(Sprite)).RHeight / 4) - 32) - 4
     Else
         ' Proceed as normal
-        y = MapNpc(MapNpcNum).y * PIC_Y + MapNpc(MapNpcNum).YOffset - 4
+        y = MapNpc(MapNpcNum).y * PIC_Y + MapNpc(MapNpcNum).yOffset - 4
     End If
     If Not map.DayNight = 1 Then
         If DayTime = True Then
@@ -1733,8 +1734,8 @@ Dim i As Long, x As Long, y As Long, width As Long, height As Long
     
     For i = 1 To MAX_PLAYERS
         If IsPlaying(i) And GetPlayerMap(MyIndex) = GetPlayerMap(i) Then
-            x = (Player(i).x * 32) + TempPlayer(i).XOffset + 32
-            y = (Player(i).y * 32) + TempPlayer(i).YOffset + 32
+            x = (Player(i).x * 32) + TempPlayer(i).xOffset + 32
+            y = (Player(i).y * 32) + TempPlayer(i).yOffset + 32
             If x >= GlobalX_Map And x <= GlobalX_Map + 32 Then
                 If y >= GlobalY_Map And y <= GlobalY_Map + 32 Then
                     x = ConvertMapX(x)
@@ -1747,8 +1748,8 @@ Dim i As Long, x As Long, y As Long, width As Long, height As Long
     
     For i = 1 To MAX_MAP_NPCS
         If MapNpc(i).Num > 0 Then
-            x = (MapNpc(i).x * 32) + MapNpc(i).XOffset + 32
-            y = (MapNpc(i).y * 32) + MapNpc(i).YOffset + 32
+            x = (MapNpc(i).x * 32) + MapNpc(i).xOffset + 32
+            y = (MapNpc(i).y * 32) + MapNpc(i).yOffset + 32
             If x >= GlobalX_Map And x <= GlobalX_Map + 32 Then
                 If y >= GlobalY_Map And y <= GlobalY_Map + 32 Then
                     x = ConvertMapX(x)
@@ -2002,8 +2003,8 @@ Dim x As Long, y As Long, lockindex As Long
                 ' check if on same map
                 If GetPlayerMap(lockindex) = GetPlayerMap(MyIndex) Then
                     ' is on map, is playing, set x & y
-                    x = (GetPlayerX(lockindex) * PIC_X) + 16 - (width / 2) + TempPlayer(lockindex).XOffset
-                    y = (GetPlayerY(lockindex) * PIC_Y) + 16 - (height / 2) + TempPlayer(lockindex).YOffset
+                    x = (GetPlayerX(lockindex) * PIC_X) + 16 - (width / 2) + TempPlayer(lockindex).xOffset
+                    y = (GetPlayerY(lockindex) * PIC_Y) + 16 - (height / 2) + TempPlayer(lockindex).yOffset
                 End If
             End If
         ElseIf AnimInstance(index).LockType = TARGET_TYPE_NPC Then
@@ -2012,10 +2013,10 @@ Dim x As Long, y As Long, lockindex As Long
             ' check if NPC exists
             If MapNpc(lockindex).Num > 0 Then
                 ' check if alive
-                If MapNpc(lockindex).Vital(Vitals.HP) > 0 Then
+                If MapNpc(lockindex).Vital(Vitals.hp) > 0 Then
                     ' exists, is alive, set x & y
-                    x = (MapNpc(lockindex).x * PIC_X) + 16 - (width / 2) + MapNpc(lockindex).XOffset
-                    y = (MapNpc(lockindex).y * PIC_Y) + 16 - (height / 2) + MapNpc(lockindex).YOffset
+                    x = (MapNpc(lockindex).x * PIC_X) + 16 - (width / 2) + MapNpc(lockindex).xOffset
+                    y = (MapNpc(lockindex).y * PIC_Y) + 16 - (height / 2) + MapNpc(lockindex).yOffset
                 Else
                     ' npc not alive anymore, kill the animation
                     ClearAnimInstance index
@@ -2505,11 +2506,11 @@ Dim width As Long, height As Long
             ' damage
             i = i + 1
             ReDim Preserve sInfo(1 To i) As String
-            sInfo(i) = "HP Vital: " & spell(spellnum).Vital(Vitals.HP)
+            sInfo(i) = "HP Vital: " & spell(spellnum).Vital(Vitals.hp)
             
             i = i + 1
             ReDim Preserve sInfo(1 To i) As String
-            sInfo(i) = "MP Vital: " & spell(spellnum).Vital(Vitals.MP)
+            sInfo(i) = "MP Vital: " & spell(spellnum).Vital(Vitals.mp)
             
             ' mp cost
             i = i + 1
@@ -2672,21 +2673,21 @@ Dim width As Long, height As Long
     RenderText Font_GeorgiaShadow, "Crafting: " & GetPlayerSkillLevel(MyIndex, Crafting), dX, dY, White
     dX = dX + 100
     dY = y + 65
-    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).SkillExp(Woodcutting) / 100) / (TNSL(Woodcutting) / 100)) * 100) & "%", dX, dY, Yellow
+    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).skillExp(Woodcutting) / 100) / (TNSL(Woodcutting) / 100)) * 100) & "%", dX, dY, Yellow
     dY = dY + 15
-    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).SkillExp(Mining) / 100) / (TNSL(Mining) / 100)) * 100) & "%", dX, dY, Yellow
+    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).skillExp(Mining) / 100) / (TNSL(Mining) / 100)) * 100) & "%", dX, dY, Yellow
     dY = dY + 15
-    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).SkillExp(Fishing) / 100) / (TNSL(Fishing) / 100)) * 100) & "%", dX, dY, Yellow
+    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).skillExp(Fishing) / 100) / (TNSL(Fishing) / 100)) * 100) & "%", dX, dY, Yellow
     dY = dY + 15
-    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).SkillExp(Alchemy) / 100) / (TNSL(Alchemy) / 100)) * 100) & "%", dX, dY, Yellow
+    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).skillExp(Alchemy) / 100) / (TNSL(Alchemy) / 100)) * 100) & "%", dX, dY, Yellow
     dY = dY + 15
-    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).SkillExp(Smithing) / 100) / (TNSL(Smithing) / 100)) * 100) & "%", dX, dY, Yellow
+    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).skillExp(Smithing) / 100) / (TNSL(Smithing) / 100)) * 100) & "%", dX, dY, Yellow
     dY = dY + 15
-    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).SkillExp(Cooking) / 100) / (TNSL(Cooking) / 100)) * 100) & "%", dX, dY, Yellow
+    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).skillExp(Cooking) / 100) / (TNSL(Cooking) / 100)) * 100) & "%", dX, dY, Yellow
     dY = dY + 15
-    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).SkillExp(Fletching) / 100) / (TNSL(Fletching) / 100)) * 100) & "%", dX, dY, Yellow
+    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).skillExp(Fletching) / 100) / (TNSL(Fletching) / 100)) * 100) & "%", dX, dY, Yellow
     dY = dY + 15
-    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).SkillExp(Crafting) / 100) / (TNSL(Crafting) / 100)) * 100) & "%", dX, dY, Yellow
+    RenderText Font_GeorgiaShadow, Round(((Player(MyIndex).skillExp(Crafting) / 100) / (TNSL(Crafting) / 100)) * 100) & "%", dX, dY, Yellow
     
     ' draw the equipment
     DrawEquipment
@@ -2814,16 +2815,16 @@ Dim height As Long
         y = GUIWindow(GUI_PARTY).y + 29
         x = GUIWindow(GUI_PARTY).x + 6
         ' make sure we actually have the data before rendering
-        If GetPlayerVital(playerNum, Vitals.HP) > 0 And GetPlayerMaxVital(playerNum, Vitals.HP) > 0 Then
-            width = ((GetPlayerVital(playerNum, Vitals.HP) / Party_HPWidth) / (GetPlayerMaxVital(playerNum, Vitals.HP) / Party_HPWidth)) * Party_HPWidth
+        If GetPlayerVital(playerNum, Vitals.hp) > 0 And GetPlayerMaxVital(playerNum, Vitals.hp) > 0 Then
+            width = ((GetPlayerVital(playerNum, Vitals.hp) / Party_HPWidth) / (GetPlayerMaxVital(playerNum, Vitals.hp) / Party_HPWidth)) * Party_HPWidth
         End If
         'EngineRenderRectangle Tex_GUI(16), x, y, 0, 0, width, 9, width, 9, width, 9
         Directx8.RenderTexture Tex_GUI(16), x, y, 0, 0, width, 9, width, 9
         ' draw mp
         y = GUIWindow(GUI_PARTY).y + 38
         ' make sure we actually have the data before rendering
-        If GetPlayerVital(playerNum, Vitals.MP) > 0 And GetPlayerMaxVital(playerNum, Vitals.MP) > 0 Then
-            width = ((GetPlayerVital(playerNum, Vitals.MP) / Party_SPRWidth) / (GetPlayerMaxVital(playerNum, Vitals.MP) / Party_SPRWidth)) * Party_SPRWidth
+        If GetPlayerVital(playerNum, Vitals.mp) > 0 And GetPlayerMaxVital(playerNum, Vitals.mp) > 0 Then
+            width = ((GetPlayerVital(playerNum, Vitals.mp) / Party_SPRWidth) / (GetPlayerMaxVital(playerNum, Vitals.mp) / Party_SPRWidth)) * Party_SPRWidth
         End If
         'EngineRenderRectangle Tex_GUI(17), x, y, 0, 0, width, 9, width, 9, width, 9
         Directx8.RenderTexture Tex_GUI(17), x, y, 0, 0, width, 9, width, 9
@@ -2844,16 +2845,16 @@ Dim height As Long
                     y = GUIWindow(GUI_PARTY).y + 29 + ((i - 1) * 49)
                     x = GUIWindow(GUI_PARTY).x + 6
                     ' make sure we actually have the data before rendering
-                    If GetPlayerVital(playerNum, Vitals.HP) > 0 And GetPlayerMaxVital(playerNum, Vitals.HP) > 0 Then
-                        width = ((GetPlayerVital(playerNum, Vitals.HP) / Party_HPWidth) / (GetPlayerMaxVital(playerNum, Vitals.HP) / Party_HPWidth)) * Party_HPWidth
+                    If GetPlayerVital(playerNum, Vitals.hp) > 0 And GetPlayerMaxVital(playerNum, Vitals.hp) > 0 Then
+                        width = ((GetPlayerVital(playerNum, Vitals.hp) / Party_HPWidth) / (GetPlayerMaxVital(playerNum, Vitals.hp) / Party_HPWidth)) * Party_HPWidth
                     End If
                     'EngineRenderRectangle Tex_GUI(16), x, y, 0, 0, width, 9, width, 9, width, 9
                     Directx8.RenderTexture Tex_GUI(16), x, y, 0, 0, width, 9, width, 9
                     ' draw mp
                     y = GUIWindow(GUI_PARTY).y + 38 + ((i - 1) * 49)
                     ' make sure we actually have the data before rendering
-                    If GetPlayerVital(playerNum, Vitals.MP) > 0 And GetPlayerMaxVital(playerNum, Vitals.MP) > 0 Then
-                        width = ((GetPlayerVital(playerNum, Vitals.MP) / Party_SPRWidth) / (GetPlayerMaxVital(playerNum, Vitals.MP) / Party_SPRWidth)) * Party_SPRWidth
+                    If GetPlayerVital(playerNum, Vitals.mp) > 0 And GetPlayerMaxVital(playerNum, Vitals.mp) > 0 Then
+                        width = ((GetPlayerVital(playerNum, Vitals.mp) / Party_SPRWidth) / (GetPlayerMaxVital(playerNum, Vitals.mp) / Party_SPRWidth)) * Party_SPRWidth
                     End If
                     'EngineRenderRectangle Tex_GUI(17), x, y, 0, 0, width, 9, width, 9, width, 9
                     Directx8.RenderTexture Tex_GUI(17), x, y, 0, 0, width, 9, width, 9
@@ -3095,25 +3096,25 @@ Dim height As Long
     Select Case CurrentEvent.Type
         Case Evt_Menu
             ' Draw replies
-            RenderText Font_GeorgiaShadow, WordWrap(Trim$(CurrentEvent.Text(1)), GUIWindow(GUI_EVENTCHAT).width - 10), x + 10, y + 10, White
-            For i = 1 To UBound(CurrentEvent.Text) - 1
-                If Len(Trim$(CurrentEvent.Text(i + 1))) > 0 Then
-                    width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(i + 1)) & "]")
+            RenderText Font_GeorgiaShadow, WordWrap(Trim$(CurrentEvent.text(1)), GUIWindow(GUI_EVENTCHAT).width - 10), x + 10, y + 10, White
+            For i = 1 To UBound(CurrentEvent.text) - 1
+                If Len(Trim$(CurrentEvent.text(i + 1))) > 0 Then
+                    width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.text(i + 1)) & "]")
                     x = GUIWindow(GUI_CHAT).x + ((GUIWindow(GUI_EVENTCHAT).width / 2) - width / 2)
                     y = GUIWindow(GUI_CHAT).y + 115 - ((i - 1) * 15)
                     If chatOptState(i) = 2 Then
                         ' clicked
-                        RenderText Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(i + 1)) & "]", x, y, Grey
+                        RenderText Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.text(i + 1)) & "]", x, y, Grey
                     Else
                         ' normal
-                        RenderText Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(i + 1)) & "]", x, y, BrightBlue
+                        RenderText Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.text(i + 1)) & "]", x, y, BrightBlue
                         ' reset sound if needed
                         If lastNpcChatsound = i Then lastNpcChatsound = 0
                     End If
                 End If
             Next
         Case Evt_Message
-            RenderText Font_GeorgiaShadow, WordWrap(Trim$(CurrentEvent.Text(1)), GUIWindow(GUI_EVENTCHAT).width - 52), x + 10, y + 10, White
+            RenderText Font_GeorgiaShadow, WordWrap(Trim$(CurrentEvent.text(1)), GUIWindow(GUI_EVENTCHAT).width - 52), x + 10, y + 10, White
             width = EngineGetTextWidth(Font_GeorgiaShadow, "[Continue]")
             x = GUIWindow(GUI_EVENTCHAT).x + ((GUIWindow(GUI_EVENTCHAT).width / 2) - width / 2)
             y = GUIWindow(GUI_EVENTCHAT).y + 100
@@ -3500,7 +3501,7 @@ Dim width As Long, height As Long, dateString As String
     Directx8.RenderTextureRectangle 2, 10, 10, 65, 65
    
     'Directx8.RenderTexture Tex_Char(GetPlayerSprite(MyMyindex)), 25, 20, 0, 0, gTexture(Tex_Char(GetPlayerSprite(MyMyindex))).RWidth / 3, gTexture(Tex_Char(GetPlayerSprite(MyMyindex))).RHeight / 4, gTexture(Tex_Char(GetPlayerSprite(MyMyindex))).RWidth / 3, gTexture(Tex_Char(GetPlayerSprite(MyMyindex))).RHeight / 4
-    If Player(MyIndex).Sex = SEX_MALE Then
+    If Player(MyIndex).sex = SEX_MALE Then
         Directx8.RenderTexture Tex_Char(1), 25, 20, 0, 0, gTexture(Tex_Char(1)).RWidth / 3, gTexture(Tex_Char(1)).RHeight / 4, gTexture(Tex_Char(1)).RWidth / 3, gTexture(Tex_Char(1)).RHeight / 4
         If GetPlayerClothes(MyIndex) > 0 Then Directx8.RenderTexture Tex_ClothesM(GetPlayerClothes(MyIndex)), 25, 20, 0, 0, gTexture(Tex_Char(1)).RWidth / 3, gTexture(Tex_Char(1)).RHeight / 4, gTexture(Tex_Char(1)).RWidth / 3, gTexture(Tex_Char(1)).RHeight / 4
         If GetPlayerGear(MyIndex) > 0 Then Directx8.RenderTexture Tex_GearM(GetPlayerGear(MyIndex)), 25, 20, 0, 0, gTexture(Tex_Char(1)).RWidth / 3, gTexture(Tex_Char(1)).RHeight / 4, gTexture(Tex_Char(1)).RWidth / 3, gTexture(Tex_Char(1)).RHeight / 4
@@ -3519,23 +3520,23 @@ Dim width As Long, height As Long, dateString As String
     dX = x + 75
     dY = y + 5
     ' health bar
-    BarWidth_GuiHP_Max = ((GetPlayerVital(MyIndex, Vitals.HP) / barWidth) / (GetPlayerMaxVital(MyIndex, Vitals.HP) / barWidth)) * barWidth
+    BarWidth_GuiHP_Max = ((GetPlayerVital(MyIndex, Vitals.hp) / barWidth) / (GetPlayerMaxVital(MyIndex, Vitals.hp) / barWidth)) * barWidth
     Directx8.RenderTextureRectangle 3, dX, dY, BarWidth_GuiHP, 22
     dX = x + 80
     dY = y + 7
     ' render health
-    sString = "Health: " & GetPlayerVital(MyIndex, Vitals.HP) & "/" & GetPlayerMaxVital(MyIndex, Vitals.HP)
+    sString = "Health: " & GetPlayerVital(MyIndex, Vitals.hp) & "/" & GetPlayerMaxVital(MyIndex, Vitals.hp)
     RenderText Font_GeorgiaShadow, sString, dX, dY, White
     
     dX = x + 75
     dY = y + 26
     ' spirit bar
-    BarWidth_GuiSP_Max = ((GetPlayerVital(MyIndex, Vitals.MP) / barWidth) / (GetPlayerMaxVital(MyIndex, Vitals.MP) / barWidth)) * barWidth
+    BarWidth_GuiSP_Max = ((GetPlayerVital(MyIndex, Vitals.mp) / barWidth) / (GetPlayerMaxVital(MyIndex, Vitals.mp) / barWidth)) * barWidth
     Directx8.RenderTextureRectangle 4, dX, dY, BarWidth_GuiSP, 22
     dX = x + 80
     dY = y + 28
     ' render spirit
-    sString = "Spirit: " & GetPlayerVital(MyIndex, Vitals.MP) & "/" & GetPlayerMaxVital(MyIndex, Vitals.MP)
+    sString = "Spirit: " & GetPlayerVital(MyIndex, Vitals.mp) & "/" & GetPlayerMaxVital(MyIndex, Vitals.mp)
     RenderText Font_GeorgiaShadow, sString, dX, dY, White
     
     dX = x + 75
@@ -3942,7 +3943,7 @@ End Sub
 Sub DrawNight()
     If map.DayNight = 2 Then Exit Sub
     If DayTime = False Or map.DayNight = 1 Then
-        Directx8.RenderTexture Tex_Night, ConvertMapX(GetPlayerX(MyIndex) * 32) + TempPlayer(MyIndex).XOffset + 16 - gTexture(Tex_Night).RWidth / 2, ConvertMapY(GetPlayerY(MyIndex) * 32) + TempPlayer(MyIndex).YOffset + 32 - gTexture(Tex_Night).RHeight / 2, 0, 0, gTexture(Tex_Night).RWidth, gTexture(Tex_Night).RHeight, gTexture(Tex_Night).RWidth, gTexture(Tex_Night).RHeight
+        Directx8.RenderTexture Tex_Night, ConvertMapX(GetPlayerX(MyIndex) * 32) + TempPlayer(MyIndex).xOffset + 16 - gTexture(Tex_Night).RWidth / 2, ConvertMapY(GetPlayerY(MyIndex) * 32) + TempPlayer(MyIndex).yOffset + 32 - gTexture(Tex_Night).RHeight / 2, 0, 0, gTexture(Tex_Night).RWidth, gTexture(Tex_Night).RHeight, gTexture(Tex_Night).RWidth, gTexture(Tex_Night).RHeight
     End If
 End Sub
 
@@ -3952,8 +3953,8 @@ Dim height As Long
 'GUIWindow(GUI_RIGHTMENU).visible = False
 If myTargetType = TARGET_TYPE_NPC Then GUIWindow(GUI_RIGHTMENU).visible = False
 
-    x = ConvertMapX(GetPlayerX(myTarget) * PIC_X) + TempPlayer(myTarget).XOffset
-    y = ConvertMapY(GetPlayerY(myTarget) * PIC_Y) + TempPlayer(myTarget).YOffset
+    x = ConvertMapX(GetPlayerX(myTarget) * PIC_X) + TempPlayer(myTarget).xOffset
+    y = ConvertMapY(GetPlayerY(myTarget) * PIC_Y) + TempPlayer(myTarget).yOffset
     GUIWindow(GUI_RIGHTMENU).x = x
     GUIWindow(GUI_RIGHTMENU).y = y
     ' render chatbox
@@ -4108,7 +4109,7 @@ Dim width As Long, height As Long
         End If
         Sprite = Events(index).Graphic(eventAnimFrame)
     Else
-        Sprite = Events(index).Graphic(Player(MyIndex).EventGraphic(index))
+        Sprite = Events(index).Graphic(Player(MyIndex).eventGraphic(index))
     End If
     If Sprite = 0 Then Exit Sub
 
@@ -4186,7 +4187,7 @@ Dim width As Long, height As Long, x As Long, y As Long, i As Long
         RenderText Font_GeorgiaShadow, WordWrap(Trim$(GuildData.Guild_MOTD), GUIWindow(GUI_GUILD).width - 40 - EngineGetTextWidth(Font_GeorgiaShadow, "MOTD: ")), GUIWindow(GUI_GUILD).x + 20 + EngineGetTextWidth(Font_GeorgiaShadow, "MOTD: "), GUIWindow(GUI_GUILD).y + 34, White
         Directx8.RenderTexture Tex_Guildicon(GuildData.Guild_Logo), GUIWindow(GUI_GUILD).x + 25, GUIWindow(GUI_GUILD).y + 53, 0, 0, 16, 16, 16, 16, D3DColorRGBA(255, 255, 255, 200)
         
-        If Not TempPlayer(MyIndex).GuildName = vbNullString Then
+        If Not TempPlayer(MyIndex).guildName = vbNullString Then
             For i = 1 To MAX_GUILD_MEMBERS
                 If i > GuildScroll - (i - GuildScroll) - 2 And i < GuildScroll + 5 Then
                     If Not GuildData.Guild_Members(i).User_Name = vbNullString Then
@@ -4248,10 +4249,10 @@ Dim width As Long, height As Long
             dX = x + 5
             dY = y + 30
             ' health bar
-            BarWidth_TargetHP_Max = ((GetPlayerVital(myTarget, Vitals.HP) / barWidth) / (GetPlayerMaxVital(myTarget, Vitals.HP) / barWidth)) * barWidth
+            BarWidth_TargetHP_Max = ((GetPlayerVital(myTarget, Vitals.hp) / barWidth) / (GetPlayerMaxVital(myTarget, Vitals.hp) / barWidth)) * barWidth
             Directx8.RenderTextureRectangle 3, dX, dY, BarWidth_TargetHP, 22
             ' render health
-            sString = GetPlayerVital(myTarget, Vitals.HP) & "/" & GetPlayerMaxVital(myTarget, Vitals.HP)
+            sString = GetPlayerVital(myTarget, Vitals.hp) & "/" & GetPlayerMaxVital(myTarget, Vitals.hp)
             dX = x + (width / 2) - (EngineGetTextWidth(Font_GeorgiaShadow, sString) / 2)
             dY = y + 33
             RenderText Font_GeorgiaShadow, sString, dX, dY, White
@@ -4264,9 +4265,9 @@ Dim width As Long, height As Long
             dX = x + 5
             dY = y + 30
             ' health bar
-            BarWidth_TargetHP_Max = ((MapNpc(myTarget).Vital(Vitals.HP) / barWidth) / (NPC(MapNpc(myTarget).Num).HP / barWidth)) * barWidth
+            BarWidth_TargetHP_Max = ((MapNpc(myTarget).Vital(Vitals.hp) / barWidth) / (NPC(MapNpc(myTarget).Num).hp / barWidth)) * barWidth
             Directx8.RenderTextureRectangle 3, dX, dY, BarWidth_TargetHP, 22
-            sString = MapNpc(myTarget).Vital(Vitals.HP) & "/" & NPC(MapNpc(myTarget).Num).HP
+            sString = MapNpc(myTarget).Vital(Vitals.hp) & "/" & NPC(MapNpc(myTarget).Num).hp
             ' render health
             dX = x + (width / 2) - (EngineGetTextWidth(Font_GeorgiaShadow, sString) / 2)
             dY = y + 33
@@ -4300,10 +4301,10 @@ If NPC(MapNpc(myTarget).TargetType).name = 0 Then GoTo e
             dX = x + 5
             dY = y + 30
             ' health bar
-            BarWidth_TargetHP_Max = ((GetPlayerVital(myTargetsTarget, Vitals.HP) / barWidth) / (GetPlayerMaxVital(myTargetsTarget, Vitals.HP) / barWidth)) * barWidth
+            BarWidth_TargetHP_Max = ((GetPlayerVital(myTargetsTarget, Vitals.hp) / barWidth) / (GetPlayerMaxVital(myTargetsTarget, Vitals.hp) / barWidth)) * barWidth
             Directx8.RenderTextureRectangle 3, dX, dY, BarWidth_TargetHP, 22
             ' render health
-            sString = GetPlayerVital(myTargetsTarget, Vitals.HP) & "/" & GetPlayerMaxVital(myTargetsTarget, Vitals.HP)
+            sString = GetPlayerVital(myTargetsTarget, Vitals.hp) & "/" & GetPlayerMaxVital(myTargetsTarget, Vitals.hp)
             dX = x + (width / 2) - (EngineGetTextWidth(Font_GeorgiaShadow, sString) / 2)
             dY = y + 33
             RenderText Font_GeorgiaShadow, sString, dX, dY, White
@@ -4316,9 +4317,9 @@ If NPC(MapNpc(myTarget).TargetType).name = 0 Then GoTo e
             dX = x + 5
             dY = y + 30
             ' health bar
-            BarWidth_TargetHP_Max = ((MapNpc(myTarget).Vital(Vitals.HP) / barWidth) / (NPC(MapNpc(myTarget).Num).HP / barWidth)) * barWidth
+            BarWidth_TargetHP_Max = ((MapNpc(myTarget).Vital(Vitals.hp) / barWidth) / (NPC(MapNpc(myTarget).Num).hp / barWidth)) * barWidth
             Directx8.RenderTextureRectangle 3, dX, dY, BarWidth_TargetHP, 22
-            sString = MapNpc(myTarget).Vital(Vitals.HP) & "/" & NPC(MapNpc(myTarget).Num).HP
+            sString = MapNpc(myTarget).Vital(Vitals.hp) & "/" & NPC(MapNpc(myTarget).Num).hp
             ' render health
             dX = x + (width / 2) - (EngineGetTextWidth(Font_GeorgiaShadow, sString) / 2)
             dY = y + 33
@@ -4341,24 +4342,24 @@ Dim height As Long
 
     Dim QuestNum As Long
     Dim name As String, Desc As String, descLine() As String
-    Dim reqlvl As Long, reqquest As Long, Task As String
+    Dim reqlvl As Long, reqquest As Long, task As String
     
 '    RenderText Font_GeorgiaShadow, WordWrap(DescLine(I), 340), GUIWindow(GUI_QUESTS).X + 200, GUIWindow(GUI_QUESTS).Y + 75 + (12 * I), White
     
-    QuestNum = GetQuestNum(Trim$(frmMain.lstQuestLog.Text))
+    QuestNum = GetQuestNum(Trim$(frmMain.lstQuestLog.text))
 
     If QuestNum = 0 Then
     Else
-        Desc = Trim$(Quest(QuestNum).Speech(1))
-        QuestSay = Quest(QuestNum).QuestLog
-        name = Trim$(Quest(QuestNum).name)
-        reqquest = Quest(QuestNum).RequiredQuest
+        Desc = Trim$(quest(QuestNum).Speech(1))
+        QuestSay = quest(QuestNum).QuestLog
+        name = Trim$(quest(QuestNum).name)
+        reqquest = quest(QuestNum).RequiredQuest
         
         descLine = Split(Desc, "/r")
-            If Trim$(frmMain.lstQuestLog.Text) = vbNullString Then Exit Sub
+            If Trim$(frmMain.lstQuestLog.text) = vbNullString Then Exit Sub
             
             RenderText Font_GeorgiaShadow, "Name: " & name, GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 32, White
-            If Quest(QuestNum).Repeat = "1" Then
+            If quest(QuestNum).Repeat = "1" Then
             RenderText Font_GeorgiaShadow, "Repeatable: Yes", GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 47, Yellow
             Else
             RenderText Font_GeorgiaShadow, "Repeatable: No", GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 47, Yellow
@@ -4373,7 +4374,7 @@ Dim height As Long
                 RenderText Font_GeorgiaShadow, "Required Level: " & reqlvl, GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 122, White
             End If
             If reqquest > 0 Then
-                RenderText Font_GeorgiaShadow, "Required Quest: " & Trim$(Quest(reqquest).name), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 142, White
+                RenderText Font_GeorgiaShadow, "Required Quest: " & Trim$(quest(reqquest).name), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 142, White
             End If
             
             If TempPlayer(MyIndex).PlayerQuest(QuestNum).ActualTask = 0 Then
@@ -4388,58 +4389,58 @@ Dim height As Long
                'render EXP
                 RenderText Font_GeorgiaShadow, "Rewards: ", GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 180, Brown
                  Directx8.RenderTexture Tex_Item(PicNum), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 195, 0, 0, 26, 26, 32, 32
-                RenderText Font_GeorgiaShadow, " X  " & Trim$(Quest(QuestNum).RewardExp) & " Exp", GUIWindow(GUI_QUESTS).x + 230, GUIWindow(GUI_QUESTS).y + 200, White
+                RenderText Font_GeorgiaShadow, " X  " & Trim$(quest(QuestNum).RewardExp) & " Exp", GUIWindow(GUI_QUESTS).x + 230, GUIWindow(GUI_QUESTS).y + 200, White
                 'render currency
-                If Quest(QuestNum).RewardItem(1).item = 0 Then
+                If quest(QuestNum).RewardItem(1).item = 0 Then
                     Else
-                         Directx8.RenderTexture Tex_Item(item(Quest(QuestNum).RewardItem(1).item).Pic), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 225, 0, 0, 26, 26, 32, 32
-                        RenderText Font_GeorgiaShadow, Trim$(item(Trim$(Quest(QuestNum).RewardItem(i).item)).name) & " X  " & Trim$(Quest(QuestNum).RewardItem(i).Value), GUIWindow(GUI_QUESTS).x + 230, GUIWindow(GUI_QUESTS).y + 230, White
+                         Directx8.RenderTexture Tex_Item(item(quest(QuestNum).RewardItem(1).item).Pic), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 225, 0, 0, 26, 26, 32, 32
+                        RenderText Font_GeorgiaShadow, Trim$(item(Trim$(quest(QuestNum).RewardItem(i).item)).name) & " X  " & Trim$(quest(QuestNum).RewardItem(i).Value), GUIWindow(GUI_QUESTS).x + 230, GUIWindow(GUI_QUESTS).y + 230, White
                     End If
                     'other items
                 For i = 2 To 8
-                    If Quest(QuestNum).RewardItem(i).item = 0 Then
+                    If quest(QuestNum).RewardItem(i).item = 0 Then
                     Else
-                         Directx8.RenderTexture Tex_Item(item(Quest(QuestNum).RewardItem(i).item).Pic), GUIWindow(GUI_QUESTS).x + 295, GUIWindow(GUI_QUESTS).y + 140 + (i * 25), 0, 0, 32, 32, 32, 32
-                        RenderText Font_GeorgiaShadow, Trim$(item(Trim$(Quest(QuestNum).RewardItem(i).item)).name) & " X  " & Trim$(Quest(QuestNum).RewardItem(i).Value), GUIWindow(GUI_QUESTS).x + 325, GUIWindow(GUI_QUESTS).y + 150 + (i * 25), White
+                         Directx8.RenderTexture Tex_Item(item(quest(QuestNum).RewardItem(i).item).Pic), GUIWindow(GUI_QUESTS).x + 295, GUIWindow(GUI_QUESTS).y + 140 + (i * 25), 0, 0, 32, 32, 32, 32
+                        RenderText Font_GeorgiaShadow, Trim$(item(Trim$(quest(QuestNum).RewardItem(i).item)).name) & " X  " & Trim$(quest(QuestNum).RewardItem(i).Value), GUIWindow(GUI_QUESTS).x + 325, GUIWindow(GUI_QUESTS).y + 150 + (i * 25), White
                     End If
                 Next
         
-                RenderText Font_GeorgiaShadow, "Step " & TempPlayer(MyIndex).PlayerQuest(QuestNum).Status & " from " & TempPlayer(MyIndex).PlayerQuest(QuestNum).ActualTask, GUIWindow(GUI_QUESTS).x + 465, GUIWindow(GUI_QUESTS).y + 330, White
+                RenderText Font_GeorgiaShadow, "Step " & TempPlayer(MyIndex).PlayerQuest(QuestNum).status & " from " & TempPlayer(MyIndex).PlayerQuest(QuestNum).ActualTask, GUIWindow(GUI_QUESTS).x + 465, GUIWindow(GUI_QUESTS).y + 330, White
      Dim ActualTask As Long
      ActualTask = TempPlayer(MyIndex).PlayerQuest(QuestNum).ActualTask
-Task = Trim$(Quest(QuestNum).Task(ActualTask).TaskLog)
+task = Trim$(quest(QuestNum).task(ActualTask).TaskLog)
 
-   RenderText Font_GeorgiaShadow, "Task: " & Task, GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 93, White
-                If Trim$(Quest(QuestNum).Task(ActualTask).Amount) > 0 And Trim$(Quest(QuestNum).Task(ActualTask).NPC) > 0 Then 'Kill
-                    RenderText Font_GeorgiaShadow, "Current Task: Slay " + Trim$(TempPlayer(MyIndex).PlayerQuest(QuestNum).CurrentCount) + " / " + Trim$(Quest(QuestNum).Task(ActualTask).Amount) + " " + Trim$(NPC(Quest(QuestNum).Task(ActualTask).NPC).name), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 162, White
+   RenderText Font_GeorgiaShadow, "Task: " & task, GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 93, White
+                If Trim$(quest(QuestNum).task(ActualTask).Amount) > 0 And Trim$(quest(QuestNum).task(ActualTask).NPC) > 0 Then 'Kill
+                    RenderText Font_GeorgiaShadow, "Current Task: Slay " + Trim$(TempPlayer(MyIndex).PlayerQuest(QuestNum).CurrentCount) + " / " + Trim$(quest(QuestNum).task(ActualTask).Amount) + " " + Trim$(NPC(quest(QuestNum).task(ActualTask).NPC).name), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 162, White
                      Directx8.RenderTexture Tex_GUI(18), 570, 330, 0, 0, 64, 64, 64, 64
-                     Directx8.RenderTexture Tex_Char(NPC(Quest(QuestNum).Task(ActualTask).NPC).Sprite), 570, 330, 0, 0, 64, 64, 32, 32
+                     Directx8.RenderTexture Tex_Char(NPC(quest(QuestNum).task(ActualTask).NPC).Sprite), 570, 330, 0, 0, 64, 64, 32, 32
                 End If
 
-                If Trim$(Quest(QuestNum).Task(ActualTask).map) > 0 Then 'Map
-                    RenderText Font_GeorgiaShadow, "Current Task: Visit " & Trim$(Quest(QuestNum).Task(ActualTask).map), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 162, White
+                If Trim$(quest(QuestNum).task(ActualTask).map) > 0 Then 'Map
+                    RenderText Font_GeorgiaShadow, "Current Task: Visit " & Trim$(quest(QuestNum).task(ActualTask).map), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 162, White
                 End If
 
-                If Trim$(Quest(QuestNum).Task(ActualTask).NPC) > 0 And Trim$(Quest(QuestNum).Task(ActualTask).Amount) = 0 Then 'Talk
-                    RenderText Font_GeorgiaShadow, "Current Task: Go talk with " & Trim$(NPC(Trim$(Quest(QuestNum).Task(ActualTask).NPC)).name), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 162, White
+                If Trim$(quest(QuestNum).task(ActualTask).NPC) > 0 And Trim$(quest(QuestNum).task(ActualTask).Amount) = 0 Then 'Talk
+                    RenderText Font_GeorgiaShadow, "Current Task: Go talk with " & Trim$(NPC(Trim$(quest(QuestNum).task(ActualTask).NPC)).name), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 162, White
                     ' Directx8.RenderTexture Tex_GUI(39), 570, 330, 0, 0, 64, 64, 64, 64
                      Directx8.RenderTexture Tex_GUI(18), GUIWindow(GUI_QUESTS).x + 465, GUIWindow(GUI_QUESTS).y + 10, 0, 0, 64, 64, 64, 64
                     ' Directx8.RenderTexture Tex_Char(NPC(Quest(QuestNum).Task(ActualTask).NPC).Sprite), 570, 430, 0, 0, 64, 64, 32, 32
-                     Directx8.RenderTexture Tex_Char(NPC(Quest(QuestNum).Task(ActualTask).NPC).Sprite), GUIWindow(GUI_QUESTS).x + 470, GUIWindow(GUI_QUESTS).y + 10, 0, 0, 64, 64, 32, 32
+                     Directx8.RenderTexture Tex_Char(NPC(quest(QuestNum).task(ActualTask).NPC).Sprite), GUIWindow(GUI_QUESTS).x + 470, GUIWindow(GUI_QUESTS).y + 10, 0, 0, 64, 64, 32, 32
                 End If
 
-                If Trim$(Quest(QuestNum).Task(ActualTask).item) > 0 And Trim$(Quest(QuestNum).Task(ActualTask).Amount) > 0 Then 'Get
-                    RenderText Font_GeorgiaShadow, "Current Task: Obtain " & Trim$(Quest(QuestNum).Task(ActualTask).Amount) + " " + Trim$(item(Trim$(Quest(QuestNum).Task(ActualTask).item)).name), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 162, White
+                If Trim$(quest(QuestNum).task(ActualTask).item) > 0 And Trim$(quest(QuestNum).task(ActualTask).Amount) > 0 Then 'Get
+                    RenderText Font_GeorgiaShadow, "Current Task: Obtain " & Trim$(quest(QuestNum).task(ActualTask).Amount) + " " + Trim$(item(Trim$(quest(QuestNum).task(ActualTask).item)).name), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 162, White
                 End If
 
-                If Trim$(Quest(QuestNum).Task(ActualTask).Resource) > 0 And Trim$(Quest(QuestNum).Task(ActualTask).NPC) = 0 Then 'Resource
-                    RenderText Font_GeorgiaShadow, "Current Task: Train " & Trim$(Quest(QuestNum).Task(ActualTask).Amount) + "times with " + Trim$(Resource(Trim$(Quest(QuestNum).Task(ActualTask).Resource)).name), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 162, White
+                If Trim$(quest(QuestNum).task(ActualTask).Resource) > 0 And Trim$(quest(QuestNum).task(ActualTask).NPC) = 0 Then 'Resource
+                    RenderText Font_GeorgiaShadow, "Current Task: Train " & Trim$(quest(QuestNum).task(ActualTask).Amount) + "times with " + Trim$(Resource(Trim$(quest(QuestNum).task(ActualTask).Resource)).name), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 162, White
                      Directx8.RenderTexture Tex_GUI(18), 550, 330, 0, 0, 64, 64, 64, 64
-                     Directx8.RenderTexture Tex_Char(Resource(Trim$(Quest(QuestNum).Task(ActualTask).Resource)).ResourceImage), 550, 330, 0, 0, 64, 64, 32, 32
+                     Directx8.RenderTexture Tex_Char(Resource(Trim$(quest(QuestNum).task(ActualTask).Resource)).ResourceImage), 550, 330, 0, 0, 64, 64, 32, 32
                 End If
 
-                If Trim$(Quest(QuestNum).Task(ActualTask).NPC) > 0 And Trim$(Quest(QuestNum).Task(ActualTask).Amount) > 0 And Trim$(Quest(QuestNum).Task(ActualTask).item) > 0 Then 'Give
-                    RenderText Font_GeorgiaShadow, "Current Task: Got give " & Trim$(NPC(Trim$(Quest(QuestNum).Task(ActualTask).NPC)).name) + " " + Trim$(Quest(QuestNum).Task(ActualTask).Amount) + " " + Trim$(item(Trim$(Quest(QuestNum).Task(ActualTask).item)).name), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 162, White
+                If Trim$(quest(QuestNum).task(ActualTask).NPC) > 0 And Trim$(quest(QuestNum).task(ActualTask).Amount) > 0 And Trim$(quest(QuestNum).task(ActualTask).item) > 0 Then 'Give
+                    RenderText Font_GeorgiaShadow, "Current Task: Got give " & Trim$(NPC(Trim$(quest(QuestNum).task(ActualTask).NPC)).name) + " " + Trim$(quest(QuestNum).task(ActualTask).Amount) + " " + Trim$(item(Trim$(quest(QuestNum).task(ActualTask).item)).name), GUIWindow(GUI_QUESTS).x + 200, GUIWindow(GUI_QUESTS).y + 162, White
                 End If
                 
             End If

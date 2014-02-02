@@ -28,8 +28,8 @@ Public Sub add(ByVal c As clsCharacter)
   Call mCol.add(c, str$(c.id))
 End Sub
 
-Public Sub remove(ByVal c As clsCharacter)
-  Call mCol.remove(str$(c.id))
+Public Sub remove(ByVal id As String)
+  Call mCol.remove(id)
 End Sub
 
 Public Function count() As Long

@@ -17,6 +17,10 @@ Private mData As CharacterStruct
 
 Private mQuest(1 To MAX_QUESTS) As clsCharacterQuest
 
+Private mAttacking As Boolean
+Private mAttackTimer As Long
+
+Private mMoving As Long
 Private mXOffset As Long
 Private mYOffset As Long
 
@@ -287,12 +291,24 @@ Public Property Get skillExp(ByVal index As Long) As Long
   skillExp = mData.skillExp(index)
 End Property
 
+Public Property Let eventOpen(ByVal index As Long, ByVal eventOpen As Byte)
+  mData.eventOpen(index) = eventOpen
+End Property
+
 Public Property Get eventOpen(ByVal index As Long) As Byte
   eventOpen = mData.eventOpen(index)
 End Property
 
+Public Property Let eventGraphic(ByVal index As Long, ByVal eventGraphic As Byte)
+  mData.eventGraphic(index) = eventGraphic
+End Property
+
 Public Property Get eventGraphic(ByVal index As Long) As Byte
   eventGraphic = mData.eventGraphic(index)
+End Property
+
+Public Property Let chestOpen(ByVal index As Long, ByVal chestOpen As Boolean)
+  mData.chestOpen(index) = chestOpen
 End Property
 
 Public Property Get chestOpen(ByVal index As Long) As Boolean
@@ -301,6 +317,30 @@ End Property
 
 Public Property Get quest(ByVal index As Long) As clsCharacterQuest
   Set quest = mQuest(index)
+End Property
+
+Public Property Let attackTimer(ByVal attackTimer As Boolean)
+  mAttackTimer = attackTimer
+End Property
+
+Public Property Get attackTimer() As Boolean
+  attackTimer = mAttackTimer
+End Property
+
+Public Property Let attacking(ByVal attacking As Boolean)
+  mAttacking = attacking
+End Property
+
+Public Property Get attacking() As Boolean
+  attacking = mAttacking
+End Property
+
+Public Property Let moving(ByVal moving As Long)
+  mMoving = moving
+End Property
+
+Public Property Get moving() As Long
+  moving = mMoving
 End Property
 
 Public Property Let xOffset(ByVal xOffset As Long)
@@ -319,20 +359,40 @@ Public Property Get yOffset() As Long
   yOffset = mYOffset
 End Property
 
+Public Property Let guildColour(ByVal guildColour As Long)
+  mGuildColour = guildColour
+End Property
+
 Public Property Get guildColour() As Long
   guildColour = mGuildColour
+End Property
+
+Public Property Let guildName(ByVal guildName As String)
+  mGuildName = guildName
 End Property
 
 Public Property Get guildName() As String
   guildName = mGuildName
 End Property
 
+Public Property Let guildTag(ByVal guildTag As String)
+  mGuildTag = guildTag
+End Property
+
 Public Property Get guildTag() As String
   guildTag = mGuildTag
 End Property
 
+Public Property Let guildLogo(ByVal guildLogo As Long)
+  mGuildLogo = guildLogo
+End Property
+
 Public Property Get guildLogo() As Long
   guildLogo = mGuildLogo
+End Property
+
+Public Property Let AFK(ByVal AFK As Boolean)
+  mAFK = AFK
 End Property
 
 Public Property Get AFK() As Boolean

@@ -232,11 +232,6 @@ Dim y As Long
     Close #f
 End Sub
 
-Sub ClearPlayer(ByVal index As Long)
-    Call ZeroMemory(ByVal VarPtr(Player(index)), LenB(Player(index)))
-    Player(index).name = vbNullString
-End Sub
-
 Sub ClearItem(ByVal index As Long)
     Call ZeroMemory(ByVal VarPtr(item(index)), LenB(item(index)))
     item(index).name = vbNullString

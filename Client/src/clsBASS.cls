@@ -282,8 +282,8 @@ Dim X1 As Long, X2 As Long, Y1 As Long, Y2 As Long, distance As Double
     If Options.Sound = 0 Then Exit Function
     
     If SoundX > -1 Or SoundY > -1 Then
-        X1 = (myChar.x * 32) + TempPlayer(MyIndex).XOffset
-        Y1 = (myChar.y * 32) + TempPlayer(MyIndex).YOffset
+        X1 = (myChar.x * 32) + myChar.xOffset
+        Y1 = (myChar.y * 32) + myChar.yOffset
         X2 = (SoundX * 32) + 16
         Y2 = (SoundY * 32) + 16
         If ((X1 - X2) ^ 2) + ((Y1 - Y2) ^ 2) < 0 Then
@@ -300,8 +300,4 @@ Dim X1 As Long, X2 As Long, Y1 As Long, Y2 As Long, distance As Double
     Else
         CalculateSoundVolume = Options.Volume
     End If
-    
 End Function
-
-
-

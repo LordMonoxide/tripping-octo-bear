@@ -15,12 +15,24 @@ Option Explicit
 
 Private mData As CharacterQuestStruct
 
+Public Property Let status(ByVal status As Long)
+  mData.status = status
+End Property
+
 Public Property Get status() As Long
   status = mData.status
 End Property
 
+Public Property Let task(ByVal task As Long)
+  mData.task = task
+End Property
+
 Public Property Get task() As Long
   task = mData.task
+End Property
+
+Public Property Let count(ByVal count As Long)
+  mData.count = count
 End Property
 
 Public Property Get count() As Long
