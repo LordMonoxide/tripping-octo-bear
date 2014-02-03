@@ -80,46 +80,45 @@ Dim buffer As clsBuffer
   Call buffer.WriteLong(CLogin)
   Call buffer.WriteLong(userID)
   Call buffer.WriteLong(charID)
-  Call sendData(buffer.ToArray)
+  Call send(buffer.ToArray)
 End Sub
 
-Public Sub SayMsg(ByVal Text As String)
+Public Sub SayMsg(ByVal text As String)
 Dim buffer As clsBuffer
     
-    Set buffer = New clsBuffer
-    buffer.WriteLong CSayMsg
-    buffer.WriteString Text
-    send buffer.ToArray()
-    Set buffer = Nothing
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(CSayMsg)
+  Call buffer.WriteString(text)
+  Call send(buffer)
 End Sub
 
-Public Sub BroadcastMsg(ByVal Text As String)
+Public Sub BroadcastMsg(ByVal text As String)
 Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CBroadcastMsg
-    buffer.WriteString Text
+    buffer.WriteString text
     send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
-Public Sub EmoteMsg(ByVal Text As String)
+Public Sub EmoteMsg(ByVal text As String)
 Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CEmoteMsg
-    buffer.WriteString Text
+    buffer.WriteString text
     send buffer.ToArray()
     Set buffer = Nothing
 End Sub
 
-Public Sub PlayerMsg(ByVal Text As String, ByVal MsgTo As String)
+Public Sub PlayerMsg(ByVal text As String, ByVal MsgTo As String)
 Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
     buffer.WriteLong CSayMsg
     buffer.WriteString MsgTo
-    buffer.WriteString Text
+    buffer.WriteString text
     send buffer.ToArray()
     Set buffer = Nothing
 End Sub
@@ -130,7 +129,7 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong CPlayerMove
     buffer.WriteLong GetPlayerDir(MyIndex)
-    buffer.WriteLong TempPlayer(MyIndex).Moving
+    buffer.WriteLong TempPlayer(MyIndex).moving
     buffer.WriteLong Player(MyIndex).x
     buffer.WriteLong Player(MyIndex).y
     send buffer.ToArray()
@@ -841,42 +840,6 @@ Dim buffer As clsBuffer
     Set buffer = Nothing
 End Sub
 
-Sub SendPartyLeave()
-Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong CPartyLeave
-    send buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
-Sub SendPartyRequest()
-Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong CPartyRequest
-    send buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
-Sub SendAcceptParty()
-Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong CAcceptParty
-    send buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
-Sub SendDeclineParty()
-Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong CDeclineParty
-    send buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
 Sub SendFinishTutorial()
     Dim buffer As clsBuffer
     Set buffer = New clsBuffer
@@ -910,9 +873,9 @@ Public Sub Events_SendSaveEvent(ByVal EIndex As Long)
             With Events(EIndex).SubEvents(i)
                 buffer.WriteLong .Type
                 If .HasText Then
-                    buffer.WriteLong UBound(.Text)
-                    For d = 1 To UBound(.Text)
-                        buffer.WriteString .Text(d)
+                    buffer.WriteLong UBound(.text)
+                    For d = 1 To UBound(.text)
+                        buffer.WriteString .text(d)
                     Next d
                 Else
                     buffer.WriteLong 0
@@ -997,16 +960,6 @@ Dim buffer As clsBuffer
 Set buffer = Nothing
 End Sub
 
-Public Sub SendPartyChatMsg(ByVal Text As String)
-    Dim buffer As clsBuffer
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong CPartyChatMsg
-    buffer.WriteString Text
-    
-    send buffer.ToArray()
-    Set buffer = Nothing
-End Sub
 Public Sub SendChest(ByVal index As Long)
 Dim buffer As clsBuffer
 

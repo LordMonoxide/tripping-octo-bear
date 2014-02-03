@@ -14,7 +14,6 @@ Public Shop(1 To MAX_SHOPS) As ShopRec
 Public spell(1 To MAX_SPELLS) As clsSpell
 Public Resource(1 To MAX_RESOURCES) As ResourceRec
 Public animation(1 To MAX_ANIMATIONS) As AnimationRec
-Public Party(1 To MAX_PARTYS) As PartyRec
 Public Events(1 To MAX_EVENTS) As EventWrapperRec
 Public switches(1 To MAX_SWITCHES) As String
 Public variables(1 To MAX_VARIABLES) As String
@@ -44,12 +43,6 @@ Private Type OptionsRec
     Tray As Byte
     Logs As Byte
     HighIndexing As Byte
-End Type
-
-Public Type PartyRec
-    Leader As Long
-    Member(1 To MAX_PARTY_MEMBERS) As clsCharacter
-    MemberCount As Long
 End Type
 
 Private Type Cache

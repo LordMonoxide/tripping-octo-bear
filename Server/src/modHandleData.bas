@@ -83,10 +83,6 @@ Public Sub InitMessages()
     HandleDataSub(CSwapSpellSlots) = GetAddress(AddressOf HandleSwapSpellSlots)
     HandleDataSub(CAcceptTradeRequest) = GetAddress(AddressOf HandleAcceptTradeRequest)
     HandleDataSub(CDeclineTradeRequest) = GetAddress(AddressOf HandleDeclineTradeRequest)
-    HandleDataSub(CPartyRequest) = GetAddress(AddressOf HandlePartyRequest)
-    HandleDataSub(CAcceptParty) = GetAddress(AddressOf HandleAcceptParty)
-    HandleDataSub(CDeclineParty) = GetAddress(AddressOf HandleDeclineParty)
-    HandleDataSub(CPartyLeave) = GetAddress(AddressOf HandlePartyLeave)
     HandleDataSub(CRequestEditQuest) = GetAddress(AddressOf HandleRequestEditQuest)
     HandleDataSub(CSaveQuest) = GetAddress(AddressOf HandleSaveQuest)
     HandleDataSub(CRequestQuests) = GetAddress(AddressOf HandleRequestQuests)
@@ -101,7 +97,6 @@ Public Sub InitMessages()
     HandleDataSub(CRequestEditEvents) = GetAddress(AddressOf Events_HandleRequestEditEvents)
     HandleDataSub(CChooseEventOption) = GetAddress(AddressOf Events_HandleChooseEventOption)
     HandleDataSub(CAfk) = GetAddress(AddressOf HandleAfk)
-    HandleDataSub(CPartyChatMsg) = GetAddress(AddressOf HandlePartyChatMsg)
     HandleDataSub(CSayGuild) = GetAddress(AddressOf HandleGuildMsg)
     HandleDataSub(CGuildCommand) = GetAddress(AddressOf HandleGuildCommands)
     HandleDataSub(CSaveGuild) = GetAddress(AddressOf HandleGuildSave)
@@ -123,7 +118,7 @@ Dim MsgType As Long
   PacketsIn = PacketsIn + 1
   
   Set buffer2 = New clsBuffer
-  Call buffer2.WriteBytes(buffer.ReadBytes(buffer.Length))
+  Call buffer2.WriteBytes(buffer.ReadBytes(buffer.length))
   
   If socket.char Is Nothing Then
     Call CallWindowProc(HandleDataSub(MsgType), socket, buffer2, 0, 0)
@@ -327,37 +322,31 @@ End Sub
 ' :::::::::::::::::::::::::::::
 ' :: Moving character packet ::
 ' :::::::::::::::::::::::::::::
-Sub HandlePlayerDir(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Dim dir As Long
-    Dim buffer As clsBuffer
+Sub HandlePlayerDir(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Dim dir As Long
 
-    Set buffer = New clsBuffer
-    buffer.WriteBytes data()
-
-    If TempPlayer(index).gettingMap = YES Then
-        Exit Sub
-    End If
-
-    dir = buffer.ReadLong 'CLng(Parse(1))
-    Set buffer = Nothing
-
-    ' Prevent hacking
-    If dir < DIR_UP Or dir > DIR_DOWN_RIGHT Then
-        Exit Sub
-    End If
-
-    Call SetPlayerDir(index, dir)
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPlayerDir
-    buffer.WriteLong index
-    buffer.WriteLong GetPlayerDir(index)
-    SendDataToMapBut index, GetPlayerMap(index), buffer.ToArray()
+  If char.gettingMap Then Exit Sub
+  
+  dir = buffer.ReadLong
+  
+  ' Prevent hacking
+  If dir < DIR_UP Or dir > DIR_DOWN_RIGHT Then
+      Exit Sub
+  End If
+  
+  char.dir = dir
+  
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SPlayerDir)
+  Call buffer.WriteLong(index)
+  Call buffer.WriteLong(dir)
+  Call sendToMapBut(index, char.map, buffer)
 End Sub
 
 ' :::::::::::::::::::::
 ' :: Use item packet ::
 ' :::::::::::::::::::::
-Sub HandleUseItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleUseItem(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim invNum As Long
 Dim buffer As clsBuffer
     
@@ -372,7 +361,7 @@ End Sub
 ' ::::::::::::::::::::::::::
 ' :: Player attack packet ::
 ' ::::::::::::::::::::::::::
-Sub HandleAttack(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleAttack(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim i As Long, TempIndex As Long, x As Long, y As Long, shoot As Boolean
     
     If TempPlayer(index).spellBuffer.spell > 0 Then Exit Sub
@@ -469,7 +458,7 @@ End Sub
 ' ::::::::::::::::::::::
 ' :: Use stats packet ::
 ' ::::::::::::::::::::::
-Sub HandleUseStatPoint(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleUseStatPoint(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim PointType As Byte
 Dim buffer As clsBuffer
 Dim sMes As String
@@ -532,7 +521,7 @@ End Sub
 ' ::::::::::::::::::::::::::::::::
 ' :: Player info request packet ::
 ' ::::::::::::::::::::::::::::::::
-Sub HandlePlayerInfoRequest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandlePlayerInfoRequest(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim name As String
     Dim i As Long
     Dim buffer As clsBuffer
@@ -547,7 +536,7 @@ End Sub
 ' :::::::::::::::::::::::
 ' :: Warp me to packet ::
 ' :::::::::::::::::::::::
-Sub HandleWarpMeTo(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleWarpMeTo(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim buffer As clsBuffer
 
@@ -581,7 +570,7 @@ End Sub
 ' :::::::::::::::::::::::
 ' :: Warp to me packet ::
 ' :::::::::::::::::::::::
-Sub HandleWarpToMe(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleWarpToMe(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim buffer As clsBuffer
 
@@ -615,7 +604,7 @@ End Sub
 ' ::::::::::::::::::::::::
 ' :: Warp to map packet ::
 ' ::::::::::::::::::::::::
-Sub HandleWarpTo(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleWarpTo(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim buffer As clsBuffer
 
@@ -644,14 +633,14 @@ End Sub
 ' ::::::::::::::::::::::::::
 ' :: Stats request packet ::
 ' ::::::::::::::::::::::::::
-Sub HandleGetStats(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleGetStats(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     
 End Sub
 
 ' ::::::::::::::::::::::::::::::::::
 ' :: Player request for a new map ::
 ' ::::::::::::::::::::::::::::::::::
-Sub HandleRequestNewMap(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestNewMap(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim dir As Long
     Dim buffer As clsBuffer
 
@@ -671,7 +660,7 @@ End Sub
 ' :::::::::::::::::::::
 ' :: Map data packet ::
 ' :::::::::::::::::::::
-Sub HandleMapData(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleMapData(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim i As Long
     Dim mapNum As Long
     Dim x As Long
@@ -773,7 +762,7 @@ End Sub
 ' ::::::::::::::::::::::::::::
 ' :: Need map yes/no packet ::
 ' ::::::::::::::::::::::::::::
-Sub HandleNeedMap(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleNeedMap(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim s As String
     Dim buffer As clsBuffer
     Dim i As Long
@@ -807,14 +796,14 @@ End Sub
 ' :::::::::::::::::::::::::::::::::::::::::::::::
 ' :: Player trying to pick up something packet ::
 ' :::::::::::::::::::::::::::::::::::::::::::::::
-Sub HandleMapGetItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleMapGetItem(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Call PlayerMapGetItem(index)
 End Sub
 
 ' ::::::::::::::::::::::::::::::::::::::::::::
 ' :: Player trying to drop something packet ::
 ' ::::::::::::::::::::::::::::::::::::::::::::
-Sub HandleMapDropItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleMapDropItem(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim invNum As Long
     Dim Amount As Long
     Dim buffer As clsBuffer
@@ -844,7 +833,7 @@ End Sub
 ' ::::::::::::::::::::::::
 ' :: Respawn map packet ::
 ' ::::::::::::::::::::::::
-Sub HandleMapRespawn(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleMapRespawn(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim i As Long
 
     If GetPlayerAccess(index) < ADMIN_MAPPER Then
@@ -873,7 +862,7 @@ End Sub
 ' :::::::::::::::::::::::
 ' :: Map report packet ::
 ' :::::::::::::::::::::::
-Sub HandleMapReport(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleMapReport(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim i As Long
     Dim buffer As clsBuffer
 
@@ -895,7 +884,7 @@ End Sub
 ' ::::::::::::::::::::::::
 ' :: Kick player packet ::
 ' ::::::::::::::::::::::::
-Sub HandleKickPlayer(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleKickPlayer(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim buffer As clsBuffer
 
@@ -933,7 +922,7 @@ End Sub
 ' :::::::::::::::::::::
 ' :: Ban list packet ::
 ' :::::::::::::::::::::
-Sub HandleBanlist(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleBanlist(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim f As Long
     Dim s As String
@@ -960,7 +949,7 @@ End Sub
 ' ::::::::::::::::::::::::
 ' :: Ban destroy packet ::
 ' ::::::::::::::::::::::::
-Sub HandleBanDestroy(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleBanDestroy(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim filename As String
     Dim f As Long
 
@@ -983,7 +972,7 @@ End Sub
 ' :::::::::::::::::::::::
 ' :: Ban player packet ::
 ' :::::::::::::::::::::::
-Sub HandleBanPlayer(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleBanPlayer(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim buffer As clsBuffer
 
@@ -1019,7 +1008,7 @@ End Sub
 ' :::::::::::::::::::::::::::::
 ' :: Request edit map packet ::
 ' :::::::::::::::::::::::::::::
-Sub HandleRequestEditMap(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestEditMap(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
 
     If GetPlayerAccess(index) < ADMIN_MAPPER Then
@@ -1035,7 +1024,7 @@ End Sub
 ' ::::::::::::::::::::::::::::::
 ' :: Request edit item packet ::
 ' ::::::::::::::::::::::::::::::
-Sub HandleRequestEditItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestEditItem(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
 
     If GetPlayerAccess(index) < ADMIN_DEVELOPER Then
@@ -1051,7 +1040,7 @@ End Sub
 ' ::::::::::::::::::::::
 ' :: Save item packet ::
 ' ::::::::::::::::::::::
-Sub HandleSaveItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSaveItem(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim buffer As clsBuffer
     Dim ItemSize As Long
@@ -1087,7 +1076,7 @@ End Sub
 ' ::::::::::::::::::::::::::::::
 ' :: Request edit Animation packet ::
 ' ::::::::::::::::::::::::::::::
-Sub HandleRequestEditAnimation(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestEditAnimation(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
 
     If GetPlayerAccess(index) < ADMIN_DEVELOPER Then
@@ -1103,7 +1092,7 @@ End Sub
 ' ::::::::::::::::::::::
 ' :: Save Animation packet ::
 ' ::::::::::::::::::::::
-Sub HandleSaveAnimation(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSaveAnimation(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim buffer As clsBuffer
     Dim AnimationSize As Long
@@ -1139,7 +1128,7 @@ End Sub
 ' :::::::::::::::::::::::::::::
 ' :: Request edit npc packet ::
 ' :::::::::::::::::::::::::::::
-Sub HandleRequestEditNpc(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestEditNpc(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
 
     If GetPlayerAccess(index) < ADMIN_DEVELOPER Then
@@ -1155,7 +1144,7 @@ End Sub
 ' :::::::::::::::::::::
 ' :: Save npc packet ::
 ' :::::::::::::::::::::
-Private Sub HandleSaveNpc(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Private Sub HandleSaveNpc(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim NPCNum As Long
     Dim buffer As clsBuffer
     Dim NPCSize As Long
@@ -1187,7 +1176,7 @@ End Sub
 ' :::::::::::::::::::::::::::::
 ' :: Request edit Resource packet ::
 ' :::::::::::::::::::::::::::::
-Sub HandleRequestEditResource(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestEditResource(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
 
     If GetPlayerAccess(index) < ADMIN_DEVELOPER Then
@@ -1203,7 +1192,7 @@ End Sub
 ' :::::::::::::::::::::
 ' :: Save Resource packet ::
 ' :::::::::::::::::::::
-Private Sub HandleSaveResource(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Private Sub HandleSaveResource(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim ResourceNum As Long
     Dim buffer As clsBuffer
     Dim ResourceSize As Long
@@ -1235,7 +1224,7 @@ End Sub
 ' ::::::::::::::::::::::::::::::
 ' :: Request edit shop packet ::
 ' ::::::::::::::::::::::::::::::
-Sub HandleRequestEditShop(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestEditShop(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
 
     If GetPlayerAccess(index) < ADMIN_DEVELOPER Then
@@ -1251,7 +1240,7 @@ End Sub
 ' ::::::::::::::::::::::
 ' :: Save shop packet ::
 ' ::::::::::::::::::::::
-Sub HandleSaveShop(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSaveShop(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim shopNum As Long
     Dim buffer As clsBuffer
     Dim ShopSize As Long
@@ -1287,7 +1276,7 @@ End Sub
 ' :::::::::::::::::::::::::::::
 ' :: Request edit spell packet ::
 ' :::::::::::::::::::::::::::::
-Sub HandleRequestEditspell(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestEditspell(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
 
     If GetPlayerAccess(index) < ADMIN_DEVELOPER Then
@@ -1303,7 +1292,7 @@ End Sub
 ' :::::::::::::::::::::::
 ' :: Save spell packet ::
 ' :::::::::::::::::::::::
-Sub HandleSaveSpell(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSaveSpell(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim SpellNum As Long
     Dim buffer As clsBuffer
     Dim SpellSize As Long
@@ -1335,7 +1324,7 @@ End Sub
 ' :::::::::::::::::::::::
 ' :: Set access packet ::
 ' :::::::::::::::::::::::
-Sub HandleSetAccess(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSetAccess(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim i As Long
     Dim buffer As clsBuffer
@@ -1385,14 +1374,14 @@ End Sub
 ' :::::::::::::::::::::::
 ' :: Who online packet ::
 ' :::::::::::::::::::::::
-Sub HandleWhosOnline(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleWhosOnline(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Call sendWhosOnline(index)
 End Sub
 
 ' :::::::::::::::::::::
 ' :: Set MOTD packet ::
 ' :::::::::::::::::::::
-Sub HandleSetMotd(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSetMotd(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
@@ -1413,7 +1402,7 @@ End Sub
 ' :::::::::::::::::::
 ' :: Search packet ::
 ' :::::::::::::::::::
-Sub HandleTarget(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleTarget(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim buffer As clsBuffer, target As Long, targetType As Long
 
     Set buffer = New clsBuffer
@@ -1433,14 +1422,14 @@ End Sub
 ' :::::::::::::::::::
 ' :: Spells packet ::
 ' :::::::::::::::::::
-Sub HandleSpells(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSpells(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Call SendPlayerSpells(index)
 End Sub
 
 ' :::::::::::::::::
 ' :: Cast packet ::
 ' :::::::::::::::::
-Sub HandleCast(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleCast(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim buffer As clsBuffer
 
@@ -1456,14 +1445,14 @@ End Sub
 ' ::::::::::::::::::::::
 ' :: Quit game packet ::
 ' ::::::::::::::::::::::
-Sub HandleQuit(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleQuit(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Call closeSocket(index)
 End Sub
 
 ' ::::::::::::::::::::::::::
 ' :: Swap Inventory Slots ::
 ' ::::::::::::::::::::::::::
-Sub HandleSwapInvSlots(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSwapInvSlots(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim oldSlot As Long, newSlot As Long
     
@@ -1478,7 +1467,7 @@ Sub HandleSwapInvSlots(ByVal index As Long, ByRef data() As Byte, ByVal StartAdd
     PlayerSwitchInvSlots index, oldSlot, newSlot
 End Sub
 
-Sub HandleSwapSpellSlots(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSwapSpellSlots(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim oldSlot As Long, newSlot As Long, n As Long
     
@@ -1508,7 +1497,7 @@ End Sub
 ' ::::::::::::::::
 ' :: Check Ping ::
 ' ::::::::::::::::
-Sub HandleCheckPing(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleCheckPing(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
@@ -1517,7 +1506,7 @@ Sub HandleCheckPing(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr A
     Set buffer = Nothing
 End Sub
 
-Sub HandleUnequip(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleUnequip(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
 
     Set buffer = New clsBuffer
@@ -1526,35 +1515,35 @@ Sub HandleUnequip(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As 
     Set buffer = Nothing
 End Sub
 
-Sub HandleRequestPlayerData(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestPlayerData(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     SendPlayerData index
 End Sub
 
-Sub HandleRequestItems(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestItems(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     SendItems index
 End Sub
 
-Sub HandleRequestAnimations(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestAnimations(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     SendAnimations index
 End Sub
 
-Sub HandleRequestNPCS(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestNPCS(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     SendNpcs index
 End Sub
 
-Sub HandleRequestResources(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestResources(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     SendResources index
 End Sub
 
-Sub HandleRequestSpells(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestSpells(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     SendSpells index
 End Sub
 
-Sub HandleRequestShops(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestShops(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     SendShops index
 End Sub
 
-Sub HandleSpawnItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSpawnItem(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim tmpItem As Long
     Dim tmpAmount As Long
@@ -1572,13 +1561,13 @@ Sub HandleSpawnItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr A
     Set buffer = Nothing
 End Sub
 
-Sub HandleRequestLevelUp(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestLevelUp(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     If GetPlayerAccess(index) < ADMIN_CREATOR Then Exit Sub
     SetPlayerExp index, GetPlayerNextLevel(index)
     CheckPlayerLevelUp index
 End Sub
 
-Sub HandleForgetSpell(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleForgetSpell(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim spellslot As Long
     
@@ -1610,12 +1599,12 @@ Sub HandleForgetSpell(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr
     Set buffer = Nothing
 End Sub
 
-Sub HandleCloseShop(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleCloseShop(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     TempPlayer(index).inShop = 0
     ResetShopAction index
 End Sub
 
-Sub HandleBuyItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleBuyItem(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim shopslot As Long
     Dim shopNum As Long
@@ -1702,7 +1691,7 @@ Sub HandleBuyItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As 
     Set buffer = Nothing
 End Sub
 
-Sub HandleSellItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSellItem(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim invSlot As Long
     Dim itemnum As Long
@@ -1745,7 +1734,7 @@ Sub HandleSellItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As
     Set buffer = Nothing
 End Sub
 
-Sub HandleChangeBankSlots(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleChangeBankSlots(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim newSlot As Long
     Dim oldSlot As Long
@@ -1761,7 +1750,7 @@ Sub HandleChangeBankSlots(ByVal index As Long, ByRef data() As Byte, ByVal Start
     Set buffer = Nothing
 End Sub
 
-Sub HandleWithdrawItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleWithdrawItem(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim BankSlot As Long
     Dim Amount As Long
@@ -1777,7 +1766,7 @@ Sub HandleWithdrawItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAdd
     Set buffer = Nothing
 End Sub
 
-Sub HandleDepositItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleDepositItem(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim invSlot As Long
     Dim Amount As Long
@@ -1793,7 +1782,7 @@ Sub HandleDepositItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr
     Set buffer = Nothing
 End Sub
 
-Sub HandleCloseBank(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleCloseBank(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     
     Set buffer = New clsBuffer
@@ -1807,7 +1796,7 @@ Sub HandleCloseBank(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr A
     Set buffer = Nothing
 End Sub
 
-Sub HandleAdminWarp(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleAdminWarp(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim x As Long
     Dim y As Long
@@ -1828,7 +1817,7 @@ Sub HandleAdminWarp(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr A
     Set buffer = Nothing
 End Sub
 
-Sub HandleTradeRequest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleTradeRequest(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim tradeTarget As Long, sX As Long, sY As Long, tX As Long, tY As Long
 
     If TempPlayer(index).targetType <> TARGET_TYPE_PLAYER Then Exit Sub
@@ -1875,7 +1864,7 @@ Dim tradeTarget As Long, sX As Long, sY As Long, tX As Long, tY As Long
     SendTradeRequest tradeTarget, index
 End Sub
 
-Sub HandleAcceptTradeRequest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleAcceptTradeRequest(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim tradeTarget As Long
 Dim i As Long
 
@@ -1906,14 +1895,14 @@ Dim i As Long
     SendTradeUpdate tradeTarget, 1
 End Sub
 
-Sub HandleDeclineTradeRequest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleDeclineTradeRequest(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     PlayerMsg TempPlayer(index).TradeRequest, GetPlayerName(index) & " has declined your trade request.", BrightRed
     PlayerMsg index, "You decline the trade request.", BrightRed
     ' clear the tradeRequest server-side
     TempPlayer(index).TradeRequest = 0
 End Sub
 
-Sub HandleAcceptTrade(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleAcceptTrade(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim tradeTarget As Long
     Dim i As Long
     Dim tmpTradeItem(1 To MAX_INV) As PlayerInvRec
@@ -1992,7 +1981,7 @@ Sub HandleAcceptTrade(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr
     SendCloseTrade tradeTarget
 End Sub
 
-Sub HandleDeclineTrade(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleDeclineTrade(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim i As Long
 Dim tradeTarget As Long
 
@@ -2015,7 +2004,7 @@ Dim tradeTarget As Long
     SendCloseTrade tradeTarget
 End Sub
 
-Sub HandleTradeItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleTradeItem(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim invSlot As Long
     Dim Amount As Long
@@ -2095,7 +2084,7 @@ Sub HandleTradeItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr A
     SendTradeUpdate TempPlayer(index).InTrade, 1
 End Sub
 
-Sub HandleUntradeItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleUntradeItem(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim tradeSlot As Long
     
@@ -2122,7 +2111,7 @@ Sub HandleUntradeItem(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr
     SendTradeUpdate TempPlayer(index).InTrade, 1
 End Sub
 
-Sub HandleHotbarChange(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleHotbarChange(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim sType As Long
     Dim Slot As Long
@@ -2164,7 +2153,7 @@ Sub HandleHotbarChange(ByVal index As Long, ByRef data() As Byte, ByVal StartAdd
     Set buffer = Nothing
 End Sub
 
-Sub HandleHotbarUse(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleHotbarUse(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim Slot As Long
     Dim i As Long
@@ -2198,44 +2187,16 @@ Sub HandleHotbarUse(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr A
     Set buffer = Nothing
 End Sub
 
-Sub HandlePartyRequest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    If TempPlayer(index).targetType <> TARGET_TYPE_PLAYER Then Exit Sub
-    If TempPlayer(index).target = index Then Exit Sub
-    
-    ' make sure they're connected and on the same map
-    If Not IsConnected(TempPlayer(index).target) Or Not IsPlaying(TempPlayer(index).target) Then Exit Sub
-    If GetPlayerMap(TempPlayer(index).target) <> GetPlayerMap(index) Then Exit Sub
-    
-    ' init the request
-    Party_Invite index, TempPlayer(index).target
-End Sub
-
-Sub HandleAcceptParty(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-If Not IsConnected(TempPlayer(index).partyInvite) Or Not IsPlaying(TempPlayer(index).partyInvite) Then
-TempPlayer(index).partyInvite = 0
-Exit Sub
-End If
-    Party_InviteAccept TempPlayer(index).partyInvite, index
-End Sub
-
-Sub HandleDeclineParty(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Party_InviteDecline TempPlayer(index).partyInvite, index
-End Sub
-
-Sub HandlePartyLeave(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-    Party_PlayerLeave index
-End Sub
-
-Sub HandleFinishTutorial(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleFinishTutorial(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Player(index).tutorialState = 1
     SavePlayer index
 End Sub
 
-Sub HandleRequestSwitchesAndVariables(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestSwitchesAndVariables(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     SendSwitchesAndVariables (index)
 End Sub
 
-Sub HandleSwitchesAndVariables(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSwitchesAndVariables(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer, i As Long
 
     Set buffer = New clsBuffer
@@ -2257,7 +2218,7 @@ Sub HandleSwitchesAndVariables(ByVal index As Long, ByRef data() As Byte, ByVal 
     SendSwitchesAndVariables 0, True
 End Sub
 
-Public Sub Events_HandleChooseEventOption(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Public Sub Events_HandleChooseEventOption(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer, Opt As Long
     
     Set buffer = New clsBuffer
@@ -2269,7 +2230,7 @@ Public Sub Events_HandleChooseEventOption(ByVal index As Long, ByRef data() As B
     Set buffer = Nothing
 End Sub
 
-Public Sub Events_HandleSaveEventData(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Public Sub Events_HandleSaveEventData(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim EIndex As Long, s As Long, SCount As Long, D As Long, DCount As Long
 
@@ -2343,7 +2304,7 @@ Public Sub Events_HandleSaveEventData(ByVal index As Long, ByRef data() As Byte,
     Set buffer = Nothing
 End Sub
 
-Public Sub Events_HandleRequestEventData(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Public Sub Events_HandleRequestEventData(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim EIndex As Long
 
@@ -2358,7 +2319,7 @@ Public Sub Events_HandleRequestEventData(ByVal index As Long, ByRef data() As By
     Set buffer = Nothing
 End Sub
 
-Public Sub Events_HandleRequestEventsData(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Public Sub Events_HandleRequestEventsData(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim i As Long
 
     For i = 1 To MAX_EVENTS
@@ -2366,7 +2327,7 @@ Public Sub Events_HandleRequestEventsData(ByVal index As Long, ByRef data() As B
     Next
 End Sub
 
-Public Sub Events_HandleRequestEditEvents(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Public Sub Events_HandleRequestEditEvents(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     If GetPlayerAccess(index) < ADMIN_DEVELOPER Then
         Exit Sub
     End If
@@ -2378,7 +2339,7 @@ Public Sub Events_HandleRequestEditEvents(ByVal index As Long, ByRef data() As B
     Set buffer = Nothing
 End Sub
 
-Public Sub HandleAfk(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Public Sub HandleAfk(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
 Dim buffer As clsBuffer
 Dim AFK As Byte
 
@@ -2396,25 +2357,7 @@ Dim AFK As Byte
     SendAfk index
 End Sub
 
-Public Sub HandlePartyChatMsg(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
-Dim msg As String
-
-  msg = buffer.ReadString
-  partyNum = char.inParty
-  
-  If partyNum = 0 Then
-    Call char.sendMessage("You are not in a party.", BrightRed)
-    Exit Sub
-  End If
-  
-  For i = 1 To MAX_PARTY_MEMBERS
-    If Not Party(partyNum).Member(i) Is Nothing Then
-      Call Party(partyNum).Member(i).sendMessage("[Party] " & char.name & ": " & msg, color)
-    End If
-  Next
-End Sub
-
-Sub HandleRequestEditQuest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestEditQuest(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
 
     ' Prevent hacking
@@ -2428,7 +2371,7 @@ Sub HandleRequestEditQuest(ByVal index As Long, ByRef data() As Byte, ByVal Star
     Set buffer = Nothing
 End Sub
 
-Sub HandleSaveQuest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSaveQuest(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim n As Long
     Dim buffer As clsBuffer
     Dim QuestSize As Long
@@ -2460,11 +2403,11 @@ Sub HandleSaveQuest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr A
     Call AddLog(GetPlayerName(index) & " saved Quest #" & n & ".", ADMIN_LOG)
 End Sub
 
-Sub HandleRequestQuests(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleRequestQuests(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     sendQuests index
 End Sub
 
-Sub HandlePlayerHandleQuest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandlePlayerHandleQuest(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer
     Dim questNum As Long, Order As Long, i As Long, n As Long
     Dim RemoveStartItems As Boolean
@@ -2541,10 +2484,10 @@ Sub HandlePlayerHandleQuest(ByVal index As Long, ByRef data() As Byte, ByVal Sta
     Set buffer = Nothing
 End Sub
 
-Sub HandleQuestLogUpdate(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleQuestLogUpdate(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     SendPlayerQuests index
 End Sub
-Sub HandleSaveChest(ByVal index As Long, ByRef data() As Byte, ByVal StartAddr As Long, ByVal ExtraVar As Long)
+Sub HandleSaveChest(ByVal char As clsCharacter, ByVal buffer As clsBuffer, ByVal StartAddr As Long, ByVal ExtraVar As Long)
     Dim buffer As clsBuffer, n As Long
 
     ' Prevent hacking

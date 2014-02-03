@@ -68,16 +68,6 @@ Dim c As clsCharacter
   Next
 End Sub
 
-Public Sub sendToParty(ByVal partyNum As Long, ByVal buffer As clsBuffer)
-Dim i As Long
-
-  For i = 1 To Party(partyNum).MemberCount
-    If Not Party(partyNum).Member(i) Is Nothing Then
-      Call Party(partyNum).Member(i).send(buffer)
-    End If
-  Next
-End Sub
-
 Public Sub globalMsg(ByVal msg As String, ByVal color As Byte)
 Dim buffer As clsBuffer
 
@@ -112,16 +102,6 @@ Dim buffer As clsBuffer
   Call buffer.WriteString(msg)
   Call buffer.WriteLong(color)
   Call sendToMap(mapNum, buffer)
-End Sub
-
-Public Sub PartyMsg(ByVal partyNum As Long, ByVal msg As String, ByVal color As Byte)
-Dim i As Long
-
-  For i = 1 To MAX_PARTY_MEMBERS
-    If Not Party(partyNum).Member(i) Is Nothing Then
-      Call Party(partyNum).Member(i).sendMessage(msg, color)
-    End If
-  Next
 End Sub
 
 Public Sub MapCache_Create(ByVal mapNum As Long)
@@ -275,59 +255,53 @@ Dim i As Long
 End Sub
 
 Sub SendMapNpcVitals(ByVal mapNum As Long, ByVal MapNPCNum As Long)
-    Dim i As Long
-    Dim buffer As clsBuffer
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong SMapNpcVitals
-    buffer.WriteLong MapNPCNum
-    For i = 1 To Vitals.Vital_Count - 1
-        buffer.WriteLong map(mapNum).mapNPC(MapNPCNum).vital(i)
-    Next
+Dim buffer As clsBuffer
+Dim i As Long
 
-    SendDataToMap mapNum, buffer.ToArray()
-    
-    Set buffer = Nothing
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SMapNpcVitals)
+  Call buffer.WriteLong(MapNPCNum)
+  Call buffer.WriteLong(map(mapNum).mapNPC(MapNPCNum).hp)
+  Call buffer.WriteLong(map(mapNum).mapNPC(MapNPCNum).mp)
+  Call sendToMap(mapNum, buffer)
 End Sub
 
-Sub SendMapNpcsTo(ByVal index As Long, ByVal mapNum As Long)
-    Dim i As Long
-    Dim buffer As clsBuffer
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong SMapNpcData
+Sub SendMapNpcsTo(ByVal char As clsCharacter, ByVal mapNum As Long)
+Dim buffer As clsBuffer
+Dim i As Long
 
-    For i = 1 To MAX_MAP_NPCS
-        buffer.WriteLong map(mapNum).mapNPC(i).num
-        buffer.WriteLong map(mapNum).mapNPC(i).x
-        buffer.WriteLong map(mapNum).mapNPC(i).y
-        buffer.WriteLong map(mapNum).mapNPC(i).dir
-        buffer.WriteLong map(mapNum).mapNPC(i).vital(hp)
-    Next
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SMapNpcData)
 
-    SendDataTo index, buffer.ToArray()
-    
-    Set buffer = Nothing
+  For i = 1 To MAX_MAP_NPCS
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).NPC.id)
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).x)
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).y)
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).dir)
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).hp)
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).mp)
+  Next
+
+  Call char.send(buffer)
 End Sub
 
 Sub SendMapNpcsToMap(ByVal mapNum As Long)
-    Dim i As Long
-    Dim buffer As clsBuffer
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong SMapNpcData
+Dim buffer As clsBuffer
+Dim i As Long
 
-    For i = 1 To MAX_MAP_NPCS
-        buffer.WriteLong map(mapNum).mapNPC(i).num
-        buffer.WriteLong map(mapNum).mapNPC(i).x
-        buffer.WriteLong map(mapNum).mapNPC(i).y
-        buffer.WriteLong map(mapNum).mapNPC(i).dir
-        buffer.WriteLong map(mapNum).mapNPC(i).vital(hp)
-    Next
+  Set buffer = New clsBuffer
+  buffer.WriteLong SMapNpcData
 
-    SendDataToMap mapNum, buffer.ToArray()
-    
-    Set buffer = Nothing
+  For i = 1 To MAX_MAP_NPCS
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).NPC.id)
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).x)
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).y)
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).dir)
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).hp)
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).mp)
+  Next
+  
+  Call sendToMap(mapNum, buffer)
 End Sub
 
 Sub SendItems(ByVal index As Long)
@@ -335,7 +309,7 @@ Sub SendItems(ByVal index As Long)
 
     For i = 1 To MAX_ITEMS
 
-        If LenB(Trim$(item(i).name)) > 0 Then
+        If LenB(item(i).name) > 0 Then
             Call SendUpdateItemTo(index, i)
         End If
 
@@ -1116,56 +1090,6 @@ Dim buffer As clsBuffer
     Set buffer = New clsBuffer
     buffer.WriteLong STradeRequest
     buffer.WriteString Trim$(Player(TradeRequest).name)
-    SendDataTo index, buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
-Sub SendPartyInvite(ByVal index As Long, ByVal TARGETPLAYER As Long)
-Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPartyInvite
-    buffer.WriteString Trim$(Player(TARGETPLAYER).name)
-    SendDataTo index, buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
-Sub SendPartyUpdate(ByVal partyNum As Long)
-Dim buffer As clsBuffer, i As Long
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPartyUpdate
-    buffer.WriteByte 1
-    buffer.WriteLong Party(partyNum).Leader
-    For i = 1 To MAX_PARTY_MEMBERS
-        buffer.WriteLong Party(partyNum).Member(i)
-    Next
-    buffer.WriteLong Party(partyNum).MemberCount
-    SendDataToParty partyNum, buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
-Sub SendPartyUpdateTo(ByVal index As Long)
-Dim buffer As clsBuffer, i As Long, partyNum As Long
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPartyUpdate
-    
-    ' check if we're in a party
-    partyNum = TempPlayer(index).inParty
-    If partyNum > 0 Then
-        ' send party data
-        buffer.WriteByte 1
-        buffer.WriteLong Party(partyNum).Leader
-        For i = 1 To MAX_PARTY_MEMBERS
-            buffer.WriteLong Party(partyNum).Member(i)
-        Next
-        buffer.WriteLong Party(partyNum).MemberCount
-    Else
-        ' send clear command
-        buffer.WriteByte 0
-    End If
-    
     SendDataTo index, buffer.ToArray()
     Set buffer = Nothing
 End Sub

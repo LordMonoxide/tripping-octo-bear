@@ -135,8 +135,6 @@ Public Const MAX_RESOURCES As Long = 100
 Public Const MAX_LEVELS As Long = 99
 Public Const MAX_BANK As Long = 99
 Public Const MAX_HOTBAR As Long = 9
-Public Const MAX_PARTYS As Long = 35
-Public Const MAX_PARTY_MEMBERS As Long = 4
 Public Const MAX_NPC_DROPS As Byte = 30
 Public Const MAX_NPC_SPELLS As Byte = 10
 Public Const MAX_EVENTS As Long = 255
@@ -274,7 +272,6 @@ Public Const TARGET_TYPE_NPC As Byte = 2
 Public Const DIALOGUE_TYPE_NONE As Byte = 0
 Public Const DIALOGUE_TYPE_TRADE As Byte = 1
 Public Const DIALOGUE_TYPE_FORGET As Byte = 2
-Public Const DIALOGUE_TYPE_PARTY As Byte = 3
 Public Const DIALOGUE_LOOT_ITEM As Byte = 4
 Public Const DIALOGUE_TYPE_GUILD As Byte = 5
 

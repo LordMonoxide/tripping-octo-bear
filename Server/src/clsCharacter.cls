@@ -25,8 +25,6 @@ Private mSpellBuffer As clsCharacterSpellBuffer
 Private mGettingMap As Boolean
 Private mInBank As Boolean
 Private mInShop As Boolean
-Private mInParty As Long
-Private mPartyInvite As Long
 
 Private mTargetType As TargetTypeEnum
 Private mTarget As Long
@@ -305,10 +303,6 @@ Public Property Get inShop() As Boolean
   inShop = mInShop
 End Property
 
-Public Property Get inParty() As Long
-  inParty = mInParty
-End Property
-
 Public Property Let target(ByVal target As Long)
   mTarget = target
 End Property
@@ -582,17 +576,6 @@ Dim i As Long
   Call buffer.WriteLong(hpMax)
   Call buffer.WriteLong(mData.hp)
   Call send(buffer)
-  
-  If mInParty <> 0 Then
-    Call buffer.Flush
-    Call buffer.WriteLong(SPartyVitals)
-    Call buffer.WriteLong(mData.id)
-    Call buffer.WriteLong(hpMax)
-    Call buffer.WriteLong(mData.hp)
-    Call buffer.WriteLong(mpMax)
-    Call buffer.WriteLong(mData.mp)
-    Call sendToParty(mInParty, buffer)
-  End If
 End Sub
 
 Public Sub sendMP()
@@ -604,17 +587,6 @@ Dim i As Long
   Call buffer.WriteLong(mpMax)
   Call buffer.WriteLong(mData.mp)
   Call send(buffer)
-  
-  If mInParty <> 0 Then
-    Call buffer.Flush
-    Call buffer.WriteLong(SPartyVitals)
-    Call buffer.WriteLong(mData.id)
-    Call buffer.WriteLong(hpMax)
-    Call buffer.WriteLong(mData.hp)
-    Call buffer.WriteLong(mpMax)
-    Call buffer.WriteLong(mData.mp)
-    Call sendToParty(mInParty, buffer)
-  End If
 End Sub
 
 Public Sub sendEquipmentToMap()

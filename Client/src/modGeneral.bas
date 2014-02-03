@@ -141,8 +141,8 @@ Dim i As Long, n As Long
   Call MenuLoop
 End Sub
 
-Public Sub menuStatus(Optional ByRef Text As String)
-  frmMain.lblStatus.Caption = Text
+Public Sub menuStatus(Optional ByRef text As String)
+  frmMain.lblStatus.Caption = text
 End Sub
 
 Public Sub enableLogin()
@@ -648,20 +648,12 @@ Dim i As Long
         .height = val(GetVar(FileName, "GUI_OPTIONS", "Height"))
         .visible = False
     End With
+    
     With GUIWindow(GUI_QUESTDIALOGUE)
         .x = val(GetVar(FileName, "GUI_CHAT", "X"))
         .y = val(GetVar(FileName, "GUI_CHAT", "Y"))
         .width = val(GetVar(FileName, "GUI_CHAT", "Width"))
         .height = val(GetVar(FileName, "GUI_CHAT", "Height"))
-        .visible = False
-    End With
-
-    ' 9 - Party
-    With GUIWindow(GUI_PARTY)
-        .x = val(GetVar(FileName, "GUI_PARTY", "X"))
-        .y = val(GetVar(FileName, "GUI_PARTY", "Y"))
-        .width = val(GetVar(FileName, "GUI_PARTY", "Width"))
-        .height = val(GetVar(FileName, "GUI_PARTY", "Height"))
         .visible = False
     End With
     
@@ -828,17 +820,6 @@ Dim i As Long
         .PicNum = 5
     End With
     
-    ' main - party
-    With Buttons(6)
-        .state = 0 ' normal
-        .x = 181
-        .y = 6
-        .width = 36
-        .height = 36
-        .visible = True
-        .PicNum = 6
-    End With
-    
     ' menu - login
     With Buttons(7)
         .state = 0 ' normal
@@ -993,28 +974,6 @@ Dim i As Long
         .height = 29
         .visible = True
         .PicNum = 16
-    End With
-    
-    ' main - party invite
-    With Buttons(24)
-        .state = 0 ' normal
-        .x = 14
-        .y = 209
-        .width = 79
-        .height = 29
-        .visible = True
-        .PicNum = 17
-    End With
-    
-    ' main - party invite
-    With Buttons(25)
-        .state = 0 ' normal
-        .x = 101
-        .y = 209
-        .width = 79
-        .height = 29
-        .visible = True
-        .PicNum = 18
     End With
     
     ' main - music on
@@ -1243,7 +1202,7 @@ Dim i As Long
     
     ' destroy the chat
     For i = 1 To ChatTextBufferSize
-        ChatTextBuffer(i).Text = vbNullString
+        ChatTextBuffer(i).text = vbNullString
     Next
     
     GUIWindow(GUI_MAINMENU).visible = True
@@ -1311,12 +1270,12 @@ End Sub
 ' Used for adding text to packet debugger
 Public Sub TextAdd(ByVal Txt As TextBox, msg As String, NewLine As Boolean)
     If NewLine Then
-        Txt.Text = Txt.Text + msg + vbCrLf
+        Txt.text = Txt.text + msg + vbCrLf
     Else
-        Txt.Text = Txt.Text + msg
+        Txt.text = Txt.text + msg
     End If
 
-    Txt.SelStart = Len(Txt.Text) - 1
+    Txt.SelStart = Len(Txt.text) - 1
 End Sub
 
 Public Function Rand(ByVal Low As Long, ByVal High As Long) As Long

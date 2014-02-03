@@ -2,7 +2,7 @@ Attribute VB_Name = "modConstants"
 Option Explicit
 
 ' API
-Public Declare Sub CopyMemory Lib "Kernel32.dll" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal Length As Long)
+Public Declare Sub CopyMemory Lib "Kernel32.dll" Alias "RtlMoveMemory" (Destination As Any, Source As Any, ByVal length As Long)
 'Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal hWnd As Long, ByRef Msg() As Byte, ByVal wParam As Long, ByVal lParam As Long) As Long
 Public Declare Function CallWindowProc Lib "user32" Alias "CallWindowProcA" (ByVal lpPrevWndFunc As Long, ByVal socket As clsSocket, ByVal data As clsBuffer, ByVal wParam As Long, ByVal lParam As Long) As Long
 
@@ -31,8 +31,6 @@ Public Const MAX_RESOURCES As Long = 100
 Public Const MAX_LEVELS As Long = 99
 Public Const MAX_BANK As Long = 99
 Public Const MAX_HOTBAR As Long = 9
-Public Const MAX_PARTYS As Long = 35
-Public Const MAX_PARTY_MEMBERS As Long = 4
 Public Const MAX_NPC_DROPS As Byte = 30
 Public Const MAX_NPC_SPELLS As Byte = 10
 Public Const MAX_EVENTS As Long = 255

@@ -1,21 +1,6 @@
 Attribute VB_Name = "modGameLogic"
 Option Explicit
 
-Function FindOpenPlayerSlot() As Long
-    Dim i As Long
-
-    FindOpenPlayerSlot = 0
-
-    For i = 1 To MAX_PLAYERS
-
-        If Not IsConnected(i) Then
-            FindOpenPlayerSlot = i
-            Exit Function
-        End If
-
-    Next
-End Function
-
 Function FindOpenMapItemSlot(ByVal mapNum As Long) As Long
     Dim i As Long
 
@@ -70,7 +55,7 @@ Sub SpawnItemSlot(ByVal MapItemSlot As Long, ByVal itemnum As Long, ByVal ItemVa
             map(mapNum).mapItem(i).canDespawn = canDespawn
             map(mapNum).mapItem(i).despawnTimer = timeGetTime + ITEM_DESPAWN_TIME
             map(mapNum).mapItem(i).num = itemnum
-            map(mapNum).mapItem(i).Value = ItemVal
+            map(mapNum).mapItem(i).value = ItemVal
             map(mapNum).mapItem(i).x = x
             map(mapNum).mapItem(i).y = y
             map(mapNum).mapItem(i).bound = isSB
@@ -131,7 +116,7 @@ Public Sub SpawnNpc(ByVal MapNPCNum As Long, ByVal mapNum As Long, Optional Forc
         .vital(Vitals.mp) = GetNpcMaxVital(NPCNum, Vitals.mp)
         .dir = Int(Rnd * 4)
         .spellBuffer.spell = 0
-        .spellBuffer.Timer = 0
+        .spellBuffer.timer = 0
         .spellBuffer.target = 0
         .spellBuffer.tType = 0
     
@@ -805,8 +790,6 @@ Sub PlayerUnequipItem(ByVal index As Long, ByVal EqSlot As Long)
         ' send vitals
         Call SendVital(index, Vitals.hp)
         Call SendVital(index, Vitals.mp)
-        ' send vitals to party if in one
-        If TempPlayer(index).inParty > 0 Then SendPartyVitals TempPlayer(index).inParty, index
     Else
         PlayerMsg index, "Your inventory is full.", BrightRed
     End If
@@ -850,283 +833,8 @@ Public Function RAND(ByVal Low As Long, ByVal High As Long) As Long
     RAND = Int((High - Low + 1) * Rnd) + Low
 End Function
 
-' #####################
-' ## Party functions ##
-' #####################
-Public Sub Party_PlayerLeave(ByVal index As Long)
-Dim partyNum As Long, i As Long
-
-    partyNum = TempPlayer(index).inParty
-    If partyNum > 0 Then
-        ' find out how many members we have
-        Party_CountMembers partyNum
-        ' make sure there's more than 2 people
-        If Party(partyNum).MemberCount > 2 Then
-            ' check if leader
-            If Party(partyNum).Leader = index Then
-                ' set next person down as leader
-                For i = 1 To MAX_PARTY_MEMBERS
-                    If Party(partyNum).Member(i) > 0 And Party(partyNum).Member(i) <> index Then
-                        Party(partyNum).Leader = Party(partyNum).Member(i)
-                        PartyMsg partyNum, GetPlayerName(Party(partyNum).Leader) & " is now the party leader.", BrightBlue
-                        Exit For
-                    End If
-                Next
-                ' leave party
-                PartyMsg partyNum, GetPlayerName(index) & " has left the party.", BrightRed
-                ' remove from array
-                For i = 1 To MAX_PARTY_MEMBERS
-                    If Party(partyNum).Member(i) = index Then
-                        Party(partyNum).Member(i) = 0
-                        Exit For
-                    End If
-                Next
-                TempPlayer(index).inParty = 0
-                TempPlayer(index).partyInvite = 0
-                ' recount party
-                Party_CountMembers partyNum
-                ' set update to all
-                SendPartyUpdate partyNum
-                ' send clear to player
-                SendPartyUpdateTo index
-            Else
-                ' not the leader, just leave
-                PartyMsg partyNum, GetPlayerName(index) & " has left the party.", BrightRed
-                ' remove from array
-                For i = 1 To MAX_PARTY_MEMBERS
-                    If Party(partyNum).Member(i) = index Then
-                        Party(partyNum).Member(i) = 0
-                        Exit For
-                    End If
-                Next
-                TempPlayer(index).inParty = 0
-                TempPlayer(index).partyInvite = 0
-                ' recount party
-                Party_CountMembers partyNum
-                ' set update to all
-                SendPartyUpdate partyNum
-                ' send clear to player
-                SendPartyUpdateTo index
-            End If
-        Else
-            ' find out how many members we have
-            Party_CountMembers partyNum
-            ' only 2 people, disband
-            PartyMsg partyNum, "Party disbanded.", BrightRed
-            ' clear out everyone's party
-            For i = 1 To MAX_PARTY_MEMBERS
-                index = Party(partyNum).Member(i)
-                ' player exist?
-                If index > 0 Then
-                    ' remove them
-                    TempPlayer(index).inParty = 0
-                    ' send clear to players
-                    SendPartyUpdateTo index
-                End If
-            Next
-            ' clear out the party itself
-            ClearParty partyNum
-        End If
-    End If
-End Sub
-
-Public Sub Party_Invite(ByVal index As Long, ByVal TARGETPLAYER As Long)
-Dim partyNum As Long, i As Long
-
-    ' make sure they're not busy
-    If TempPlayer(TARGETPLAYER).partyInvite > 0 Or TempPlayer(TARGETPLAYER).TradeRequest > 0 Then
-        ' they've already got a request for trade/party
-        PlayerMsg index, "This player is busy.", BrightRed
-        ' exit out early
-        Exit Sub
-    End If
-    ' make syure they're not in a party
-    If TempPlayer(TARGETPLAYER).inParty > 0 Then
-        ' they're already in a party
-        PlayerMsg index, "This player is already in a party.", BrightRed
-        'exit out early
-        Exit Sub
-    End If
-    
-    ' check if we're in a party
-    If TempPlayer(index).inParty > 0 Then
-        partyNum = TempPlayer(index).inParty
-        ' make sure we're the leader
-        If Party(partyNum).Leader = index Then
-            ' got a blank slot?
-            For i = 1 To MAX_PARTY_MEMBERS
-                If Party(partyNum).Member(i) = 0 Then
-                    ' send the invitation
-                    SendPartyInvite TARGETPLAYER, index
-                    ' set the invite target
-                    TempPlayer(TARGETPLAYER).partyInvite = index
-                    ' let them know
-                    PlayerMsg index, "Invitation sent.", Pink
-                    Exit Sub
-                End If
-            Next
-            ' no room
-            PlayerMsg index, "Party is full.", BrightRed
-            Exit Sub
-        Else
-            ' not the leader
-            PlayerMsg index, "You are not the party leader.", BrightRed
-            Exit Sub
-        End If
-    Else
-        ' not in a party - doesn't matter!
-        SendPartyInvite TARGETPLAYER, index
-        ' set the invite target
-        TempPlayer(TARGETPLAYER).partyInvite = index
-        ' let them know
-        PlayerMsg index, "Invitation sent.", Pink
-        Exit Sub
-    End If
-End Sub
-
-Public Sub Party_InviteAccept(ByVal index As Long, ByVal TARGETPLAYER As Long)
-Dim partyNum As Long, i As Long, x As Long
-
-    If TempPlayer(index).inParty > 0 Then
-        ' get the partynumber
-        partyNum = TempPlayer(index).inParty
-        ' got a blank slot?
-        For i = 1 To MAX_PARTY_MEMBERS
-            If Party(partyNum).Member(i) = 0 Then
-                'add to the party
-                Party(partyNum).Member(i) = TARGETPLAYER
-                ' recount party
-                Party_CountMembers partyNum
-                ' send update to all - including new player
-                SendPartyUpdate partyNum
-                ' Send party vitals to everyone again
-                For x = 1 To MAX_PARTY_MEMBERS
-                    If Party(partyNum).Member(x) > 0 Then
-                        SendPartyVitals partyNum, Party(partyNum).Member(x)
-                    End If
-                Next
-                ' let everyone know they've joined
-                PartyMsg partyNum, GetPlayerName(TARGETPLAYER) & " has joined the party.", Pink
-                ' add them in
-                TempPlayer(TARGETPLAYER).inParty = partyNum
-                Exit Sub
-            End If
-        Next
-        ' no empty slots - let them know
-        PlayerMsg index, "Party is full.", BrightRed
-        PlayerMsg TARGETPLAYER, "Party is full.", BrightRed
-        TempPlayer(TARGETPLAYER).partyInvite = 0
-        Exit Sub
-    Else
-        ' not in a party. Create one with the new person.
-        For i = 1 To MAX_PARTYS
-            ' find blank party
-            If Not Party(i).Leader > 0 Then
-                partyNum = i
-                Exit For
-            End If
-        Next
-        ' create the party
-        Party(partyNum).MemberCount = 2
-        Party(partyNum).Leader = index
-        Party(partyNum).Member(1) = index
-        Party(partyNum).Member(2) = TARGETPLAYER
-        SendPartyUpdate partyNum
-        SendPartyVitals partyNum, index
-        SendPartyVitals partyNum, TARGETPLAYER
-        ' let them know it's created
-        PartyMsg partyNum, "Party created.", BrightGreen
-        PartyMsg partyNum, GetPlayerName(index) & " has joined the party.", Pink
-        PartyMsg partyNum, GetPlayerName(TARGETPLAYER) & " has joined the party.", Pink
-        ' clear the invitation
-        TempPlayer(TARGETPLAYER).partyInvite = 0
-        ' add them to the party
-        TempPlayer(index).inParty = partyNum
-        TempPlayer(TARGETPLAYER).inParty = partyNum
-        Exit Sub
-    End If
-End Sub
-
-Public Sub Party_InviteDecline(ByVal index As Long, ByVal TARGETPLAYER As Long)
-    PlayerMsg index, GetPlayerName(TARGETPLAYER) & " has declined to join the party.", BrightRed
-    PlayerMsg TARGETPLAYER, "You declined to join the party.", BrightRed
-    ' clear the invitation
-    TempPlayer(TARGETPLAYER).partyInvite = 0
-End Sub
-
-Public Sub Party_CountMembers(ByVal partyNum As Long)
-Dim i As Long, highIndex As Long, x As Long
-
-    For i = MAX_PARTY_MEMBERS To 1 Step -1
-        If Party(partyNum).Member(i) > 0 Then
-            highIndex = i
-            Exit For
-        End If
-    Next
-    ' count the members
-    For i = 1 To MAX_PARTY_MEMBERS
-        ' we've got a blank member
-        If Party(partyNum).Member(i) = 0 Then
-            ' is it lower than the high index?
-            If i < highIndex Then
-                ' move everyone down a slot
-                For x = i To MAX_PARTY_MEMBERS - 1
-                    Party(partyNum).Member(x) = Party(partyNum).Member(x + 1)
-                    Party(partyNum).Member(x + 1) = 0
-                Next
-            Else
-                ' not lower - highindex is count
-                Party(partyNum).MemberCount = highIndex
-                Exit Sub
-            End If
-        End If
-        ' check if we've reached the max
-        If i = MAX_PARTY_MEMBERS Then
-            If highIndex = i Then
-                Party(partyNum).MemberCount = MAX_PARTY_MEMBERS
-                Exit Sub
-            End If
-        End If
-    Next
-    ' if we're here it means that we need to re-count again
-    Party_CountMembers partyNum
-End Sub
-
-Public Sub Party_ShareExp(ByVal partyNum As Long, ByVal exp As Long, ByVal index As Long, Optional ByVal enemyLevel As Long = 0)
-Dim expShare As Long, leftOver As Long, i As Long, tmpIndex As Long
-
-    ' check if it's worth sharing
-    If Not exp >= Party(partyNum).MemberCount Then
-        ' no party - keep exp for self
-        GivePlayerEXP index, exp, enemyLevel
-        Exit Sub
-    End If
-    
-    ' find out the equal share
-    expShare = exp \ Party(partyNum).MemberCount
-    leftOver = exp Mod Party(partyNum).MemberCount
-    
-    ' loop through and give everyone exp
-    For i = 1 To MAX_PARTY_MEMBERS
-        tmpIndex = Party(partyNum).Member(i)
-        ' existing member?Kn
-        If tmpIndex > 0 Then
-            ' playing?
-            If IsConnected(tmpIndex) And IsPlaying(tmpIndex) Then
-                ' give them their share
-                GivePlayerEXP tmpIndex, expShare, enemyLevel
-            End If
-        End If
-    Next
-    
-    ' give the remainder to a random member
-    tmpIndex = Party(partyNum).Member(RAND(1, Party(partyNum).MemberCount))
-    ' give the exp
-    GivePlayerEXP tmpIndex, leftOver, enemyLevel
-End Sub
-
 Public Sub GivePlayerEXP(ByVal index As Long, ByVal exp As Long, Optional ByVal enemyLevel As Long = 0)
-Dim multiplier As Long, partyNum As Long, expBonus As Long
+Dim multiplier As Long, expBonus As Long
 
     ' make sure we're not max level
     If Not GetPlayerLevel(index) >= MAX_LEVELS Then
@@ -1141,17 +849,7 @@ Dim multiplier As Long, partyNum As Long, expBonus As Long
                 exp = exp / 2
             End If
         End If
-        ' check if in party
-        partyNum = TempPlayer(index).inParty
-        If partyNum > 0 Then
-            If Party(partyNum).MemberCount > 1 Then
-                multiplier = Party(partyNum).MemberCount - 1
-                ' multiply the exp
-                expBonus = (exp / 100) * (multiplier * 3) ' 3 = 3% per party member
-                ' Modify the exp
-                exp = exp + expBonus
-            End If
-        End If
+        
         ' give the exp
         Call SetPlayerExp(index, GetPlayerExp(index) + exp)
         SendEXP index
@@ -1165,21 +863,10 @@ Dim multiplier As Long, partyNum As Long, expBonus As Long
 End Sub
 
 Public Sub GivePlayerSkillEXP(ByVal index As Long, ByVal exp As Long, ByVal skill As Skills)
-Dim multiplier As Long, partyNum As Long, expBonus As Long
+Dim multiplier As Long, expBonus As Long
 
     ' make sure we're not max level
     If Not GetPlayerLevel(index) >= MAX_LEVELS Then
-        ' check if in party
-        partyNum = TempPlayer(index).inParty
-        If partyNum > 0 Then
-            If Party(partyNum).MemberCount > 1 Then
-                multiplier = Party(partyNum).MemberCount - 1
-                ' multiply the exp
-                expBonus = (exp / 100) * (multiplier * 3) ' 3 = 3% per party member
-                ' Modify the exp
-                exp = exp + expBonus
-            End If
-        End If
         ' give the exp
         Call SetPlayerSkillExp(index, GetPlayerSkillExp(index, skill) + exp, skill)
         SendEXP index
@@ -1208,7 +895,7 @@ Dim i As Long, buffer As clsBuffer
     For i = 1 To MAX_DOTS
         With map(mapNum).mapNPC(NPCNum).DoT(i)
             .spell = 0
-            .Timer = 0
+            .timer = 0
             .Caster = 0
             .StartTime = 0
             .Used = False
@@ -1216,7 +903,7 @@ Dim i As Long, buffer As clsBuffer
             
         With map(mapNum).mapNPC(NPCNum).HoT(i)
             .spell = 0
-            .Timer = 0
+            .timer = 0
             .Caster = 0
             .StartTime = 0
             .Used = False

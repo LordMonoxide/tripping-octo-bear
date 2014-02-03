@@ -341,11 +341,6 @@ Dim i As Long
                     AddText "Chat channel: Guild", Green
                     GME = 3
                 End If
-            Case vbKeyF5
-                If Not GME = 4 Then
-                    AddText "Chat channel: Party", Green
-                    GME = 4
-                End If
             Case vbKeyI: If Not chatOn Then OpenGuiWindow 1
             Case vbKeyJ: If Not chatOn Then OpenGuiWindow 2
             Case vbKeyC: If Not chatOn Then OpenGuiWindow 3
@@ -526,19 +521,6 @@ Dim buffer As clsBuffer
                 Call GuildMsg(chatText)
             End If
         
-            MyText = vbNullString
-            UpdateShowChatText
-            Exit Sub
-        End If
-        
-        ' party Msg
-        If Left$(chatText, 3) = "/p " Then
-            chatText = Mid$(chatText, 4, Len(chatText) - 3)
-
-            If Len(chatText) > 0 Then
-                Call SendPartyChatMsg(chatText)
-            End If
-
             MyText = vbNullString
             UpdateShowChatText
             Exit Sub
@@ -940,8 +922,6 @@ continue:
                     Call EmoteMsg(" " & chatText)
                 Case 3
                     Call GuildMsg(chatText)
-                Case 4
-                    Call SendPartyChatMsg(chatText)
             End Select
         End If
 
@@ -1049,9 +1029,6 @@ Dim i As Long
                         Case GUI_SHOP
                             Shop_MouseDown
                             Exit Sub
-                        Case GUI_PARTY
-                            Party_MouseDown
-                            Exit Sub
                         Case GUI_OPTIONS
                             Options_MouseDown
                             Exit Sub
@@ -1145,8 +1122,6 @@ Dim i As Long
                             Chat_MouseUp
                         Case GUI_SHOP
                             Shop_MouseUp
-                        Case GUI_PARTY
-                            Party_MouseUp
                         Case GUI_OPTIONS
                             Options_MouseUp
                         Case GUI_TRADE
@@ -1253,12 +1228,6 @@ Public Sub OpenGuiWindow(ByVal index As Long)
         GUIWindow(GUI_CHARACTER).visible = False
     End If
     
-    If index = 4 Then
-        GUIWindow(GUI_PARTY).visible = Not GUIWindow(GUI_PARTY).visible
-    Else
-        GUIWindow(GUI_PARTY).visible = False
-    End If
-    
     If index = 5 Then
         GUIWindow(GUI_GUILD).visible = Not GUIWindow(GUI_GUILD).visible
     Else
@@ -1327,9 +1296,9 @@ Dim i As Long, x As Long, y As Long, width As Long
 
 Select Case CurrentEvent.Type
     Case Evt_Menu
-    For i = 1 To UBound(CurrentEvent.Text) - 1
-        If Len(Trim$(CurrentEvent.Text(i + 1))) > 0 Then
-            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(i + 1)) & "]")
+    For i = 1 To UBound(CurrentEvent.text) - 1
+        If Len(Trim$(CurrentEvent.text(i + 1))) > 0 Then
+            width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.text(i + 1)) & "]")
             x = GUIWindow(GUI_EVENTCHAT).x + ((GUIWindow(GUI_EVENTCHAT).width / 2) - width / 2)
             y = GUIWindow(GUI_EVENTCHAT).y + 115 - ((i - 1) * 15)
             If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
@@ -1352,9 +1321,9 @@ Dim i As Long, x As Long, y As Long, width As Long
 
 Select Case CurrentEvent.Type
     Case Evt_Menu
-        For i = 1 To UBound(CurrentEvent.Text) - 1
-            If Len(Trim$(CurrentEvent.Text(i + 1))) > 0 Then
-                width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.Text(i + 1)) & "]")
+        For i = 1 To UBound(CurrentEvent.text) - 1
+            If Len(Trim$(CurrentEvent.text(i + 1))) > 0 Then
+                width = EngineGetTextWidth(Font_GeorgiaShadow, "[" & Trim$(CurrentEvent.text(i + 1)) & "]")
                 x = GUIWindow(GUI_EVENTCHAT).x + ((GUIWindow(GUI_EVENTCHAT).width / 2) - width / 2)
                 y = GUIWindow(GUI_EVENTCHAT).y + 115 - ((i - 1) * 15)
                 If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
@@ -1368,7 +1337,7 @@ Select Case CurrentEvent.Type
             End If
         Next
         
-        For i = 1 To UBound(CurrentEvent.Text) - 1
+        For i = 1 To UBound(CurrentEvent.text) - 1
             chatOptState(i) = 0 ' normal
         Next
     Case Evt_Message
@@ -1468,55 +1437,6 @@ Dim shopSlot As Long
         ' buy item code
         BuyItem shopSlot
     End If
-End Sub
-
-' Party
-Public Sub Party_MouseUp()
-Dim i As Long, x As Long, y As Long
-
-    ' find out which button we're clicking
-    For i = 24 To 25
-        x = GUIWindow(GUI_PARTY).x + Buttons(i).x
-        y = GUIWindow(GUI_PARTY).y + Buttons(i).y
-        ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
-            If Buttons(i).state = 2 Then
-                ' do stuffs
-                Select Case i
-                    Case 24 ' invite
-                        If myTargetType = TARGET_TYPE_PLAYER And myTarget <> MyIndex Then
-                            SendPartyRequest
-                        Else
-                            AddText "Invalid invitation target.", BrightRed
-                        End If
-                    Case 25 ' leave
-                        If Party.Leader > 0 Then
-                            SendPartyLeave
-                        Else
-                            AddText "You are not in a party.", BrightRed
-                        End If
-                End Select
-                ' play sound
-                FMOD.Sound_Play Sound_ButtonClick
-            End If
-        End If
-    Next
-    
-    ' reset buttons
-    resetClickedButtons
-End Sub
-
-Public Sub Party_MouseDown()
-Dim i As Long, x As Long, y As Long
-    ' find out which button we're clicking
-    For i = 24 To 25
-        x = GUIWindow(GUI_PARTY).x + Buttons(i).x
-        y = GUIWindow(GUI_PARTY).y + Buttons(i).y
-        ' check if we're on the button
-        If (GlobalX >= x And GlobalX <= x + Buttons(i).width) And (GlobalY >= y And GlobalY <= y + Buttons(i).height) Then
-            Buttons(i).state = 2 ' clicked
-        End If
-    Next
 End Sub
 
 'Options
@@ -2293,13 +2213,6 @@ Dim x As Long, y As Long, width As Long
         RightMenuButtonState(1) = 2 ' clicked
     End If
     
-    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Party]")
-    x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
-    y = GUIWindow(GUI_RIGHTMENU).y + 38
-    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
-        RightMenuButtonState(2) = 2 ' clicked
-    End If
-    
     width = EngineGetTextWidth(Font_GeorgiaShadow, "[Guild]")
     x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
     y = GUIWindow(GUI_RIGHTMENU).y + 52
@@ -2336,25 +2249,6 @@ Dim x As Long, y As Long, width As Long
         End If
     End If
     RightMenuButtonState(1) = 0
-    
-    width = EngineGetTextWidth(Font_GeorgiaShadow, "[Party]")
-    x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)
-    y = GUIWindow(GUI_RIGHTMENU).y + 38
-    If (GlobalX >= x And GlobalX <= x + width) And (GlobalY >= y And GlobalY <= y + 14) Then
-        If RightMenuButtonState(2) = 2 Then
-            If myTarget > 0 And myTargetType = TARGET_TYPE_PLAYER Then
-                If myTarget <> MyIndex Then
-                    SendPartyRequest
-                Else
-                    SendPartyLeave
-                End If
-            End If
-            ' play sound
-            FMOD.Sound_Play Sound_ButtonClick
-            GUIWindow(GUI_RIGHTMENU).visible = False
-        End If
-    End If
-    RightMenuButtonState(2) = 0
     
     width = EngineGetTextWidth(Font_GeorgiaShadow, "[Guild]")
     x = (GUIWindow(GUI_RIGHTMENU).x + (GUIWindow(GUI_RIGHTMENU).width / 2)) - (width / 2)

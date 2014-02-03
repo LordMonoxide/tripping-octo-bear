@@ -101,10 +101,6 @@ Public Hotbar(1 To MAX_HOTBAR) As HotbarRec
 ' Amount of blood decals
 Public BloodCount As Long
 
-' Party GUI
-Public Const Party_HPWidth As Long = 182
-Public Const Party_SPRWidth As Long = 182
-
 ' targetting
 Public myTarget As Long
 Public myTargetType As Long

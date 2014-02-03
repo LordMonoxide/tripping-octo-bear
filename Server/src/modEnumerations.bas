@@ -82,9 +82,6 @@ Public Enum ServerPackets
     SHighIndex
     SSound
     STradeRequest
-    SPartyInvite
-    SPartyUpdate
-    SPartyVitals
     SQuestEditor
     SUpdateQuest
     SPlayerQuest
@@ -193,10 +190,6 @@ Public Enum ClientPackets
     CSwapSpellSlots
     CAcceptTradeRequest
     CDeclineTradeRequest
-    CPartyRequest
-    CAcceptParty
-    CDeclineParty
-    CPartyLeave
     CRequestEditQuest
     CSaveQuest
     CRequestQuests
@@ -211,7 +204,6 @@ Public Enum ClientPackets
     CRequestEventsData
     CChooseEventOption
     CAfk
-    CPartyChatMsg
     CGuildCommand
     CSayGuild
     CSaveGuild

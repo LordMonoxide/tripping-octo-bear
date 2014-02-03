@@ -85,9 +85,6 @@ Public Sub InitMessages()
     HandleDataSub(SHotbar) = GetAddress(AddressOf HandleHotbar)
     HandleDataSub(SSound) = GetAddress(AddressOf HandleSound)
     HandleDataSub(STradeRequest) = GetAddress(AddressOf HandleTradeRequest)
-    HandleDataSub(SPartyInvite) = GetAddress(AddressOf HandlePartyInvite)
-    HandleDataSub(SPartyUpdate) = GetAddress(AddressOf HandlePartyUpdate)
-    HandleDataSub(SPartyVitals) = GetAddress(AddressOf HandlePartyVitals)
     HandleDataSub(SQuestEditor) = GetAddress(AddressOf HandleQuestEditor)
     HandleDataSub(SUpdateQuest) = GetAddress(AddressOf HandleUpdateQuest)
     HandleDataSub(SPlayerQuest) = GetAddress(AddressOf HandlePlayerQuest)
@@ -1155,41 +1152,6 @@ End Sub
 
 Private Sub HandleTradeRequest(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
   Call Dialogue("Trade Request", buffer.ReadString & " has requested a trade. Would you like to accept?", DIALOGUE_TYPE_TRADE, True)
-End Sub
-
-Private Sub HandlePartyInvite(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
-  Call Dialogue("Party Invitation", buffer.ReadString & " has invited you to a party. Would you like to join?", DIALOGUE_TYPE_PARTY, True)
-End Sub
-
-Private Sub HandlePartyUpdate(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
-Dim i As Long, inParty As Byte
-
-  inParty = buffer.ReadByte
-  
-  ' exit out if we're not in a party
-  If inParty = 0 Then
-    Call ZeroMemory(ByVal VarPtr(Party), LenB(Party))
-    ' exit out early
-    Exit Sub
-  End If
-  
-  ' carry on otherwise
-  Party.Leader = buffer.ReadLong
-  For i = 1 To MAX_PARTY_MEMBERS
-    Party.Member(i) = buffer.ReadLong
-  Next
-  
-  Party.MemberCount = buffer.ReadLong
-End Sub
-
-Private Sub HandlePartyVitals(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)
-Dim char As clsCharacter
-
-  Set char = characters(buffer.ReadLong)
-  char.hpMax = buffer.ReadLong
-  char.hp = buffer.ReadLong
-  char.mpMax = buffer.ReadLong
-  char.mp = buffer.ReadLong
 End Sub
 
 Private Sub HandleStartTutorial(ByVal buffer As clsBuffer, ByVal msg As Long, ByVal wParam As Long, ByVal lParam As Long)

@@ -23,6 +23,7 @@ Private mAttackTimer As Long
 Private mMoving As Long
 Private mXOffset As Long
 Private mYOffset As Long
+Private mStep As Byte
 
 Private mGuildColour As Long
 Private mGuildName As String
@@ -267,11 +268,11 @@ Public Property Get dir() As Byte
   dir = mData.dir
 End Property
 
-Public Property Let threshold(ByVal threashold As Byte)
-  mData.threshold = threashold
+Public Property Let threshold(ByVal threshold As Boolean)
+  mData.threshold = threshold
 End Property
 
-Public Property Get threshold() As Byte
+Public Property Get threshold() As Boolean
   threshold = mData.threshold
 End Property
 
@@ -357,6 +358,14 @@ End Property
 
 Public Property Get yOffset() As Long
   yOffset = mYOffset
+End Property
+
+Public Property Let step(ByVal step As Byte)
+  mStep = step
+End Property
+
+Public Property Get step() As Byte
+  step = mStep
 End Property
 
 Public Property Let guildColour(ByVal guildColour As Long)

@@ -76,9 +76,6 @@ Public Enum ServerPackets
     SHighIndex
     SSound
     STradeRequest
-    SPartyInvite
-    SPartyUpdate
-    SPartyVitals
     SQuestEditor
     SUpdateQuest
     SPlayerQuest
@@ -187,10 +184,6 @@ Public Enum ClientPackets
     CSwapSpellSlots
     CAcceptTradeRequest
     CDeclineTradeRequest
-    CPartyRequest
-    CAcceptParty
-    CDeclineParty
-    CPartyLeave
     CRequestEditQuest
     CSaveQuest
     CRequestQuests
@@ -205,7 +198,6 @@ Public Enum ClientPackets
     CRequestEventsData
     CChooseEventOption
     CAfk
-    CPartyChatMsg
     CGuildCommand
     CSayGuild
     CSaveGuild
@@ -243,18 +235,18 @@ End Enum
 
 ' Vitals used by Players, Npcs and Classes
 Public Enum Vitals
-    HP = 1
-    MP
+    hp = 1
+    mp
     ' Make sure Vital_Count is below everything else
     Vital_Count
 End Enum
 
 ' Equipment used by Players
 Public Enum Equipment
-    Weapon = 1
+    weapon = 1
     Armor
-    Aura
-    Shield
+    aura
+    shield
     ' Make sure Equipment_Count is below everything else
     Equipment_Count
 End Enum
@@ -291,7 +283,6 @@ Public Enum GUIType
     GUI_SPELLS
     GUI_CHARACTER
     GUI_OPTIONS
-    GUI_PARTY
     GUI_DESCRIPTION
     GUI_MAINMENU
     GUI_SHOP

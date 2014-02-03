@@ -419,7 +419,7 @@ Sub ProcessMovement(ByVal index As Long)
 Dim MovementSpeed As Long
 
     ' Check if player is walking, and if so process moving them over
-    Select Case TempPlayer(index).Moving
+    Select Case TempPlayer(index).moving
         Case MOVING_WALKING: MovementSpeed = ((ElapsedTime / 1000) * (WALK_SPEED * SIZE_X))
         Case MOVING_RUNNING: MovementSpeed = ((ElapsedTime / 1000) * (RUN_SPEED * SIZE_X))
         Case Else: Exit Sub
@@ -461,10 +461,10 @@ Dim MovementSpeed As Long
     End Select
 
     ' Check if completed walking over to the next tile
-    If TempPlayer(index).Moving > 0 Then
+    If TempPlayer(index).moving > 0 Then
         If GetPlayerDir(index) = DIR_RIGHT Or GetPlayerDir(index) = DIR_DOWN Or GetPlayerDir(index) = DIR_DOWN_RIGHT Then
             If (TempPlayer(index).xOffset >= 0) And (TempPlayer(index).yOffset >= 0) Then
-                TempPlayer(index).Moving = 0
+                TempPlayer(index).moving = 0
                 If TempPlayer(index).step = 0 Then
                     TempPlayer(index).step = 2
                 Else
@@ -473,7 +473,7 @@ Dim MovementSpeed As Long
             End If
         Else
             If (TempPlayer(index).xOffset <= 0) And (TempPlayer(index).yOffset <= 0) Then
-                TempPlayer(index).Moving = 0
+                TempPlayer(index).moving = 0
                 If TempPlayer(index).step = 0 Then
                     TempPlayer(index).step = 2
                 Else
@@ -488,7 +488,7 @@ Sub ProcessNpcMovement(ByVal MapNpcNum As Long)
 Dim MovementSpeed As Long
 
     ' Check if NPC is walking, and if so process moving them over
-    If MapNpc(MapNpcNum).Moving = MOVING_WALKING Then
+    If MapNpc(MapNpcNum).moving = MOVING_WALKING Then
         MovementSpeed = RUN_SPEED
     Else
         Exit Sub
@@ -537,10 +537,10 @@ Dim MovementSpeed As Long
     End Select
 
     ' Check if completed walking over to the next tile
-    If MapNpc(MapNpcNum).Moving > 0 Then
+    If MapNpc(MapNpcNum).moving > 0 Then
         If MapNpc(MapNpcNum).dir = DIR_RIGHT Or MapNpc(MapNpcNum).dir = DIR_DOWN Or MapNpc(MapNpcNum).dir = DIR_DOWN_RIGHT Then
             If (MapNpc(MapNpcNum).xOffset >= 0) And (MapNpc(MapNpcNum).yOffset >= 0) Then
-                MapNpc(MapNpcNum).Moving = 0
+                MapNpc(MapNpcNum).moving = 0
                 If MapNpc(MapNpcNum).step = 0 Then
                     MapNpc(MapNpcNum).step = 2
                 Else
@@ -549,7 +549,7 @@ Dim MovementSpeed As Long
             End If
         Else
             If (MapNpc(MapNpcNum).xOffset <= 0) And (MapNpc(MapNpcNum).yOffset <= 0) Then
-                MapNpc(MapNpcNum).Moving = 0
+                MapNpc(MapNpcNum).moving = 0
                 If MapNpc(MapNpcNum).step = 0 Then
                     MapNpc(MapNpcNum).step = 2
                 Else
@@ -566,31 +566,6 @@ Dim buffer As New clsBuffer, tmpIndex As Long, i As Long, x As Long
     Set buffer = New clsBuffer
 
     If timeGetTime > TempPlayer(MyIndex).MapGetTimer + 250 Then
-        ' find out if we want to pick it up
-        For i = 1 To MAX_MAP_ITEMS
-            If MapItem(i).x = Player(MyIndex).x And MapItem(i).y = Player(MyIndex).y Then
-                If MapItem(i).Num > 0 Then
-                    If item(MapItem(i).Num).BindType = 1 Then
-                        ' make sure it's not a party drop
-                        If Party.Leader > 0 Then
-                            For x = 1 To MAX_PARTY_MEMBERS
-                                tmpIndex = Party.Member(x)
-                                If tmpIndex > 0 Then
-                                    If Trim$(GetPlayerName(tmpIndex)) = Trim$(MapItem(i).playerName) Then
-                            
-                                                Dialogue "Loot Check", "This item is BoP and is not for your class. Are you sure you want to pick it up?", DIALOGUE_LOOT_ITEM, True
-                                                Exit Sub
-                                    End If
-                                End If
-                            Next
-                        End If
-                    Else
-                        'not bound
-                        Exit For
-                    End If
-                End If
-            End If
-        Next
         ' nevermind, pick it up
         TempPlayer(MyIndex).MapGetTimer = timeGetTime
         buffer.WriteLong CMapGetItem
@@ -616,12 +591,12 @@ Dim attackspeed As Long
             attackspeed = 1000
         End If
 
-        If TempPlayer(MyIndex).AttackTimer + attackspeed < timeGetTime Then
-            If TempPlayer(MyIndex).Attacking = 0 Then
+        If TempPlayer(MyIndex).attackTimer + attackspeed < timeGetTime Then
+            If TempPlayer(MyIndex).attacking = 0 Then
 
                 With TempPlayer(MyIndex)
-                    .Attacking = 1
-                    .AttackTimer = timeGetTime
+                    .attacking = 1
+                    .attackTimer = timeGetTime
                 End With
 
                 Set buffer = New clsBuffer
@@ -643,7 +618,7 @@ Function CanMove() As Boolean
     CanMove = True
 
     ' Make sure they aren't trying to move when they are already moving
-    If TempPlayer(MyIndex).Moving <> 0 Then
+    If TempPlayer(MyIndex).moving <> 0 Then
         CanMove = False
         Exit Function
     End If
@@ -974,9 +949,9 @@ Sub CheckMovement()
 
             ' Check if player has the shift key down for running
             If ShiftDown Then
-                TempPlayer(MyIndex).Moving = MOVING_RUNNING
+                TempPlayer(MyIndex).moving = MOVING_RUNNING
             Else
-                TempPlayer(MyIndex).Moving = MOVING_WALKING
+                TempPlayer(MyIndex).moving = MOVING_WALKING
             End If
 
             Select Case GetPlayerDir(MyIndex)
@@ -1098,8 +1073,8 @@ Dim buffer As clsBuffer
     End If
 
     If PlayerSpells(spellSlot) > 0 Then
-        If timeGetTime > TempPlayer(MyIndex).AttackTimer + 1000 Then
-            If TempPlayer(MyIndex).Moving = 0 Then
+        If timeGetTime > TempPlayer(MyIndex).attackTimer + 1000 Then
+            If TempPlayer(MyIndex).moving = 0 Then
                 Set buffer = New clsBuffer
                 buffer.WriteLong CCast
                 buffer.WriteLong spellSlot
@@ -1116,14 +1091,14 @@ Dim buffer As clsBuffer
     End If
 End Sub
 
-Public Sub DevMsg(ByVal Text As String, ByVal color As Byte)
+Public Sub DevMsg(ByVal text As String, ByVal color As Byte)
     If InGame Then
         If GetPlayerAccess(MyIndex) > ADMIN_DEVELOPER Then
-            Call AddText(Text, color)
+            Call AddText(text, color)
         End If
     End If
 
-    Debug.Print Text
+    Debug.Print text
 End Sub
 
 Public Function ConvertCurrency(ByVal Amount As Long) As String
@@ -1388,8 +1363,6 @@ Dim buffer As New clsBuffer
                 SendAcceptTradeRequest
             Case DIALOGUE_TYPE_FORGET
                 ForgetSpell dialogueData1
-            Case DIALOGUE_TYPE_PARTY
-                SendAcceptParty
             Case DIALOGUE_LOOT_ITEM
                 ' send the packet
                 TempPlayer(MyIndex).MapGetTimer = timeGetTime
@@ -1403,8 +1376,6 @@ Dim buffer As New clsBuffer
         Select Case dialogueIndex
             Case DIALOGUE_TYPE_TRADE
                 SendDeclineTradeRequest
-            Case DIALOGUE_TYPE_PARTY
-                SendDeclineParty
             Case DIALOGUE_TYPE_GUILD
                 Call GuildCommand(7, "")
         End Select
@@ -1556,8 +1527,6 @@ Public Function IsEqItem(ByVal x As Single, ByVal y As Single) As Long
     Dim tempRec As RECT
     Dim i As Long
     
-    IsEqItem = 0
-
     For i = 1 To Equipment.Equipment_Count - 1
 
         If GetPlayerEquipment(MyIndex, i) > 0 And GetPlayerEquipment(MyIndex, i) <= MAX_ITEMS Then
@@ -2637,112 +2606,112 @@ Public Sub Events_SetSubEventType(ByVal EIndex As Long, ByVal SIndex As Long, By
             Case Evt_Message
                 .HasText = True
                 .HasData = False
-                ReDim Preserve .Text(1 To 1)
+                ReDim Preserve .text(1 To 1)
             Case Evt_Menu
-                If Not .HasText Then ReDim .Text(1 To 2)
-                If UBound(.Text) < 2 Then ReDim Preserve .Text(1 To 2)
+                If Not .HasText Then ReDim .text(1 To 2)
+                If UBound(.text) < 2 Then ReDim Preserve .text(1 To 2)
                 If Not .HasData Then ReDim .data(1 To 1)
                 .HasText = True
                 .HasData = True
             Case Evt_OpenShop
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 1)
             Case Evt_GOTO
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 1)
             Case Evt_GiveItem
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 3)
             Case Evt_PlayAnimation
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 3)
             Case Evt_Warp
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 3)
             Case Evt_Switch
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 2)
             Case Evt_Variable
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 4)
             Case Evt_AddText
                 .HasText = True
                 .HasData = True
-                ReDim Preserve .Text(1 To 1)
+                ReDim Preserve .text(1 To 1)
                 ReDim Preserve .data(1 To 2)
             Case Evt_Chatbubble
                 .HasText = True
                 .HasData = True
-                ReDim Preserve .Text(1 To 1)
+                ReDim Preserve .text(1 To 1)
                 ReDim Preserve .data(1 To 2)
             Case Evt_Branch
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 6)
             Case Evt_ChangeSkill
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 2)
             Case Evt_ChangeLevel
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 2)
             Case Evt_ChangePK
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 1)
             Case Evt_ChangeExp
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 2)
             Case Evt_SetAccess
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 1)
             Case Evt_CustomScript
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 1)
             Case Evt_OpenEvent
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 4)
             Case Evt_SpawnNPC
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 1)
             Case Evt_Changegraphic
                 .HasText = False
                 .HasData = True
-                Erase .Text
+                Erase .text
                 ReDim Preserve .data(1 To 4)
             Case Else
                 .HasText = False
                 .HasData = False
-                Erase .Text
+                Erase .text
                 Erase .data
         End Select
     End With
@@ -2778,7 +2747,7 @@ Dim evtType As EventType
 evtType = Events(EventIndex).SubEvents(SubIndex).Type
     Select Case evtType
         Case Evt_Message
-            GetEventTypeName = "@Show Message: '" & Trim$(Events(EventIndex).SubEvents(SubIndex).Text(1)) & "'"
+            GetEventTypeName = "@Show Message: '" & Trim$(Events(EventIndex).SubEvents(SubIndex).text(1)) & "'"
             Exit Function
         Case Evt_Menu
             GetEventTypeName = "@Show Choices"
@@ -2827,9 +2796,9 @@ evtType = Events(EventIndex).SubEvents(SubIndex).Type
             Exit Function
         Case Evt_AddText
             Select Case Events(EventIndex).SubEvents(SubIndex).data(2)
-                Case 0: GetEventTypeName = "@Add text: '" & Trim$(Events(EventIndex).SubEvents(SubIndex).Text(1)) & "' {" & GetColorString(Events(EventIndex).SubEvents(SubIndex).data(1)) & ", Player}"
-                Case 1: GetEventTypeName = "@Add text: '" & Trim$(Events(EventIndex).SubEvents(SubIndex).Text(1)) & "' {" & GetColorString(Events(EventIndex).SubEvents(SubIndex).data(1)) & ", Map}"
-                Case 2: GetEventTypeName = "@Add text: '" & Trim$(Events(EventIndex).SubEvents(SubIndex).Text(1)) & "' {" & GetColorString(Events(EventIndex).SubEvents(SubIndex).data(1)) & ", Global}"
+                Case 0: GetEventTypeName = "@Add text: '" & Trim$(Events(EventIndex).SubEvents(SubIndex).text(1)) & "' {" & GetColorString(Events(EventIndex).SubEvents(SubIndex).data(1)) & ", Player}"
+                Case 1: GetEventTypeName = "@Add text: '" & Trim$(Events(EventIndex).SubEvents(SubIndex).text(1)) & "' {" & GetColorString(Events(EventIndex).SubEvents(SubIndex).data(1)) & ", Map}"
+                Case 2: GetEventTypeName = "@Add text: '" & Trim$(Events(EventIndex).SubEvents(SubIndex).text(1)) & "' {" & GetColorString(Events(EventIndex).SubEvents(SubIndex).data(1)) & ", Global}"
             End Select
             Exit Function
         Case Evt_Chatbubble

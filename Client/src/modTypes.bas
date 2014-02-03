@@ -26,7 +26,6 @@ Public GameTime As TimeRec
 Public ActionMsg(1 To MAX_BYTE) As ActionMsgRec
 Public Blood(1 To MAX_BYTE) As BloodRec
 Public AnimInstance(1 To MAX_BYTE) As AnimInstanceRec
-Public Party As PartyRec
 Public GUIWindow() As GUIWindowRec
 Public Buttons(1 To MAX_BUTTONS) As ButtonRec
 Public Autotile() As AutotileRec
@@ -107,12 +106,6 @@ Private Type OptionsRec
     FPS As Byte
 End Type
 
-Public Type PartyRec
-    Leader As Long
-    Member(1 To MAX_PARTY_MEMBERS) As Long
-    MemberCount As Long
-End Type
-
 Public Type PlayerInvRec
     Num As Long
     Value As Long
@@ -169,7 +162,7 @@ Public Type CharacterStruct
   y As Byte
   dir As Byte
   
-  threshold As Byte
+  threshold As Boolean
   
   skill(1 To Skills.Skill_Count - 1) As Byte
   skillExp(1 To Skills.Skill_Count - 1) As Long
@@ -182,7 +175,6 @@ End Type
 
 Private Type TempPlayerRec
     MapGetTimer As Long
-    step As Byte
     Anim As Long
     AnimTimer As Long
 End Type
@@ -343,7 +335,7 @@ Private Type MapNpcRec
     yOffset As Long
     moving As Byte
     attacking As Byte
-    AttackTimer As Long
+    attackTimer As Long
     step As Byte
     Anim As Long
     AnimTimer As Long

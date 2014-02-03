@@ -82,7 +82,7 @@ End Sub
 Sub LeftGame(ByVal user As clsUser)
 Dim char As clsCharacter
 
-  char = user.character
+  char = user.Character
   If Not char Is Nothing Then
     If GetTotalMapPlayers(char.map) = 1 Then
       PlayersOnMap(char.map) = NO
@@ -100,9 +100,6 @@ Dim char As clsCharacter
       TempPlayer(tradeTarget).InTrade = 0
       SendCloseTrade tradeTarget
     End If
-    
-    ' leave party.
-    Party_PlayerLeave index
     
     If Player(index).GuildFileId > 0 Then
       'Set player online flag off
@@ -573,18 +570,12 @@ Dim vitalType As Long, colour As Long, Amount As Long
           Call SendActionMsg(char.map, "+" & Amount, BrightGreen, ACTIONMSG_SCROLL, char.x * 32, char.y * 32, 1)
           Call char.sendMessage("You feel rejuvinating forces flowing through your body.", BrightGreen)
           Call char.sendHP
-          
-          ' send vitals to party if in one
-          If TempPlayer(index).inParty <> 0 Then Call SendPartyVitals(TempPlayer(index).inParty, index)
         Else
           char.mp = char.mp + Amount
           
           Call SendActionMsg(char.map, "+" & Amount, BrightBlue, ACTIONMSG_SCROLL, char.x * 32, char.y * 32, 1)
           Call char.sendMessage("You feel rejuvinating forces flowing through your body.", BrightBlue)
           Call char.sendHP
-          
-          ' send vitals to party if in one
-          If TempPlayer(index).inParty <> 0 Then Call SendPartyVitals(TempPlayer(index).inParty, index)
         End If
       End If
       
@@ -603,9 +594,6 @@ Dim vitalType As Long, colour As Long, Amount As Long
         char.hp = char.hp - Amount
         Call char.sendMessage("You're injured by a trap.", BrightRed)
         Call char.sendHP
-        
-        ' send vitals to party if in one
-        If TempPlayer(index).inParty > 0 Then Call SendPartyVitals(TempPlayer(index).inParty, index)
       End If
       
       Moved = YES
@@ -1017,26 +1005,7 @@ Dim mapNum As Long, tmpIndex As Long, i As Long
     ' no lock or locked to player?
     If map(mapNum).mapItem(mapItemNum).playerName = vbNullString Or map(mapNum).mapItem(mapItemNum).playerName = Trim$(GetPlayerName(index)) Then
         CanPlayerPickupItem = True
-        Exit Function
     End If
-    
-    ' if in party show their party member's drops
-    If TempPlayer(index).inParty > 0 Then
-        For i = 1 To MAX_PARTY_MEMBERS
-            tmpIndex = Party(TempPlayer(index).inParty).Member(i)
-            If tmpIndex > 0 Then
-                If Trim$(GetPlayerName(tmpIndex)) = map(mapNum).mapItem(mapItemNum).playerName Then
-                    If map(mapNum).mapItem(mapItemNum).bound = 0 Then
-                        CanPlayerPickupItem = True
-                        Exit Function
-                    End If
-                End If
-            End If
-        Next
-    End If
-    
-    ' exit out
-    CanPlayerPickupItem = False
 End Function
 
 Sub PlayerMapDropItem(ByVal index As Long, ByVal invNum As Long, ByVal Amount As Long)
@@ -1366,14 +1335,6 @@ Sub OnDeath(ByVal index As Long)
     Call SetPlayerVital(index, Vitals.mp, GetPlayerMaxVital(index, Vitals.mp))
     Call SendVital(index, Vitals.hp)
     Call SendVital(index, Vitals.mp)
-    ' send vitals to party if in one
-    If TempPlayer(index).inParty > 0 Then SendPartyVitals TempPlayer(index).inParty, index
-
-    ' If the player the attacker killed was a pk then take it away
-    If GetPlayerPK(index) = YES Then
-        Call SetPlayerPK(index, NO)
-        Call SendPlayerData(index)
-    End If
 End Sub
 
 Sub CheckResource(ByVal index As Long, ByVal x As Long, ByVal y As Long)
@@ -1702,8 +1663,6 @@ Dim n As Long, i As Long, tempItem As Long, x As Long, itemnum As Long
             ' send vitals
             Call SendVital(index, Vitals.hp)
             Call SendVital(index, Vitals.mp)
-            ' send vitals to party if in one
-            If TempPlayer(index).inParty > 0 Then SendPartyVitals TempPlayer(index).inParty, index
             
             ' send the sound
             SendPlayerSound index, GetPlayerX(index), GetPlayerY(index), SoundEntity.seItem, itemnum
@@ -1768,8 +1727,6 @@ Dim n As Long, i As Long, tempItem As Long, x As Long, itemnum As Long
             ' send vitals
             Call SendVital(index, Vitals.hp)
             Call SendVital(index, Vitals.mp)
-            ' send vitals to party if in one
-            If TempPlayer(index).inParty > 0 Then SendPartyVitals TempPlayer(index).inParty, index
             
             ' send the sound
             SendPlayerSound index, GetPlayerX(index), GetPlayerY(index), SoundEntity.seItem, itemnum
@@ -1827,8 +1784,6 @@ Dim n As Long, i As Long, tempItem As Long, x As Long, itemnum As Long
             ' send vitals
             Call SendVital(index, Vitals.hp)
             Call SendVital(index, Vitals.mp)
-            ' send vitals to party if in one
-            If TempPlayer(index).inParty > 0 Then SendPartyVitals TempPlayer(index).inParty, index
             
             ' send the sound
             SendPlayerSound index, GetPlayerX(index), GetPlayerY(index), SoundEntity.seItem, itemnum
@@ -1890,8 +1845,6 @@ Dim n As Long, i As Long, tempItem As Long, x As Long, itemnum As Long
             ' send vitals
             Call SendVital(index, Vitals.hp)
             Call SendVital(index, Vitals.mp)
-            ' send vitals to party if in one
-            If TempPlayer(index).inParty > 0 Then SendPartyVitals TempPlayer(index).inParty, index
 
             Call SendWornEquipment(index)
             Call SendMapEquipment(index)
@@ -1925,16 +1878,12 @@ Dim n As Long, i As Long, tempItem As Long, x As Long, itemnum As Long
                 Player(index).vital(Vitals.hp) = Player(index).vital(Vitals.hp) + item(itemnum).addHP
                 SendActionMsg GetPlayerMap(index), "+" & item(itemnum).addHP, BrightGreen, ACTIONMSG_SCROLL, GetPlayerX(index) * 32, GetPlayerY(index) * 32
                 SendVital index, hp
-                ' send vitals to party if in one
-                If TempPlayer(index).inParty > 0 Then SendPartyVitals TempPlayer(index).inParty, index
             End If
             ' add mp
             If item(itemnum).addMP > 0 Then
                 Player(index).vital(Vitals.mp) = Player(index).vital(Vitals.mp) + item(itemnum).addMP
                 SendActionMsg GetPlayerMap(index), "+" & item(itemnum).addMP, BrightBlue, ACTIONMSG_SCROLL, GetPlayerX(index) * 32, GetPlayerY(index) * 32
                 SendVital index, mp
-                ' send vitals to party if in one
-                If TempPlayer(index).inParty > 0 Then SendPartyVitals TempPlayer(index).inParty, index
             End If
             ' add exp
             If item(itemnum).addEXP > 0 Then
