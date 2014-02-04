@@ -275,6 +275,10 @@ Public Property Get y() As Byte
   y = mData.y
 End Property
 
+Public Property Let dir(ByVal dir As Byte)
+  mData.dir = dir
+End Property
+
 Public Property Get dir() As Byte
   dir = mData.dir
 End Property
@@ -535,6 +539,32 @@ Public Sub sendData()
   Call sendToMap(mData.map, serialize)
 End Sub
 
+Public Sub sendWelcome()
+  If LenB(Options.MOTD) > 0 Then
+    Call sendMessage(Options.MOTD, BrightCyan)
+  End If
+  
+  ' Send whos online
+  Call sendWhosOnline
+End Sub
+
+Public Sub sendLeftGame()
+Dim buffer As clsBuffer
+
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SPlayerData)
+  Call buffer.WriteLong(mData.id)
+  Call buffer.WriteString(vbNullString)
+  Call buffer.WriteLong(0)
+  Call buffer.WriteLong(0)
+  Call buffer.WriteLong(0)
+  Call buffer.WriteLong(0)
+  Call buffer.WriteLong(0)
+  Call buffer.WriteLong(0)
+  Call buffer.WriteLong(0)
+  Call sendToAllBut(Me, buffer)
+End Sub
+
 Public Sub sendLoc()
 Dim buffer As clsBuffer
 
@@ -655,6 +685,75 @@ Dim buffer As clsBuffer
   End If
   
   Call char.send(buffer)
+End Sub
+
+Public Sub sendInventory()
+Dim buffer As clsBuffer
+Dim i As Long
+
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SPlayerInv)
+  
+  For i = 1 To MAX_INV
+    Call buffer.WriteLong(mItem(i).item.id)
+    Call buffer.WriteLong(mItem(i).value)
+    Call buffer.WriteByte(mItem(i).bound)
+  Next
+  
+  Call send(buffer)
+End Sub
+
+Public Sub sendInventoryUpdate(ByVal invSlot As Long)
+Dim buffer As clsBuffer
+
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SPlayerInvUpdate)
+  Call buffer.WriteLong(invSlot)
+  Call buffer.WriteLong(mItem(invSlot).item.id)
+  Call buffer.WriteLong(mItem(invSlot).value)
+  Call buffer.WriteByte(mItem(invSlot).bound)
+  Call send(buffer)
+End Sub
+
+Public Sub sendEquipment()
+Dim buffer As clsBuffer
+
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SPlayerWornEq)
+  Call buffer.WriteLong(mData.weapon.id)
+  Call buffer.WriteLong(mData.armour.id)
+  Call buffer.WriteLong(mData.shield.id)
+  Call buffer.WriteLong(mData.aura.id)
+  Call send(buffer)
+End Sub
+
+Sub sendEXP(ByVal index As Long)
+Dim buffer As clsBuffer, i As Long
+
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SPlayerEXP)
+  Call buffer.WriteLong(mData.exp)
+  Call buffer.WriteLong(GetPlayerNextLevel(index))
+  
+  For i = 1 To Skills.Skill_Count - 1
+    Call buffer.WriteLong(GetPlayerSkillExp(index, i))
+    Call buffer.WriteLong(GetPlayerNextSkillLevel(index, i))
+  Next
+  
+  Call send(buffer)
+End Sub
+
+Sub sendStats(ByVal index As Long)
+Dim buffer As clsBuffer
+
+  Set buffer = New clsBuffer
+  Call buffer.WriteLong(SPlayerStats)
+  Call buffer.WriteLong(mData.str)
+  Call buffer.WriteLong(mData.end)
+  Call buffer.WriteLong(mData.int)
+  Call buffer.WriteLong(mData.agl)
+  Call buffer.WriteLong(mData.wil)
+  Call send(buffer)
 End Sub
 
 Public Sub sendTarget()

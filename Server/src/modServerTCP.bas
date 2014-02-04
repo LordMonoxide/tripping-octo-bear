@@ -149,7 +149,7 @@ Public Sub MapCache_Create(ByVal mapNum As Long)
     Next
 
     For x = 1 To MAX_MAP_NPCS
-        buffer.WriteLong map(mapNum).NPC(x)
+        buffer.WriteLong map(mapNum).npc(x)
     Next
     
     buffer.WriteByte map(mapNum).Fog
@@ -274,7 +274,7 @@ Dim i As Long
   Call buffer.WriteLong(SMapNpcData)
 
   For i = 1 To MAX_MAP_NPCS
-    Call buffer.WriteLong(map(mapNum).mapNPC(i).NPC.id)
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).npc.id)
     Call buffer.WriteLong(map(mapNum).mapNPC(i).x)
     Call buffer.WriteLong(map(mapNum).mapNPC(i).y)
     Call buffer.WriteLong(map(mapNum).mapNPC(i).dir)
@@ -293,7 +293,7 @@ Dim i As Long
   buffer.WriteLong SMapNpcData
 
   For i = 1 To MAX_MAP_NPCS
-    Call buffer.WriteLong(map(mapNum).mapNPC(i).NPC.id)
+    Call buffer.WriteLong(map(mapNum).mapNPC(i).npc.id)
     Call buffer.WriteLong(map(mapNum).mapNPC(i).x)
     Call buffer.WriteLong(map(mapNum).mapNPC(i).y)
     Call buffer.WriteLong(map(mapNum).mapNPC(i).dir)
@@ -305,15 +305,13 @@ Dim i As Long
 End Sub
 
 Sub SendItems(ByVal index As Long)
-    Dim i As Long
+Dim item As clsItem
 
-    For i = 1 To MAX_ITEMS
-
-        If LenB(item(i).name) > 0 Then
-            Call SendUpdateItemTo(index, i)
-        End If
-
-    Next
+  For Each item In items
+    If LenB(item.name) > 0 Then
+      Call SendUpdateItemTo(index, item)
+    End If
+  Next
 End Sub
 
 Sub SendAnimations(ByVal index As Long)
@@ -329,15 +327,13 @@ Sub SendAnimations(ByVal index As Long)
 End Sub
 
 Sub SendNpcs(ByVal index As Long)
-    Dim i As Long
+Dim npc As clsNPC
 
-    For i = 1 To MAX_NPCS
-
-        If LenB(Trim$(NPC(i).name)) > 0 Then
-            Call SendUpdateNpcTo(index, i)
-        End If
-
-    Next
+  For Each npc In npcs
+    If LenB(npc.name) > 0 Then
+      Call SendUpdateNpcTo(index, npc)
+    End If
+  Next
 End Sub
 
 Sub SendResources(ByVal index As Long)
@@ -350,120 +346,6 @@ Sub SendResources(ByVal index As Long)
         End If
 
     Next
-End Sub
-
-Sub SendInventory(ByVal index As Long)
-    Dim i As Long
-    Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong SPlayerInv
-
-    For i = 1 To MAX_INV
-        buffer.WriteLong GetPlayerInvItemNum(index, i)
-        buffer.WriteLong GetPlayerInvItemValue(index, i)
-        buffer.WriteByte Player(index).inv(i).bound
-    Next
-
-    SendDataTo index, buffer.ToArray()
-    
-    Set buffer = Nothing
-End Sub
-
-Sub SendInventoryUpdate(ByVal index As Long, ByVal invSlot As Long)
-    Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong SPlayerInvUpdate
-    buffer.WriteLong invSlot
-    buffer.WriteLong GetPlayerInvItemNum(index, invSlot)
-    buffer.WriteLong GetPlayerInvItemValue(index, invSlot)
-    buffer.WriteByte Player(index).inv(invSlot).bound
-    SendDataTo index, buffer.ToArray()
-    
-    Set buffer = Nothing
-End Sub
-
-Sub SendWornEquipment(ByVal index As Long)
-    Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong SPlayerWornEq
-    buffer.WriteLong GetPlayerEquipment(index, Armor)
-    buffer.WriteLong GetPlayerEquipment(index, weapon)
-    buffer.WriteLong GetPlayerEquipment(index, aura)
-    buffer.WriteLong GetPlayerEquipment(index, shield)
-    SendDataTo index, buffer.ToArray()
-    
-    Set buffer = Nothing
-End Sub
-
-Sub SendEXP(ByVal index As Long)
-Dim buffer As clsBuffer, i As Long
-
-    Set buffer = New clsBuffer
-    
-    buffer.WriteLong SPlayerEXP
-    buffer.WriteLong GetPlayerExp(index)
-    buffer.WriteLong GetPlayerNextLevel(index)
-    For i = 1 To Skills.Skill_Count - 1
-        buffer.WriteLong GetPlayerSkillExp(index, i)
-        buffer.WriteLong GetPlayerNextSkillLevel(index, i)
-    Next
-    
-    SendDataTo index, buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
-Sub SendStats(ByVal index As Long)
-Dim i As Long
-Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPlayerStats
-    For i = 1 To Stats.Stat_Count - 1
-        buffer.WriteLong GetPlayerStat(index, i)
-    Next
-    SendDataTo index, buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
-Sub SendWelcome(ByVal index As Long)
-    If LenB(Options.MOTD) > 0 Then
-        Call PlayerMsg(index, Options.MOTD, BrightCyan)
-    End If
-
-    ' Send whos online
-    Call sendWhosOnline(index)
-End Sub
-Sub SendNewChar(ByVal index As Long)
-    Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong SNewChar
-    SendDataTo index, buffer.ToArray()
-    Set buffer = Nothing
-End Sub
-
-Sub SendLeftGame(ByVal index As Long)
-    Dim buffer As clsBuffer
-
-    Set buffer = New clsBuffer
-    buffer.WriteLong SPlayerData
-    buffer.WriteLong index
-    buffer.WriteString vbNullString
-    buffer.WriteLong 0
-    buffer.WriteLong 0
-    buffer.WriteLong 0
-    buffer.WriteLong 0
-    buffer.WriteLong 0
-    buffer.WriteLong 0
-    buffer.WriteLong 0
-    SendDataToAllBut index, buffer.ToArray()
-    Set buffer = Nothing
 End Sub
 
 Sub SendUpdateItemToAll(ByVal itemnum As Long)
@@ -541,11 +423,11 @@ Sub SendUpdateNpcToAll(ByVal NPCNum As Long)
     
     Set buffer = New clsBuffer
     
-    NPCSize = LenB(NPC(NPCNum))
+    NPCSize = LenB(npc(NPCNum))
     
     ReDim NPCData(NPCSize - 1)
     
-    CopyMemory NPCData(0), ByVal VarPtr(NPC(NPCNum)), NPCSize
+    CopyMemory NPCData(0), ByVal VarPtr(npc(NPCNum)), NPCSize
     
     buffer.WriteLong SUpdateNpc
     buffer.WriteLong NPCNum
@@ -560,9 +442,9 @@ Sub SendUpdateNpcTo(ByVal index As Long, ByVal NPCNum As Long)
     Dim NPCData() As Byte
 
     Set buffer = New clsBuffer
-    NPCSize = LenB(NPC(NPCNum))
+    NPCSize = LenB(npc(NPCNum))
     ReDim NPCData(NPCSize - 1)
-    CopyMemory NPCData(0), ByVal VarPtr(NPC(NPCNum)), NPCSize
+    CopyMemory NPCData(0), ByVal VarPtr(npc(NPCNum)), NPCSize
     buffer.WriteLong SUpdateNpc
     buffer.WriteLong NPCNum
     buffer.WriteBytes NPCData

@@ -27,7 +27,7 @@ Dim c As clsCharacter
   name = UCase$(name)
   For Each c In characters
     If Len(c.name) >= Len(name) Then
-      If UCase$(Mid$(GetPlayerName(i), 1, Len(name))) = name Then
+      If UCase$(Mid$(c.name, 1, Len(name))) = name Then
         Set FindPlayer = c
         Exit Function
       End If

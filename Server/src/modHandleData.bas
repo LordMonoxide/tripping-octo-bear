@@ -338,7 +338,7 @@ Dim dir As Long
   
   Set buffer = New clsBuffer
   Call buffer.WriteLong(SPlayerDir)
-  Call buffer.WriteLong(index)
+  Call buffer.WriteLong(char.id)
   Call buffer.WriteLong(dir)
   Call sendToMapBut(index, char.map, buffer)
 End Sub
